@@ -469,6 +469,21 @@ strong a {
 
 
     
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'shuchaang',
+      repo: 'shuchaang.github.io',
+      oauth: {
+        client_id: '065d381c2cc192aaac37',
+        client_secret: 'dfe3bcc1bfe2e3bc179cf82481fee2e537450220',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
 
 
 
