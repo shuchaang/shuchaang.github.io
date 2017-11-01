@@ -12,7 +12,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/11/01/redis解决分布式锁/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
 <meta property="og:description" content="废话不多说，首先分享一个业务场景-抢购。一个典型的高并发问题，所需的最关键字段就是库存，在高并发的情况下每次都去数据库查询显然是不合适的，因此把库存信息存入Redis中，利用redis的锁机制来控制并发访问，是一个不错的解决方案。 首先是一段业务代码： 12345678910111213141516171819@Transactionalpublic void orderProductMockDi">
-<meta property="og:updated_time" content="2017-11-01T00:46:17.000Z">
+<meta property="og:updated_time" content="2017-11-01T00:53:21.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="redis解决分布式锁">
 <meta name="twitter:description" content="废话不多说，首先分享一个业务场景-抢购。一个典型的高并发问题，所需的最关键字段就是库存，在高并发的情况下每次都去数据库查询显然是不合适的，因此把库存信息存入Redis中，利用redis的锁机制来控制并发访问，是一个不错的解决方案。 首先是一段业务代码： 12345678910111213141516171819@Transactionalpublic void orderProductMockDi">
@@ -345,7 +345,7 @@
         <p><span>本文标题:</span><a href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
         <p><span>发布时间:</span>2017年11月01日 - 08时35分</p>
-        <p><span>最后更新:</span>2017年11月01日 - 08时46分</p>
+        <p><span>最后更新:</span>2017年11月01日 - 08时53分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2017/11/01/redis解决分布式锁/" title="redis解决分布式锁">http://yoursite.com/2017/11/01/redis解决分布式锁/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2017/11/01/redis解决分布式锁/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
