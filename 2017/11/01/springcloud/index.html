@@ -69,10 +69,6 @@
         <p class="header-subtitle">剑来!</p>
         
         
-            <form>
-                <input type="text" class="st-default-search-input search" id="search" placeholder=" Search...">
-            </form>
-        
         
             <div id="switch-btn" class="switch-btn">
                 <div class="icon">
@@ -411,21 +407,6 @@
 
 
     
-        <div id="gitments"></div>
-<script src="/js/gitment.browser.js"></script>
-<script>
-    var gitment = new Gitment({
-      id: window.location.pathname,
-      owner: 'shuchaang',
-      repo: 'shuchaang.github.io',
-      oauth: {
-        client_id: 'efc6830107a91d821da1',
-        client_secret: '2d76ded6da6d2629ea3ae87e0149d272eb60f36a',
-      },
-    })
-    gitment.render('gitments')
-</script>
-    
 
 
 
@@ -557,23 +538,6 @@
     });
 </script>
 
-
-    <script type="text/javascript">
-      window.onload = function(){
-        document.getElementById("search").onclick = function(){
-            console.log("search")
-            search();
-        }
-      }
-      function search(){
-        (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
-        (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
-        e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
-        })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
-
-        _st('install','A1Pz-LKMXbrzcFg2FWi6','2.0.0');
-      }
-    </script>
 
   </div>
 </body>
