@@ -3,19 +3,22 @@
 <head>
   <meta charset="utf-8">
   
-  <title>redis解决分布式锁 | Shuchang&#39;s Blog</title>
+  <title>devops初识 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="废话不多说，首先分享一个业务场景-抢购。一个典型的高并发问题，所需的最关键字段就是库存，在高并发的情况下每次都去数据库查询显然是不合适的，因此把库存信息存入Redis中，利用redis的锁机制来控制并发访问，是一个不错的解决方案。 首先是一段业务代码： 12345678910111213141516171819@Transactionalpublic void orderProductMockDi">
-<meta name="keywords" content="redis,java">
+  <meta name="description" content="what DevOps = Development+Operations 快速的迭代和快速的用户反馈  流程    首先就是代码编写，开发过后就是打包编译(CI/BUILD),在这个过程中消除99%以上的bug.紧接着就是部署上线，Dev会协助Ops进行运维观察，并通过一些工具检查程序的运行情况，并反馈给Dev.据说现在AWS已经做到程序每11.2s迭代一次。而普通的开发流程可能需要几个月。 一个">
+<meta name="keywords" content="devops">
 <meta property="og:type" content="article">
-<meta property="og:title" content="redis解决分布式锁">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/11/01/redis解决分布式锁/index.html">
+<meta property="og:title" content="devops初识">
+<meta property="og:url" content="http://www.shuchang.sc.com/2017/11/07/devops初识/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="废话不多说，首先分享一个业务场景-抢购。一个典型的高并发问题，所需的最关键字段就是库存，在高并发的情况下每次都去数据库查询显然是不合适的，因此把库存信息存入Redis中，利用redis的锁机制来控制并发访问，是一个不错的解决方案。 首先是一段业务代码： 12345678910111213141516171819@Transactionalpublic void orderProductMockDi">
-<meta property="og:updated_time" content="2017-11-01T01:11:28.000Z">
+<meta property="og:description" content="what DevOps = Development+Operations 快速的迭代和快速的用户反馈  流程    首先就是代码编写，开发过后就是打包编译(CI/BUILD),在这个过程中消除99%以上的bug.紧接着就是部署上线，Dev会协助Ops进行运维观察，并通过一些工具检查程序的运行情况，并反馈给Dev.据说现在AWS已经做到程序每11.2s迭代一次。而普通的开发流程可能需要几个月。 一个">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fl97w1iur9j30p00epgmn.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fl99b5521qj30rv0hvdge.jpg">
+<meta property="og:updated_time" content="2017-11-07T01:24:05.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="redis解决分布式锁">
-<meta name="twitter:description" content="废话不多说，首先分享一个业务场景-抢购。一个典型的高并发问题，所需的最关键字段就是库存，在高并发的情况下每次都去数据库查询显然是不合适的，因此把库存信息存入Redis中，利用redis的锁机制来控制并发访问，是一个不错的解决方案。 首先是一段业务代码： 12345678910111213141516171819@Transactionalpublic void orderProductMockDi">
+<meta name="twitter:title" content="devops初识">
+<meta name="twitter:description" content="what DevOps = Development+Operations 快速的迭代和快速的用户反馈  流程    首先就是代码编写，开发过后就是打包编译(CI/BUILD),在这个过程中消除99%以上的bug.紧接着就是部署上线，Dev会协助Ops进行运维观察，并通过一些工具检查程序的运行情况，并反馈给Dev.据说现在AWS已经做到程序每11.2s迭代一次。而普通的开发流程可能需要几个月。 一个">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fl97w1iur9j30p00epgmn.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -229,11 +232,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-redis解决分布式锁" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-devops初识" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/11/01/redis解决分布式锁/" class="article-date">
-      <time datetime="2017-11-01T00:35:02.000Z" itemprop="datePublished">2017-11-01</time>
+      <a href="/2017/11/07/devops初识/" class="article-date">
+      <time datetime="2017-11-07T00:23:59.000Z" itemprop="datePublished">2017-11-07</time>
 </a>
     </div>
   
@@ -246,7 +249,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      redis解决分布式锁
+      devops初识
     </h1>
   
 
@@ -255,13 +258,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
+    <a class="article-category-link" href="/categories/杂谈/">杂谈</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/devops/">devops</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -271,22 +274,18 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>废话不多说，首先分享一个业务场景-抢购。一个典型的高并发问题，所需的最关键字段就是库存，在高并发的情况下每次都去数据库查询显然是不合适的，因此把库存信息存入Redis中，利用redis的锁机制来控制并发访问，是一个不错的解决方案。</p>
-<p>首先是一段业务代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">@Transactional</div><div class="line">public void orderProductMockDiffUser(String productId)&#123;</div><div class="line">    //1.查库存</div><div class="line">    int stockNum  = stock.get(productId);</div><div class="line">    if(stocknum == 0)&#123;</div><div class="line">        throw new SellException(ProductStatusEnum.STOCK_EMPTY);</div><div class="line">        //这里抛出的异常要是运行时异常，否则无法进行数据回滚，这也是spring中比较基础的</div><div class="line">    &#125;else&#123;</div><div class="line">        //2.下单</div><div class="line">        orders.put(KeyUtil.genUniqueKey(),productId);//生成随机用户id模拟高并发</div><div class="line">        sotckNum = stockNum-1;</div><div class="line">        try&#123;</div><div class="line">            Thread.sleep(100);</div><div class="line">        &#125; catch (InterruptedExcption e)&#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        stock.put(productId,stockNum);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这里有一种比较简单的解决方案，就是<strong><em>synchronized</em></strong>关键字。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public synchronized void orderProductMockDiffUser(String productId)</div></pre></td></tr></table></figure></p>
-<p>这就是java自带的一种锁机制，简单的对函数加锁和释放锁。但问题是这个实在是太慢了，感兴趣的可以可以写个接口用apache ab压测一下。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ab -n 500 -c 100 http://localhost:8080/xxxxxxx</div></pre></td></tr></table></figure>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li><a id="more"></a>
-<the rest="" of="" contents="" |="" 余下全文=""><br>下面就是redis分布式锁的解决方法。首先要了解两个redis指令<br>SETNX 和 GETSET，可以在<a href="http://redis.cn/" target="_blank" rel="external">redis中文网</a>上找到详细的介绍。<br>SETNX就是set if not exist的缩写，如果不存在就返回保存value并返回1，如果存在就返回0。<br>GETSET其实就是两个指令GET和SET，首先会GET到当前key的值并返回，然后在设置当前Key为要设置Value。</the></li>
+        <h2 id="what"><a href="#what" class="headerlink" title="what"></a>what</h2><ul>
+<li>DevOps = Development+Operations</li>
+<li>快速的迭代和快速的用户反馈</li>
 </ul>
-<p>首先我们先新建一个RedisLock类：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line">@Slf4j</div><div class="line">@Component</div><div class="line">public class RedisService &#123;</div><div class="line">    @Autowired</div><div class="line">    private StringRedisTemplate stringRedisTemplate;</div><div class="line"></div><div class="line"></div><div class="line">    /***</div><div class="line">     * 加锁</div><div class="line">     * @param key</div><div class="line">     * @param value 当前时间+超时时间</div><div class="line">     * @return 锁住返回true</div><div class="line">     */</div><div class="line">    public boolean lock(String key,String value)&#123;</div><div class="line">        if(stringRedisTemplate.opsForValue().setIfAbsent(key,value))&#123;//setNX 返回boolean</div><div class="line">            return true;</div><div class="line">        &#125;</div><div class="line">        //如果锁超时 ***</div><div class="line">        String currentValue = stringRedisTemplate.opsForValue().get(key);</div><div class="line">        if(!StringUtils.isEmpty(currentValue) &amp;&amp; Long.parseLong(currentValue)&lt;System.currentTimeMillis())&#123;</div><div class="line">            //获取上一个锁的时间</div><div class="line">            String oldvalue  = stringRedisTemplate.opsForValue().getAndSet(key,value);</div><div class="line">            if(!StringUtils.isEmpty(oldvalue)&amp;&amp;oldvalue.equals(currentValue))&#123;</div><div class="line">                return true;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">    /***</div><div class="line">     * 解锁</div><div class="line">     * @param key</div><div class="line">     * @param value</div><div class="line">     * @return</div><div class="line">     */</div><div class="line">    public void unlock(String key,String value)&#123;</div><div class="line">        try &#123;</div><div class="line">            String currentValue = stringRedisTemplate.opsForValue().get(key);</div><div class="line">            if(!StringUtils.isEmpty(currentValue)&amp;&amp;currentValue.equals(value))&#123;</div><div class="line">                stringRedisTemplate.opsForValue().getOperations().delete(key);</div><div class="line">            &#125;</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            log.error(&quot;解锁异常&quot;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这个项目是springboot的项目。首先要加入redis的pom依赖，该类只有两个功能，加锁和解锁，解锁比较简单，就是删除当前key的键值对。我们主要来说一说加锁这个功能。<br>首先，锁的value值是当前时间加上过期时间的时间戳，Long类型。首先看到用setiFAbsent方法也就是对应的SETNX，在没有线程获得锁的情况下可以直接拿到锁，并返回true也就是加锁，最后没有获得锁的线程会返回false。 最重要的是中间对于锁超时的处理，如果没有这段代码，当秒杀方法发生异常的时候，后续的线程都无法得到锁，也就陷入了一个死锁的情况。我们可以假设CurrentValue为A，并且在执行过程中抛出了异常，这时进入了两个value为B的线程来争夺这个锁，也就是走到了注释<em>*</em>的地方。currentValue==A，这时某一个线程执行到了getAndSet(key,value)函数(某一时刻一定只有一个线程执行这个方法，其他要等待)。这时oldvalue也就是之前的value等于A，在方法执行过后，oldvalue会被设置为当前的value也就是B。这时继续执行，由于oldValue==currentValue所以该线程获取到锁。而另一个线程获取的oldvalue是B，而currentValue是A，所以他就获取不到锁啦。多线程还是有些乱的，需要好好想一想。<br>接下来就是在业务代码中加锁啦：首要要@Autowired注入刚刚RedisLock类，不要忘记对这个类加一个@Component注解否则无法注入</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">private static final int TIMEOUT= 10*1000;</div><div class="line">@Transactional</div><div class="line">public void orderProductMockDiffUser(String productId)&#123;</div><div class="line">     long time = System.currentTimeMillions()+TIMEOUT;</div><div class="line">   if(!redislock.lock(productId,String.valueOf(time))&#123;</div><div class="line">    throw new SellException(101,&quot;换个姿势再试试&quot;)</div><div class="line">    &#125;</div><div class="line">    //1.查库存</div><div class="line">    int stockNum  = stock.get(productId);</div><div class="line">    if(stocknum == 0)&#123;</div><div class="line">        throw new SellException(ProductStatusEnum.STOCK_EMPTY);</div><div class="line">        //这里抛出的异常要是运行时异常，否则无法进行数据回滚，这也是spring中比较基础的</div><div class="line">    &#125;else&#123;</div><div class="line">        //2.下单</div><div class="line">        orders.put(KeyUtil.genUniqueKey(),productId);//生成随机用户id模拟高并发</div><div class="line">        sotckNum = stockNum-1;</div><div class="line">        try&#123;</div><div class="line">            Thread.sleep(100);</div><div class="line">        &#125; catch (InterruptedExcption e)&#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        stock.put(productId,stockNum);</div><div class="line">    &#125;</div><div class="line">    redisLock.unlock(productId,String.valueOf(time));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>大功告成了！比synchronized快了不知道多少倍，再也不会被老板骂了!</p>
+<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fl97w1iur9j30p00epgmn.jpg" alt=""></p>
+<p>   首先就是代码编写，开发过后就是打包编译(CI/BUILD),在这个过程中消除99%以上的bug.<br>紧接着就是部署上线，Dev会协助Ops进行运维观察，并通过一些工具检查程序的运行情况，并反馈给Dev.<br>据说现在AWS已经做到程序每11.2s迭代一次。而普通的开发流程可能需要几个月。</p>
+<h2 id="一个基于Go、阿里云、github的Devops-Demo"><a href="#一个基于Go、阿里云、github的Devops-Demo" class="headerlink" title="一个基于Go、阿里云、github的Devops Demo"></a>一个基于Go、阿里云、github的Devops Demo</h2><p>deploy.sh<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">kill -9</div><div class="line">cd ~/demo/</div><div class="line">git pull xxxxxxxx.git</div><div class="line">cd /gitRepo</div><div class="line">./webserver &amp;</div></pre></td></tr></table></figure></p>
+<p>deploy.go<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">import(</div><div class="line">    &quot;io&quot;</div><div class="line">    &quot;net/http&quot;</div><div class="line">    &quot;os/exec&quot;</div><div class="line">    &quot;log&quot;</div><div class="line">)</div><div class="line"></div><div class="line">function reLaunch()&#123;</div><div class="line">    cmd:=exec.Command(&quot;sh&quot;,&quot;./deploy.sh&quot;)</div><div class="line">    err:=com.Start()</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatal(err)</div><div class="line">    &#125;</div><div class="line">    err=com.Wait()</div><div class="line">&#125;</div><div class="line">func firstPage(w http.ResponseWriter, r *http.Request)&#123;</div><div class="line">    os.WriteString(w,&quot;&lt;h1&gt;hello this is deploy sh&lt;/h1&gt;&quot;)</div><div class="line">    reLaunch()</div><div class="line">&#125;</div><div class="line">func main()&#123;</div><div class="line">    http.HandleFunc(&quot;/&quot;,firstPage)</div><div class="line">    http.ListenAndServer(&quot;:5000&quot;,nil)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>main.go<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">func firstPage(w http.ResponseWriter, r *http.Request)&#123;</div><div class="line">    os.WriteString(w,&quot;&lt;h1&gt;hello this is welcome&lt;/h1&gt;&quot;)</div><div class="line">    reLaunch()</div><div class="line">&#125;</div><div class="line">func main()&#123;</div><div class="line">    http.HandleFunc(&quot;/&quot;,firstPage)</div><div class="line">    http.ListenAndServer(&quot;:8000&quot;,nil)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>GitHub</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fl99b5521qj30rv0hvdge.jpg" alt=""><br>设置一个web钩子，当有push动作产生的时候自动触发deploy.go重新部署，这样就做到了修改业务代码的自动部署。<br>Webhooks的用途十分广泛，我在做SpringCloud的配置中心的时候也用到了webhooks，通过这个机制通知配置中心，配置中心通过消息队列更新整个集群的配置。</p>
+<p>这样其实就做到了一个简易的DevOps</p>
 
       
       
@@ -342,13 +341,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></p>
+        <p><span>本文标题:</span><a href="/2017/11/07/devops初识/">devops初识</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2017年11月01日 - 08时35分</p>
-        <p><span>最后更新:</span>2017年11月01日 - 09时11分</p>
+        <p><span>发布时间:</span>2017年11月07日 - 08时23分</p>
+        <p><span>最后更新:</span>2017年11月07日 - 09时24分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/11/01/redis解决分布式锁/" title="redis解决分布式锁">http://www.shuchang.sc.com/2017/11/01/redis解决分布式锁/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/11/01/redis解决分布式锁/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2017/11/07/devops初识/" title="devops初识">http://www.shuchang.sc.com/2017/11/07/devops初识/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/11/07/devops初识/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -361,15 +360,11 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/11/01/springcloud/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          springcloud
-        
-      </div>
-    </a>
   
+    <a href="/2017/11/05/常用工具类整理/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">常用工具类整理</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
   
 </nav>
 
@@ -378,7 +373,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#what"><span class="toc-number">1.</span> <span class="toc-text">what</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#流程"><span class="toc-number">2.</span> <span class="toc-text">流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一个基于Go、阿里云、github的Devops-Demo"><span class="toc-number">3.</span> <span class="toc-text">一个基于Go、阿里云、github的Devops Demo</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -444,13 +439,13 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/11/01/springcloud/" title="上一篇: springcloud">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+            <a href="/2017/11/05/常用工具类整理/" title="下一篇: 常用工具类整理">
+                <i class="fa fa-angle-right"></i>
+            </a>
         
     </div>
     <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/11/07/devops初识/">devops初识</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/05/常用工具类整理/">常用工具类整理</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/springcloud/">springcloud</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
