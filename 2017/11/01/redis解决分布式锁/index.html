@@ -6,7 +6,7 @@
   <title>redis解决分布式锁 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="废话不多说，首先分享一个业务场景-抢购。一个典型的高并发问题，所需的最关键字段就是库存，在高并发的情况下每次都去数据库查询显然是不合适的，因此把库存信息存入Redis中，利用redis的锁机制来控制并发访问，是一个不错的解决方案。 首先是一段业务代码： 12345678910111213141516171819@Transactionalpublic void orderProductMockDi">
-<meta name="keywords" content="redis,java">
+<meta name="keywords" content="java,redis">
 <meta property="og:type" content="article">
 <meta property="og:title" content="redis解决分布式锁">
 <meta property="og:url" content="http://www.shuchang.sc.com/2017/11/01/redis解决分布式锁/index.html">
@@ -149,7 +149,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/devops/" style="font-size: 10px;">devops</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/springcloud/" style="font-size: 10px;">springcloud</a>
+                        <a href="/tags/devops/" style="font-size: 10px;">devops</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a>
                     </div>
                 </section>
                 
@@ -361,11 +361,11 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/11/01/springcloud/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2017/11/05/常用工具类整理/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption"><</strong>
       <div class="article-nav-title">
         
-          springcloud
+          常用工具类整理
         
       </div>
     </a>
@@ -444,7 +444,7 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/11/01/springcloud/" title="上一篇: springcloud">
+            <a href="/2017/11/05/常用工具类整理/" title="上一篇: 常用工具类整理">
                 <i class="fa fa-angle-left"></i>
             </a>
         
@@ -453,7 +453,7 @@
             <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
     </div>
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/11/07/devops初识/">devops初识</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/05/常用工具类整理/">常用工具类整理</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/springcloud/">springcloud</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/07/devops初识/">devops初识</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/05/常用工具类整理/">常用工具类整理</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
     <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
     <script>
         $(".post-list").addClass("toc-article");
