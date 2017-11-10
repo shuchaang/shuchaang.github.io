@@ -259,7 +259,7 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>Redis的强大功能很大程度上是由于其将所有数据存储在内存中，为了使redis重启后数据不丢失，需要将数据以某种形式保存在硬盘中。</p>
+              <p>Redis的强大功能很大程度上是由于其将所有数据存储在内存中，为了使redis重启后数据不丢失，需要将数据以某种形式保存在硬盘中。</p>
 <p>Redis支持两种持久化方式，RDB和AOF。可以单独使用一种或两种结合。redis默认的持久化方式是RDB。</p>
 <p>RDB通过快照完成，当符合一定条件时redis会自动将内存中的数据进行快照并保存在硬盘上。参数有两个：<strong>时间和改动键的个数</strong>。当指定时间内更改键的个数大于指定值就会快照,默认配置如下，单位为秒。</p>
 <p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1flcrw1og6bj304z02na9u.jpg" alt="rdb默认配置"></p>
@@ -274,27 +274,8 @@
 <li>子进程写入完成数据后用临时文件替换就得RDB文件。</li>
 </ol>
 <p>可以配置<strong><em>rdbcompression yes</em></strong>来选择是否对rdb进行压缩。<br>压缩的好处显而易见就是减少资源的消耗。缺点就是消耗更多的cpu资源。而选择不压缩就相反。</p>
-<excerpt in="" index="" |="" 首页摘要="">
-
-<the rest="" of="" contents="" |="" 余下全文="">
-
-<h3 id="AOF持久化方式"><a href="#AOF持久化方式" class="headerlink" title="AOF持久化方式"></a>AOF持久化方式</h3><p>策略是将发送到redis服务端的每条命令都记录下来，保存到aof文件，其实aof就是一种日志策略，只要重新执行每一条记录下的指令，就可以恢复这个过程中的数据。<br>通过修改配置为yes就可以启动aof的持久化方式。</p>
-<p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1flcsenbkf8j305101iq2p.jpg" alt=""></p>
-<p>但是使用AOF方式可能会记录很多中间的过程，这或许对于我们所需的最终结果是没有什么帮助的。例如<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">set abc 1</div><div class="line">set abc 2</div></pre></td></tr></table></figure></p>
-<p>reids会记录这两条命令，但我们只需要abc 2就可以了。</p>
-<p>redis提供了<strong><em>BGREWRITEAOF</em></strong>指令来优化AOF文件，目的就是去除中间的执行过程。重写策略提供了一些参数：<br><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1flcsnvtqvsj30a101xdfn.jpg" alt=""></p>
-<ol>
-<li>第一参数指定了重写百分比。例如现在的aof文件大小为64MB，那么下一次重写就是128mb的时候也就是再增加100%的64MB</li>
-<li>第二个参数指定了aof文件最小为64MB的时候才进行重写。</li>
-</ol>
-<h3 id="写入硬盘"><a href="#写入硬盘" class="headerlink" title="写入硬盘"></a>写入硬盘</h3><p>文件写入默认情况下先写入系统缓存，系统每根据策略同步，才是真正写入硬盘中，如果这期间服务器宕机，数据也是会丢失的，redis提供了一些配置来修改同步策略。</p>
-<p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1flcsu6cyb5j307102adfn.jpg" alt=""></p>
-<ol>
-<li>每次同步 安全但是最慢</li>
-<li>每秒同步 默认策略</li>
-<li>不主动同步，由操作系统决定，同步周期可能达到30s  最快但是不安全</li>
-</ol>
-</the></excerpt>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>s</excerpt></p>
+          
       
       
     </div>
@@ -312,6 +293,10 @@
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
     </div>
 
+      
+        <p class="article-more-link">
+          <a  href="/2017/11/10/redis持久化/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>

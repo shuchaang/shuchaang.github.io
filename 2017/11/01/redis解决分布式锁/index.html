@@ -6,7 +6,7 @@
   <title>redis解决分布式锁 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="废话不多说，首先分享一个业务场景-抢购。一个典型的高并发问题，所需的最关键字段就是库存，在高并发的情况下每次都去数据库查询显然是不合适的，因此把库存信息存入Redis中，利用redis的锁机制来控制并发访问，是一个不错的解决方案。 首先是一段业务代码： 12345678910111213141516171819@Transactionalpublic void orderProductMockDi">
-<meta name="keywords" content="redis,java">
+<meta name="keywords" content="java,redis">
 <meta property="og:type" content="article">
 <meta property="og:title" content="redis解决分布式锁">
 <meta property="og:url" content="http://www.shuchang.sc.com/2017/11/01/redis解决分布式锁/index.html">
