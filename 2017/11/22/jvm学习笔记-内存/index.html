@@ -3,23 +3,22 @@
 <head>
   <meta charset="utf-8">
   
-  <title>SpringMvc浅谈 | Shuchang&#39;s Blog</title>
+  <title>jvm学习笔记-内存 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="springmvc在哪里springmvc是spring体系的一部分，位于web部分。 springmvc的设计模式先来看一个简化版:用户请求到达控制器，控制器并没有处理业务逻辑的能力，于是把请求交给后台的一个model做处理，并将处理的结果返回给控制器。当控制器拿到数据后，就要找到视图并做渲染，并将渲染好的结果返回给用户，这就是一个通用的mvc设计模式。      spirngmvc架构：  可">
-<meta name="keywords" content="springmvc">
+  <meta name="description" content="最近看完了《深入理解java虚拟机》这本书，记录一下所学所思，留作以后复习。 宏观先来说说虚拟机，我们都知道Java程序运行在虚拟机上，虚拟机负责和操作系统打交道，最终通过二进制指令操作电子电路运行，完成数据的读取，运算，输出。虚拟机在加载.class文件的时候会在内存开辟一块区域”方法区”,专门用来存储累的基本信息，同时在”堆”区生成这个类的Class对象，作为类的一个镜像，为反射机制提供一种可">
+<meta name="keywords" content="jvm - java">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SpringMvc浅谈">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/11/11/SpringMvc浅谈/index.html">
+<meta property="og:title" content="jvm学习笔记-内存">
+<meta property="og:url" content="http://www.shuchang.sc.com/2017/11/22/jvm学习笔记-内存/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="springmvc在哪里springmvc是spring体系的一部分，位于web部分。 springmvc的设计模式先来看一个简化版:用户请求到达控制器，控制器并没有处理业务逻辑的能力，于是把请求交给后台的一个model做处理，并将处理的结果返回给控制器。当控制器拿到数据后，就要找到视图并做渲染，并将渲染好的结果返回给用户，这就是一个通用的mvc设计模式。      spirngmvc架构：  可">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fle36iwgwmj30fq0d7aak.jpg">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fle3d2iyonj30g5078wec.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fle4abaf20j30q00d2t91.jpg">
-<meta property="og:updated_time" content="2017-11-11T07:05:08.000Z">
+<meta property="og:description" content="最近看完了《深入理解java虚拟机》这本书，记录一下所学所思，留作以后复习。 宏观先来说说虚拟机，我们都知道Java程序运行在虚拟机上，虚拟机负责和操作系统打交道，最终通过二进制指令操作电子电路运行，完成数据的读取，运算，输出。虚拟机在加载.class文件的时候会在内存开辟一块区域”方法区”,专门用来存储累的基本信息，同时在”堆”区生成这个类的Class对象，作为类的一个镜像，为反射机制提供一种可">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1flqy10c5vtj30ub0lwn0f.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1flr40x4murj30xw0oegqi.jpg">
+<meta property="og:updated_time" content="2017-11-22T12:00:30.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SpringMvc浅谈">
-<meta name="twitter:description" content="springmvc在哪里springmvc是spring体系的一部分，位于web部分。 springmvc的设计模式先来看一个简化版:用户请求到达控制器，控制器并没有处理业务逻辑的能力，于是把请求交给后台的一个model做处理，并将处理的结果返回给控制器。当控制器拿到数据后，就要找到视图并做渲染，并将渲染好的结果返回给用户，这就是一个通用的mvc设计模式。      spirngmvc架构：  可">
-<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fle36iwgwmj30fq0d7aak.jpg">
+<meta name="twitter:title" content="jvm学习笔记-内存">
+<meta name="twitter:description" content="最近看完了《深入理解java虚拟机》这本书，记录一下所学所思，留作以后复习。 宏观先来说说虚拟机，我们都知道Java程序运行在虚拟机上，虚拟机负责和操作系统打交道，最终通过二进制指令操作电子电路运行，完成数据的读取，运算，输出。虚拟机在加载.class文件的时候会在内存开辟一块区域”方法区”,专门用来存储累的基本信息，同时在”堆”区生成这个类的Class对象，作为类的一个镜像，为反射机制提供一种可">
+<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1flqy10c5vtj30ub0lwn0f.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -233,11 +232,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-SpringMvc浅谈" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-jvm学习笔记-内存" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/11/11/SpringMvc浅谈/" class="article-date">
-      <time datetime="2017-11-11T07:00:47.000Z" itemprop="datePublished">2017-11-11</time>
+      <a href="/2017/11/22/jvm学习笔记-内存/" class="article-date">
+      <time datetime="2017-11-22T07:24:27.000Z" itemprop="datePublished">2017-11-22</time>
 </a>
     </div>
   
@@ -250,7 +249,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      SpringMvc浅谈
+      jvm学习笔记-内存
     </h1>
   
 
@@ -259,13 +258,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/springmvc/">springmvc</a>
+    <a class="article-category-link" href="/categories/jvm-java/">jvm -java</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/springmvc/">springmvc</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm-java/">jvm - java</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -275,24 +274,61 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h3 id="springmvc在哪里"><a href="#springmvc在哪里" class="headerlink" title="springmvc在哪里"></a>springmvc在哪里</h3><p>springmvc是spring体系的一部分，位于web部分。<br><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fle36iwgwmj30fq0d7aak.jpg" alt=""></p>
-<h3 id="springmvc的设计模式"><a href="#springmvc的设计模式" class="headerlink" title="springmvc的设计模式"></a>springmvc的设计模式</h3><p>先来看一个简化版:<br><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fle3d2iyonj30g5078wec.jpg" alt=""><br>用户请求到达控制器，控制器并没有处理业务逻辑的能力，于是把请求交给后台的一个model做处理，并将处理的结果返回给控制器。当控制器拿到数据后，就要找到视图并做渲染，并将渲染好的结果返回给用户，这就是一个通用的mvc设计模式。</p>
-<excerpt in="" index="" |="" 首页摘要="">
+        <p>最近看完了《深入理解java虚拟机》这本书，记录一下所学所思，留作以后复习。</p>
+<h3 id="宏观"><a href="#宏观" class="headerlink" title="宏观"></a>宏观</h3><p>先来说说虚拟机，我们都知道Java程序运行在虚拟机上，虚拟机负责和操作系统打交道，最终通过二进制指令操作电子电路运行，完成数据的读取，运算，输出。<br>虚拟机在加载.class文件的时候会在内存开辟一块区域”方法区”,专门用来存储累的基本信息，同时在”堆”区生成这个类的Class对象，作为类的一个镜像，为反射机制提供一种可能。Java是一门面向对象的语言，程序运行过程中伴随着对象的生成与死亡，有的是临时对象短暂存活，有的是壮年而亡，而有的长命百岁。所以虚拟机就不停地申请内存，回收内存。对象的生成方法很多，对象的回收方法也很多，例如GC、标记清除/整理等。</p>
+<p>垃圾回收首先要确定的是什么是垃圾，什么时候回收，在哪里回收，怎么回收。不同的对象可能需要不同的回收策略。一个很容易想到的方法就是在后台启动一个线程，每隔一段时间扫描一次内存，清除垃圾，如此往复。</p>
+<p>实际情况往往非常复杂，效率、安全性、对当前程序的影响都要考虑进去。于是人们发现，对象的生命周期不同，使用一种GC方法效率很差。于是就有了Hotspot的方案，堆区根据不同的生命周期，分为eden、to survivor、from survivor以及非堆的元数据区(java8之前的永久区)。<br> 每个区采用了不同的清理算法。于是便出现了最初的<code>串行收集器</code>。</p>
+<p>同时，为了最大程度的利用CPU的多核资源，出现了<code>并行收集器</code>，即多个线程一起收集垃圾。</p>
+<p>为了降低垃圾收集对原有程序的影响,如STW,一种全局暂停的现象，<code>并发收集器</code>应运而生。</p>
+<p>到此为止，便可以引出jvm优化中最重要的两部分，jvm内存怎么划分，选择哪一种垃圾收集器，就是我们常说的jvm调优。这就考验一个开发人员对业务系统的理解和眼光，确定优化方向并调整参数。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li><a id="more"></a>
+<the rest="" of="" contents="" |="" 余下全文="">
 
-<p><the rest="" of="" contents="" |="" 余下全文=""></the></p>
-<blockquote>
-<p> spirngmvc架构：</p>
-</blockquote>
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fle4abaf20j30q00d2t91.jpg" alt=""><br>可以看到这个架构的入口就是DispatcherServlet，其本质也是一个servlet，同时这也显示出了它与struts2的区别之一，Struts2的入口是一个过滤器。DispatcherServlet也没有处理事务的能力，仅作为一个数据的分发中心，将数据交给后面的过程来处理。DispatcherServlet通过HandlerMapping来查找Handler，HandlerMapping会返回两部分内容，其一是handler对象，也就是后台模型对象，还有一部分是拦截器数组。前端控制器拿到这些返回数据时，其实就应该来执行handler对象，因为执行handler对象就可以处理具体的业务逻辑。但是springmvc并没有这样做，它将数据利用HandlerAdapter适配器进行包装，也就到了图中的Handler部分。Handler处理过后返回一个ModelAndView对象，包括两部分：Model和view，Model就是数据，view就是视图名称，而不是视图对象。<br>这时前端控制器既有数据，又有视图名称，这时通过视图解析器返回真正的视图对象，最后将视图对象进行渲染并返回给用户。</p>
-<blockquote>
-<p>springmvc为什么要设计适配器？没有行不行？</p>
-</blockquote>
-<p>首先要明确的是在springmvc框架中controller的类型有很多种，比较常见的是<strong><em>@controller</em></strong>类型和<strong><em>实现Handler接口</em></strong>的类型，如果没有适配器，前端控制器就需要做一个类型判断，每种类型需要做哪些不同的处理。这时判断逻辑就会写死在代码中，并不符合springmvc的可扩展行的设计，一旦用户需要自己创建一个类型，那么就需要修改spring源码，这显然是不可取的。但有了适配器问题就方便了很多，每种类型只需要定义一种适配器即可。</p>
-<blockquote>
-<p>springmvc为什么要设计视图解析器？没有行不行？</p>
-</blockquote>
-<p>其实答案和上一个问题一样，当然都是可以的，只是这样需要在前端控制器加入逻辑判断，并不优雅也不易扩展。</p>
-</excerpt>
+</the></li>
+</ul>
+<h3 id="jvm内存模型"><a href="#jvm内存模型" class="headerlink" title="jvm内存模型"></a>jvm内存模型</h3><p>首先要分清楚的一点是jvm内存模型 != java内存模型(JMM)</p>
+<p>自己画了一张思路的整理图：</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1flqy10c5vtj30ub0lwn0f.jpg" alt="自己画的思路图"></p>
+<p>整理一些零碎的东西：</p>
+<ol>
+<li>程序计数器是此内存区唯一一个没有OOM情况的区域。</li>
+<li>方法区有个别名叫做非堆，用于存储加载的类的信息，在hotspot虚拟上更多的叫做“永久代”,在java8中已经改名为元数据区(MetaSpace)，该区域也可以选择不进行垃圾回收。</li>
+<li>新生对象优先被分配到Eden区</li>
+<li>大对象直接被分到老年代，常见的如长字符串以及数组</li>
+<li>长期存活的对象直接进入老年代。一次Minor GC年龄增长一岁，默认15岁进入老年代。可以调节-XX：MaxTenuringThreshold参数来改变</li>
+<li><p>在survivor空间中年龄相同的所有对象的大小总和大于survivor空间的一半，年龄大于或等于该年龄的对象可以直接进入老年代(这一条读了很多遍才明白)</p>
+<h3 id="对象创建"><a href="#对象创建" class="headerlink" title="对象创建"></a>对象创建</h3><p>当我们使用new创建一个对象时，大概发生了这样一些事情。首先类加载器检查这个类有没有被加载过，如果没有则需要加载-&gt;解析-&gt;初始化。之后虚拟机为它分配内存，就是将一块确定大小的内存划分出来。这时会遇到两个问题：</p>
+</li>
+<li><p>内存是否规整<br>内存是否规整取决于所使用的gc器，如Serial，ParNew等带有整理功能的收集器，就是规整的，在分配内存时只要将标志占用或空闲的指针移动就可以了。<br>如果使用CMS这种基于mark-sweep的算法gc器，则不是规整的，需要利用一张”空闲列表“查找空闲的区块来分配内存。</p>
+</li>
+<li>频繁创建对象<br>对象的频繁创建可能造成前一个对象的指针没有来得及修改，后一个对象便占用了前一个对象的位置。解决方法有两种：一是CAS(compare and sweep一种乐观锁)+失败重试保证更新的原子性，也是虚拟机实际采用的一种方法。二是TLAB（本地线程分配缓冲）,哪个线程需要分配内存就在哪个线程的TLAB上进行分配，可以使用<code>-XX：+UseTLAB</code>开启，个人认为这个参数可以在高并发场景下开启，适合在eden区使用。</li>
+</ol>
+<h3 id="HotSpot的实现方式"><a href="#HotSpot的实现方式" class="headerlink" title="HotSpot的实现方式"></a>HotSpot的实现方式</h3><p>当判断一个对象是否应该被回收时，java采用了一种可达性分析的方法来判断。要做到这点就需要得到所有的GC Roots节点，从GC Root来遍历。如果我们对栈全部扫描一遍这是相当浪费时间和资源的事情，于是我们可以在某个位置把栈上的引用位置记录下来，这样在gc时便不用全盘扫描。在Hotspot中这种结构就叫<code>OopMap</code>,记录了在该类型的对象内什么偏移量上是什么类型的数据。但是我们并不能在任何时候都生成OopMap，只会在称之为<code>安全点</code>的地方生成：</p>
+<ol>
+<li>循环的末尾</li>
+<li>方法返回前</li>
+<li>可能抛出异常的地方</li>
+</ol>
+<p>另一个需要考虑的问题是如何在GC发生时如何保证所有线程走到最近的安全点再停下来，目前最广泛的做法就是<code>主动式中断</code>，设置一个标志，让各个线程主动轮询这个标志，如果标志位true就中断。<br>这时又会有问题，如果程序不能继续执行呢，例如碰到了sleep情况，jvm不会等到线程被重新分配CPU时间，这时就需要<code>安全区来</code>解决。在安全区的任意地点GC都是安全的，当线程进入安全区，首先会标识自己，如果这段时间jvm发起了GC，则不管标记安全区的线程。当线程离开安全区，它要自己检查是否完成了根节点枚举，如果完成了就可以继续执行，否则就要等待。</p>
+<h3 id="垃圾收集器"><a href="#垃圾收集器" class="headerlink" title="垃圾收集器"></a>垃圾收集器</h3><ol>
+<li>串行收集器</li>
+</ol>
+<p>serial收集器 -XX:+UseSerialGC</p>
+<ol>
+<li>并行收集器</li>
+</ol>
+<p>ParNew收集器 -XX:+UseParNewGC<br>-XX:ParallelGCThreads 限制线程数量</p>
+<p>Parallel收集器 -XX:+UseParallelGC</p>
+<ol>
+<li>并发收集器</li>
+</ol>
+<p>CMS收集器 -XX:+UseConcMarkSweepGC<br>-XX:+ UseCMSCompactAtFullCollection Full GC后，进行一次碎片整理；整理过程是独占的，会引起停顿时间变长。</p>
+<p>-XX:+CMSFullGCsBeforeCompaction  设置进行几次Full GC后，进行一次碎片整理<br>-XX:ParallelCMSThreads  设定CMS的线程数量</p>
+<p>G1收集器：据说会在java9上设置为默认的垃圾收集器，但是最近java9已经更新了，并没有相关的消息。G1的优点就是调优简单，只需要调节最大堆内存和最大暂停时间，另外就是取消了年轻代和老年代的物理划分。</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1flr40x4murj30xw0oegqi.jpg" alt="整理一张来自网络的图"></p>
+
       
       
         <div class="page-reward">
@@ -347,13 +383,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></p>
+        <p><span>本文标题:</span><a href="/2017/11/22/jvm学习笔记-内存/">jvm学习笔记-内存</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2017年11月11日 - 15时00分</p>
-        <p><span>最后更新:</span>2017年11月11日 - 15时05分</p>
+        <p><span>发布时间:</span>2017年11月22日 - 15时24分</p>
+        <p><span>最后更新:</span>2017年11月22日 - 20时00分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/11/11/SpringMvc浅谈/" title="SpringMvc浅谈">http://www.shuchang.sc.com/2017/11/11/SpringMvc浅谈/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/11/11/SpringMvc浅谈/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2017/11/22/jvm学习笔记-内存/" title="jvm学习笔记-内存">http://www.shuchang.sc.com/2017/11/22/jvm学习笔记-内存/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/11/22/jvm学习笔记-内存/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -366,18 +402,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/11/22/jvm学习笔记-内存/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          jvm学习笔记-内存
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/11/10/redis持久化/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">redis持久化</div>
+    <a href="/2017/11/11/SpringMvc浅谈/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">SpringMvc浅谈</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -388,7 +415,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#springmvc在哪里"><span class="toc-number">1.</span> <span class="toc-text">springmvc在哪里</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#springmvc的设计模式"><span class="toc-number">2.</span> <span class="toc-text">springmvc的设计模式</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#宏观"><span class="toc-number">1.</span> <span class="toc-text">宏观</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jvm内存模型"><span class="toc-number">2.</span> <span class="toc-text">jvm内存模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对象创建"><span class="toc-number">3.</span> <span class="toc-text">对象创建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HotSpot的实现方式"><span class="toc-number">4.</span> <span class="toc-text">HotSpot的实现方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#垃圾收集器"><span class="toc-number">5.</span> <span class="toc-text">垃圾收集器</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -454,13 +481,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/11/22/jvm学习笔记-内存/" title="上一篇: jvm学习笔记-内存">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/11/10/redis持久化/" title="下一篇: redis持久化">
+            <a href="/2017/11/11/SpringMvc浅谈/" title="下一篇: SpringMvc浅谈">
                 <i class="fa fa-angle-right"></i>
             </a>
         

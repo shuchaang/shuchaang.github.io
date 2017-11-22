@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/devops/" style="font-size: 10px;">devops</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/redis/" style="font-size: 15px;">redis</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a>
+                        <a href="/tags/devops/" style="font-size: 10px;">devops</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm-java/" style="font-size: 10px;">jvm - java</a> <a href="/tags/redis/" style="font-size: 15px;">redis</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a>
                     </div>
                 </section>
                 
@@ -232,6 +232,82 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-jvm学习笔记-内存" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/11/22/jvm学习笔记-内存/" class="article-date">
+      <time datetime="2017-11-22T07:24:27.000Z" itemprop="datePublished">2017-11-22</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/22/jvm学习笔记-内存/">jvm学习笔记-内存</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>最近看完了《深入理解java虚拟机》这本书，记录一下所学所思，留作以后复习。</p>
+<h3 id="宏观"><a href="#宏观" class="headerlink" title="宏观"></a>宏观</h3><p>先来说说虚拟机，我们都知道Java程序运行在虚拟机上，虚拟机负责和操作系统打交道，最终通过二进制指令操作电子电路运行，完成数据的读取，运算，输出。<br>虚拟机在加载.class文件的时候会在内存开辟一块区域”方法区”,专门用来存储累的基本信息，同时在”堆”区生成这个类的Class对象，作为类的一个镜像，为反射机制提供一种可能。Java是一门面向对象的语言，程序运行过程中伴随着对象的生成与死亡，有的是临时对象短暂存活，有的是壮年而亡，而有的长命百岁。所以虚拟机就不停地申请内存，回收内存。对象的生成方法很多，对象的回收方法也很多，例如GC、标记清除/整理等。</p>
+<p>垃圾回收首先要确定的是什么是垃圾，什么时候回收，在哪里回收，怎么回收。不同的对象可能需要不同的回收策略。一个很容易想到的方法就是在后台启动一个线程，每隔一段时间扫描一次内存，清除垃圾，如此往复。</p>
+<p>实际情况往往非常复杂，效率、安全性、对当前程序的影响都要考虑进去。于是人们发现，对象的生命周期不同，使用一种GC方法效率很差。于是就有了Hotspot的方案，堆区根据不同的生命周期，分为eden、to survivor、from survivor以及非堆的元数据区(java8之前的永久区)。<br> 每个区采用了不同的清理算法。于是便出现了最初的<code>串行收集器</code>。</p>
+<p>同时，为了最大程度的利用CPU的多核资源，出现了<code>并行收集器</code>，即多个线程一起收集垃圾。</p>
+<p>为了降低垃圾收集对原有程序的影响,如STW,一种全局暂停的现象，<code>并发收集器</code>应运而生。</p>
+<p>到此为止，便可以引出jvm优化中最重要的两部分，jvm内存怎么划分，选择哪一种垃圾收集器，就是我们常说的jvm调优。这就考验一个开发人员对业务系统的理解和眼光，确定优化方向并调整参数。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/jvm-java/">jvm -java</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm-java/">jvm - java</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/11/22/jvm学习笔记-内存/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-SpringMvc浅谈" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -259,10 +335,24 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-              <h3 id="springmvc在哪里"><a href="#springmvc在哪里" class="headerlink" title="springmvc在哪里"></a>springmvc在哪里</h3><p>springmvc是spring体系的一部分，位于web部分。<br><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fle36iwgwmj30fq0d7aak.jpg" alt=""></p>
+        <h3 id="springmvc在哪里"><a href="#springmvc在哪里" class="headerlink" title="springmvc在哪里"></a>springmvc在哪里</h3><p>springmvc是spring体系的一部分，位于web部分。<br><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fle36iwgwmj30fq0d7aak.jpg" alt=""></p>
 <h3 id="springmvc的设计模式"><a href="#springmvc的设计模式" class="headerlink" title="springmvc的设计模式"></a>springmvc的设计模式</h3><p>先来看一个简化版:<br><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fle3d2iyonj30g5078wec.jpg" alt=""><br>用户请求到达控制器，控制器并没有处理业务逻辑的能力，于是把请求交给后台的一个model做处理，并将处理的结果返回给控制器。当控制器拿到数据后，就要找到视图并做渲染，并将渲染好的结果返回给用户，这就是一个通用的mvc设计模式。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>~</excerpt></p>
-          
+<excerpt in="" index="" |="" 首页摘要="">
+
+<p><the rest="" of="" contents="" |="" 余下全文=""></the></p>
+<blockquote>
+<p> spirngmvc架构：</p>
+</blockquote>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fle4abaf20j30q00d2t91.jpg" alt=""><br>可以看到这个架构的入口就是DispatcherServlet，其本质也是一个servlet，同时这也显示出了它与struts2的区别之一，Struts2的入口是一个过滤器。DispatcherServlet也没有处理事务的能力，仅作为一个数据的分发中心，将数据交给后面的过程来处理。DispatcherServlet通过HandlerMapping来查找Handler，HandlerMapping会返回两部分内容，其一是handler对象，也就是后台模型对象，还有一部分是拦截器数组。前端控制器拿到这些返回数据时，其实就应该来执行handler对象，因为执行handler对象就可以处理具体的业务逻辑。但是springmvc并没有这样做，它将数据利用HandlerAdapter适配器进行包装，也就到了图中的Handler部分。Handler处理过后返回一个ModelAndView对象，包括两部分：Model和view，Model就是数据，view就是视图名称，而不是视图对象。<br>这时前端控制器既有数据，又有视图名称，这时通过视图解析器返回真正的视图对象，最后将视图对象进行渲染并返回给用户。</p>
+<blockquote>
+<p>springmvc为什么要设计适配器？没有行不行？</p>
+</blockquote>
+<p>首先要明确的是在springmvc框架中controller的类型有很多种，比较常见的是<strong><em>@controller</em></strong>类型和<strong><em>实现Handler接口</em></strong>的类型，如果没有适配器，前端控制器就需要做一个类型判断，每种类型需要做哪些不同的处理。这时判断逻辑就会写死在代码中，并不符合springmvc的可扩展行的设计，一旦用户需要自己创建一个类型，那么就需要修改spring源码，这显然是不可取的。但有了适配器问题就方便了很多，每种类型只需要定义一种适配器即可。</p>
+<blockquote>
+<p>springmvc为什么要设计视图解析器？没有行不行？</p>
+</blockquote>
+<p>其实答案和上一个问题一样，当然都是可以的，只是这样需要在前端控制器加入逻辑判断，并不优雅也不易扩展。</p>
+</excerpt>
       
       
     </div>
@@ -280,10 +370,6 @@
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/springmvc/">springmvc</a></li></ul>
     </div>
 
-      
-        <p class="article-more-link">
-          <a  href="/2017/11/11/SpringMvc浅谈/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
       
       <div class="clearfix"></div>
     </div>
@@ -343,7 +429,7 @@
 <li>子进程写入完成数据后用临时文件替换就得RDB文件。</li>
 </ol>
 <p>可以配置<strong><em>rdbcompression yes</em></strong>来选择是否对rdb进行压缩。<br>压缩的好处显而易见就是减少资源的消耗。缺点就是消耗更多的cpu资源。而选择不压缩就相反。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>s</excerpt></p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>s
           
       
       
@@ -417,7 +503,7 @@
 <p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1flap6nqupej30cp09c3yc.jpg" alt=""></p>
 <p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
 <ul>
-<li></li></ul>
+<li>
           
       
       
@@ -561,7 +647,7 @@
               <h1 id="Cookie工具类"><a href="#Cookie工具类" class="headerlink" title="Cookie工具类"></a>Cookie工具类</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div></pre></td><td class="code"><pre><div class="line">public final class CookieUtils &#123;</div><div class="line"></div><div class="line">    protected static final Logger logger = LoggerFactory.getLogger(CookieUtils.class);</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 得到Cookie的值, 不编码</div><div class="line">     * </div><div class="line">     * @param request</div><div class="line">     * @param cookieName</div><div class="line">     * @return</div><div class="line">     */</div><div class="line">    public static String getCookieValue(HttpServletRequest request, String cookieName) &#123;</div><div class="line">        return getCookieValue(request, cookieName, false);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 得到Cookie的值,</div><div class="line">     * </div><div class="line">     * @param request</div><div class="line">     * @param cookieName</div><div class="line">     * @return</div><div class="line">     */</div><div class="line">    public static String getCookieValue(HttpServletRequest request, String cookieName, boolean isDecoder) &#123;</div><div class="line">        Cookie[] cookieList = request.getCookies();</div><div class="line">        if (cookieList == null || cookieName == null) &#123;</div><div class="line">            return null;</div><div class="line">        &#125;</div><div class="line">        String retValue = null;</div><div class="line">        try &#123;</div><div class="line">            for (int i = 0; i &lt; cookieList.length; i++) &#123;</div><div class="line">                if (cookieList[i].getName().equals(cookieName)) &#123;</div><div class="line">                    if (isDecoder) &#123;</div><div class="line">                        retValue = URLDecoder.decode(cookieList[i].getValue(), &quot;UTF-8&quot;);</div><div class="line">                    &#125; else &#123;</div><div class="line">                        retValue = cookieList[i].getValue();</div><div class="line">                    &#125;</div><div class="line">                    break;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125; catch (UnsupportedEncodingException e) &#123;</div><div class="line">            logger.error(&quot;Cookie Decode Error.&quot;, e);</div><div class="line">        &#125;</div><div class="line">        return retValue;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 得到Cookie的值,</div><div class="line">     * </div><div class="line">     * @param request</div><div class="line">     * @param cookieName</div><div class="line">     * @return</div><div class="line">     */</div><div class="line">    public static String getCookieValue(HttpServletRequest request, String cookieName, String encodeString) &#123;</div><div class="line">        Cookie[] cookieList = request.getCookies();</div><div class="line">        if (cookieList == null || cookieName == null) &#123;</div><div class="line">            return null;</div><div class="line">        &#125;</div><div class="line">        String retValue = null;</div><div class="line">        try &#123;</div><div class="line">            for (int i = 0; i &lt; cookieList.length; i++) &#123;</div><div class="line">                if (cookieList[i].getName().equals(cookieName)) &#123;</div><div class="line">                    retValue = URLDecoder.decode(cookieList[i].getValue(), encodeString);</div><div class="line">                    break;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125; catch (UnsupportedEncodingException e) &#123;</div><div class="line">            logger.error(&quot;Cookie Decode Error.&quot;, e);</div><div class="line">        &#125;</div><div class="line">        return retValue;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 设置Cookie的值 不设置生效时间默认浏览器关闭即失效,也不编码</div><div class="line">     */</div><div class="line">    public static void setCookie(HttpServletRequest request, HttpServletResponse response, String cookieName,</div><div class="line">            String cookieValue) &#123;</div><div class="line">        setCookie(request, response, cookieName, cookieValue, -1);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 设置Cookie的值 在指定时间内生效,但不编码</div><div class="line">     */</div><div class="line">    public static void setCookie(HttpServletRequest request, HttpServletResponse response, String cookieName,</div><div class="line">            String cookieValue, int cookieMaxage) &#123;</div><div class="line">        setCookie(request, response, cookieName, cookieValue, cookieMaxage, false);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 设置Cookie的值 不设置生效时间,但编码</div><div class="line">     */</div><div class="line">    public static void setCookie(HttpServletRequest request, HttpServletResponse response, String cookieName,</div><div class="line">            String cookieValue, boolean isEncode) &#123;</div><div class="line">        setCookie(request, response, cookieName, cookieValue, -1, isEncode);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 设置Cookie的值 在指定时间内生效, 编码参数</div><div class="line">     */</div><div class="line">    public static void setCookie(HttpServletRequest request, HttpServletResponse response, String cookieName,</div><div class="line">            String cookieValue, int cookieMaxage, boolean isEncode) &#123;</div><div class="line">        doSetCookie(request, response, cookieName, cookieValue, cookieMaxage, isEncode);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 设置Cookie的值 在指定时间内生效, 编码参数(指定编码)</div><div class="line">     */</div><div class="line">    public static void setCookie(HttpServletRequest request, HttpServletResponse response, String cookieName,</div><div class="line">            String cookieValue, int cookieMaxage, String encodeString) &#123;</div><div class="line">        doSetCookie(request, response, cookieName, cookieValue, cookieMaxage, encodeString);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 删除Cookie带cookie域名</div><div class="line">     */</div><div class="line">    public static void deleteCookie(HttpServletRequest request, HttpServletResponse response,</div><div class="line">            String cookieName) &#123;</div><div class="line">        doSetCookie(request, response, cookieName, &quot;&quot;, -1, false);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 设置Cookie的值，并使其在指定时间内生效</div><div class="line">     * </div><div class="line">     * @param cookieMaxage cookie生效的最大秒数</div><div class="line">     */</div><div class="line">    private static final void doSetCookie(HttpServletRequest request, HttpServletResponse response,</div><div class="line">            String cookieName, String cookieValue, int cookieMaxage, boolean isEncode) &#123;</div><div class="line">        try &#123;</div><div class="line">            if (cookieValue == null) &#123;</div><div class="line">                cookieValue = &quot;&quot;;</div><div class="line">            &#125; else if (isEncode) &#123;</div><div class="line">                cookieValue = URLEncoder.encode(cookieValue, &quot;utf-8&quot;);</div><div class="line">            &#125;</div><div class="line">            Cookie cookie = new Cookie(cookieName, cookieValue);</div><div class="line">            if (cookieMaxage &gt; 0)</div><div class="line">                cookie.setMaxAge(cookieMaxage);</div><div class="line">            if (null != request)// 设置域名的cookie</div><div class="line">                cookie.setDomain(getDomainName(request));</div><div class="line">            cookie.setPath(&quot;/&quot;);</div><div class="line">            response.addCookie(cookie);</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            logger.error(&quot;Cookie Encode Error.&quot;, e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 设置Cookie的值，并使其在指定时间内生效</div><div class="line">     * </div><div class="line">     * @param cookieMaxage cookie生效的最大秒数</div><div class="line">     */</div><div class="line">    private static final void doSetCookie(HttpServletRequest request, HttpServletResponse response,</div><div class="line">            String cookieName, String cookieValue, int cookieMaxage, String encodeString) &#123;</div><div class="line">        try &#123;</div><div class="line">            if (cookieValue == null) &#123;</div><div class="line">                cookieValue = &quot;&quot;;</div><div class="line">            &#125; else &#123;</div><div class="line">                cookieValue = URLEncoder.encode(cookieValue, encodeString);</div><div class="line">            &#125;</div><div class="line">            Cookie cookie = new Cookie(cookieName, cookieValue);</div><div class="line">            if (cookieMaxage &gt; 0)</div><div class="line">                cookie.setMaxAge(cookieMaxage);</div><div class="line">            if (null != request)// 设置域名的cookie</div><div class="line">                cookie.setDomain(getDomainName(request));</div><div class="line">            cookie.setPath(&quot;/&quot;);</div><div class="line">            response.addCookie(cookie);</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            logger.error(&quot;Cookie Encode Error.&quot;, e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 得到cookie的域名</div><div class="line">     */</div><div class="line">    private static final String getDomainName(HttpServletRequest request) &#123;</div><div class="line">        String domainName = null;</div><div class="line"></div><div class="line">        String serverName = request.getRequestURL().toString();</div><div class="line">        if (serverName == null || serverName.equals(&quot;&quot;)) &#123;</div><div class="line">            domainName = &quot;&quot;;</div><div class="line">        &#125; else &#123;</div><div class="line">            serverName = serverName.toLowerCase();</div><div class="line">            serverName = serverName.substring(7);</div><div class="line">            final int end = serverName.indexOf(&quot;/&quot;);</div><div class="line">            serverName = serverName.substring(0, end);</div><div class="line">            final String[] domains = serverName.split(&quot;\\.&quot;);</div><div class="line">            int len = domains.length;</div><div class="line">            if (len &gt; 3) &#123;</div><div class="line">                // www.xxx.com.cn</div><div class="line">                domainName = &quot;.&quot; + domains[len - 3] + &quot;.&quot; + domains[len - 2] + &quot;.&quot; + domains[len - 1];</div><div class="line">            &#125; else if (len &lt;= 3 &amp;&amp; len &gt; 1) &#123;</div><div class="line">                // xxx.com or xxx.cn</div><div class="line">                domainName = &quot;.&quot; + domains[len - 2] + &quot;.&quot; + domains[len - 1];</div><div class="line">            &#125; else &#123;</div><div class="line">                domainName = serverName;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (domainName != null &amp;&amp; domainName.indexOf(&quot;:&quot;) &gt; 0) &#123;</div><div class="line">            String[] ary = domainName.split(&quot;\\:&quot;);</div><div class="line">            domainName = ary[0];</div><div class="line">        &#125;</div><div class="line">        return domainName;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
 <ul>
-<li></li></ul>
+<li>
           
       
       
@@ -636,7 +722,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ab -n 500 -c 100 http://localhost:8080/xxxxxxx</div></pre></td></tr></table></figure>
 <p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
 <ul>
-<li></li></ul>
+<li>
           
       
       
