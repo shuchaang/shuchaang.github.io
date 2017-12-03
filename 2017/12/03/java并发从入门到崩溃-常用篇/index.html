@@ -3,22 +3,22 @@
 <head>
   <meta charset="utf-8">
   
-  <title>devops初识 | Shuchang&#39;s Blog</title>
+  <title>java并发从入门到崩溃--常用篇 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="what DevOps = Development+Operations 快速的迭代和快速的用户反馈  流程    首先就是代码编写，开发过后就是打包编译(CI/BUILD),在这个过程中消除99%以上的bug.紧接着就是部署上线，Dev会协助Ops进行运维观察，并通过一些工具检查程序的运行情况，并反馈给Dev.据说现在AWS已经做到程序每11.2s迭代一次。而普通的开发流程可能需要几个月。 一个">
-<meta name="keywords" content="devops">
+  <meta name="description" content="关于并发的一些思考最近看完了《java多线程编程核心技术》、《java并发编程艺术》两本书。第一本更偏向于线程基础技术，看完之后给人一种眼前明亮之感。啊，原来并发编程就是这些操作。当我看完第二本之后，就已经一脸茫然，忘记了第一本的内容 - -!。因为第二本的内容太丰富，涉及到并发的底层原理和框架。于是我又拿出来《java编程思想》找到了并发的一章来看，发现看完已经满脑浆糊了，所以还是要坚持写一下博">
+<meta name="keywords" content="java,并发">
 <meta property="og:type" content="article">
-<meta property="og:title" content="devops初识">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/11/07/devops初识/index.html">
+<meta property="og:title" content="java并发从入门到崩溃--常用篇">
+<meta property="og:url" content="http://www.shuchang.sc.com/2017/12/03/java并发从入门到崩溃-常用篇/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="what DevOps = Development+Operations 快速的迭代和快速的用户反馈  流程    首先就是代码编写，开发过后就是打包编译(CI/BUILD),在这个过程中消除99%以上的bug.紧接着就是部署上线，Dev会协助Ops进行运维观察，并通过一些工具检查程序的运行情况，并反馈给Dev.据说现在AWS已经做到程序每11.2s迭代一次。而普通的开发流程可能需要几个月。 一个">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fl97w1iur9j30p00epgmn.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fl99b5521qj30rv0hvdge.jpg">
-<meta property="og:updated_time" content="2017-11-07T01:24:05.000Z">
+<meta property="og:description" content="关于并发的一些思考最近看完了《java多线程编程核心技术》、《java并发编程艺术》两本书。第一本更偏向于线程基础技术，看完之后给人一种眼前明亮之感。啊，原来并发编程就是这些操作。当我看完第二本之后，就已经一脸茫然，忘记了第一本的内容 - -!。因为第二本的内容太丰富，涉及到并发的底层原理和框架。于是我又拿出来《java编程思想》找到了并发的一章来看，发现看完已经满脑浆糊了，所以还是要坚持写一下博">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1flwmbc1dy9j30kw0onwhp.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fm3i98scrkj30gx0ch3zu.jpg">
+<meta property="og:updated_time" content="2017-12-03T05:21:19.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="devops初识">
-<meta name="twitter:description" content="what DevOps = Development+Operations 快速的迭代和快速的用户反馈  流程    首先就是代码编写，开发过后就是打包编译(CI/BUILD),在这个过程中消除99%以上的bug.紧接着就是部署上线，Dev会协助Ops进行运维观察，并通过一些工具检查程序的运行情况，并反馈给Dev.据说现在AWS已经做到程序每11.2s迭代一次。而普通的开发流程可能需要几个月。 一个">
-<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fl97w1iur9j30p00epgmn.jpg">
+<meta name="twitter:title" content="java并发从入门到崩溃--常用篇">
+<meta name="twitter:description" content="关于并发的一些思考最近看完了《java多线程编程核心技术》、《java并发编程艺术》两本书。第一本更偏向于线程基础技术，看完之后给人一种眼前明亮之感。啊，原来并发编程就是这些操作。当我看完第二本之后，就已经一脸茫然，忘记了第一本的内容 - -!。因为第二本的内容太丰富，涉及到并发的底层原理和框架。于是我又拿出来《java编程思想》找到了并发的一章来看，发现看完已经满脑浆糊了，所以还是要坚持写一下博">
+<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1flwmbc1dy9j30kw0onwhp.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -232,11 +232,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-devops初识" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-java并发从入门到崩溃-常用篇" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/11/07/devops初识/" class="article-date">
-      <time datetime="2017-11-07T00:23:59.000Z" itemprop="datePublished">2017-11-07</time>
+      <a href="/2017/12/03/java并发从入门到崩溃-常用篇/" class="article-date">
+      <time datetime="2017-12-03T03:11:17.000Z" itemprop="datePublished">2017-12-03</time>
 </a>
     </div>
   
@@ -249,7 +249,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      devops初识
+      java并发从入门到崩溃--常用篇
     </h1>
   
 
@@ -258,13 +258,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/杂谈/">杂谈</a>
+    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/devops/">devops</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -274,18 +274,45 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h2 id="what"><a href="#what" class="headerlink" title="what"></a>what</h2><ul>
-<li>DevOps = Development+Operations</li>
-<li>快速的迭代和快速的用户反馈</li>
+        <h3 id="关于并发的一些思考"><a href="#关于并发的一些思考" class="headerlink" title="关于并发的一些思考"></a>关于并发的一些思考</h3><p>最近看完了《java多线程编程核心技术》、《java并发编程艺术》两本书。第一本更偏向于线程基础技术，看完之后给人一种眼前明亮之感。啊，原来并发编程就是这些操作。当我看完第二本之后，就已经一脸茫然，忘记了第一本的内容 - -!。因为第二本的内容太丰富，涉及到并发的底层原理和框架。于是我又拿出来《java编程思想》找到了并发的一章来看，发现看完已经满脑浆糊了，所以还是要坚持写一下博文，理一下思路也好。</p>
+<p>多线程，任何一个程序员都知道，但是实际工作中，大部分程序员面对的都是业务的CRUD和BUG定位，貌似没有太多机会接触并发。大家都知道程序运行的时候，最关键的是内存和CPU，而CPU运算的时候，是要从内存取值，当然现在很多时候是在L1/L2等Cache中取值，然后放入寄存器，参与运算，得到结果，先放入寄存器，再放入内存。程序执行的指令也放在寄存器，它记录当前程序执行的地址。</p>
+<p>上面说到了，一个数值，进入CPU运算，经过了内存、cache、寄存器。看过jvm我们就知道，当多线程运算同一个值的时候，是每个线程拷贝了一份值的副本到自己的线程工作内存（这里还涉及到java的内存模型），当一个线程计算完毕（计算结果写入寄存器），还没有刷到主存，另一个线程从主存中取到的值还是旧值。所以一个很直观的问题就是如何保证每个线程拿到的数据是最新的，这就是同步机制。最常见的volatile和synchronized就是为了解决这个问题。</p>
+<p>最简单的解决方案就是：共享变量同一时刻只允许有一个线程操作。这就保证了线程要么拿不到值，要么拿到最新的值。于是有了synchronized告诉jvm：这个地方是临界区，只有一把锁。那道锁的那个家伙才能开门进去，否则只能在门口等着。java中的锁，可以是this，方法，对象，类。锁的范围可以是代码块，方法甚至类。jvm会在锁和方法区之间建立联系。jvm生成一个对象会产生很多额外的信息，起码要有对象的内存地址或一个间接的指针，所以要标识一个对象被哪个线程占有并不困难。</p>
+<p>上面的方法虽然可以解决问题，但是很简单粗暴，我们想要一种更灵活的方式。很多时候我们并不关心谁在操作对象，我们只关心这个值到底是多少。于是就有了volatile：保证可见性，不保证原子性。其实意思就是说被volatile修饰的这个对象是一个尊贵的java会员，你要找他必须到他的家（内存）去接它出来，你请它聊天吃饭之后还要把它送回家(内存)。所以这里略过了计算机的高速缓存，读写内存。所以可见性就是说这个值谁都可以看到。至于不保证原子性，就是说这个值谁都可以取来运算。至于说到volatile的效率嘛，肯定也是大打折扣的，因为操作内存很定要比缓存慢的多。就如同数据库，其实我们也是写入了缓存，后台线程刷到磁盘而已。其实从硬件到软件，设计的思想大都是相通的。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li><a id="more"></a>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+</the></li>
 </ul>
-<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fl97w1iur9j30p00epgmn.jpg" alt=""></p>
-<p>   首先就是代码编写，开发过后就是打包编译(CI/BUILD),在这个过程中消除99%以上的bug.<br>紧接着就是部署上线，Dev会协助Ops进行运维观察，并通过一些工具检查程序的运行情况，并反馈给Dev.<br>据说现在AWS已经做到程序每11.2s迭代一次。而普通的开发流程可能需要几个月。</p>
-<h2 id="一个基于Go、阿里云、github的Devops-Demo"><a href="#一个基于Go、阿里云、github的Devops-Demo" class="headerlink" title="一个基于Go、阿里云、github的Devops Demo"></a>一个基于Go、阿里云、github的Devops Demo</h2><p>deploy.sh<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">kill -9</div><div class="line">cd ~/demo/</div><div class="line">git pull xxxxxxxx.git</div><div class="line">cd /gitRepo</div><div class="line">./webserver &amp;</div></pre></td></tr></table></figure></p>
-<p>deploy.go<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">import(</div><div class="line">    &quot;io&quot;</div><div class="line">    &quot;net/http&quot;</div><div class="line">    &quot;os/exec&quot;</div><div class="line">    &quot;log&quot;</div><div class="line">)</div><div class="line"></div><div class="line">function reLaunch()&#123;</div><div class="line">    cmd:=exec.Command(&quot;sh&quot;,&quot;./deploy.sh&quot;)</div><div class="line">    err:=com.Start()</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatal(err)</div><div class="line">    &#125;</div><div class="line">    err=com.Wait()</div><div class="line">&#125;</div><div class="line">func firstPage(w http.ResponseWriter, r *http.Request)&#123;</div><div class="line">    os.WriteString(w,&quot;&lt;h1&gt;hello this is deploy sh&lt;/h1&gt;&quot;)</div><div class="line">    reLaunch()</div><div class="line">&#125;</div><div class="line">func main()&#123;</div><div class="line">    http.HandleFunc(&quot;/&quot;,firstPage)</div><div class="line">    http.ListenAndServer(&quot;:5000&quot;,nil)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>main.go<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">func firstPage(w http.ResponseWriter, r *http.Request)&#123;</div><div class="line">    os.WriteString(w,&quot;&lt;h1&gt;hello this is welcome&lt;/h1&gt;&quot;)</div><div class="line">    reLaunch()</div><div class="line">&#125;</div><div class="line">func main()&#123;</div><div class="line">    http.HandleFunc(&quot;/&quot;,firstPage)</div><div class="line">    http.ListenAndServer(&quot;:8000&quot;,nil)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>GitHub</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fl99b5521qj30rv0hvdge.jpg" alt=""><br>设置一个web钩子，当有push动作产生的时候自动触发deploy.go重新部署，这样就做到了修改业务代码的自动部署。<br>Webhooks的用途十分广泛，我在做SpringCloud的配置中心的时候也用到了webhooks，通过这个机制通知配置中心，配置中心通过消息队列更新整个集群的配置。</p>
-<p>这样其实就做到了一个简易的DevOps</p>
+<h3 id="再说sychronized"><a href="#再说sychronized" class="headerlink" title="再说sychronized"></a>再说sychronized</h3><p>举个栗子，多人上厕所。多线程和锁，一个是线程，一个是对象。一个在私有的线程栈中，一个在共享堆中。如何标识某个对象被某个线程锁定？线程开启一片栈帧，在其中存储对象锁记录，堆中对象有对象头（元数据、Runtime State、gc分代等等），可以标识被哪个线程锁定，实际上锁线程就是利用了对象头和monitor来实现锁机制。</p>
+<p>所以在上厕所的例子中，人就是线程，厕所就是共享对象，锁就是对象头，monitor就是钥匙。</p>
+<p>sychronized锁的是一个对象，或者是一个类的实例，或者是类本身。sychronized内部原理是通过对象内部一个叫监视器的东西来实现的。本质又是依赖于操作系统的mutex::Lock(一种互斥锁)来实现的。而操作系统实现线程切换需要从用户态转向核心态，这个成本非常高。这也是<br>我们为什么说sychronized效率低的原因。其实我们常用的HashMap内部就有很多的sychronized方法，这也就是我们说HashMap效率低的问题（关于HashMap可以衍生出很多问题，包括一些算法和红黑树，以后会慢慢写），如下给出了HashMap的put方法。</p>
+<p><code>public synchronized V put(K key, V value) {}</code></p>
+<p>在JDK5之后的版本一直在对sychronized进行优化，都是为了减少这种重量级锁的使用。如JDK6中引入的自旋锁，适应性自旋锁，锁消除，锁粗化，偏向锁等技术减少锁的消耗。以上内容等我想明白再细说吧。</p>
+<p>既然对sychronized有这么多的怨言，当然就会出现可行的替代方案-Lock。简单来说就是把sychronized拆分成获得锁，释放锁的多个步骤。用更灵巧的方式进行同步，使用Lock会更灵活，粒度可以自由控制。当然也会带来更复杂的参数和学习成本。😢</p>
+<p>介绍一种反汇编的指令： javap   xxx.class<br><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1flwmbc1dy9j30kw0onwhp.jpg" alt=""></p>
+<p>通过javap可以更清晰的看到底层实现的细节,上图就展示了sychronized的底层代码。</p>
+<h3 id="再说volatile"><a href="#再说volatile" class="headerlink" title="再说volatile"></a>再说volatile</h3><p>如果对声明了volatile变量进行写操作时，JVM会向处理器发送一条<strong><em><em>Lock</em></em></strong>前缀的指令，将这个变量所在缓存行的数据写会到系统内存。 这一步确保了如果有其他线程对声明了volatile变量进行修改，则立即更新主内存中数据。</p>
+<p>但这时候其他处理器的缓存还是旧的，所以在多处理器环境下，为了保证各个处理器缓存一致，每个处理会通过嗅探在总线上传播的数据来检查 自己的缓存是否过期，当处理器发现自己缓存行对应的内存地址被修改了，就会将当前处理器的缓存行设置成无效状态，当处理器要对这个数据进行修改操作时，会强制重新从系统内存把数据读到处理器缓存里。 这一步确保了其他线程获得的声明了volatile变量都是从主内存中获取最新的。</p>
+<p>volatile关键字的另一种用途是保证long和double的原子性操作。其实是利用了某些cpu的高速缓存是64字节宽度，并且不支持填充缓存行的机制。这种应用场景应用相对较少且并不具有普适性，就不在过多介绍。</p>
+<h3 id="创建多线程的方式"><a href="#创建多线程的方式" class="headerlink" title="创建多线程的方式"></a>创建多线程的方式</h3><ol>
+<li>继承Thread类</li>
+<li>实现Runnable接口</li>
+<li>匿名内部类</li>
+<li>带返回值的线程(Callable/Future)</li>
+<li>定时器</li>
+<li>线程池</li>
+<li>Lambda表达式</li>
+</ol>
+<p>其中第七种是从java8才开始的，其它六种应该很常见，记录一下第七种。<br><code>new Thread(() -&gt; {
+            Sysout.out.println(&quot;I am a new Thread&quot;);
+        }).start();</code></p>
+<p>最近也在学习lambda表达式的写法，真的是一种让人学会了就一直想秀的语法。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>写了一些比较基础的东西，发现再深入一点可能就讲不清楚了。需要在花上半个月再好好看一遍，贴一张书中的图，看完整本书再看这个图就觉得清晰了很多。计划从下往上总结吧。</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fm3i98scrkj30gx0ch3zu.jpg" alt=""></p>
+<p>回头看了一下才发现，大多数内容是加锁。但其实有一点我们要清楚，使用多线程的目的是完成业务而不是为了和锁纠缠不清，加锁只是不得已而为之。</p>
 
       
       
@@ -341,13 +368,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/11/07/devops初识/">devops初识</a></p>
+        <p><span>本文标题:</span><a href="/2017/12/03/java并发从入门到崩溃-常用篇/">java并发从入门到崩溃--常用篇</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2017年11月07日 - 08时23分</p>
-        <p><span>最后更新:</span>2017年11月07日 - 09时24分</p>
+        <p><span>发布时间:</span>2017年12月03日 - 11时11分</p>
+        <p><span>最后更新:</span>2017年12月03日 - 13时21分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/11/07/devops初识/" title="devops初识">http://www.shuchang.sc.com/2017/11/07/devops初识/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/11/07/devops初识/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2017/12/03/java并发从入门到崩溃-常用篇/" title="java并发从入门到崩溃--常用篇">http://www.shuchang.sc.com/2017/12/03/java并发从入门到崩溃-常用篇/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/12/03/java并发从入门到崩溃-常用篇/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -360,18 +387,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/11/08/java对象-引用-传递/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          java对象:引用||传递
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/11/05/常用工具类整理/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">常用工具类整理</div>
+    <a href="/2017/11/23/表面理解jvm-类加载/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">jvm学习笔记-类加载</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -382,7 +400,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#what"><span class="toc-number">1.</span> <span class="toc-text">what</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#流程"><span class="toc-number">2.</span> <span class="toc-text">流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一个基于Go、阿里云、github的Devops-Demo"><span class="toc-number">3.</span> <span class="toc-text">一个基于Go、阿里云、github的Devops Demo</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#关于并发的一些思考"><span class="toc-number">1.</span> <span class="toc-text">关于并发的一些思考</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#再说sychronized"><span class="toc-number">2.</span> <span class="toc-text">再说sychronized</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#再说volatile"><span class="toc-number">3.</span> <span class="toc-text">再说volatile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建多线程的方式"><span class="toc-number">4.</span> <span class="toc-text">创建多线程的方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -448,13 +466,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/11/08/java对象-引用-传递/" title="上一篇: java对象:引用||传递">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/11/05/常用工具类整理/" title="下一篇: 常用工具类整理">
+            <a href="/2017/11/23/表面理解jvm-类加载/" title="下一篇: jvm学习笔记-类加载">
                 <i class="fa fa-angle-right"></i>
             </a>
         
