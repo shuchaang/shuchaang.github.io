@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>java并发从入门到崩溃--常用篇 | Shuchang&#39;s Blog</title>
+  <title>java并发从入门到崩溃--常用篇(1) | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="关于并发的一些思考最近看完了《java多线程编程核心技术》、《java并发编程艺术》两本书。第一本更偏向于线程基础技术，看完之后给人一种眼前明亮之感。啊，原来并发编程就是这些操作。当我看完第二本之后，就已经一脸茫然，忘记了第一本的内容 - -!。因为第二本的内容太丰富，涉及到并发的底层原理和框架。于是我又拿出来《java编程思想》找到了并发的一章来看，发现看完已经满脑浆糊了，所以还是要坚持写一下博">
 <meta name="keywords" content="java,并发">
 <meta property="og:type" content="article">
-<meta property="og:title" content="java并发从入门到崩溃--常用篇">
+<meta property="og:title" content="java并发从入门到崩溃--常用篇(1)">
 <meta property="og:url" content="http://www.shuchang.sc.com/2017/12/03/java并发从入门到崩溃-常用篇/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
 <meta property="og:description" content="关于并发的一些思考最近看完了《java多线程编程核心技术》、《java并发编程艺术》两本书。第一本更偏向于线程基础技术，看完之后给人一种眼前明亮之感。啊，原来并发编程就是这些操作。当我看完第二本之后，就已经一脸茫然，忘记了第一本的内容 - -!。因为第二本的内容太丰富，涉及到并发的底层原理和框架。于是我又拿出来《java编程思想》找到了并发的一章来看，发现看完已经满脑浆糊了，所以还是要坚持写一下博">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1flwmbc1dy9j30kw0onwhp.jpg">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fm3i98scrkj30gx0ch3zu.jpg">
-<meta property="og:updated_time" content="2017-12-03T05:21:19.000Z">
+<meta property="og:updated_time" content="2017-12-08T08:27:12.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="java并发从入门到崩溃--常用篇">
+<meta name="twitter:title" content="java并发从入门到崩溃--常用篇(1)">
 <meta name="twitter:description" content="关于并发的一些思考最近看完了《java多线程编程核心技术》、《java并发编程艺术》两本书。第一本更偏向于线程基础技术，看完之后给人一种眼前明亮之感。啊，原来并发编程就是这些操作。当我看完第二本之后，就已经一脸茫然，忘记了第一本的内容 - -!。因为第二本的内容太丰富，涉及到并发的底层原理和框架。于是我又拿出来《java编程思想》找到了并发的一章来看，发现看完已经满脑浆糊了，所以还是要坚持写一下博">
 <meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1flwmbc1dy9j30kw0onwhp.jpg">
   
@@ -249,7 +249,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      java并发从入门到崩溃--常用篇
+      java并发从入门到崩溃--常用篇(1)
     </h1>
   
 
@@ -368,12 +368,12 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/12/03/java并发从入门到崩溃-常用篇/">java并发从入门到崩溃--常用篇</a></p>
+        <p><span>本文标题:</span><a href="/2017/12/03/java并发从入门到崩溃-常用篇/">java并发从入门到崩溃--常用篇(1)</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
         <p><span>发布时间:</span>2017年12月03日 - 11时11分</p>
-        <p><span>最后更新:</span>2017年12月03日 - 13时21分</p>
+        <p><span>最后更新:</span>2017年12月08日 - 16时27分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/12/03/java并发从入门到崩溃-常用篇/" title="java并发从入门到崩溃--常用篇">http://www.shuchang.sc.com/2017/12/03/java并发从入门到崩溃-常用篇/</a>
+            <span>原始链接:</span><a class="post-url" href="/2017/12/03/java并发从入门到崩溃-常用篇/" title="java并发从入门到崩溃--常用篇(1)">http://www.shuchang.sc.com/2017/12/03/java并发从入门到崩溃-常用篇/</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/12/03/java并发从入门到崩溃-常用篇/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
@@ -386,6 +386,15 @@
 
 
 <nav id="article-nav">
+  
+    <a href="/2017/12/08/java并发从入门到崩溃-CAS/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          java并发从入门到崩溃-CAS
+        
+      </div>
+    </a>
   
   
     <a href="/2017/11/23/表面理解jvm-类加载/" id="article-nav-older" class="article-nav-link-wrap">
@@ -466,7 +475,9 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+            <a href="/2017/12/08/java并发从入门到崩溃-CAS/" title="上一篇: java并发从入门到崩溃-CAS">
+                <i class="fa fa-angle-left"></i>
+            </a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
@@ -475,7 +486,7 @@
             </a>
         
     </div>
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">java并发从入门到崩溃--常用篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/07/devops初识/">devops初识</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/05/常用工具类整理/">常用工具类整理</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">java并发从入门到崩溃-CAS</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">java并发从入门到崩溃--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/07/devops初识/">devops初识</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/05/常用工具类整理/">常用工具类整理</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
     <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
     <script>
         $(".post-list").addClass("toc-article");
