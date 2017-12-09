@@ -259,7 +259,21 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        
+              <h3 id="什么是AQS"><a href="#什么是AQS" class="headerlink" title="什么是AQS"></a>什么是AQS</h3><p>AQS是AbstractQueuedSynchronizer的缩写，是用来实现一个锁的底层框架。<br><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1fma8k3ufacj30kf0e7n00.jpg" alt=""></p>
+<p>为什么要了解AQS(队列同步器)呢？因为我们在并发编程的时候很可能用到锁，而AQS与锁的实现密切相关。可是在图中我们并没有看到AQS与Lock产生直接关联，这是因为在每个锁内部都封装了一个抽象类Sync，而sync继承自AQS，如ReentranLock：<br><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fma97wfi6tj30y10810w3.jpg" alt=""></p>
+<p>AQS是JUC中Lock的实现关键，是实现锁或者自定义一个同步组件的基本框架，它使用了一个volatile int state作为同步状态，通过内置的FIFO队列(CLH)完成线程排队工作。AQS同事支持独占式获取同步状态，也支持共享式获取同步状态，以实现不同组件。Lock通过AQS框架，隐藏了具体的实现细节而与用户的交互使用接口，大大简化了锁的实现方式。它封装了线程、挂起唤醒的内部运作，我们只需要通过设置AQS的state值来控制他的线程挂起和唤醒的运作路径，就可以实现我们的同步器类了。</p>
+<p>AQS提供的方法可分为三类:</p>
+<ol>
+<li>独占式获取/释放状态</li>
+<li>共享式获取/释放状态</li>
+<li>查询同步队列情况</li>
+</ol>
+<p>通过以下代码我们就可以简单实现一个互斥锁。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">public class mutex &#123;</div><div class="line">    Sync sync = new Sync();</div><div class="line">    public void lock()&#123;</div><div class="line">        sync.tryAcquire(1);</div><div class="line">    &#125;</div><div class="line">    public void unlock()&#123;</div><div class="line">        sync.tryRelease(0);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    private static class Sync extends AbstractQueuedSynchronizer&#123;</div><div class="line">        @Override</div><div class="line">        protected boolean isHeldExclusively() &#123;</div><div class="line">            return getState() == 1;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        protected boolean tryAcquire(int arg) &#123;</div><div class="line">            if(compareAndSetState(0,1))&#123;</div><div class="line">                setExclusiveOwnerThread(Thread.currentThread());</div><div class="line">                return true;</div><div class="line">            &#125;</div><div class="line">            return false;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        protected boolean tryRelease(int arg) &#123;</div><div class="line">            if(getState()==0)&#123;</div><div class="line">                throw  new IllegalMonitorStateException(&quot;状态不符合预期&quot;);</div><div class="line">            &#125;</div><div class="line">            setExclusiveOwnerThread(null);</div><div class="line">            setState(0);</div><div class="line">            return true;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
       
       
     </div>
@@ -277,6 +291,10 @@
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
     </div>
 
+      
+        <p class="article-more-link">
+          <a  href="/2017/12/09/JAVA并发从入门到崩溃-AQS/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
