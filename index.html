@@ -279,7 +279,14 @@
 <li>循环开销大</li>
 <li>无法保证对多个共享变量的原子操作</li>
 </ol>
-<p>发现并没有讲出什么，好水</p>
+<h2 id="为什么是volatile和cas作底层"><a href="#为什么是volatile和cas作底层" class="headerlink" title="为什么是volatile和cas作底层"></a>为什么是volatile和cas作底层</h2><p>由于java的CAS同时具有volatile读和volatile写的内存语义，因此java之间线程通信目前有以下几种形式。</p>
+<ol>
+<li>A线程写volatile变量，B线程读这个volatile变量</li>
+<li>A线程写volatile变量，B线程以cas更新volatile变量</li>
+<li>A线程cas更新一个volatile变量，B线程cas更新这个volatile变量</li>
+<li>A线程cas更新一个volatile变量，B线程读这个volatile变量</li>
+</ol>
+<p>JAVA的CAS会使用现代处理器上提供的高效机器级别的原子指令，这些指令以原子的形式对内存执行读写操作。同时volatile和CAS一起使用可以实现线程之间的通信，因此构成了JUC的基石。</p>
 
       
       
