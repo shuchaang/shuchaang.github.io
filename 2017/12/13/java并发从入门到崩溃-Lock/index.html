@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>java并发从入门到崩溃-Lock(4) | Shuchang&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="我们可以先来看看有哪些类实现了Lock接口，有我们很熟悉的ReentrantLock、ReadLock、WriteLock、ConcurrentHashMap中的Segment内部类以及在JAVA8中新加入的StampedLock，接下来一一分析一下这些锁的实现。 ReentrantLock可重入锁也是JUC中的一位元老级的人物了。可重入锁，顾名思义就是就是支持一个线程对资源的重复加锁，此外可重入">
+<meta name="keywords" content="java,并发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java并发从入门到崩溃-Lock(4)">
+<meta property="og:url" content="http://www.shuchang.sc.com/2017/12/13/java并发从入门到崩溃-Lock/index.html">
+<meta property="og:site_name" content="Shuchang&#39;s Blog">
+<meta property="og:description" content="我们可以先来看看有哪些类实现了Lock接口，有我们很熟悉的ReentrantLock、ReadLock、WriteLock、ConcurrentHashMap中的Segment内部类以及在JAVA8中新加入的StampedLock，接下来一一分析一下这些锁的实现。 ReentrantLock可重入锁也是JUC中的一位元老级的人物了。可重入锁，顾名思义就是就是支持一个线程对资源的重复加锁，此外可重入">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fmf9asltb1j30ny05c40l.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fmfb64413cj30bb0dfwfo.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmfd7i92n3j30c306qwfc.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmffawoo85j30ar04kwer.jpg">
+<meta property="og:updated_time" content="2017-12-13T13:13:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="java并发从入门到崩溃-Lock(4)">
+<meta name="twitter:description" content="我们可以先来看看有哪些类实现了Lock接口，有我们很熟悉的ReentrantLock、ReadLock、WriteLock、ConcurrentHashMap中的Segment内部类以及在JAVA8中新加入的StampedLock，接下来一一分析一下这些锁的实现。 ReentrantLock可重入锁也是JUC中的一位元老级的人物了。可重入锁，顾名思义就是就是支持一个线程对资源的重复加锁，此外可重入">
+<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fmf9asltb1j30ny05c40l.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Shuchang</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">剑来!</p>
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                            <li><a href="/archives">所有文章</a></li>
+                        
+                            <li><a href="/about">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                            
+                                <a class="fl github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                            
+                                <a class="fl zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                            
+                                <a class="fl weibo" target="_blank" href="#" title="weibo">weibo</a>
+                            
+                                <a class="fl google" target="_blank" href="#" title="google">google</a>
+                            
+                                <a class="fl twitter" target="_blank" href="#" title="twitter">twitter</a>
+                            
+                                <a class="fl linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/devops/" style="font-size: 10px;">devops</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 13.33px;">jvm</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/并发/" style="font-size: 16.67px;">并发</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="https://gitee.com/swiftsc/">name</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">身怀利器，杀心自起，慎而重之</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Shuchang</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Shuchang</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">剑来!</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                    <li><a href="/archives">所有文章</a></li>
+                
+                    <li><a href="/about">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                    
+                        <a class="github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                    
+                        <a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                    
+                        <a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+                    
+                        <a class="google" target="_blank" href="#" title="google">google</a>
+                    
+                        <a class="twitter" target="_blank" href="#" title="twitter">twitter</a>
+                    
+                        <a class="linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-java并发从入门到崩溃-Lock" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/13/java并发从入门到崩溃-Lock/" class="article-date">
+      <time datetime="2017-12-13T09:09:47.000Z" itemprop="datePublished">2017-12-13</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      java并发从入门到崩溃-Lock(4)
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>我们可以先来看看有哪些类实现了Lock接口，有我们很熟悉的ReentrantLock、ReadLock、WriteLock、ConcurrentHashMap中的Segment内部类以及在JAVA8中新加入的StampedLock，接下来一一分析一下这些锁的实现。<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmf9asltb1j30ny05c40l.jpg" alt=""></p>
+<h3 id="ReentrantLock"><a href="#ReentrantLock" class="headerlink" title="ReentrantLock"></a>ReentrantLock</h3><p>可重入锁也是JUC中的一位元老级的人物了。可重入锁，顾名思义就是就是支持一个线程对资源的重复加锁，此外可重入锁还支持公平或非公平加锁。<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmfb64413cj30bb0dfwfo.jpg" alt=""></p>
+<p>ReentrantLock的类结构如图所示，一个内部抽象类Sync继承自AQS，作为一个同步器。NonfairSync和FairSync都继承Sync用于实现不同的加锁方法。ReentrantLock类中的方法都是通过调用内部类的方法实现的加锁与释放。因为AQS是用来构建锁或其他同步器的基本框架。分析ReentrantLock的核心就是加锁的方法，根据代码，公平锁和非公锁都实现各自的Lock和tryAcquire方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">//非公平锁</div><div class="line"> static final class NonfairSync extends Sync &#123;</div><div class="line">        final void lock() &#123;</div><div class="line">            if (compareAndSetState(0, 1))</div><div class="line">                setExclusiveOwnerThread(Thread.currentThread());</div><div class="line">            else</div><div class="line">                acquire(1);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        protected final boolean tryAcquire(int acquires) &#123;</div><div class="line">            return nonfairTryAcquire(acquires);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">//公平锁</div><div class="line">    static final class FairSync extends Sync &#123;</div><div class="line"></div><div class="line">        final void lock() &#123;</div><div class="line">            acquire(1);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        protected final boolean tryAcquire(int acquires) &#123;</div><div class="line">            final Thread current = Thread.currentThread();</div><div class="line">            int c = getState();</div><div class="line">            if (c == 0) &#123;</div><div class="line">                if (!hasQueuedPredecessors() &amp;&amp;</div><div class="line">                    compareAndSetState(0, acquires)) &#123;</div><div class="line">                    setExclusiveOwnerThread(current);</div><div class="line">                    return true;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            else if (current == getExclusiveOwnerThread()) &#123;</div><div class="line">                int nextc = c + acquires;</div><div class="line">                if (nextc &lt; 0)</div><div class="line">                    throw new Error(&quot;Maximum lock count exceeded&quot;);</div><div class="line">                setState(nextc);</div><div class="line">                return true;</div><div class="line">            &#125;</div><div class="line">            return false;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li><a id="more"></a>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+
+</the></li>
+</ul>
+<h4 id="不同的加锁方式"><a href="#不同的加锁方式" class="headerlink" title="不同的加锁方式"></a>不同的加锁方式</h4><p>假设有一个state变量，初始值为0，假设当前线程为A,每当A获取一次锁，status++. 释放一次，status–.锁会记录当前持有的线程。当A线程拥有锁的时候，status&gt;0. B线程尝试获取锁的时候会对这个status有一个CAS(0,1)的操作，尝试几次失败后就挂起线程，进入一个等待队列。如果A线程恰好释放，–status==0, A线程会去唤醒等待队列中第一个线程，即刚刚进入等待队列的B线程，B线程被唤醒之后回去检查这个status的值，尝试CAS(0,1),而如果这时恰好C线程也尝试去争抢这把锁，C直接尝试对这个status CAS(0,1)操作，并成功改变了status的值，B线程获取锁失败，再次挂起，这就是<strong><em><em>非公平锁</em></em></strong>。B在C之前尝试获取锁，而最终是C抢到了锁。</p>
+<p><strong><em><em>公平锁</em></em></strong>：C发现有线程在等待队列，直接将自己进入等待队列并挂起,B获取锁。</p>
+<h4 id="可重入的实现原理"><a href="#可重入的实现原理" class="headerlink" title="可重入的实现原理:"></a>可重入的实现原理:</h4><p>两个类实现的tryAquire()方法也是不同的。非公平锁由于是可重入锁的默认状态，所以它的tryAquire方法就是父类Sync的方法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">final boolean nonfairTryAcquire(int acquires) &#123;</div><div class="line">            final Thread current = Thread.currentThread();</div><div class="line">            int c = getState();</div><div class="line">            if (c == 0) &#123;</div><div class="line">                if (compareAndSetState(0, acquires)) &#123;</div><div class="line">                    setExclusiveOwnerThread(current);</div><div class="line">                    return true;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            else if (current == getExclusiveOwnerThread()) &#123;</div><div class="line">                int nextc = c + acquires;</div><div class="line">                if (nextc &lt; 0) // overflow</div><div class="line">                    throw new Error(&quot;Maximum lock count exceeded&quot;);</div><div class="line">                setState(nextc);</div><div class="line">                return true;</div><div class="line">            &#125;</div><div class="line">            return false;</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
+<p>通过判断当前线程是否获是取得锁的线程，来决定操作是否成功，如果是获取锁的线程再次请求，则将同步状态值进行增加并返回true。<br>公平锁与非公平锁实现此方法的差别就在于hasQueuedPredecessors()方法，该方法表示加入了同步队列的当前节点，是否还有前驱节点，如果返回true，表示它不是头结点，不能取到锁，继续等待，只有等到前驱节点释放的时候它才可以获取锁。</p>
+<p>既然重入锁时会增加同步状态值，那么释放锁时就必须将同步状态值减为0才可以算作释放锁。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">protected final boolean tryRelease(int releases) &#123;</div><div class="line">    int c = getState() - releases;</div><div class="line">    if (Thread.currentThread() != getExclusiveOwnerThread())</div><div class="line">        throw new IllegalMonitorStateException();</div><div class="line">    boolean free = false;</div><div class="line">    if (c == 0) &#123;</div><div class="line">        free = true;</div><div class="line">        setExclusiveOwnerThread(null);</div><div class="line">    &#125;</div><div class="line">    setState(c);</div><div class="line">    return free;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果锁被获取了n次，那么前n-1次release都会返回false。同步状态值为0时，设置占有线程为null，并返回true，释放锁。</p>
+<h3 id="ReentrantReadWriteLock"><a href="#ReentrantReadWriteLock" class="headerlink" title="ReentrantReadWriteLock"></a>ReentrantReadWriteLock</h3><p>一般我们都会称这个锁为读写锁，从名字也可以看出，读写锁也是支持重入的，默认支持非公平。读写锁的特性为通过分离读锁和写锁，使得并发性有很大的提高。读锁在同一时刻允许多个线程访问，但有写锁线程访问时，所有的读线程和其他写线程都被阻塞。读写锁的结果如图所示:<br><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmfd7i92n3j30c306qwfc.jpg" alt=""></p>
+<p>它的实现同样依赖于Sync自定义同步器，由于读锁和写锁要分开计数，那么在只有一个状态值的情况下怎么计算读写锁的数量呢。由于java跨平台的特性，int类型的状态值始终是32位，于是设计者将状态值的低16位标识写状态，高16位标识读状态，如00..0011 00..0011表示读状态3，写状态3表示重入了三次读锁，重入了三次写锁。我们还是重点关注它的获取锁的代码。</p>
+<h4 id="获取写锁"><a href="#获取写锁" class="headerlink" title="获取写锁"></a>获取写锁</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">1️⃣</div><div class="line">  public void lock() &#123;</div><div class="line">       sync.acquire(1);</div><div class="line">  &#125;</div><div class="line">2️⃣</div><div class="line"> public final void acquire(int arg) &#123;</div><div class="line">     if (!tryAcquire(arg) &amp;&amp;</div><div class="line">        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</div><div class="line">        selfInterrupt();</div><div class="line">  &#125;</div><div class="line"></div><div class="line">3️⃣</div><div class="line">protected final boolean tryAcquire(int acquires) &#123;</div><div class="line">       Thread current = Thread.currentThread();</div><div class="line">       int c = getState();</div><div class="line">       int w = exclusiveCount(c);</div><div class="line">       if (c != 0) &#123;</div><div class="line">      // (Note: if c != 0 and w == 0 then shared count != 0)</div><div class="line">       if (w == 0 || current != getExclusiveOwnerThread())</div><div class="line">          return false;</div><div class="line">       if (w + exclusiveCount(acquires) &gt; MAX_COUNT)</div><div class="line">          throw new Error(&quot;Maximum lock count exceeded&quot;);</div><div class="line">          // Reentrant acquire</div><div class="line">       setState(c + acquires);</div><div class="line">         return true;</div><div class="line">      &#125;</div><div class="line">     if (writerShouldBlock() ||</div><div class="line">        !compareAndSetState(c, c + acquires))</div><div class="line">          return false;</div><div class="line">     setExclusiveOwnerThread(current);</div><div class="line">         return true;</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
+<p>首先是WriteLock内部类调用了Sync的acquire方法，acquire方法其实是一个自旋等待的过程。关键在于tryAcquire方法，该方法有一个if判断当前是否有读线程存在，如果存在则不能加写锁，因为读写锁要确保写锁的操作对读锁可见，如果允许读锁在已被获取的情况下加写锁，那读锁程序无法感知到写锁的存在，读出的数据就可能是错的。因此加写锁时读锁必须全部释放，已经获取到写锁是阻塞其他全部线程。</p>
+<h4 id="获取读锁"><a href="#获取读锁" class="headerlink" title="获取读锁"></a>获取读锁</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">protected final int tryAcquireShared(int unused) &#123;</div><div class="line">    Thread current = Thread.currentThread();</div><div class="line">    int c = getState();</div><div class="line">    if (exclusiveCount(c) != 0 &amp;&amp;</div><div class="line">        getExclusiveOwnerThread() != current)</div><div class="line">        return -1;</div><div class="line">    int r = sharedCount(c);</div><div class="line">    if (!readerShouldBlock() &amp;&amp;</div><div class="line">        r &lt; MAX_COUNT &amp;&amp;</div><div class="line">        compareAndSetState(c, c + SHARED_UNIT)) &#123;</div><div class="line">        if (r == 0) &#123;</div><div class="line">            firstReader = current;</div><div class="line">            firstReaderHoldCount = 1;</div><div class="line">        &#125; else if (firstReader == current) &#123;</div><div class="line">            firstReaderHoldCount++;</div><div class="line">        &#125; else &#123;</div><div class="line">            HoldCounter rh = cachedHoldCounter;</div><div class="line">            if (rh == null || rh.tid != getThreadId(current))</div><div class="line">                cachedHoldCounter = rh = readHolds.get();</div><div class="line">            else if (rh.count == 0)</div><div class="line">                readHolds.set(rh);</div><div class="line">            rh.count++;</div><div class="line">        &#125;</div><div class="line">        return 1;</div><div class="line">    &#125;</div><div class="line">    return fullTryAcquireShared(current);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这段代码的主要逻辑首先获取了当前读锁的重入次数，当没有写锁在执行并且状态值&lt;MAX_COUNT时以CAS的方式设置状态值，如果没有获取到读锁，就加入到一个链中循环获取。</p>
+<h4 id="锁降级"><a href="#锁降级" class="headerlink" title="锁降级"></a>锁降级</h4><p>读写锁支持对写锁的降级操作，意思是当前线程持有写锁，先获取到读锁，随后释放写锁的过程。分段进行锁的释放则不属于锁降级,记录一段锁降级操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">public void processData()&#123;</div><div class="line">       //读锁获取</div><div class="line">       readLock.lock();</div><div class="line"></div><div class="line">       if(!update)&#123;</div><div class="line">           //必须先释放读锁</div><div class="line">           readLock.unlock();</div><div class="line"></div><div class="line">           //锁降级从获取写锁开始</div><div class="line">          writeLock.lock();</div><div class="line">          try &#123;</div><div class="line">                   if(!update)&#123;</div><div class="line">                      //准备数据流程（略）</div><div class="line">                       update=true;</div><div class="line">                   &#125;</div><div class="line">                   //获取读锁。在写锁持有期间获取读锁</div><div class="line">                   //此处获取读锁，是为了防止，当释放写锁后，又有一个线程T获取锁，对数据进行改变，而当前线程下面对改变的数据无法感知。</div><div class="line">                   //如果获取了读锁，则线程T则被阻塞，直到当前线程释放了读锁，那个T线程才有可能获取写锁。</div><div class="line">                   readLock.lock();</div><div class="line">               &#125;finally&#123;</div><div class="line">                   //释放写锁</div><div class="line">                   writeLock.unlock();</div><div class="line">               &#125;</div><div class="line">           //锁降级完成</div><div class="line">       &#125;</div><div class="line"></div><div class="line">       try &#123;</div><div class="line">           //使用数据的流程</div><div class="line">       &#125; finally&#123;</div><div class="line">           //释放读锁</div><div class="line">           readLock.unlock();</div><div class="line">       &#125;</div><div class="line"></div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<h3 id="StampedLock"><a href="#StampedLock" class="headerlink" title="StampedLock"></a>StampedLock</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmffawoo85j30ar04kwer.jpg" alt=""></p>
+<p>StampedLock的内部类结构和读写锁很像，也分为读锁和写锁。其实StampedLock就是java8中对读写锁的一种升级版本，StampedLock想要解决的问题是读写锁中，读不应该阻塞写。StampedLock的实现思路：在读的时候如果发生了写，则应当重读而不是在读的时候直接阻塞写,因为在使用读写锁的场合，可能大多数线程都是读线程，若让写线程等待读线程全部读完，有可能造写线程的饥饿。</p>
+<p>StampedLock控制锁有三种模式（写，读，乐观读），一个StampedLock状态是由版本和模式两个部分组成，锁获取方法返回一个数字作为票据stamp，它用相应的锁状态表示并控制访问，数字0表示没有写锁被授权访问。在读锁上分为悲观锁和乐观锁。</p>
+<p>所谓的乐观读模式，也就是若读的操作很多，写的操作很少的情况下，你可以乐观地认为，写入与读取同时发生几率很少，因此不悲观地使用完全的读取锁定，程序可以查看读取资料之后，是否遭到写入执行的变更，再采取后续的措施（重新读取变更信息，或者抛出异常） ，这一个小小改进，可大幅度提高程序的吞吐量。</p>
+<p>个人感觉随着java对底层的优化，sychronized关键字的执行效率也大幅度提高，很少有场景使用单独的锁来保证同步。目前JAVA8提供的Executor框架已经可以满足大多数并发场景的需求。(好一个偷懒的理由)</p>
+<p>详细的源码解析参考:</p>
+<blockquote>
+<p><a href="http://blog.csdn.net/luoyuyou/article/details/30259877" target="_blank" rel="external">http://blog.csdn.net/luoyuyou/article/details/30259877</a></p>
+</blockquote>
+
+      
+      
+        <div class="page-reward">
+          <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang">赏</a></p>
+          <div class="hide_box"></div>
+          <div class="shang_box">
+            <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+            <div class="shang_tit">
+              <p>纯属好玩</p>
+            </div>
+            <div class="shang_payimg">
+              <img src="/img/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+            </div>
+              <div class="pay_explain">扫码打赏，你说多少就多少</div>
+            <div class="shang_payselect">
+              
+                <div class="pay_item checked" data-id="alipay">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/alipay.png" alt="支付宝" /></span>
+                </div>
+              
+              
+                <div class="pay_item" data-id="wechat">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/weixin.png" alt="微信" /></span>
+                </div>
+              
+            </div>
+            <div class="shang_info">
+              <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script type="text/javascript">
+          $(".pay_item").click(function(){
+            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+            var dataid=$(this).attr('data-id');
+            $(".shang_payimg img").attr("src","/img/"+dataid+"img.jpg");
+            $("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+          });
+          function dashangToggle(){
+            
+            $(".hide_box").fadeToggle();
+            $(".shang_box").fadeToggle();
+          }
+        </script>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2017/12/13/java并发从入门到崩溃-Lock/">java并发从入门到崩溃-Lock(4)</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
+        <p><span>发布时间:</span>2017年12月13日 - 17时09分</p>
+        <p><span>最后更新:</span>2017年12月13日 - 21时13分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2017/12/13/java并发从入门到崩溃-Lock/" title="java并发从入门到崩溃-Lock(4)">http://www.shuchang.sc.com/2017/12/13/java并发从入门到崩溃-Lock/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/12/13/java并发从入门到崩溃-Lock/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2017/12/09/JAVA并发从入门到崩溃-AQS/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">java并发从入门到崩溃-AQS(3)</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#ReentrantLock"><span class="toc-number">1.</span> <span class="toc-text">ReentrantLock</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#不同的加锁方式"><span class="toc-number">1.1.</span> <span class="toc-text">不同的加锁方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#可重入的实现原理"><span class="toc-number">1.2.</span> <span class="toc-text">可重入的实现原理:</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ReentrantReadWriteLock"><span class="toc-number">2.</span> <span class="toc-text">ReentrantReadWriteLock</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#获取写锁"><span class="toc-number">2.1.</span> <span class="toc-text">获取写锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#获取读锁"><span class="toc-number">2.2.</span> <span class="toc-text">获取读锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#锁降级"><span class="toc-number">2.3.</span> <span class="toc-text">锁降级</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#StampedLock"><span class="toc-number">3.</span> <span class="toc-text">StampedLock</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'shuchaang',
+      repo: 'shuchaang.github.io',
+      oauth: {
+        client_id: 'c5aa96bb5e5656512174',
+        client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2017/12/09/JAVA并发从入门到崩溃-AQS/" title="下一篇: java并发从入门到崩溃-AQS(3)">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">java并发从入门到崩溃-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">java并发从入门到崩溃-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">java并发从入门到崩溃-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">java并发从入门到崩溃--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/07/devops初识/">devops初识</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2017 Shuchang
+            </div>
+
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>

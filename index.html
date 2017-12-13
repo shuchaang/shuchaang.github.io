@@ -232,6 +232,79 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-java并发从入门到崩溃-Lock" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/13/java并发从入门到崩溃-Lock/" class="article-date">
+      <time datetime="2017-12-13T09:09:47.000Z" itemprop="datePublished">2017-12-13</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/13/java并发从入门到崩溃-Lock/">java并发从入门到崩溃-Lock(4)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>我们可以先来看看有哪些类实现了Lock接口，有我们很熟悉的ReentrantLock、ReadLock、WriteLock、ConcurrentHashMap中的Segment内部类以及在JAVA8中新加入的StampedLock，接下来一一分析一下这些锁的实现。<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmf9asltb1j30ny05c40l.jpg" alt=""></p>
+<h3 id="ReentrantLock"><a href="#ReentrantLock" class="headerlink" title="ReentrantLock"></a>ReentrantLock</h3><p>可重入锁也是JUC中的一位元老级的人物了。可重入锁，顾名思义就是就是支持一个线程对资源的重复加锁，此外可重入锁还支持公平或非公平加锁。<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmfb64413cj30bb0dfwfo.jpg" alt=""></p>
+<p>ReentrantLock的类结构如图所示，一个内部抽象类Sync继承自AQS，作为一个同步器。NonfairSync和FairSync都继承Sync用于实现不同的加锁方法。ReentrantLock类中的方法都是通过调用内部类的方法实现的加锁与释放。因为AQS是用来构建锁或其他同步器的基本框架。分析ReentrantLock的核心就是加锁的方法，根据代码，公平锁和非公锁都实现各自的Lock和tryAcquire方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">//非公平锁</div><div class="line"> static final class NonfairSync extends Sync &#123;</div><div class="line">        final void lock() &#123;</div><div class="line">            if (compareAndSetState(0, 1))</div><div class="line">                setExclusiveOwnerThread(Thread.currentThread());</div><div class="line">            else</div><div class="line">                acquire(1);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        protected final boolean tryAcquire(int acquires) &#123;</div><div class="line">            return nonfairTryAcquire(acquires);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">//公平锁</div><div class="line">    static final class FairSync extends Sync &#123;</div><div class="line"></div><div class="line">        final void lock() &#123;</div><div class="line">            acquire(1);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        protected final boolean tryAcquire(int acquires) &#123;</div><div class="line">            final Thread current = Thread.currentThread();</div><div class="line">            int c = getState();</div><div class="line">            if (c == 0) &#123;</div><div class="line">                if (!hasQueuedPredecessors() &amp;&amp;</div><div class="line">                    compareAndSetState(0, acquires)) &#123;</div><div class="line">                    setExclusiveOwnerThread(current);</div><div class="line">                    return true;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            else if (current == getExclusiveOwnerThread()) &#123;</div><div class="line">                int nextc = c + acquires;</div><div class="line">                if (nextc &lt; 0)</div><div class="line">                    throw new Error(&quot;Maximum lock count exceeded&quot;);</div><div class="line">                setState(nextc);</div><div class="line">                return true;</div><div class="line">            &#125;</div><div class="line">            return false;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/12/13/java并发从入门到崩溃-Lock/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-JAVA并发从入门到崩溃-AQS" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -249,7 +322,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JAVA并发从入门到崩溃-AQS(3)</a>
+      <a class="article-title" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">java并发从入门到崩溃-AQS(3)</a>
     </h1>
   
 
@@ -948,81 +1021,10 @@
 
 
   
-    <article id="post-redis解决分布式锁" class="article article-type-post" itemscope itemprop="blogPost">
   
-    <div class="article-meta">
-      <a href="/2017/11/01/redis解决分布式锁/" class="article-date">
-      <time datetime="2017-11-01T00:35:02.000Z" itemprop="datePublished">2017-11-01</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>废话不多说，首先分享一个业务场景-抢购。一个典型的高并发问题，所需的最关键字段就是库存，在高并发的情况下每次都去数据库查询显然是不合适的，因此把库存信息存入Redis中，利用redis的锁机制来控制并发访问，是一个不错的解决方案。</p>
-<p>首先是一段业务代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">@Transactional</div><div class="line">public void orderProductMockDiffUser(String productId)&#123;</div><div class="line">    //1.查库存</div><div class="line">    int stockNum  = stock.get(productId);</div><div class="line">    if(stocknum == 0)&#123;</div><div class="line">        throw new SellException(ProductStatusEnum.STOCK_EMPTY);</div><div class="line">        //这里抛出的异常要是运行时异常，否则无法进行数据回滚，这也是spring中比较基础的</div><div class="line">    &#125;else&#123;</div><div class="line">        //2.下单</div><div class="line">        orders.put(KeyUtil.genUniqueKey(),productId);//生成随机用户id模拟高并发</div><div class="line">        sotckNum = stockNum-1;</div><div class="line">        try&#123;</div><div class="line">            Thread.sleep(100);</div><div class="line">        &#125; catch (InterruptedExcption e)&#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        stock.put(productId,stockNum);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这里有一种比较简单的解决方案，就是<strong><em>synchronized</em></strong>关键字。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public synchronized void orderProductMockDiffUser(String productId)</div></pre></td></tr></table></figure></p>
-<p>这就是java自带的一种锁机制，简单的对函数加锁和释放锁。但问题是这个实在是太慢了，感兴趣的可以可以写个接口用apache ab压测一下。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ab -n 500 -c 100 http://localhost:8080/xxxxxxx</div></pre></td></tr></table></figure>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2017/11/01/redis解决分布式锁/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    </nav>
   
 </div>
       <footer id="footer">

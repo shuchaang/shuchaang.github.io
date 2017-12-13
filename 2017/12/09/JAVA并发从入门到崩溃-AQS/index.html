@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   
-  <title>JAVA并发从入门到崩溃-AQS(3) | Shuchang&#39;s Blog</title>
+  <title>java并发从入门到崩溃-AQS(3) | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="什么是AQSAQS是AbstractQueuedSynchronizer的缩写，是用来实现一个锁的底层框架。 为什么要了解AQS(队列同步器)呢？因为我们在并发编程的时候很可能用到锁，而AQS与锁的实现密切相关。可是在图中我们并没有看到AQS与Lock产生直接关联，这是因为在每个锁内部都封装了一个抽象类Sync，而sync继承自AQS，如ReentranLock： AQS是JUC中Lock的实现关">
 <meta name="keywords" content="java,并发">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JAVA并发从入门到崩溃-AQS(3)">
+<meta property="og:title" content="java并发从入门到崩溃-AQS(3)">
 <meta property="og:url" content="http://www.shuchang.sc.com/2017/12/09/JAVA并发从入门到崩溃-AQS/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
 <meta property="og:description" content="什么是AQSAQS是AbstractQueuedSynchronizer的缩写，是用来实现一个锁的底层框架。 为什么要了解AQS(队列同步器)呢？因为我们在并发编程的时候很可能用到锁，而AQS与锁的实现密切相关。可是在图中我们并没有看到AQS与Lock产生直接关联，这是因为在每个锁内部都封装了一个抽象类Sync，而sync继承自AQS，如ReentranLock： AQS是JUC中Lock的实现关">
@@ -17,9 +17,9 @@
 <meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fmaa96e2ogj30jp07xq46.jpg">
 <meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fmaab2x082j306j05yaah.jpg">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tKfTcgy1fmaamazwopj30iq07zdga.jpg">
-<meta property="og:updated_time" content="2017-12-09T02:45:42.000Z">
+<meta property="og:updated_time" content="2017-12-13T09:08:55.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JAVA并发从入门到崩溃-AQS(3)">
+<meta name="twitter:title" content="java并发从入门到崩溃-AQS(3)">
 <meta name="twitter:description" content="什么是AQSAQS是AbstractQueuedSynchronizer的缩写，是用来实现一个锁的底层框架。 为什么要了解AQS(队列同步器)呢？因为我们在并发编程的时候很可能用到锁，而AQS与锁的实现密切相关。可是在图中我们并没有看到AQS与Lock产生直接关联，这是因为在每个锁内部都封装了一个抽象类Sync，而sync继承自AQS，如ReentranLock： AQS是JUC中Lock的实现关">
 <meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1fma8k3ufacj30kf0e7n00.jpg">
   
@@ -252,7 +252,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      JAVA并发从入门到崩溃-AQS(3)
+      java并发从入门到崩溃-AQS(3)
     </h1>
   
 
@@ -366,12 +366,12 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JAVA并发从入门到崩溃-AQS(3)</a></p>
+        <p><span>本文标题:</span><a href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">java并发从入门到崩溃-AQS(3)</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
         <p><span>发布时间:</span>2017年12月09日 - 08时45分</p>
-        <p><span>最后更新:</span>2017年12月09日 - 10时45分</p>
+        <p><span>最后更新:</span>2017年12月13日 - 17时08分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/" title="JAVA并发从入门到崩溃-AQS(3)">http://www.shuchang.sc.com/2017/12/09/JAVA并发从入门到崩溃-AQS/</a>
+            <span>原始链接:</span><a class="post-url" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/" title="java并发从入门到崩溃-AQS(3)">http://www.shuchang.sc.com/2017/12/09/JAVA并发从入门到崩溃-AQS/</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/12/09/JAVA并发从入门到崩溃-AQS/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
@@ -384,6 +384,15 @@
 
 
 <nav id="article-nav">
+  
+    <a href="/2017/12/13/java并发从入门到崩溃-Lock/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          java并发从入门到崩溃-Lock(4)
+        
+      </div>
+    </a>
   
   
     <a href="/2017/12/08/java并发从入门到崩溃-CAS/" id="article-nav-older" class="article-nav-link-wrap">
@@ -464,7 +473,9 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+            <a href="/2017/12/13/java并发从入门到崩溃-Lock/" title="上一篇: java并发从入门到崩溃-Lock(4)">
+                <i class="fa fa-angle-left"></i>
+            </a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
@@ -473,7 +484,7 @@
             </a>
         
     </div>
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JAVA并发从入门到崩溃-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">java并发从入门到崩溃-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">java并发从入门到崩溃--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/07/devops初识/">devops初识</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">java并发从入门到崩溃-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">java并发从入门到崩溃-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">java并发从入门到崩溃-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">java并发从入门到崩溃--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/07/devops初识/">devops初识</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
     <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
     <script>
         $(".post-list").addClass("toc-article");
