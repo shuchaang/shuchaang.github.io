@@ -3,23 +3,23 @@
 <head>
   <meta charset="utf-8">
   
-  <title>SpringMvc浅谈 | Shuchang&#39;s Blog</title>
+  <title>java并发从入门到崩溃-JMM(5) | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="springmvc在哪里springmvc是spring体系的一部分，位于web部分。 springmvc的设计模式先来看一个简化版:用户请求到达控制器，控制器并没有处理业务逻辑的能力，于是把请求交给后台的一个model做处理，并将处理的结果返回给控制器。当控制器拿到数据后，就要找到视图并做渲染，并将渲染好的结果返回给用户，这就是一个通用的mvc设计模式。      spirngmvc架构：  可">
-<meta name="keywords" content="springmvc">
+  <meta name="description" content="JMM在写这篇博客之前参考了大量的博客和书籍，但是个人总感觉理解不来，在这里记录下自己的看法，可能不对。 在并发编程中，我们要解决的关键性问题就是线程通信和同步的问题——那么就有两种结局方案，共享内存和消息传递。共享内存的方式就是各个线程在一个公共的内存区域中共同读写变量，消息传递则是通过显示的方法交换信息。 所以JAVA对内存进行了一种抽象，形成了java内存模型JMM。这种模型可以说就是为了方">
+<meta name="keywords" content="java,并发">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SpringMvc浅谈">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/11/11/SpringMvc浅谈/index.html">
+<meta property="og:title" content="java并发从入门到崩溃-JMM(5)">
+<meta property="og:url" content="http://www.shuchang.sc.com/2017/12/17/java并发从入门到崩溃-JMM/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="springmvc在哪里springmvc是spring体系的一部分，位于web部分。 springmvc的设计模式先来看一个简化版:用户请求到达控制器，控制器并没有处理业务逻辑的能力，于是把请求交给后台的一个model做处理，并将处理的结果返回给控制器。当控制器拿到数据后，就要找到视图并做渲染，并将渲染好的结果返回给用户，这就是一个通用的mvc设计模式。      spirngmvc架构：  可">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fle36iwgwmj30fq0d7aak.jpg">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fle3d2iyonj30g5078wec.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fle4abaf20j30q00d2t91.jpg">
-<meta property="og:updated_time" content="2017-11-11T07:05:08.000Z">
+<meta property="og:description" content="JMM在写这篇博客之前参考了大量的博客和书籍，但是个人总感觉理解不来，在这里记录下自己的看法，可能不对。 在并发编程中，我们要解决的关键性问题就是线程通信和同步的问题——那么就有两种结局方案，共享内存和消息传递。共享内存的方式就是各个线程在一个公共的内存区域中共同读写变量，消息传递则是通过显示的方法交换信息。 所以JAVA对内存进行了一种抽象，形成了java内存模型JMM。这种模型可以说就是为了方">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmjrum6j9lj30ae0be74i.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fmjsbm9tn9j30n704dwfn.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fmjsfmdpkaj30ke05idi4.jpg">
+<meta property="og:updated_time" content="2017-12-17T07:59:28.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SpringMvc浅谈">
-<meta name="twitter:description" content="springmvc在哪里springmvc是spring体系的一部分，位于web部分。 springmvc的设计模式先来看一个简化版:用户请求到达控制器，控制器并没有处理业务逻辑的能力，于是把请求交给后台的一个model做处理，并将处理的结果返回给控制器。当控制器拿到数据后，就要找到视图并做渲染，并将渲染好的结果返回给用户，这就是一个通用的mvc设计模式。      spirngmvc架构：  可">
-<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fle36iwgwmj30fq0d7aak.jpg">
+<meta name="twitter:title" content="java并发从入门到崩溃-JMM(5)">
+<meta name="twitter:description" content="JMM在写这篇博客之前参考了大量的博客和书籍，但是个人总感觉理解不来，在这里记录下自己的看法，可能不对。 在并发编程中，我们要解决的关键性问题就是线程通信和同步的问题——那么就有两种结局方案，共享内存和消息传递。共享内存的方式就是各个线程在一个公共的内存区域中共同读写变量，消息传递则是通过显示的方法交换信息。 所以JAVA对内存进行了一种抽象，形成了java内存模型JMM。这种模型可以说就是为了方">
+<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmjrum6j9lj30ae0be74i.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -233,11 +233,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-SpringMvc浅谈" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-java并发从入门到崩溃-JMM" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/11/11/SpringMvc浅谈/" class="article-date">
-      <time datetime="2017-11-11T07:00:47.000Z" itemprop="datePublished">2017-11-11</time>
+      <a href="/2017/12/17/java并发从入门到崩溃-JMM/" class="article-date">
+      <time datetime="2017-12-17T06:21:21.000Z" itemprop="datePublished">2017-12-17</time>
 </a>
     </div>
   
@@ -250,7 +250,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      SpringMvc浅谈
+      java并发从入门到崩溃-JMM(5)
     </h1>
   
 
@@ -259,13 +259,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/springmvc/">springmvc</a>
+    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/springmvc/">springmvc</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -275,24 +275,33 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h3 id="springmvc在哪里"><a href="#springmvc在哪里" class="headerlink" title="springmvc在哪里"></a>springmvc在哪里</h3><p>springmvc是spring体系的一部分，位于web部分。<br><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fle36iwgwmj30fq0d7aak.jpg" alt=""></p>
-<h3 id="springmvc的设计模式"><a href="#springmvc的设计模式" class="headerlink" title="springmvc的设计模式"></a>springmvc的设计模式</h3><p>先来看一个简化版:<br><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fle3d2iyonj30g5078wec.jpg" alt=""><br>用户请求到达控制器，控制器并没有处理业务逻辑的能力，于是把请求交给后台的一个model做处理，并将处理的结果返回给控制器。当控制器拿到数据后，就要找到视图并做渲染，并将渲染好的结果返回给用户，这就是一个通用的mvc设计模式。</p>
-<excerpt in="" index="" |="" 首页摘要="">
+        <h3 id="JMM"><a href="#JMM" class="headerlink" title="JMM"></a>JMM</h3><p>在写这篇博客之前参考了大量的博客和书籍，但是个人总感觉理解不来，在这里记录下自己的看法，可能不对。</p>
+<p>在并发编程中，我们要解决的关键性问题就是线程通信和同步的问题——那么就有两种结局方案，共享内存和消息传递。共享内存的方式就是各个线程在一个公共的内存区域中共同读写变量，消息传递则是通过显示的方法交换信息。</p>
+<p>所以JAVA对内存进行了一种抽象，形成了java内存模型JMM。这种模型可以说就是为了方便多线程编程而设计。JMM的设计说起来其实很简单，各个线程拥有自己的本地内存，线程之间的共享变量存储在<br>主存中，为了提高效率，各自的本地内存中还保留了一份共享变量的拷贝。本地内存是一个抽象的概念，并不存在，它在物理上覆盖了缓存区，寄存器以及各种优化技术。</p>
+<p>因此JAVA中线程之间的通信可以使用以下方式：</p>
+<ol>
+<li>一个线程将数据写入到主存中</li>
+<li>另一个线程去主存获取这个数据</li>
+</ol>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmjrum6j9lj30ae0be74i.jpg" alt=""></p>
+<p>也就是说线程之间依靠在主存之中共享变量实现了线程之间的通信，虽然说起来这个过程很简单，但我们看的还是太过于宏观，屏蔽了太多底层的东西。因为我们对于多线程的编程都停留在java语言这种高级语言的层面，但是java语言底层会和操作系统、内存、寄存器这些硬件打交道。而这些硬件由于读写速率有很大差别，因此会有一些对编程语言的优化策略，并不是每条指令都是顺序执行的。由于存在这种硬件优化策略，所以java语言就要保证它的多线程编程所得出的结果是程序员所希望的结果，也就是对编程人员的可见性。所以为了保证这种对编程人员的可见性，java并发编程就需要抽象一种既能保证执行结果又能让程序设计人员无需关心底层的内存模型，这就是JMM。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li><a id="more"></a>
+<the rest="" of="" contents="" |="" 余下全文="">
 
-<p><the rest="" of="" contents="" |="" 余下全文=""></the></p>
-<blockquote>
-<p> spirngmvc架构：</p>
-</blockquote>
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fle4abaf20j30q00d2t91.jpg" alt=""><br>可以看到这个架构的入口就是DispatcherServlet，其本质也是一个servlet，同时这也显示出了它与struts2的区别之一，Struts2的入口是一个过滤器。DispatcherServlet也没有处理事务的能力，仅作为一个数据的分发中心，将数据交给后面的过程来处理。DispatcherServlet通过HandlerMapping来查找Handler，HandlerMapping会返回两部分内容，其一是handler对象，也就是后台模型对象，还有一部分是拦截器数组。前端控制器拿到这些返回数据时，其实就应该来执行handler对象，因为执行handler对象就可以处理具体的业务逻辑。但是springmvc并没有这样做，它将数据利用HandlerAdapter适配器进行包装，也就到了图中的Handler部分。Handler处理过后返回一个ModelAndView对象，包括两部分：Model和view，Model就是数据，view就是视图名称，而不是视图对象。<br>这时前端控制器既有数据，又有视图名称，这时通过视图解析器返回真正的视图对象，最后将视图对象进行渲染并返回给用户。</p>
-<blockquote>
-<p>springmvc为什么要设计适配器？没有行不行？</p>
-</blockquote>
-<p>首先要明确的是在springmvc框架中controller的类型有很多种，比较常见的是<strong><em>@controller</em></strong>类型和<strong><em>实现Handler接口</em></strong>的类型，如果没有适配器，前端控制器就需要做一个类型判断，每种类型需要做哪些不同的处理。这时判断逻辑就会写死在代码中，并不符合springmvc的可扩展行的设计，一旦用户需要自己创建一个类型，那么就需要修改spring源码，这显然是不可取的。但有了适配器问题就方便了很多，每种类型只需要定义一种适配器即可。</p>
-<blockquote>
-<p>springmvc为什么要设计视图解析器？没有行不行？</p>
-</blockquote>
-<p>其实答案和上一个问题一样，当然都是可以的，只是这样需要在前端控制器加入逻辑判断，并不优雅也不易扩展。</p>
-</excerpt>
+</the></li>
+</ul>
+<h3 id="从PIPELINE看JMM"><a href="#从PIPELINE看JMM" class="headerlink" title="从PIPELINE看JMM"></a>从PIPELINE看JMM</h3><p>学过计算机组成原理或计算机体系结构的同学可能见过这幅图</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmjsbm9tn9j30n704dwfn.jpg" alt=""></p>
+<p>这就是把一条机器指令分为了五个原子的步骤去执行IF表示取指令，WB表示写回内存。下一条指令会在前一条写回内存后才会执行，这么这个看来就是一个线程安全的模型了。只可惜，现实中的计算机指令流水线并不会这样设计，因为这样的效率实在是太低了。</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmjsfmdpkaj30ke05idi4.jpg" alt=""></p>
+<p>实际上的流水线是这样的一种模型，在第一个位置空出来后就可以执行第二条了。这样才能最大限度的利用资源。那么为了提高效率，问题也就随之而来了，这样的一种模型就会造成一种数据依赖的情况，有可能第二条指令需要第一条指令的运算结果,出现这种情况最快的优化就是让IF在EX之后执行，通过通道直接获取到EX之后的值，而不必等到写回内存再去内存中调用。其实这种情况分细了来说就是流水线中遇到的WAR,WAW等读写冲突现象。</p>
+<p>说完了计组中pipeline的思想，那么我们把JMM作一下类比，我们可以把JMM当做处理pipeline的容器，java代码在编译成字节码之后，为了解决读写冲突也需要设定一系列的机制。这些机制就包括设定内存屏障，happens-before原则，顺序一致性模型等等。如果你知道pipeline对机器指令读写冲突的解决方案，从字面上你就能理解jmm这些机制的作用。</p>
+<p>所以知道了以上几种jmm的设计原则之后，就有了volatile的内存语义，lock的内存语义等等。它们讲述这些不同的线程之间通信和同步的方式在jmm中是怎样实现的。其实归根结底就是想解决在经历过种种编译优化之后怎样保持各个线程之间的数据依赖问题。</p>
+<p>其实出现这些问题最根本的原因是人们对提升计算机效率的永恒追求，因为追求性能，出现了经典的五层流水线模型。因为追求性能出现了java并发编程。于是在硬件和软件层面都对追求性能而带来的数据冲突问题作出了解决，虽然具体做法不同但思想都是想通的。</p>
+<p>这时我又想起了大学老师对我们说过的话：计算机这个东西在硬件和软件方面是相通的，双方的思想都可以拿来互相借鉴，想通了就很简单。</p>
+
       
       
         <div class="page-reward">
@@ -347,13 +356,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></p>
+        <p><span>本文标题:</span><a href="/2017/12/17/java并发从入门到崩溃-JMM/">java并发从入门到崩溃-JMM(5)</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2017年11月11日 - 15时00分</p>
-        <p><span>最后更新:</span>2017年11月11日 - 15时05分</p>
+        <p><span>发布时间:</span>2017年12月17日 - 14时21分</p>
+        <p><span>最后更新:</span>2017年12月17日 - 15时59分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/11/11/SpringMvc浅谈/" title="SpringMvc浅谈">http://www.shuchang.sc.com/2017/11/11/SpringMvc浅谈/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/11/11/SpringMvc浅谈/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2017/12/17/java并发从入门到崩溃-JMM/" title="java并发从入门到崩溃-JMM(5)">http://www.shuchang.sc.com/2017/12/17/java并发从入门到崩溃-JMM/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/12/17/java并发从入门到崩溃-JMM/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -366,18 +375,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/11/22/表面理解jvm-内存/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          表面理解jvm-内存
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/11/10/redis持久化/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">redis持久化</div>
+    <a href="/2017/12/13/java并发从入门到崩溃-Lock/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">java并发从入门到崩溃-Lock(4)</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -388,7 +388,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#springmvc在哪里"><span class="toc-number">1.</span> <span class="toc-text">springmvc在哪里</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#springmvc的设计模式"><span class="toc-number">2.</span> <span class="toc-text">springmvc的设计模式</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#JMM"><span class="toc-number">1.</span> <span class="toc-text">JMM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#从PIPELINE看JMM"><span class="toc-number">2.</span> <span class="toc-text">从PIPELINE看JMM</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -454,13 +454,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/11/22/表面理解jvm-内存/" title="上一篇: 表面理解jvm-内存">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/11/10/redis持久化/" title="下一篇: redis持久化">
+            <a href="/2017/12/13/java并发从入门到崩溃-Lock/" title="下一篇: java并发从入门到崩溃-Lock(4)">
                 <i class="fa fa-angle-right"></i>
             </a>
         

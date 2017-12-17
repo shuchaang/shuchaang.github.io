@@ -232,6 +232,85 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-java并发从入门到崩溃-JMM" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/17/java并发从入门到崩溃-JMM/" class="article-date">
+      <time datetime="2017-12-17T06:21:21.000Z" itemprop="datePublished">2017-12-17</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/17/java并发从入门到崩溃-JMM/">java并发从入门到崩溃-JMM(5)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h3 id="JMM"><a href="#JMM" class="headerlink" title="JMM"></a>JMM</h3><p>在写这篇博客之前参考了大量的博客和书籍，但是个人总感觉理解不来，在这里记录下自己的看法，可能不对。</p>
+<p>在并发编程中，我们要解决的关键性问题就是线程通信和同步的问题——那么就有两种结局方案，共享内存和消息传递。共享内存的方式就是各个线程在一个公共的内存区域中共同读写变量，消息传递则是通过显示的方法交换信息。</p>
+<p>所以JAVA对内存进行了一种抽象，形成了java内存模型JMM。这种模型可以说就是为了方便多线程编程而设计。JMM的设计说起来其实很简单，各个线程拥有自己的本地内存，线程之间的共享变量存储在<br>主存中，为了提高效率，各自的本地内存中还保留了一份共享变量的拷贝。本地内存是一个抽象的概念，并不存在，它在物理上覆盖了缓存区，寄存器以及各种优化技术。</p>
+<p>因此JAVA中线程之间的通信可以使用以下方式：</p>
+<ol>
+<li>一个线程将数据写入到主存中</li>
+<li>另一个线程去主存获取这个数据</li>
+</ol>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmjrum6j9lj30ae0be74i.jpg" alt=""></p>
+<p>也就是说线程之间依靠在主存之中共享变量实现了线程之间的通信，虽然说起来这个过程很简单，但我们看的还是太过于宏观，屏蔽了太多底层的东西。因为我们对于多线程的编程都停留在java语言这种高级语言的层面，但是java语言底层会和操作系统、内存、寄存器这些硬件打交道。而这些硬件由于读写速率有很大差别，因此会有一些对编程语言的优化策略，并不是每条指令都是顺序执行的。由于存在这种硬件优化策略，所以java语言就要保证它的多线程编程所得出的结果是程序员所希望的结果，也就是对编程人员的可见性。所以为了保证这种对编程人员的可见性，java并发编程就需要抽象一种既能保证执行结果又能让程序设计人员无需关心底层的内存模型，这就是JMM。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/12/17/java并发从入门到崩溃-JMM/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-java并发从入门到崩溃-Lock" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -930,80 +1009,6 @@
         <p class="article-more-link">
           <a  href="/2017/11/08/java对象-引用-传递/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-devops初识" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2017/11/07/devops初识/" class="article-date">
-      <time datetime="2017-11-07T00:23:59.000Z" itemprop="datePublished">2017-11-07</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/07/devops初识/">devops初识</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <h2 id="what"><a href="#what" class="headerlink" title="what"></a>what</h2><ul>
-<li>DevOps = Development+Operations</li>
-<li>快速的迭代和快速的用户反馈</li>
-</ul>
-<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fl97w1iur9j30p00epgmn.jpg" alt=""></p>
-<p>   首先就是代码编写，开发过后就是打包编译(CI/BUILD),在这个过程中消除99%以上的bug.<br>紧接着就是部署上线，Dev会协助Ops进行运维观察，并通过一些工具检查程序的运行情况，并反馈给Dev.<br>据说现在AWS已经做到程序每11.2s迭代一次。而普通的开发流程可能需要几个月。</p>
-<h2 id="一个基于Go、阿里云、github的Devops-Demo"><a href="#一个基于Go、阿里云、github的Devops-Demo" class="headerlink" title="一个基于Go、阿里云、github的Devops Demo"></a>一个基于Go、阿里云、github的Devops Demo</h2><p>deploy.sh<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">kill -9</div><div class="line">cd ~/demo/</div><div class="line">git pull xxxxxxxx.git</div><div class="line">cd /gitRepo</div><div class="line">./webserver &amp;</div></pre></td></tr></table></figure></p>
-<p>deploy.go<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">import(</div><div class="line">    &quot;io&quot;</div><div class="line">    &quot;net/http&quot;</div><div class="line">    &quot;os/exec&quot;</div><div class="line">    &quot;log&quot;</div><div class="line">)</div><div class="line"></div><div class="line">function reLaunch()&#123;</div><div class="line">    cmd:=exec.Command(&quot;sh&quot;,&quot;./deploy.sh&quot;)</div><div class="line">    err:=com.Start()</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatal(err)</div><div class="line">    &#125;</div><div class="line">    err=com.Wait()</div><div class="line">&#125;</div><div class="line">func firstPage(w http.ResponseWriter, r *http.Request)&#123;</div><div class="line">    os.WriteString(w,&quot;&lt;h1&gt;hello this is deploy sh&lt;/h1&gt;&quot;)</div><div class="line">    reLaunch()</div><div class="line">&#125;</div><div class="line">func main()&#123;</div><div class="line">    http.HandleFunc(&quot;/&quot;,firstPage)</div><div class="line">    http.ListenAndServer(&quot;:5000&quot;,nil)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>main.go<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">func firstPage(w http.ResponseWriter, r *http.Request)&#123;</div><div class="line">    os.WriteString(w,&quot;&lt;h1&gt;hello this is welcome&lt;/h1&gt;&quot;)</div><div class="line">    reLaunch()</div><div class="line">&#125;</div><div class="line">func main()&#123;</div><div class="line">    http.HandleFunc(&quot;/&quot;,firstPage)</div><div class="line">    http.ListenAndServer(&quot;:8000&quot;,nil)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>GitHub</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fl99b5521qj30rv0hvdge.jpg" alt=""><br>设置一个web钩子，当有push动作产生的时候自动触发deploy.go重新部署，这样就做到了修改业务代码的自动部署。<br>Webhooks的用途十分广泛，我在做SpringCloud的配置中心的时候也用到了webhooks，通过这个机制通知配置中心，配置中心通过消息队列更新整个集群的配置。</p>
-<p>这样其实就做到了一个简易的DevOps</p>
-
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/杂谈/">杂谈</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/devops/">devops</a></li></ul>
-    </div>
-
       
       <div class="clearfix"></div>
     </div>
