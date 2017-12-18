@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/devops/" style="font-size: 10px;">devops</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 13.33px;">jvm</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/并发/" style="font-size: 16.67px;">并发</a>
+                        <a href="/tags/devops/" style="font-size: 10px;">devops</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 13.33px;">jvm</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 10px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/并发/" style="font-size: 16.67px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,80 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-spring4-3-x源码阅读笔记-容器基础" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/" class="article-date">
+      <time datetime="2017-12-18T05:55:55.000Z" itemprop="datePublished">2017-12-18</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>环境:Spring4.3.5、IDEA</p>
+<p>网络上很多对spring源码讲解的博客基本上使用的都是spring3的版本，跟着做了一下发现最开始的XMLBeanFactory类已经废弃了，spring4中使用最频繁的是ClassPathXmlApplicationContext,所以自己也打打断点看代码，看看有什么变化。</p>
+<h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>基于maven的spring4.3项目，创建一个User类，给一个简单的构造函数。在classpath下新建一个spirng的xml文件，配置User Bean。最后创建一个类，在主方法中获取类的信息，观察调用栈。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">1.</div><div class="line">public class User &#123;</div><div class="line">    private int id;</div><div class="line">    private String email;</div><div class="line">    private String password;</div><div class="line">    private String username;</div><div class="line">    private String role;</div><div class="line">    private int status;</div><div class="line">    private Date regTime;</div><div class="line"></div><div class="line"></div><div class="line">    public User()&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public User(String username)&#123;</div><div class="line">        this.username = username;</div><div class="line">    &#125;</div><div class="line">    //get/set省略</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">2.</div><div class="line">    &lt;bean class=&quot;com.sc.model.User&quot; id=&quot;user&quot;&gt;</div><div class="line">        &lt;constructor-arg value=&quot;hello world&quot;/&gt;</div><div class="line">    &lt;/bean&gt;</div><div class="line"></div><div class="line"></div><div class="line">3.</div><div class="line">    public class Start &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;spring-mybatis.xml&quot;);</div><div class="line">        User user = (User) applicationContext.getBean(&quot;user&quot;);</div><div class="line">        System.out.println(user.getUsername());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这段代码正确的结果会打印出:hello world</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/spring4/">spring4</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-java并发从入门到崩溃-ConcurrentHashMap-6" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -928,88 +1002,6 @@
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/springmvc/">springmvc</a></li></ul>
     </div>
 
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-redis持久化" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2017/11/10/redis持久化/" class="article-date">
-      <time datetime="2017-11-10T03:00:41.000Z" itemprop="datePublished">2017-11-10</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/10/redis持久化/">redis持久化</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>Redis的强大功能很大程度上是由于其将所有数据存储在内存中，为了使redis重启后数据不丢失，需要将数据以某种形式保存在硬盘中。</p>
-<p>Redis支持两种持久化方式，RDB和AOF。可以单独使用一种或两种结合。redis默认的持久化方式是RDB。</p>
-<p>RDB通过快照完成，当符合一定条件时redis会自动将内存中的数据进行快照并保存在硬盘上。参数有两个：<strong>时间和改动键的个数</strong>。当指定时间内更改键的个数大于指定值就会快照,默认配置如下，单位为秒。</p>
-<p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1flcrw1og6bj304z02na9u.jpg" alt="rdb默认配置"></p>
-<p>可以通过SAVE和BGSAVE指令来手动进行快照。</p>
-<ul>
-<li>SAVE由主进程进行快照，会阻塞其他请求。</li>
-<li>BGSAVE通过fork一个子进程进行快照。</li>
-</ul>
-<h3 id="RDB快照过程"><a href="#RDB快照过程" class="headerlink" title="RDB快照过程"></a>RDB快照过程</h3><ol>
-<li>redis使用fork函数复制一份当前进程的副本。</li>
-<li>父进程继续接受后续指令，子进程还是将内存中的数据写入硬盘中的临时文件。</li>
-<li>子进程写入完成数据后用临时文件替换就得RDB文件。</li>
-</ol>
-<p>可以配置<strong><em>rdbcompression yes</em></strong>来选择是否对rdb进行压缩。<br>压缩的好处显而易见就是减少资源的消耗。缺点就是消耗更多的cpu资源。而选择不压缩就相反。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>s
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2017/11/10/redis持久化/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
       
       <div class="clearfix"></div>
     </div>
