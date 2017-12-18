@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>spring4.3.x源码阅读笔记-XML配置文件解析(2) | Shuchang&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="验证XML12345678910&amp;lt;beans xmlns=&amp;quot;http://www.springframework.org/schema/beans&amp;quot;       xmlns:xsi=&amp;quot;http://www.w3.org/2001/XMLSchema-instance&amp;quot;       xmlns:context=&amp;quot;http://www.sprin">
+<meta name="keywords" content="java,spring">
+<meta property="og:type" content="article">
+<meta property="og:title" content="spring4.3.x源码阅读笔记-XML配置文件解析(2)">
+<meta property="og:url" content="http://www.shuchang.sc.com/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/index.html">
+<meta property="og:site_name" content="Shuchang&#39;s Blog">
+<meta property="og:description" content="验证XML12345678910&amp;lt;beans xmlns=&amp;quot;http://www.springframework.org/schema/beans&amp;quot;       xmlns:xsi=&amp;quot;http://www.w3.org/2001/XMLSchema-instance&amp;quot;       xmlns:context=&amp;quot;http://www.sprin">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fml5kcytl3j30ir0b7gmz.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fml6ssdvk4j30qk09mgn6.jpg">
+<meta property="og:updated_time" content="2017-12-18T12:24:10.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="spring4.3.x源码阅读笔记-XML配置文件解析(2)">
+<meta name="twitter:description" content="验证XML12345678910&amp;lt;beans xmlns=&amp;quot;http://www.springframework.org/schema/beans&amp;quot;       xmlns:xsi=&amp;quot;http://www.w3.org/2001/XMLSchema-instance&amp;quot;       xmlns:context=&amp;quot;http://www.sprin">
+<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fml5kcytl3j30ir0b7gmz.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Shuchang</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">剑来!</p>
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                            <li><a href="/archives">所有文章</a></li>
+                        
+                            <li><a href="/about">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                            
+                                <a class="fl github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                            
+                                <a class="fl zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                            
+                                <a class="fl weibo" target="_blank" href="#" title="weibo">weibo</a>
+                            
+                                <a class="fl google" target="_blank" href="#" title="google">google</a>
+                            
+                                <a class="fl twitter" target="_blank" href="#" title="twitter">twitter</a>
+                            
+                                <a class="fl linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/devops/" style="font-size: 10px;">devops</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 13.33px;">jvm</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 13.33px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/并发/" style="font-size: 16.67px;">并发</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="https://gitee.com/swiftsc/">gitee</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">身怀利器，杀心自起，慎而重之</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Shuchang</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Shuchang</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">剑来!</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                    <li><a href="/archives">所有文章</a></li>
+                
+                    <li><a href="/about">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                    
+                        <a class="github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                    
+                        <a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                    
+                        <a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+                    
+                        <a class="google" target="_blank" href="#" title="google">google</a>
+                    
+                        <a class="twitter" target="_blank" href="#" title="twitter">twitter</a>
+                    
+                        <a class="linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-spring4-3-x源码阅读笔记-XML配置文件解析-2" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/" class="article-date">
+      <time datetime="2017-12-18T08:51:41.000Z" itemprop="datePublished">2017-12-18</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      spring4.3.x源码阅读笔记-XML配置文件解析(2)
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/spring4/">spring4</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h3 id="验证XML"><a href="#验证XML" class="headerlink" title="验证XML"></a>验证XML</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;</div><div class="line">       xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans</div><div class="line">       http://www.springframework.org/schema/beans/spring-beans.xsd</div><div class="line">       http://www.springframework.org/schema/context</div><div class="line">       http://www.springframework.org/schema/context/spring-context.xsd</div><div class="line">       http://www.springframework.org/schema/mvc</div><div class="line">       http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd&quot;&gt;</div></pre></td></tr></table></figure>
+<p>我们在编写spring.xml文件时都会在头部加入这样一段代码，这段代码就是通过xsd模式验证XML文件结构的正确性。另一种验证方法就是DTD模式验证，不过现在很少使用了。读取XML之前，spring会验证XML文件内的标签是否符合要求，符合要求才会进行下一步。XML的错误验证，一般在编译器就可以发现。</p>
+<h3 id="获取Document对象"><a href="#获取Document对象" class="headerlink" title="获取Document对象"></a>获取Document对象</h3><p>XML通过验证后，spring会读取配置文件，读取的过程XML会转化为InputSream对象，并最终转换为一个Document对象</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li><a id="more"></a>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+
+</the></li>
+</ul>
+<h3 id="解析BeanDefinations"><a href="#解析BeanDefinations" class="headerlink" title="解析BeanDefinations"></a>解析BeanDefinations</h3><p>将配置文件转换为Document对象后，主要的工作就是提取并注册Document对象中的Bean。可以通过一段代码看看Document提取Bean的过程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div></pre></td><td class="code"><pre><div class="line">    public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException &#123;</div><div class="line">    //初始化一个Reader</div><div class="line">        BeanDefinitionDocumentReader documentReader = this.createBeanDefinitionDocumentReader();</div><div class="line">    //统计已经注册的bean的个数</div><div class="line">        int countBefore = this.getRegistry().getBeanDefinitionCount();</div><div class="line">    //加载及注册bean</div><div class="line">        documentReader.registerBeanDefinitions(doc, this.createReaderContext(resource));</div><div class="line">    //记录本次加载bean的个数</div><div class="line">        return this.getRegistry().getBeanDefinitionCount() - countBefore;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext) &#123;</div><div class="line">        this.readerContext = readerContext;</div><div class="line">        this.logger.debug(&quot;Loading bean definitions&quot;);</div><div class="line">        Element root = doc.getDocumentElement();</div><div class="line">        this.doRegisterBeanDefinitions(root);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">   protected void doRegisterBeanDefinitions(Element root) &#123;</div><div class="line">        BeanDefinitionParserDelegate parent = this.delegate;</div><div class="line">        this.delegate = this.createDelegate(this.getReaderContext(), root, parent);</div><div class="line">        if (this.delegate.isDefaultNamespace(root)) &#123;</div><div class="line">        //profile属性可以在web.xml中配置，用于切换开发环境或者生产环境</div><div class="line">            String profileSpec = root.getAttribute(&quot;profile&quot;);</div><div class="line">            if (StringUtils.hasText(profileSpec)) &#123;</div><div class="line">                String[] specifiedProfiles = StringUtils.tokenizeToStringArray(profileSpec, &quot;,; &quot;);</div><div class="line">                if (!this.getReaderContext().getEnvironment().acceptsProfiles(specifiedProfiles)) &#123;</div><div class="line">                    if (this.logger.isInfoEnabled()) &#123;</div><div class="line">                        this.logger.info(&quot;Skipped XML bean definition file due to specified profiles [&quot; + profileSpec + &quot;] not matching: &quot; + this.getReaderContext().getResource());</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                    return;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">//预处理，方法为空，为扩展而设计</div><div class="line">        this.preProcessXml(root);</div><div class="line"> //解析bean</div><div class="line">        this.parseBeanDefinitions(root, this.delegate);</div><div class="line"> //后处理，方法为空，为扩展而设计</div><div class="line">        this.postProcessXml(root);</div><div class="line">        this.delegate = parent;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">   protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate) &#123;</div><div class="line">        if (delegate.isDefaultNamespace(root)) &#123;</div><div class="line">            NodeList nl = root.getChildNodes();</div><div class="line"></div><div class="line">            for(int i = 0; i &lt; nl.getLength(); ++i) &#123;</div><div class="line">                Node node = nl.item(i);</div><div class="line">                if (node instanceof Element) &#123;</div><div class="line">                    Element ele = (Element)node;</div><div class="line">                    //将要解析的bean分为两类，一类是默认标签的解析</div><div class="line">                    if (delegate.isDefaultNamespace(ele)) &#123;</div><div class="line">                        this.parseDefaultElement(ele, delegate);</div><div class="line">                    &#125; else &#123;</div><div class="line">                    //自定义标签的解析</div><div class="line">                        delegate.parseCustomElement(ele);</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125; else &#123;</div><div class="line">            delegate.parseCustomElement(root);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line"> //默认标签解析</div><div class="line"></div><div class="line"> //功能很清楚，可以对四种默认标签进行解析:import，alias，bean，beans</div><div class="line"> //import 功能是可以将一个spring配置文件拆分成多个，同个import合并在一起，有利于功能的划分。</div><div class="line"> //alias可以指定一个bean的别名</div><div class="line"> //beans 嵌套进行解析就可以了</div><div class="line"> //bean 解析的主角，最为复杂</div><div class="line">    private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate) &#123;</div><div class="line">        if (delegate.nodeNameEquals(ele, &quot;import&quot;)) &#123;</div><div class="line">            this.importBeanDefinitionResource(ele);</div><div class="line">        &#125; else if (delegate.nodeNameEquals(ele, &quot;alias&quot;)) &#123;</div><div class="line">            this.processAliasRegistration(ele);</div><div class="line">        &#125; else if (delegate.nodeNameEquals(ele, &quot;bean&quot;)) &#123;</div><div class="line">            this.processBeanDefinition(ele, delegate);</div><div class="line">        &#125; else if (delegate.nodeNameEquals(ele, &quot;beans&quot;)) &#123;</div><div class="line">            this.doRegisterBeanDefinitions(ele);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">   protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) &#123;</div><div class="line">   //这个方法让bdHolder包含配置文件的各种属性</div><div class="line">        BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);</div><div class="line">        if (bdHolder != null) &#123;</div><div class="line">   //如果有自定义的属性，对其进行解析</div><div class="line">            bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);</div><div class="line"></div><div class="line">            try &#123;</div><div class="line">   //对bdHolder进行注册</div><div class="line">                BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, this.getReaderContext().getRegistry());</div><div class="line">            &#125; catch (BeanDefinitionStoreException var5) &#123;</div><div class="line">                this.getReaderContext().error(&quot;Failed to register bean definition with name &apos;&quot; + bdHolder.getBeanName() + &quot;&apos;&quot;, ele, var5);</div><div class="line">            &#125;</div><div class="line">//发出响应事件，通知相关监听器，bean加载完成</div><div class="line">            this.getReaderContext().fireComponentRegistered(new BeanComponentDefinition(bdHolder));</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>可以发现spring的源码每个方法的分工都非常明确，层层嵌套非常深入。首先要明确BeanDefination的继承关系，BeanDefination只是一个接口，抽象类AbstractBeanDefination实现了这个接口，并且有三个具体的实现类继承自这个抽象类。继续来看最后这个方法的内部实现。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fml5kcytl3j30ir0b7gmz.jpg" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, BeanDefinition containingBean) &#123;</div><div class="line">//获取ID属性</div><div class="line">        String id = ele.getAttribute(&quot;id&quot;);</div><div class="line">//解析name属性</div><div class="line">        String nameAttr = ele.getAttribute(&quot;name&quot;);</div><div class="line">//解析alias属性</div><div class="line">        List&lt;String&gt; aliases = new ArrayList();</div><div class="line">        if (StringUtils.hasLength(nameAttr)) &#123;</div><div class="line">            String[] nameArr = StringUtils.tokenizeToStringArray(nameAttr, &quot;,; &quot;);</div><div class="line">            aliases.addAll(Arrays.asList(nameArr));</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        String beanName = id;</div><div class="line">        if (!StringUtils.hasText(id) &amp;&amp; !aliases.isEmpty()) &#123;</div><div class="line">            beanName = (String)aliases.remove(0);</div><div class="line">            if (this.logger.isDebugEnabled()) &#123;</div><div class="line">                this.logger.debug(&quot;No XML &apos;id&apos; specified - using &apos;&quot; + beanName + &quot;&apos; as bean name and &quot; + aliases + &quot; as aliases&quot;);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (containingBean == null) &#123;</div><div class="line">            this.checkNameUniqueness(beanName, aliases, ele);</div><div class="line">        &#125;</div><div class="line">//关键方法  其他标签的信息的封装</div><div class="line">        AbstractBeanDefinition beanDefinition = this.parseBeanDefinitionElement(ele, beanName, containingBean);</div><div class="line">        if (beanDefinition != null) &#123;</div><div class="line">            if (!StringUtils.hasText(beanName)) &#123;</div><div class="line">                try &#123;</div><div class="line">                    if (containingBean != null) &#123;</div><div class="line">//如果bean解析成功，但没有name属性，则生成一个name</div><div class="line">                        beanName = BeanDefinitionReaderUtils.generateBeanName(beanDefinition, this.readerContext.getRegistry(), true);</div><div class="line">                    &#125; else &#123;</div><div class="line">                        beanName = this.readerContext.generateBeanName(beanDefinition);</div><div class="line">                        String beanClassName = beanDefinition.getBeanClassName();</div><div class="line">                        if (beanClassName != null &amp;&amp; beanName.startsWith(beanClassName) &amp;&amp; beanName.length() &gt; beanClassName.length() &amp;&amp; !this.readerContext.getRegistry().isBeanNameInUse(beanClassName)) &#123;</div><div class="line">                            aliases.add(beanClassName);</div><div class="line">                        &#125;</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                    if (this.logger.isDebugEnabled()) &#123;</div><div class="line">                        this.logger.debug(&quot;Neither XML &apos;id&apos; nor &apos;name&apos; specified - using generated bean name [&quot; + beanName + &quot;]&quot;);</div><div class="line">                    &#125;</div><div class="line">                &#125; catch (Exception var9) &#123;</div><div class="line">                    this.error(var9.getMessage(), ele);</div><div class="line">                    return null;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            String[] aliasesArray = StringUtils.toStringArray(aliases);</div><div class="line">            return new BeanDefinitionHolder(beanDefinition, beanName, aliasesArray);</div><div class="line">        &#125; else &#123;</div><div class="line">            return null;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    //其他标签信息的封装方法</div><div class="line">   public AbstractBeanDefinition parseBeanDefinitionElement(Element ele, String beanName, BeanDefinition containingBean) &#123;</div><div class="line">        this.parseState.push(new BeanEntry(beanName));</div><div class="line">        String className = null;</div><div class="line">        if (ele.hasAttribute(&quot;class&quot;)) &#123;</div><div class="line">            className = ele.getAttribute(&quot;class&quot;).trim();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        try &#123;</div><div class="line">            String parent = null;</div><div class="line">//解析parent属性</div><div class="line">            if (ele.hasAttribute(&quot;parent&quot;)) &#123;</div><div class="line">                parent = ele.getAttribute(&quot;parent&quot;);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            AbstractBeanDefinition bd = this.createBeanDefinition(className, parent);</div><div class="line">//解析默认bean的各种属性</div><div class="line">            this.parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);</div><div class="line">            bd.setDescription(DomUtils.getChildElementValueByTagName(ele, &quot;description&quot;));</div><div class="line">//解析meta标签</div><div class="line">            this.parseMetaElements(ele, bd);</div><div class="line">//解析lookup-method标签</div><div class="line">            this.parseLookupOverrideSubElements(ele, bd.getMethodOverrides());</div><div class="line">//解析replace-method标签</div><div class="line">            this.parseReplacedMethodSubElements(ele, bd.getMethodOverrides());</div><div class="line">//解析构造函数标签</div><div class="line">            this.parseConstructorArgElements(ele, bd);</div><div class="line">//解析property标签</div><div class="line">            this.parsePropertyElements(ele, bd);</div><div class="line">//解析Qualifier标签</div><div class="line">            this.parseQualifierElements(ele, bd);</div><div class="line">            bd.setResource(this.readerContext.getResource());</div><div class="line">            bd.setSource(this.extractSource(ele));</div><div class="line">            AbstractBeanDefinition var7 = bd;</div><div class="line">            return var7;</div><div class="line">        &#125; catch (ClassNotFoundException var13) &#123;</div><div class="line">            this.error(&quot;Bean class [&quot; + className + &quot;] not found&quot;, ele, var13);</div><div class="line">        &#125; catch (NoClassDefFoundError var14) &#123;</div><div class="line">            this.error(&quot;Class that bean class [&quot; + className + &quot;] depends on not found&quot;, ele, var14);</div><div class="line">        &#125; catch (Throwable var15) &#123;</div><div class="line">            this.error(&quot;Unexpected failure during bean definition parsing&quot;, ele, var15);</div><div class="line">        &#125; finally &#123;</div><div class="line">            this.parseState.pop();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    //解析默认bean的属性，通过字符串就可以看出在解析哪些属性，不做注释</div><div class="line">   public AbstractBeanDefinition parseBeanDefinitionAttributes(Element ele, String beanName, BeanDefinition containingBean, AbstractBeanDefinition bd) &#123;</div><div class="line">        if (ele.hasAttribute(&quot;singleton&quot;)) &#123;</div><div class="line">            this.error(&quot;Old 1.x &apos;singleton&apos; attribute in use - upgrade to &apos;scope&apos; declaration&quot;, ele);</div><div class="line">        &#125; else if (ele.hasAttribute(&quot;scope&quot;)) &#123;</div><div class="line">            bd.setScope(ele.getAttribute(&quot;scope&quot;));</div><div class="line">        &#125; else if (containingBean != null) &#123;</div><div class="line">            bd.setScope(containingBean.getScope());</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (ele.hasAttribute(&quot;abstract&quot;)) &#123;</div><div class="line">            bd.setAbstract(&quot;true&quot;.equals(ele.getAttribute(&quot;abstract&quot;)));</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        String lazyInit = ele.getAttribute(&quot;lazy-init&quot;);</div><div class="line">        if (&quot;default&quot;.equals(lazyInit)) &#123;</div><div class="line">            lazyInit = this.defaults.getLazyInit();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        bd.setLazyInit(&quot;true&quot;.equals(lazyInit));</div><div class="line">        String autowire = ele.getAttribute(&quot;autowire&quot;);</div><div class="line">        bd.setAutowireMode(this.getAutowireMode(autowire));</div><div class="line">        String dependencyCheck = ele.getAttribute(&quot;dependency-check&quot;);</div><div class="line">        bd.setDependencyCheck(this.getDependencyCheck(dependencyCheck));</div><div class="line">        String autowireCandidate;</div><div class="line">        if (ele.hasAttribute(&quot;depends-on&quot;)) &#123;</div><div class="line">            autowireCandidate = ele.getAttribute(&quot;depends-on&quot;);</div><div class="line">            bd.setDependsOn(StringUtils.tokenizeToStringArray(autowireCandidate, &quot;,; &quot;));</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        autowireCandidate = ele.getAttribute(&quot;autowire-candidate&quot;);</div><div class="line">        String destroyMethodName;</div><div class="line">        if (!&quot;&quot;.equals(autowireCandidate) &amp;&amp; !&quot;default&quot;.equals(autowireCandidate)) &#123;</div><div class="line">            bd.setAutowireCandidate(&quot;true&quot;.equals(autowireCandidate));</div><div class="line">        &#125; else &#123;</div><div class="line">            destroyMethodName = this.defaults.getAutowireCandidates();</div><div class="line">            if (destroyMethodName != null) &#123;</div><div class="line">                String[] patterns = StringUtils.commaDelimitedListToStringArray(destroyMethodName);</div><div class="line">                bd.setAutowireCandidate(PatternMatchUtils.simpleMatch(patterns, beanName));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (ele.hasAttribute(&quot;primary&quot;)) &#123;</div><div class="line">            bd.setPrimary(&quot;true&quot;.equals(ele.getAttribute(&quot;primary&quot;)));</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (ele.hasAttribute(&quot;init-method&quot;)) &#123;</div><div class="line">            destroyMethodName = ele.getAttribute(&quot;init-method&quot;);</div><div class="line">            if (!&quot;&quot;.equals(destroyMethodName)) &#123;</div><div class="line">                bd.setInitMethodName(destroyMethodName);</div><div class="line">            &#125;</div><div class="line">        &#125; else if (this.defaults.getInitMethod() != null) &#123;</div><div class="line">            bd.setInitMethodName(this.defaults.getInitMethod());</div><div class="line">            bd.setEnforceInitMethod(false);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (ele.hasAttribute(&quot;destroy-method&quot;)) &#123;</div><div class="line">            destroyMethodName = ele.getAttribute(&quot;destroy-method&quot;);</div><div class="line">            bd.setDestroyMethodName(destroyMethodName);</div><div class="line">        &#125; else if (this.defaults.getDestroyMethod() != null) &#123;</div><div class="line">            bd.setDestroyMethodName(this.defaults.getDestroyMethod());</div><div class="line">            bd.setEnforceDestroyMethod(false);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (ele.hasAttribute(&quot;factory-method&quot;)) &#123;</div><div class="line">            bd.setFactoryMethodName(ele.getAttribute(&quot;factory-method&quot;));</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (ele.hasAttribute(&quot;factory-bean&quot;)) &#123;</div><div class="line">            bd.setFactoryBeanName(ele.getAttribute(&quot;factory-bean&quot;));</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        return bd;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>至此，我们就解析了Bean标签所有的属性。再让我们回顾一下那个最初的入口方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"> protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) &#123;</div><div class="line">   //这个方法让bdHolder包含配置文件的各种属性</div><div class="line">        BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);</div><div class="line">        if (bdHolder != null) &#123;</div><div class="line">   //如果有自定义的属性，对其进行解析</div><div class="line">            bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);</div><div class="line"></div><div class="line">            try &#123;</div><div class="line">   //对bdHolder进行注册</div><div class="line">                BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, this.getReaderContext().getRegistry());</div><div class="line">            &#125; catch (BeanDefinitionStoreException var5) &#123;</div><div class="line">                this.getReaderContext().error(&quot;Failed to register bean definition with name &apos;&quot; + bdHolder.getBeanName() + &quot;&apos;&quot;, ele, var5);</div><div class="line">            &#125;</div><div class="line">//发出响应事件，通知相关监听器，bean加载完成</div><div class="line">            this.getReaderContext().fireComponentRegistered(new BeanComponentDefinition(bdHolder));</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>此时完成了第一行代码的工作，如果有需要会进入装饰bean方法，由于工作中没有使用过自定义的bean属性需要装饰，所以到下一行代码，对hdHolder进行注册。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div></pre></td><td class="code"><pre><div class="line">    public static void registerBeanDefinition(BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry) throws BeanDefinitionStoreException &#123;</div><div class="line">        String beanName = definitionHolder.getBeanName();</div><div class="line">        //根据bean name属性进行注册</div><div class="line">        registry.registerBeanDefinition(beanName, definitionHolder.getBeanDefinition());</div><div class="line">        String[] aliases = definitionHolder.getAliases();</div><div class="line">        if (aliases != null) &#123;</div><div class="line">            String[] var4 = aliases;</div><div class="line">            int var5 = aliases.length;</div><div class="line"></div><div class="line">            for(int var6 = 0; var6 &lt; var5; ++var6) &#123;</div><div class="line">                String alias = var4[var6];</div><div class="line">       //注册所有别名</div><div class="line">                registry.registerAlias(beanName, alias);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">  public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) throws BeanDefinitionStoreException &#123;</div><div class="line">        Assert.hasText(beanName, &quot;Bean name must not be empty&quot;);</div><div class="line">        Assert.notNull(beanDefinition, &quot;BeanDefinition must not be null&quot;);</div><div class="line">        if (beanDefinition instanceof AbstractBeanDefinition) &#123;</div><div class="line">            try &#123;</div><div class="line">//对BeanDefination的一些属性进行校验</div><div class="line">                ((AbstractBeanDefinition)beanDefinition).validate();</div><div class="line">            &#125; catch (BeanDefinitionValidationException var9) &#123;</div><div class="line">                throw new BeanDefinitionStoreException(beanDefinition.getResourceDescription(), beanName, &quot;Validation of bean definition failed&quot;, var9);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">//检查这个bean是否已经被注册</div><div class="line">        BeanDefinition oldBeanDefinition = (BeanDefinition)this.beanDefinitionMap.get(beanName);</div><div class="line">        if (oldBeanDefinition != null) &#123;</div><div class="line">            if (!this.isAllowBeanDefinitionOverriding()) &#123;</div><div class="line">                throw new BeanDefinitionStoreException(beanDefinition.getResourceDescription(), beanName, &quot;Cannot register bean definition [&quot; + beanDefinition + &quot;] for bean &apos;&quot; + beanName + &quot;&apos;: There is already [&quot; + oldBeanDefinition + &quot;] bound.&quot;);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            if (oldBeanDefinition.getRole() &lt; beanDefinition.getRole()) &#123;</div><div class="line">                if (this.logger.isWarnEnabled()) &#123;</div><div class="line">                    this.logger.warn(&quot;Overriding user-defined bean definition for bean &apos;&quot; + beanName + &quot;&apos; with a framework-generated bean definition: replacing [&quot; + oldBeanDefinition + &quot;] with [&quot; + beanDefinition + &quot;]&quot;);</div><div class="line">                &#125;</div><div class="line">            &#125; else if (!beanDefinition.equals(oldBeanDefinition)) &#123;</div><div class="line">                if (this.logger.isInfoEnabled()) &#123;</div><div class="line">                    this.logger.info(&quot;Overriding bean definition for bean &apos;&quot; + beanName + &quot;&apos; with a different definition: replacing [&quot; + oldBeanDefinition + &quot;] with [&quot; + beanDefinition + &quot;]&quot;);</div><div class="line">                &#125;</div><div class="line">            &#125; else if (this.logger.isDebugEnabled()) &#123;</div><div class="line">                this.logger.debug(&quot;Overriding bean definition for bean &apos;&quot; + beanName + &quot;&apos; with an equivalent definition: replacing [&quot; + oldBeanDefinition + &quot;] with [&quot; + beanDefinition + &quot;]&quot;);</div><div class="line">            &#125;</div><div class="line">//这里因为是存在相同beanName的情况</div><div class="line">//将bean覆盖到beanDefinitionMap，这是一个ConcurrentHashMap，Key是beanName，value就是beanDefination</div><div class="line">            this.beanDefinitionMap.put(beanName, beanDefinition);</div><div class="line">        &#125; else &#123;</div><div class="line">            if (this.hasBeanCreationStarted()) &#123;</div><div class="line">                Map var4 = this.beanDefinitionMap;</div><div class="line"></div><div class="line">//这里是bean不存在的情况，控制并发访问，将bean放入Map中</div><div class="line">                synchronized(this.beanDefinitionMap) &#123;</div><div class="line">                    this.beanDefinitionMap.put(beanName, beanDefinition);</div><div class="line">                    List&lt;String&gt; updatedDefinitions = new ArrayList(this.beanDefinitionNames.size() + 1);</div><div class="line">                    updatedDefinitions.addAll(this.beanDefinitionNames);</div><div class="line">                    updatedDefinitions.add(beanName);</div><div class="line">                    this.beanDefinitionNames = updatedDefinitions;</div><div class="line">                    if (this.manualSingletonNames.contains(beanName)) &#123;</div><div class="line">                        Set&lt;String&gt; updatedSingletons = new LinkedHashSet(this.manualSingletonNames);</div><div class="line">                        updatedSingletons.remove(beanName);</div><div class="line">                        this.manualSingletonNames = updatedSingletons;</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125; else &#123;</div><div class="line">                this.beanDefinitionMap.put(beanName, beanDefinition);</div><div class="line">                this.beanDefinitionNames.add(beanName);</div><div class="line">                this.manualSingletonNames.remove(beanName);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            this.frozenBeanDefinitionNames = null;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (oldBeanDefinition != null || this.containsSingleton(beanName)) &#123;</div><div class="line"> //重置所以beanName的缓存</div><div class="line">            this.resetBeanDefinition(beanName);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>到此就完成了bean的注册。这部分只是对spring默认标签的解析过程，自定义解析的过程的方法并不相同，但思想都大同小异。通过这部分代码，就可以对spring中xml文件解析出bean到内存中这个过程做到心中有数，后面要做的就是bean的加载。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fml6ssdvk4j30qk09mgn6.jpg" alt=""></p>
+
+      
+      
+        <div class="page-reward">
+          <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang">赏</a></p>
+          <div class="hide_box"></div>
+          <div class="shang_box">
+            <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+            <div class="shang_tit">
+              <p>纯属好玩</p>
+            </div>
+            <div class="shang_payimg">
+              <img src="/img/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+            </div>
+              <div class="pay_explain">扫码打赏，你说多少就多少</div>
+            <div class="shang_payselect">
+              
+                <div class="pay_item checked" data-id="alipay">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/alipay.png" alt="支付宝" /></span>
+                </div>
+              
+              
+                <div class="pay_item" data-id="wechat">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/weixin.png" alt="微信" /></span>
+                </div>
+              
+            </div>
+            <div class="shang_info">
+              <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script type="text/javascript">
+          $(".pay_item").click(function(){
+            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+            var dataid=$(this).attr('data-id');
+            $(".shang_payimg img").attr("src","/img/"+dataid+"img.jpg");
+            $("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+          });
+          function dashangToggle(){
+            
+            $(".hide_box").fadeToggle();
+            $(".shang_box").fadeToggle();
+          }
+        </script>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
+        <p><span>发布时间:</span>2017年12月18日 - 16时51分</p>
+        <p><span>最后更新:</span>2017年12月18日 - 20时24分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/" title="spring4.3.x源码阅读笔记-XML配置文件解析(2)">http://www.shuchang.sc.com/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">spring4.3.x源码阅读笔记-从hello world开始(1)</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#验证XML"><span class="toc-number">1.</span> <span class="toc-text">验证XML</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取Document对象"><span class="toc-number">2.</span> <span class="toc-text">获取Document对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解析BeanDefinations"><span class="toc-number">3.</span> <span class="toc-text">解析BeanDefinations</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'shuchaang',
+      repo: 'shuchaang.github.io',
+      oauth: {
+        client_id: 'c5aa96bb5e5656512174',
+        client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/" title="下一篇: spring4.3.x源码阅读笔记-从hello world开始(1)">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">java并发从入门到崩溃-ConcurrentHashMap(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-JMM/">java并发从入门到崩溃-JMM(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">java并发从入门到崩溃-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">java并发从入门到崩溃-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">java并发从入门到崩溃-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">java并发从入门到崩溃--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/07/devops初识/">devops初识</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2017 Shuchang
+            </div>
+
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>
