@@ -15,7 +15,7 @@
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fmp9tuv6cxj30py0nq42h.jpg">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmpb1g99e8j30jx0a7t9f.jpg">
 <meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fmpabysk3ij30pl0aw76g.jpg">
-<meta property="og:updated_time" content="2017-12-22T02:30:26.000Z">
+<meta property="og:updated_time" content="2017-12-22T02:33:56.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RabbitMq入门-基本概念">
 <meta name="twitter:description" content="JMSJava Message Service，是java平台面向消息中间件的API，提供了与消息中间件厂商无关的访问方法，作用相当于JDBC，在多个应用程序之间，提供异步的通信服务。由于JMS只是一套API，具体的实现还是依靠Mq来做，目前使用最多的就是AcitveMq，因此在springboot中，jms默认使用的就是activemq。目前springboot集成了两种jms的实现:Acitv">
@@ -277,14 +277,16 @@
           
         <h3 id="JMS"><a href="#JMS" class="headerlink" title="JMS"></a>JMS</h3><p>Java Message Service，是java平台面向消息中间件的API，提供了与消息中间件厂商无关的访问方法，作用相当于JDBC，在多个应用程序之间，提供异步的通信服务。由于JMS只是一套API，具体的实现还是依靠Mq来做，目前使用最多的就是AcitveMq，因此在springboot中，jms默认使用的就是activemq。目前springboot集成了两种jms的实现:AcitveMq和Artemis(没听说过),实现了AMQP协议的rabbitMq以及一种发布订阅系统kafka。</p>
 <h3 id="AMQP"><a href="#AMQP" class="headerlink" title="AMQP"></a>AMQP</h3><p>Advanced Message Queuing Protocol,是一个应用层的消息队列协议，基于此协议开发消息队列产品，可以不受编程语言的限制。</p>
+<h3 id="为什么选择RabbitMq"><a href="#为什么选择RabbitMq" class="headerlink" title="为什么选择RabbitMq"></a>为什么选择RabbitMq</h3><p>一张图就能说明</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmp9tuv6cxj30py0nq42h.jpg" alt=""></p>
 <p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
 <ul>
 <li><a id="more"></a>
 <the rest="" of="" contents="" |="" 余下全文="">
 
+
 </the></li>
 </ul>
-<h3 id="为什么选择RabbitMq"><a href="#为什么选择RabbitMq" class="headerlink" title="为什么选择RabbitMq"></a>为什么选择RabbitMq</h3><p>一张图就能说明<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmp9tuv6cxj30py0nq42h.jpg" alt=""></p>
 <h3 id="RabbitMq相关概念"><a href="#RabbitMq相关概念" class="headerlink" title="RabbitMq相关概念"></a>RabbitMq相关概念</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmpb1g99e8j30jx0a7t9f.jpg" alt=""></p>
 <ol>
 <li><p>Virtual host: rabbitmq server实际上是由多个vutrual rabbitmq server组成的,即Vhost，默认是 “/”,每个用户所能使用的Exchange和queue也都是一个vhost的，而不能跨vhost调用。这样做的优点是可以为不同app提供边界隔离，使得应用安全的运行在不同的vhost实例上，相互之间不会干扰。</p>
@@ -386,7 +388,7 @@
         <p><span>本文标题:</span><a href="/2017/12/22/RabbitMq入门-基本概念/">RabbitMq入门-基本概念</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
         <p><span>发布时间:</span>2017年12月22日 - 08时43分</p>
-        <p><span>最后更新:</span>2017年12月22日 - 10时30分</p>
+        <p><span>最后更新:</span>2017年12月22日 - 10时33分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2017/12/22/RabbitMq入门-基本概念/" title="RabbitMq入门-基本概念">http://www.shuchang.sc.com/2017/12/22/RabbitMq入门-基本概念/</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/12/22/RabbitMq入门-基本概念/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
