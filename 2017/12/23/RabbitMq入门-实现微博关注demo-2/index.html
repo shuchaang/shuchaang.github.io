@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>RabbitMq入门-实现微博关注demo(2) | Shuchang&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在网上看了很多RabbitMq的demo，发现都是Exchange三种路由模式的demo，很少有真实案例的demo，在这里分享一个自己写的模拟微博关注的demo,方便理解和学习。 工具SpringBoot  RabbitMq 构思 美女发布消息，关注她的人可以接收到消息 关注和取关都记录到日志中 美女和关注者都可以动态添加,添加一个美女就是添加一个Fanout模式的Exchange，一个关注者就是">
+<meta name="keywords" content="java,RabbitMq">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMq入门-实现微博关注demo(2)">
+<meta property="og:url" content="http://www.shuchang.sc.com/2017/12/23/RabbitMq入门-实现微博关注demo-2/index.html">
+<meta property="og:site_name" content="Shuchang&#39;s Blog">
+<meta property="og:description" content="在网上看了很多RabbitMq的demo，发现都是Exchange三种路由模式的demo，很少有真实案例的demo，在这里分享一个自己写的模拟微博关注的demo,方便理解和学习。 工具SpringBoot  RabbitMq 构思 美女发布消息，关注她的人可以接收到消息 关注和取关都记录到日志中 美女和关注者都可以动态添加,添加一个美女就是添加一个Fanout模式的Exchange，一个关注者就是">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmpi6l7tvbj30hm0bn75v.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmqrsrah7ij30cp0dqjuz.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fmqrw8gd75j305j02djrd.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fmqp9ou0irj308q083gmi.jpg">
+<meta property="og:updated_time" content="2017-12-23T08:27:04.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RabbitMq入门-实现微博关注demo(2)">
+<meta name="twitter:description" content="在网上看了很多RabbitMq的demo，发现都是Exchange三种路由模式的demo，很少有真实案例的demo，在这里分享一个自己写的模拟微博关注的demo,方便理解和学习。 工具SpringBoot  RabbitMq 构思 美女发布消息，关注她的人可以接收到消息 关注和取关都记录到日志中 美女和关注者都可以动态添加,添加一个美女就是添加一个Fanout模式的Exchange，一个关注者就是">
+<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmpi6l7tvbj30hm0bn75v.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Shuchang</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">剑来!</p>
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                            <li><a href="/archives">所有文章</a></li>
+                        
+                            <li><a href="/about">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                            
+                                <a class="fl github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                            
+                                <a class="fl zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                            
+                                <a class="fl weibo" target="_blank" href="#" title="weibo">weibo</a>
+                            
+                                <a class="fl google" target="_blank" href="#" title="google">google</a>
+                            
+                                <a class="fl twitter" target="_blank" href="#" title="twitter">twitter</a>
+                            
+                                <a class="fl linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/RabbitMq/" style="font-size: 12.5px;">RabbitMq</a> <a href="/tags/devops/" style="font-size: 10px;">devops</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 12.5px;">jvm</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/spring/" style="font-size: 15px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/并发/" style="font-size: 17.5px;">并发</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="https://gitee.com/swiftsc/">gitee</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">因为不满足于现状，面对未知，我们努力探索，其实越贴近，越震撼</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Shuchang</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Shuchang</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">剑来!</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                    <li><a href="/archives">所有文章</a></li>
+                
+                    <li><a href="/about">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                    
+                        <a class="github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                    
+                        <a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                    
+                        <a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+                    
+                        <a class="google" target="_blank" href="#" title="google">google</a>
+                    
+                        <a class="twitter" target="_blank" href="#" title="twitter">twitter</a>
+                    
+                        <a class="linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-RabbitMq入门-实现微博关注demo-2" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/" class="article-date">
+      <time datetime="2017-12-23T08:05:24.000Z" itemprop="datePublished">2017-12-23</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      RabbitMq入门-实现微博关注demo(2)
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>在网上看了很多RabbitMq的demo，发现都是Exchange三种路由模式的demo，很少有真实案例的demo，在这里分享一个自己写的模拟微博关注的demo,方便理解和学习。</p>
+<h3 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h3><p>SpringBoot  RabbitMq</p>
+<h3 id="构思"><a href="#构思" class="headerlink" title="构思"></a>构思</h3><ol>
+<li>美女发布消息，关注她的人可以接收到消息</li>
+<li>关注和取关都记录到日志中</li>
+<li>美女和关注者都可以动态添加,添加一个美女就是添加一个Fanout模式的Exchange，一个关注者就是一个队列绑定到对应美女的Exchange</li>
+</ol>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmpi6l7tvbj30hm0bn75v.jpg" alt=""></p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li><a id="more"></a>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+</the></li>
+</ul>
+<h3 id="测试类"><a href="#测试类" class="headerlink" title="测试类"></a>测试类</h3><p>列出想要实现的接口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">@RestController</div><div class="line">public class Controller &#123;</div><div class="line"></div><div class="line">    @Autowired</div><div class="line">    private LikeService likeService;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 美女注册</div><div class="line">     */</div><div class="line">    @GetMapping(&quot;/addBeauty&quot;)</div><div class="line">    public void addBeauty(String name)&#123;</div><div class="line">        likeService.addBeauty(name);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 关注她</div><div class="line">     */</div><div class="line">    @GetMapping(&quot;/like&quot;)</div><div class="line">    public void like(String boyName,String girlName)</div><div class="line">    &#123;</div><div class="line">        likeService.like(boyName,girlName);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 取关</div><div class="line">     */</div><div class="line">    @GetMapping(&quot;/unlike&quot;)</div><div class="line">    public void unlike(String boyName,String girlName)&#123;</div><div class="line">        likeService.unlike(boyName,girlName);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 美女发朋友圈了</div><div class="line">     */</div><div class="line">    @GetMapping(&quot;/post&quot;)</div><div class="line">    public void postMessage(String girlName,String message)&#123;</div><div class="line">         likeService.postMessage(girlName,message);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="配置类"><a href="#配置类" class="headerlink" title="配置类"></a>配置类</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line">@Configuration</div><div class="line">public class BaseRabbitConfig &#123;</div><div class="line"></div><div class="line">    @Bean</div><div class="line">    public ConnectionFactory connectionFactory()&#123;</div><div class="line">        CachingConnectionFactory factory = new CachingConnectionFactory();</div><div class="line">        factory.setVirtualHost(&quot;/&quot;);</div><div class="line">        factory.setUsername(&quot;用户名&quot;);</div><div class="line">        factory.setPassword(&quot;密码&quot;);</div><div class="line">        factory.setAddresses(&quot;IP+PORT&quot;);</div><div class="line">        return factory;</div><div class="line">    &#125;</div><div class="line">    @Bean</div><div class="line">    public RabbitManagementTemplate rabbitManagementTemplate()&#123;</div><div class="line">        return new RabbitManagementTemplate(&quot;http://用户名:密码@IP+PORT/api/&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Bean</div><div class="line">    public AmqpAdmin amqpAdmin()&#123;</div><div class="line">        return new RabbitAdmin(connectionFactory());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Bean</div><div class="line">    public RabbitTemplate rabbitTemplate()&#123;</div><div class="line">        return new RabbitTemplate(connectionFactory());</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">@Configuration</div><div class="line">public class LogRabbitConfig extends BaseRabbitConfig &#123;</div><div class="line"></div><div class="line">    public static final String LOG_QUEUE = &quot;LOG_QUEUE&quot;;</div><div class="line">    public static final String LOG_EXCHANGE = &quot;LOG_EXCHANGE&quot;;</div><div class="line">    public final static String ROUTING_KEY=&quot;log&quot;;</div><div class="line">    @Bean</div><div class="line">    public Queue logQueue()&#123;</div><div class="line">        return new Queue(LOG_QUEUE);</div><div class="line">    &#125;</div><div class="line">    /**</div><div class="line">     * 监听容器</div><div class="line">     */</div><div class="line">    @Bean</div><div class="line">    public SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, LogListener logListener)&#123;</div><div class="line">        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();</div><div class="line">        container.setConnectionFactory(connectionFactory);</div><div class="line">        container.setQueueNames(new String[]&#123;LOG_QUEUE&#125;);</div><div class="line">        container.setMessageListener(logListener);</div><div class="line">        return container;</div><div class="line">    &#125;</div><div class="line">    @Bean</div><div class="line">    LogListener logListener()&#123;</div><div class="line">        return new LogListener();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Bean</div><div class="line">    public DirectExchange directExchange()&#123;</div><div class="line">        return new DirectExchange(LOG_EXCHANGE);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Bean</div><div class="line">    Binding binding(Queue logQueue,DirectExchange directExchange)&#123;</div><div class="line">        return BindingBuilder.bind(logQueue).to(directExchange).with(ROUTING_KEY);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里我注册了一个RabbitManagementTemplate，作用是调用HttpApi。因为我的构想是希望能够实现队列和交换器的热插拔，这时要解决的问题就是实时获取Exchange的列表和一些绑定的信息，但在网上并没有找到相关的资料。<br>这里一个技巧就是查找函数了，在IDEA中可以双击shift搜索函数。比如我想要的功能是getExchanges(),因为我猜这个功能的调用函数就叫这个名字，果然在这里发现了:</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmqrsrah7ij30cp0dqjuz.jpg" alt=""></p>
+<p>可以看到还可以取到队列，绑定的信息，这就是我们实现热插拔的必要条件了，接着看到它的构造函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public RabbitManagementTemplate() &#123;</div><div class="line">        this(&quot;http://guest:guest@localhost:15672/api/&quot;);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>所以只要我们把地址填成我们自己的rabbitmq配置就可以，这个对象其实就是调用了RabbitMq的HttpApi。我们可以打开RabbitMq的webUI，拉到最下面</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmqrw8gd75j305j02djrd.jpg" alt=""></p>
+<p>点击这个Http API就可以通过Restful的方式调用这些API</p>
+<h3 id="业务实现"><a href="#业务实现" class="headerlink" title="业务实现"></a>业务实现</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">@Service</div><div class="line">public class LikeService &#123;</div><div class="line">    @Autowired</div><div class="line">    private RabbitTemplate rabbitTemplate;</div><div class="line">    @Autowired</div><div class="line">    private AmqpAdmin amqpAdmin;</div><div class="line">    @Autowired</div><div class="line">    private RabbitManagementTemplate rabbitManagementTemplate;</div><div class="line">    public void addBeauty(String name) &#123;</div><div class="line">        try &#123;</div><div class="line">            FanoutExchange fanoutExchange = new FanoutExchange(name);</div><div class="line">            amqpAdmin.declareExchange(fanoutExchange);</div><div class="line">            System.out.println(&quot;初始化交换器成功 :&quot;+name);</div><div class="line">            rabbitTemplate.convertAndSend(LogRabbitConfig.LOG_EXCHANGE,LogRabbitConfig.ROUTING_KEY,&quot;初始化交换器&quot;+name);</div><div class="line"></div><div class="line">        &#125;catch (Exception e)&#123;</div><div class="line">            System.out.println(&quot;初始化交换器失败 :&quot;+name);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void like(String boyName, String girlName) &#123;</div><div class="line"></div><div class="line">        Queue queue = new Queue(boyName);</div><div class="line">        FanoutExchange fanoutExchange = (FanoutExchange) rabbitManagementTemplate.getExchange(girlName);</div><div class="line">        amqpAdmin.declareQueue(queue);</div><div class="line">        amqpAdmin.declareBinding(BindingBuilder.bind(queue).to(fanoutExchange));</div><div class="line">        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();</div><div class="line">        container.setQueueNames(boyName);</div><div class="line">        container.setConnectionFactory(rabbitTemplate.getConnectionFactory());</div><div class="line">        container.setMessageListener(new BoyListener());</div><div class="line">        container.start();</div><div class="line">        System.out.println(boyName+&quot;关注了&quot;+girlName);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void postMessage(String girlName, String message) &#123;</div><div class="line">        System.out.println(girlName+&quot;发了一条微博&quot;+message);</div><div class="line">        rabbitTemplate.convertAndSend(girlName,&quot;&quot;,message);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void unlike(String boyName, String girlName) &#123;</div><div class="line">            Queue queue = rabbitManagementTemplate.getQueue(boyName);</div><div class="line">            rabbitManagementTemplate.deleteQueue(queue);</div><div class="line">        rabbitTemplate.convertAndSend(LogRabbitConfig.LOG_EXCHANGE,LogRabbitConfig.ROUTING_KEY,boyName+&quot;取关了&quot;+girlName);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@RabbitListener</div><div class="line">public class BoyListener implements MessageListener&#123;</div><div class="line">    @Override</div><div class="line">    public void onMessage(org.springframework.amqp.core.Message message) &#123;</div><div class="line">        System.out.println(message.getMessageProperties().getConsumerQueue()+&quot;看到&quot;+message.getMessageProperties().getReceivedExchange()+&quot;发朋友圈&quot;+new String(message.getBody()));</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">@Service</div><div class="line">public class LogListener implements MessageListener&#123;</div><div class="line">    @Override</div><div class="line">    public void onMessage(Message message) &#123;</div><div class="line">        System.out.println(&quot;LOG QUEUE ============&quot;);</div><div class="line">        System.out.println(new String(message.getBody()));</div><div class="line">        //写入文件</div><div class="line">        System.out.println(&quot;======================&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fmqp9ou0irj308q083gmi.jpg" alt=""></p>
+<p>这里中文出现了乱码，目前已经解决问题,代码在这里</p>
+<blockquote>
+<p><a href="https://gitee.com/swiftsc/RabbitMq-mockweipo" target="_blank" rel="external">https://gitee.com/swiftsc/RabbitMq-mockweipo</a></p>
+</blockquote>
+
+      
+      
+        <div class="page-reward">
+          <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang">赏</a></p>
+          <div class="hide_box"></div>
+          <div class="shang_box">
+            <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+            <div class="shang_tit">
+              <p>纯属好玩</p>
+            </div>
+            <div class="shang_payimg">
+              <img src="/img/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+            </div>
+              <div class="pay_explain">扫码打赏，你说多少就多少</div>
+            <div class="shang_payselect">
+              
+                <div class="pay_item checked" data-id="alipay">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/alipay.png" alt="支付宝" /></span>
+                </div>
+              
+              
+                <div class="pay_item" data-id="wechat">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/weixin.png" alt="微信" /></span>
+                </div>
+              
+            </div>
+            <div class="shang_info">
+              <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script type="text/javascript">
+          $(".pay_item").click(function(){
+            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+            var dataid=$(this).attr('data-id');
+            $(".shang_payimg img").attr("src","/img/"+dataid+"img.jpg");
+            $("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+          });
+          function dashangToggle(){
+            
+            $(".hide_box").fadeToggle();
+            $(".shang_box").fadeToggle();
+          }
+        </script>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
+        <p><span>发布时间:</span>2017年12月23日 - 16时05分</p>
+        <p><span>最后更新:</span>2017年12月23日 - 16时27分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/" title="RabbitMq入门-实现微博关注demo(2)">http://www.shuchang.sc.com/2017/12/23/RabbitMq入门-实现微博关注demo-2/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/12/23/RabbitMq入门-实现微博关注demo-2/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2017/12/22/RabbitMq入门-基本概念/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">RabbitMq入门-基本概念(1)</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#工具"><span class="toc-number">1.</span> <span class="toc-text">工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构思"><span class="toc-number">2.</span> <span class="toc-text">构思</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试类"><span class="toc-number">3.</span> <span class="toc-text">测试类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置类"><span class="toc-number">4.</span> <span class="toc-text">配置类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#业务实现"><span class="toc-number">5.</span> <span class="toc-text">业务实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#效果"><span class="toc-number">6.</span> <span class="toc-text">效果</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'shuchaang',
+      repo: 'shuchaang.github.io',
+      oauth: {
+        client_id: 'c5aa96bb5e5656512174',
+        client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2017/12/22/RabbitMq入门-基本概念/" title="下一篇: RabbitMq入门-基本概念(1)">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/22/RabbitMq入门-基本概念/">RabbitMq入门-基本概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/">spring4.3.x源码阅读笔记-AOP(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">java并发从入门到崩溃-ConcurrentHashMap(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-JMM/">java并发从入门到崩溃-JMM(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">java并发从入门到崩溃-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">java并发从入门到崩溃-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">java并发从入门到崩溃-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">java并发从入门到崩溃--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/07/devops初识/">devops初识</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2017 Shuchang
+            </div>
+
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>
