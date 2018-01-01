@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>SpringBoot-Data-Jpa之高级话题(3) | Shuchang&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="JPA的一些坑如果我们的Repository继承自JpaRepository，那么我们如果执行插入或保存代码的时候会出现异常,比如下面一个方法是会执行失败的: 12345678@Testpublic void test8()&amp;#123;    Book book = new Book();    book.setName(&amp;quot;heng&amp;quot;);    book.setUpdateDa">
+<meta name="keywords" content="SpringBoot,JPA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot-Data-Jpa之高级话题(3)">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/01/01/SpringBoot-Data-Jpa之高级话题/index.html">
+<meta property="og:site_name" content="Shuchang&#39;s Blog">
+<meta property="og:description" content="JPA的一些坑如果我们的Repository继承自JpaRepository，那么我们如果执行插入或保存代码的时候会出现异常,比如下面一个方法是会执行失败的: 12345678@Testpublic void test8()&amp;#123;    Book book = new Book();    book.setName(&amp;quot;heng&amp;quot;);    book.setUpdateDa">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1fn14k7cr5nj30ek02374i.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fn15ox9hr6j30ge03zzkr.jpg">
+<meta property="og:updated_time" content="2018-01-01T08:04:17.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SpringBoot-Data-Jpa之高级话题(3)">
+<meta name="twitter:description" content="JPA的一些坑如果我们的Repository继承自JpaRepository，那么我们如果执行插入或保存代码的时候会出现异常,比如下面一个方法是会执行失败的: 12345678@Testpublic void test8()&amp;#123;    Book book = new Book();    book.setName(&amp;quot;heng&amp;quot;);    book.setUpdateDa">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1fn14k7cr5nj30ek02374i.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Shuchang</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">剑来!</p>
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                            <li><a href="/archives">所有文章</a></li>
+                        
+                            <li><a href="/about">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                            
+                                <a class="fl github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                            
+                                <a class="fl zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                            
+                                <a class="fl weibo" target="_blank" href="#" title="weibo">weibo</a>
+                            
+                                <a class="fl google" target="_blank" href="#" title="google">google</a>
+                            
+                                <a class="fl twitter" target="_blank" href="#" title="twitter">twitter</a>
+                            
+                                <a class="fl linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/JPA/" style="font-size: 15px;">JPA</a> <a href="/tags/RabbitMq/" style="font-size: 12.5px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/devops/" style="font-size: 10px;">devops</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 12.5px;">jvm</a> <a href="/tags/redis/" style="font-size: 15px;">redis</a> <a href="/tags/spring/" style="font-size: 15px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/并发/" style="font-size: 17.5px;">并发</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="https://gitee.com/swiftsc/">gitee</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">因为不满足于现状，面对未知，我们努力探索，其实越贴近，越震撼</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Shuchang</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Shuchang</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">剑来!</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                    <li><a href="/archives">所有文章</a></li>
+                
+                    <li><a href="/about">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                    
+                        <a class="github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                    
+                        <a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                    
+                        <a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+                    
+                        <a class="google" target="_blank" href="#" title="google">google</a>
+                    
+                        <a class="twitter" target="_blank" href="#" title="twitter">twitter</a>
+                    
+                        <a class="linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-SpringBoot-Data-Jpa之高级话题" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/" class="article-date">
+      <time datetime="2018-01-01T08:02:44.000Z" itemprop="datePublished">2018-01-01</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      SpringBoot-Data-Jpa之高级话题(3)
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/SpringBoot/">SpringBoot</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JPA/">JPA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringBoot/">SpringBoot</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h3 id="JPA的一些坑"><a href="#JPA的一些坑" class="headerlink" title="JPA的一些坑"></a>JPA的一些坑</h3><p>如果我们的Repository继承自JpaRepository，那么我们如果执行插入或保存代码的时候会出现异常,比如下面一个方法是会执行失败的:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">@Test</div><div class="line">public void test8()&#123;</div><div class="line">    Book book = new Book();</div><div class="line">    book.setName(&quot;heng&quot;);</div><div class="line">    book.setUpdateDate(new Date());</div><div class="line">    book.setCreateDate(new Date());</div><div class="line">    bookRepository.save(book);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>Connection is read-only. Queries leading to data modification are not allowed</p>
+</blockquote>
+<p>错误提示是ReadOnly，也就是说我们不能修改数据，那么如何解决这个问题呢，很简单。<strong><em><em>只需要在测试类或者方法上加@Transactional注解就可以</em></em></strong>。<br>那么这个问题ReadOnly是从哪里来的呢，我们继承的JpaRepository只是一个接口，那么找问题就要去找它的实现类，可以找到SimpleJpaRepository。在类注解上我们就找到了问题所在</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@Transactional(</div><div class="line">    readOnly = true</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>这里事务标注为只读，所以我们执行修改操作的时候要加事务注解对它进行覆盖。如果你对Repository层写的测试代码，那么你会发现，虽然Junit测试显示成功，sql也打印在了控制台，但是数据库并没有插入或修改这条数据。因为springboot对repository层默认进行了回滚，如果你使用Service层包装了Repository层，对Service写Junit测试，就不会出现事务回滚的情况，要解决这种回滚的情况，需要再添加一个注解:</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li><a id="more"></a>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+
+</the></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">@Test</div><div class="line">@Transactional</div><div class="line">@Rollback(false)</div><div class="line">public void test8()&#123;</div><div class="line">    Book book = new Book();</div><div class="line">    book.setName(&quot;heng&quot;);</div><div class="line">    book.setUpdateDate(new Date());</div><div class="line">    book.setCreateDate(new Date());</div><div class="line">    bookRepository.save(book);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>现在测试代码就不会有什么问题了，如果你只想观察测试用例的sql语句，那么就不需要加RollBack这个注解了。</p>
+<h3 id="自定义Repository"><a href="#自定义Repository" class="headerlink" title="自定义Repository"></a>自定义Repository</h3><p>如果我们想对Repository的方法做一些定制，Jpa当然也是支持的。这里简单演示一下在save方法前打印一句话。</p>
+<p>第一步就是集成SimpleJpaRepository这个类，这个类是JpaRepository的实现类。实现一个构造方法，这里我们重写一个save方法，save之前打印这个保存实体的名称。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class MyRepository&lt;T&gt; extends SimpleJpaRepository&lt;T,Long&gt;&#123;</div><div class="line">    public MyRepository(JpaEntityInformation&lt;T, ?&gt; entityInformation, EntityManager entityManager) &#123;</div><div class="line">        super(entityInformation, entityManager);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public &lt;S extends T&gt; S save(S entity) &#123;</div><div class="line">        System.out.println(&quot;保存了:&quot;+entity.getClass().getSimpleName());</div><div class="line">        return super.save(entity);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>第二步:在启动类上指定要使用的Jpa实现类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">@SpringBootApplication</div><div class="line">@EnableJpaRepositories(repositoryBaseClass = MyRepository.class)</div><div class="line">public class DemoApplication &#123;</div><div class="line">	public static void main(String[] args) &#123;</div><div class="line">		SpringApplication.run(DemoApplication.class, args);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这时当我们再调用测试方法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Test</div><div class="line">@Transactional</div><div class="line">public void test8()&#123;</div><div class="line">    Book book = new Book();</div><div class="line">    book.setName(&quot;heng&quot;);</div><div class="line">    book.setUpdateDate(new Date());</div><div class="line">    book.setCreateDate(new Date());</div><div class="line">    bookRepository.save(book);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>就可以看到输出结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">保存了:Book</div><div class="line">Hibernate:</div><div class="line">    insert</div><div class="line">    into</div><div class="line">        sc_book</div><div class="line">        (sc_create_date, sc_update_date, sc_category_sc_id, sc_name)</div><div class="line">    values</div><div class="line">        (?, ?, ?, ?)</div></pre></td></tr></table></figure>
+<h3 id="持久化上下文"><a href="#持久化上下文" class="headerlink" title="持久化上下文"></a>持久化上下文</h3><p>先来看这么一个场景</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">@Test</div><div class="line">@Transactional</div><div class="line">public void test9()&#123;</div><div class="line">    Book one = bookRepository.findOne(2L);</div><div class="line">    one.setName(&quot;python&quot;);</div><div class="line">    bookRepository.save(one);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">Hibernate:</div><div class="line">    select</div><div class="line">        book0_.sc_id as sc_id1_2_0_,</div><div class="line">        book0_.sc_create_date as sc_creat2_2_0_,</div><div class="line">        book0_.sc_update_date as sc_updat3_2_0_,</div><div class="line">        book0_.sc_category_sc_id as sc_categ5_2_0_,</div><div class="line">        book0_.sc_name as sc_name4_2_0_,</div><div class="line">        category1_.sc_id as sc_id1_4_1_,</div><div class="line">        category1_.sc_create_date as sc_creat2_4_1_,</div><div class="line">        category1_.sc_update_date as sc_updat3_4_1_,</div><div class="line">        category1_.sc_address as sc_addre4_4_1_,</div><div class="line">        category1_.sc_area as sc_area5_4_1_,</div><div class="line">        category1_.sc_city as sc_city6_4_1_,</div><div class="line">        category1_.sc_province as sc_provi7_4_1_,</div><div class="line">        category1_.sc_zip_code as sc_zip_c8_4_1_,</div><div class="line">        category1_.sc_age as sc_age9_4_1_,</div><div class="line">        category1_.sc_birth_day as sc_birt10_4_1_,</div><div class="line">        category1_.sc_gender as sc_gend11_4_1_,</div><div class="line">        category1_.sc_name as sc_name12_4_1_</div><div class="line">    from</div><div class="line">        sc_book book0_</div><div class="line">    left outer join</div><div class="line">        sc_category category1_</div><div class="line">            on book0_.sc_category_sc_id=category1_.sc_id</div><div class="line">    where</div><div class="line">        book0_.sc_id=?</div><div class="line">保存了:Book</div></pre></td></tr></table></figure>
+<p>结果很奇怪，只有select的sql语句执行了，然后显示save方法也执行了，但是没有执行update的sql语句。这就是持久化上下文在起作用。先给出持久化上下文的特点再进行验证。</p>
+<ul>
+<li>持久化上下文的生命周期与事务一致</li>
+<li>持久化上下文提供自动脏检查</li>
+<li>持久化下上文是一级缓存</li>
+</ul>
+<p>解释一下持久化上下文对于编程人员来说其实是不可见的，我们可以把它想象成一个map。对于第一条，当事务开始的时候会创建一个map，在事务中的所有操作都会写入这个map中，事务结束map就会销毁。自动脏检查是说如果持久化上下文发现了自己map中的数据有修改，就会修改这些数据，在事务完成后提交，如果没有修改，就不会提交。对于缓存机制，我们可以通过代码来进行验证。</p>
+<p>其实前两点就可以解释刚才代码中出现的现象，由于我们的Transactional注解会回滚掉，所以持久化上下文就不会执行update语句。如果想让它执行update那么我们只需要让jpa提交这个事务，而不是回滚这个事务就可以了。最简单的做法就是在方法上添加@Rollback(false)这个注解就可以了。当然要修改一下你要保存的数据，不要和查出来的数据一样，否则脏检查发现没有修改，也就不会执行update操作了。接着我们验证缓存机制。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">    @Test</div><div class="line">    @Transactional</div><div class="line">    @Rollback(false)</div><div class="line">    public void test9()&#123;</div><div class="line">        Book one = bookRepository.findOne(2L);</div><div class="line">        Book one1 = bookRepository.findOne(2L);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">输出sql:</div><div class="line"></div><div class="line">    select</div><div class="line">        book0_.sc_id as sc_id1_2_0_,</div><div class="line">        book0_.sc_create_date as sc_creat2_2_0_,</div><div class="line">        book0_.sc_update_date as sc_updat3_2_0_,</div><div class="line">        book0_.sc_category_sc_id as sc_categ5_2_0_,</div><div class="line">        book0_.sc_name as sc_name4_2_0_,</div><div class="line">        category1_.sc_id as sc_id1_4_1_,</div><div class="line">        category1_.sc_create_date as sc_creat2_4_1_,</div><div class="line">        category1_.sc_update_date as sc_updat3_4_1_,</div><div class="line">        category1_.sc_address as sc_addre4_4_1_,</div><div class="line">        category1_.sc_area as sc_area5_4_1_,</div><div class="line">        category1_.sc_city as sc_city6_4_1_,</div><div class="line">        category1_.sc_province as sc_provi7_4_1_,</div><div class="line">        category1_.sc_zip_code as sc_zip_c8_4_1_,</div><div class="line">        category1_.sc_age as sc_age9_4_1_,</div><div class="line">        category1_.sc_birth_day as sc_birt10_4_1_,</div><div class="line">        category1_.sc_gender as sc_gend11_4_1_,</div><div class="line">        category1_.sc_name as sc_name12_4_1_</div><div class="line">    from</div><div class="line">        sc_book book0_</div><div class="line">    left outer join</div><div class="line">        sc_category category1_</div><div class="line">            on book0_.sc_category_sc_id=category1_.sc_id</div><div class="line">    where</div><div class="line">        book0_.sc_id=?</div></pre></td></tr></table></figure>
+<p>可以看到我们执行了两次查询，同一个数据的操作，结果只执行了一次查询sql。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">    @Test</div><div class="line">    @Transactional</div><div class="line">    @Rollback(false)</div><div class="line">    public void test9()&#123;</div><div class="line">        bookRepository.findAll();</div><div class="line">        bookRepository.findAll();</div><div class="line">    &#125;</div><div class="line">输出sql:</div><div class="line"></div><div class="line">Hibernate:</div><div class="line">    select</div><div class="line">        book0_.sc_id as sc_id1_2_,</div><div class="line">        book0_.sc_create_date as sc_creat2_2_,</div><div class="line">        book0_.sc_update_date as sc_updat3_2_,</div><div class="line">        book0_.sc_category_sc_id as sc_categ5_2_,</div><div class="line">        book0_.sc_name as sc_name4_2_</div><div class="line">    from</div><div class="line">        sc_book book0_</div><div class="line">Hibernate:</div><div class="line">    select</div><div class="line">        book0_.sc_id as sc_id1_2_,</div><div class="line">        book0_.sc_create_date as sc_creat2_2_,</div><div class="line">        book0_.sc_update_date as sc_updat3_2_,</div><div class="line">        book0_.sc_category_sc_id as sc_categ5_2_,</div><div class="line">        book0_.sc_name as sc_name4_2_</div><div class="line">    from</div><div class="line">        sc_book book0_</div></pre></td></tr></table></figure>
+<p>对于findall查询，执行了两次sql</p>
+<p>可以得到的结论是，持久化上下文对于条件查询语句会做缓存，相同的查询会走缓存，而不是去连接数据库。对于findAll这种无限制条件的查询则不会缓存。</p>
+<p>我们在说JpaRepository的时候发现它有flush和saveAndFlush这两个方法，其实这两个方法的作用就是立刻将持久化上下文与数据库进行同步，而不等待事务的提交。验证方法如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Test</div><div class="line">@Transactional</div><div class="line">public void test9()&#123;</div><div class="line">    Book one = bookRepository.findOne(2L);</div><div class="line">    one.setName(&quot;python123&quot;);</div><div class="line">    bookRepository.saveAndFlush(one);</div><div class="line">    Book one1 = bookRepository.findOne(2L);</div><div class="line">    System.out.println(one1.getName());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过saveAndflush方法，数据库的数据立即就发生了改变，由于上下文中记录了数据的改变，所以第二次查询不需要经过数据库，直接可以从上下文中获取。因此第二次查询没有打印出sql语句，结果输出python123</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">Hibernate:</div><div class="line">    select</div><div class="line">        book0_.sc_id as sc_id1_2_0_,</div><div class="line">        book0_.sc_create_date as sc_creat2_2_0_,</div><div class="line">        book0_.sc_update_date as sc_updat3_2_0_,</div><div class="line">        book0_.sc_category_sc_id as sc_categ5_2_0_,</div><div class="line">        book0_.sc_name as sc_name4_2_0_,</div><div class="line">        category1_.sc_id as sc_id1_4_1_,</div><div class="line">        category1_.sc_create_date as sc_creat2_4_1_,</div><div class="line">        category1_.sc_update_date as sc_updat3_4_1_,</div><div class="line">        category1_.sc_address as sc_addre4_4_1_,</div><div class="line">        category1_.sc_area as sc_area5_4_1_,</div><div class="line">        category1_.sc_city as sc_city6_4_1_,</div><div class="line">        category1_.sc_province as sc_provi7_4_1_,</div><div class="line">        category1_.sc_zip_code as sc_zip_c8_4_1_,</div><div class="line">        category1_.sc_age as sc_age9_4_1_,</div><div class="line">        category1_.sc_birth_day as sc_birt10_4_1_,</div><div class="line">        category1_.sc_gender as sc_gend11_4_1_,</div><div class="line">        category1_.sc_name as sc_name12_4_1_</div><div class="line">    from</div><div class="line">        sc_book book0_</div><div class="line">    left outer join</div><div class="line">        sc_category category1_</div><div class="line">            on book0_.sc_category_sc_id=category1_.sc_id</div><div class="line">    where</div><div class="line">        book0_.sc_id=?</div><div class="line">保存了:Book</div><div class="line">Hibernate:</div><div class="line">    update</div><div class="line">        sc_book</div><div class="line">    set</div><div class="line">        sc_create_date=?,</div><div class="line">        sc_update_date=?,</div><div class="line">        sc_category_sc_id=?,</div><div class="line">        sc_name=?</div><div class="line">    where</div><div class="line">        sc_id=?</div><div class="line">python123</div></pre></td></tr></table></figure>
+<h3 id="抓取策略"><a href="#抓取策略" class="headerlink" title="抓取策略"></a>抓取策略</h3><p>在上面的select语句中我们可以发现一个问题，jpa会默认为我们抓取所有相关的表的数据，比如这里外联了category这张表，可以想象一下如果我们这张表关联了多张表的情况下再去默认外联很可能影响我们的查询效率，而大多数情况下我们可能不需要外联，那么这里就涉及到抓取策略。</p>
+<p>抓取策略的配置在Book类上，@ManyToOne注解上进行配置，默认为EAGER类型，也就是不管需要不需要，我都查出来。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">@Entity</div><div class="line">@Data</div><div class="line">public class Book extends CommonProperty &#123;</div><div class="line"></div><div class="line"></div><div class="line">    private String name;</div><div class="line"></div><div class="line">    @ManyToOne(fetch = FetchType.LAZY)</div><div class="line">    private Category category;</div><div class="line"></div><div class="line">    @OneToMany(mappedBy = &quot;book&quot;)</div><div class="line">    private List&lt;BookAuthor&gt; authors;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>改为lazy模式后查看sql:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">select</div><div class="line">    book0_.sc_id as sc_id1_2_0_,</div><div class="line">    book0_.sc_create_date as sc_creat2_2_0_,</div><div class="line">    book0_.sc_update_date as sc_updat3_2_0_,</div><div class="line">    book0_.sc_category_sc_id as sc_categ5_2_0_,</div><div class="line">    book0_.sc_name as sc_name4_2_0_</div><div class="line">from</div><div class="line">    sc_book book0_</div><div class="line">where</div><div class="line">    book0_.sc_id=?</div></pre></td></tr></table></figure>
+<p>可以看到当我们不需要类别信息的时候不会去外联这张category表。</p>
+<p>当我们调用jpa默认提供的方法时会是这样一种效果，那么我们自定义的接口方法时什么样的呢：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">@Component</div><div class="line">public interface BookRepository extends JpaRepository&lt;Book,Long&gt; &#123;</div><div class="line">    Book findByName(String name);</div><div class="line">&#125;</div><div class="line"></div><div class="line">    @Test</div><div class="line">    public void test10()&#123;</div><div class="line">        Book python123 = bookRepository.findByName(&quot;python1&quot;);</div><div class="line">        System.out.println(python123.getCategory().getName());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">输出结果:</div><div class="line"></div><div class="line">Hibernate:</div><div class="line">    select</div><div class="line">        book0_.sc_id as sc_id1_2_,</div><div class="line">        book0_.sc_create_date as sc_creat2_2_,</div><div class="line">        book0_.sc_update_date as sc_updat3_2_,</div><div class="line">        book0_.sc_category_sc_id as sc_categ5_2_,</div><div class="line">        book0_.sc_name as sc_name4_2_</div><div class="line">    from</div><div class="line">        sc_book book0_</div><div class="line">    where</div><div class="line">        book0_.sc_name=?</div><div class="line">Hibernate:</div><div class="line">    select</div><div class="line">        category0_.sc_id as sc_id1_4_0_,</div><div class="line">        category0_.sc_create_date as sc_creat2_4_0_,</div><div class="line">        category0_.sc_update_date as sc_updat3_4_0_,</div><div class="line">        category0_.sc_address as sc_addre4_4_0_,</div><div class="line">        category0_.sc_area as sc_area5_4_0_,</div><div class="line">        category0_.sc_city as sc_city6_4_0_,</div><div class="line">        category0_.sc_province as sc_provi7_4_0_,</div><div class="line">        category0_.sc_zip_code as sc_zip_c8_4_0_,</div><div class="line">        category0_.sc_age as sc_age9_4_0_,</div><div class="line">        category0_.sc_birth_day as sc_birt10_4_0_,</div><div class="line">        category0_.sc_gender as sc_gend11_4_0_,</div><div class="line">        category0_.sc_name as sc_name12_4_0_</div><div class="line">    from</div><div class="line">        sc_category category0_</div><div class="line">    where</div><div class="line">        category0_.sc_id=?</div><div class="line">技术</div></pre></td></tr></table></figure>
+<p>可以看到在默认的Eager模式下，jpa对于我们自定义的方法并没有做外联操作，而是执行了两次select操作。如果选择Lazy模式则会直接抛出异常no session。所以说在这里控制抓取策略是没有用的。这才是查询一条category的情况，实际环境中我们可能查询100条，就会有101句select语句，那么对性能就是一种极大的影响。那么就要想办法解决这种情况。</p>
+<h4 id="方法一"><a href="#方法一" class="headerlink" title="方法一:"></a>方法一:</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">@Query(&quot;from Book b left join b.category where b.name = ?1&quot;)</div><div class="line">Book findByName(String name);</div></pre></td></tr></table></figure>
+<p>在自定义的方法上，明确指定查询要外联category表</p>
+<h4 id="方法二"><a href="#方法二" class="headerlink" title="方法二:"></a>方法二:</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">@EntityGraph(attributePaths = &#123;&quot;category&quot;&#125; )</div><div class="line">Book findByName(String name);</div></pre></td></tr></table></figure>
+<p>在这个注解中，我们可以传入一个String 数组，也就是说，如果这个Book表关联了多个表，那么这里就可以填入想要外联的表在Book类中的属性名称,就会在查询的时候执行外联操作，而不是多个select,如图</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">Hibernate:</div><div class="line">    select</div><div class="line">        book0_.sc_id as sc_id1_2_0_,</div><div class="line">        category1_.sc_id as sc_id1_4_1_,</div><div class="line">        book0_.sc_create_date as sc_creat2_2_0_,</div><div class="line">        book0_.sc_update_date as sc_updat3_2_0_,</div><div class="line">        book0_.sc_category_sc_id as sc_categ5_2_0_,</div><div class="line">        book0_.sc_name as sc_name4_2_0_,</div><div class="line">        category1_.sc_create_date as sc_creat2_4_1_,</div><div class="line">        category1_.sc_update_date as sc_updat3_4_1_,</div><div class="line">        category1_.sc_address as sc_addre4_4_1_,</div><div class="line">        category1_.sc_area as sc_area5_4_1_,</div><div class="line">        category1_.sc_city as sc_city6_4_1_,</div><div class="line">        category1_.sc_province as sc_provi7_4_1_,</div><div class="line">        category1_.sc_zip_code as sc_zip_c8_4_1_,</div><div class="line">        category1_.sc_age as sc_age9_4_1_,</div><div class="line">        category1_.sc_birth_day as sc_birt10_4_1_,</div><div class="line">        category1_.sc_gender as sc_gend11_4_1_,</div><div class="line">        category1_.sc_name as sc_name12_4_1_</div><div class="line">    from</div><div class="line">        sc_book book0_</div><div class="line">    left outer join</div><div class="line">        sc_category category1_</div><div class="line">            on book0_.sc_category_sc_id=category1_.sc_id</div><div class="line">    where</div><div class="line">        book0_.sc_name=?</div></pre></td></tr></table></figure>
+<p>这个注解似乎已经完美解决了我们的问题，但是在真实场景中，我们可能要写10个查询方法根据不同的条件，那么我们每个方法都要加上这个注解，其实是很麻烦的事情，那么有没有方法，让我们只需要修改一处就行了呢，当然可以。</p>
+<h4 id="方法三"><a href="#方法三" class="headerlink" title="方法三:"></a>方法三:</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">@Entity</div><div class="line">@Data</div><div class="line">@NamedEntityGraph(name = &quot;Book.fetch.category_author&quot;,</div><div class="line">attributeNodes = &#123;</div><div class="line">        @NamedAttributeNode(&quot;category&quot;),</div><div class="line">        @NamedAttributeNode(&quot;authors&quot;)</div><div class="line">&#125;)</div><div class="line">public class Book extends CommonProperty &#123;</div><div class="line"></div><div class="line"></div><div class="line">    private String name;</div><div class="line"></div><div class="line">    @ManyToOne</div><div class="line">    private Category category;</div><div class="line"></div><div class="line">    @OneToMany(mappedBy = &quot;book&quot;)</div><div class="line">    private List&lt;BookAuthor&gt; authors;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">    @EntityGraph(&quot;Book.fetch.category_author&quot;)</div><div class="line">    Book findByName(String name);</div></pre></td></tr></table></figure>
+<p>我们只需要在Book实体类中添加一个NamedEntityGraph注解，并指定一个名字，名字可以任意取，并声明要抓取的策略。然后在方法上只需要声明这个Graph的名称即可。如果你有多个要抓取的策略，那么可以使用@NamedEntityGraphs注解，嵌套@NamedEntityGraph就可以了。</p>
+<h3 id="继承策略"><a href="#继承策略" class="headerlink" title="继承策略"></a>继承策略</h3><h4 id="single-table"><a href="#single-table" class="headerlink" title="single table"></a>single table</h4><p>在之前的实体类中，我们提取了Id、createTime、updateTime这些公共属性，并让实体表继承了这些属性，那么每个表就会增加响应的列。现在考虑如果我们新增了电子书和实体书两个类，两种书同属于Book，所以我们可以考虑让这两种书继承Book类，并且我们需要存储两种书的数据，那么这时候我们就需要在两种书的实体类上添加@Entity注解，我们观察一下数据库会有什么变化。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">@Data</div><div class="line">@Entity</div><div class="line">public class PrintBook extends Book &#123;</div><div class="line">        private String press;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@Entity</div><div class="line">@Data</div><div class="line">public class EBook extends Book &#123;</div><div class="line">    private String webSite;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>新建两个实体类，并运行项目</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1fn14k7cr5nj30ek02374i.jpg" alt=""></p>
+<p>可以发现数据库中并没有新增两个表，而是增加了三个字段，两个字段是我们自己定义的，并且默认都是allow null的属性。dtype则是自动生成的,不可为null。也就是说现在我们数据库中的book必须制定是Ebook还是PrintBook，如果数据库之前存了数据，现在执行查询是会报错的。要么对该列进行填充，要么删除所有数据。我们先清空数据库。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">    @Test</div><div class="line">    @Transactional</div><div class="line">    public void test11()&#123;</div><div class="line">        EBook eBook = new EBook();</div><div class="line">        eBook.setWebSite(&quot;123&quot;);</div><div class="line">        eBook.setName(&quot;西游记&quot;);</div><div class="line">        bookRepository.saveAndFlush(eBook);</div><div class="line">    &#125;</div><div class="line">输出结果:</div><div class="line">保存了:EBook</div><div class="line">Hibernate:</div><div class="line">    insert</div><div class="line">    into</div><div class="line">        sc_book</div><div class="line">        (sc_create_date, sc_update_date, sc_category_sc_id, sc_name, sc_web_site, dtype)</div><div class="line">    values</div><div class="line">        (?, ?, ?, ?, ?, &apos;EBook&apos;)</div><div class="line"></div><div class="line"></div><div class="line">    @Test</div><div class="line">    @Transactional</div><div class="line">    public void test12()&#123;</div><div class="line">        PrintBook printBook = new PrintBook();</div><div class="line">        printBook.setName(&quot;水浒传&quot;);</div><div class="line">        printBook.setPress(&quot;北京出版社&quot;);</div><div class="line">        bookRepository.saveAndFlush(printBook);</div><div class="line">    &#125;</div><div class="line">输出结果:</div><div class="line">保存了:PrintBook</div><div class="line">Hibernate:</div><div class="line">    insert</div><div class="line">    into</div><div class="line">        sc_book</div><div class="line">        (sc_create_date, sc_update_date, sc_category_sc_id, sc_name, sc_press, dtype)</div><div class="line">    values</div><div class="line">        (?, ?, ?, ?, ?, &apos;PrintBook&apos;)</div></pre></td></tr></table></figure>
+<p>可以看出jpa根据我们声明的类型，会自动添加dtype属性到数据库。那么查询操作也是类似的道理，如果findAll则会查出来两种类型，如果声明了一种返回类型，则会自动添加dtype条件进行查询。</p>
+<p>有一点要注意的是，子类中的属性不能设置为not null，因为其他子类在进行插入操作的时候不会插入这个子类的属性，设置为not null就会影响其他子类的插入操作。</p>
+<p>####joined<br>上面通过dtype的表形式只是jpa种默认的一种继承策略，我们可以修改继承策略来建立不同的表结构。需要在父类上添加注解</p>
+<p>@Inheritance(strategy = InheritanceType.JOINED)</p>
+<p>共有三种继承策略, SINGLE_TABLE为默认策略，那么我们尝试一下其他两种策略，首先要清空数据库。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">SINGLE_TABLE,</div><div class="line">TABLE_PER_CLASS,</div><div class="line">JOINED;</div></pre></td></tr></table></figure>
+<p>使用这种继承策略，会建立两个额外的表，也就是Ebook表和PrintBook表，每次插入数据的时候都会向两个表中执行两个insert语句，select语句会使用join外联，这也符合我们对Joined策略的理解。Ebook和PrintBook的表结构也是类似的，除了自身特有的属性，还有一个外键和Book表相关联。</p>
+<h4 id="TABLE-PER-CLASS"><a href="#TABLE-PER-CLASS" class="headerlink" title="TABLE_PER_CLASS"></a>TABLE_PER_CLASS</h4><p>从字面上很难理解是什么意思，清空数据库后启动项目，发现报错了。错误的内容是说当我们使用这种策略的时候主键不允许使用自增的形式。为什么呢，因为对于前两种方式，主键都是存储在Book表中，也就是说只有一个主键。而使用这种方式建立的表，每个表都有一个主键，它会把数据聚合在一起，如果使用自增的策略，可能导致多个表有相同的主键，所以会报错。那么这时候，我们要使用其他生成策略:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">@Id</div><div class="line">@GeneratedValue(generator = &quot;sequenceGenerator&quot;)</div><div class="line">@GenericGenerator(name=&quot;sequenceGenerator&quot;,strategy = &quot;org.hibernate.id.enhanced.SequenceStyleGenerator&quot;,</div><div class="line">parameters = &#123;</div><div class="line">        @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM,value = &quot;ID_SEQUENCE&quot;),</div><div class="line">        @Parameter(name = SequenceStyleGenerator.INITIAL_PARAM,value = &quot;1000&quot;),</div><div class="line">        @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM,value = &quot;1&quot;),</div><div class="line">        @Parameter(name = SequenceStyleGenerator.OPT_PARAM,value = &quot;pooled&quot;)</div><div class="line">&#125;)</div><div class="line">private Long id;</div></pre></td></tr></table></figure>
+<p>这里我们选择一种Hibernate的序列化生成Id的策略，并进行了一些配置,同时这里也显示出了我们抽取公共属性的好处，只需要修改一处代码。 观察生成的表结构:</p>
+<p>同样是生成了三张表，但是Ebook和PrintBook表和JOINED策略生成的表结构有所差别</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fn15ox9hr6j30ge03zzkr.jpg" alt=""></p>
+<p>这张表包含了Book表中的所有属性，而不是通过外键关联主表，执行测试用例:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line">    @Test</div><div class="line">    @Transactional</div><div class="line">    @Rollback(false)</div><div class="line">    public void test13()&#123;</div><div class="line">        EBook eBook = new EBook();</div><div class="line">        eBook.setWebSite(&quot;www.baidu.com&quot;);</div><div class="line">        eBook.setName(&quot;python&quot;);</div><div class="line">        bookRepository.save(eBook);</div><div class="line"></div><div class="line">        PrintBook printBook =new PrintBook();</div><div class="line">        printBook.setPress(&quot;工业出版社&quot;);</div><div class="line">        printBook.setName(&quot;java&quot;);</div><div class="line">        bookRepository.save(printBook);</div><div class="line">    &#125;</div><div class="line">输出:</div><div class="line"></div><div class="line">保存了:EBook</div><div class="line">Hibernate:</div><div class="line">    select</div><div class="line">        next_val as id_val</div><div class="line">    from</div><div class="line">        id_sequence for update</div><div class="line"></div><div class="line">Hibernate:</div><div class="line">    update</div><div class="line">        id_sequence</div><div class="line">    set</div><div class="line">        next_val= ?</div><div class="line">    where</div><div class="line">        next_val=?</div><div class="line">Hibernate:</div><div class="line">    select</div><div class="line">        next_val as id_val</div><div class="line">    from</div><div class="line">        id_sequence for update</div><div class="line"></div><div class="line">Hibernate:</div><div class="line">    update</div><div class="line">        id_sequence</div><div class="line">    set</div><div class="line">        next_val= ?</div><div class="line">    where</div><div class="line">        next_val=?</div><div class="line">保存了:PrintBook</div><div class="line">Hibernate:</div><div class="line">    insert</div><div class="line">    into</div><div class="line">        sc_ebook</div><div class="line">        (sc_create_date, sc_update_date, sc_category_sc_id, sc_name, sc_web_site, sc_id)</div><div class="line">    values</div><div class="line">        (?, ?, ?, ?, ?, ?)</div><div class="line">Hibernate:</div><div class="line">    insert</div><div class="line">    into</div><div class="line">        sc_print_book</div><div class="line">        (sc_create_date, sc_update_date, sc_category_sc_id, sc_name, sc_press, sc_id)</div><div class="line">    values</div><div class="line">        (?, ?, ?, ?, ?, ?)</div></pre></td></tr></table></figure>
+<p>可以看到除了id的操作之外，jpa向两种表分别插入了数据，Book表不会插入任何数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line">    @Test</div><div class="line">    public void test14()&#123;</div><div class="line">        bookRepository.findAll();</div><div class="line">    &#125;</div><div class="line">输出结果:</div><div class="line">Hibernate:</div><div class="line">    select</div><div class="line">        book0_.sc_id as sc_id1_2_,</div><div class="line">        book0_.sc_create_date as sc_creat2_2_,</div><div class="line">        book0_.sc_update_date as sc_updat3_2_,</div><div class="line">        book0_.sc_category_sc_id as sc_categ5_2_,</div><div class="line">        book0_.sc_name as sc_name4_2_,</div><div class="line">        book0_.sc_web_site as sc_web_s1_6_,</div><div class="line">        book0_.sc_press as sc_press1_7_,</div><div class="line">        book0_.clazz_ as clazz_</div><div class="line">    from</div><div class="line">        ( select</div><div class="line">            sc_id,</div><div class="line">            sc_create_date,</div><div class="line">            sc_update_date,</div><div class="line">            sc_name,</div><div class="line">            sc_category_sc_id,</div><div class="line">            null as sc_web_site,</div><div class="line">            null as sc_press,</div><div class="line">            0 as clazz_</div><div class="line">        from</div><div class="line">            sc_book</div><div class="line">        union</div><div class="line">        select</div><div class="line">            sc_id,</div><div class="line">            sc_create_date,</div><div class="line">            sc_update_date,</div><div class="line">            sc_name,</div><div class="line">            sc_category_sc_id,</div><div class="line">            sc_web_site,</div><div class="line">            null as sc_press,</div><div class="line">            1 as clazz_</div><div class="line">        from</div><div class="line">            sc_ebook</div><div class="line">        union</div><div class="line">        select</div><div class="line">            sc_id,</div><div class="line">            sc_create_date,</div><div class="line">            sc_update_date,</div><div class="line">            sc_name,</div><div class="line">            sc_category_sc_id,</div><div class="line">            null as sc_web_site,</div><div class="line">            sc_press,</div><div class="line">            2 as clazz_</div><div class="line">        from</div><div class="line">            sc_print_book</div><div class="line">    ) book0_</div></pre></td></tr></table></figure>
+<p>可以看到，对于findAll查询，执行了union查询方式。对于声明类型的查询，则会直接去查询对应类型的表。这种继承策略实际上和不适用继承策略效果是相同的，适用于子类与父类差异比较大的场合，因为使用这种策略查询的效率非常差。</p>
+
+      
+      
+        <div class="page-reward">
+          <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang">赏</a></p>
+          <div class="hide_box"></div>
+          <div class="shang_box">
+            <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+            <div class="shang_tit">
+              <p>纯属好玩</p>
+            </div>
+            <div class="shang_payimg">
+              <img src="/img/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+            </div>
+              <div class="pay_explain">扫码打赏，你说多少就多少</div>
+            <div class="shang_payselect">
+              
+                <div class="pay_item checked" data-id="alipay">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/alipay.png" alt="支付宝" /></span>
+                </div>
+              
+              
+                <div class="pay_item" data-id="wechat">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/weixin.png" alt="微信" /></span>
+                </div>
+              
+            </div>
+            <div class="shang_info">
+              <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script type="text/javascript">
+          $(".pay_item").click(function(){
+            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+            var dataid=$(this).attr('data-id');
+            $(".shang_payimg img").attr("src","/img/"+dataid+"img.jpg");
+            $("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+          });
+          function dashangToggle(){
+            
+            $(".hide_box").fadeToggle();
+            $(".shang_box").fadeToggle();
+          }
+        </script>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/">SpringBoot-Data-Jpa之高级话题(3)</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
+        <p><span>发布时间:</span>2018年01月01日 - 16时02分</p>
+        <p><span>最后更新:</span>2018年01月01日 - 16时04分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/" title="SpringBoot-Data-Jpa之高级话题(3)">http://www.shuchang.sc.com/2018/01/01/SpringBoot-Data-Jpa之高级话题/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/01/01/SpringBoot-Data-Jpa之高级话题/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">SpringBoot-Data JPA之Repository(2)</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#JPA的一些坑"><span class="toc-number">1.</span> <span class="toc-text">JPA的一些坑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义Repository"><span class="toc-number">2.</span> <span class="toc-text">自定义Repository</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#持久化上下文"><span class="toc-number">3.</span> <span class="toc-text">持久化上下文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#抓取策略"><span class="toc-number">4.</span> <span class="toc-text">抓取策略</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#方法一"><span class="toc-number">4.1.</span> <span class="toc-text">方法一:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#方法二"><span class="toc-number">4.2.</span> <span class="toc-text">方法二:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#方法三"><span class="toc-number">4.3.</span> <span class="toc-text">方法三:</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#继承策略"><span class="toc-number">5.</span> <span class="toc-text">继承策略</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#single-table"><span class="toc-number">5.1.</span> <span class="toc-text">single table</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TABLE-PER-CLASS"><span class="toc-number">5.2.</span> <span class="toc-text">TABLE_PER_CLASS</span></a></li></ol></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'shuchaang',
+      repo: 'shuchaang.github.io',
+      oauth: {
+        client_id: 'c5aa96bb5e5656512174',
+        client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/" title="下一篇: SpringBoot-Data JPA之Repository(2)">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/">SpringBoot-Data-Jpa之高级话题(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/">SpringBoot-Data JPA之Repository(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/springboot-Data-JPA之对象映射/">SpringBoot-Data JPA之对象映射(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/22/RabbitMq入门-基本概念/">RabbitMq入门-基本概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/">spring4.3.x源码阅读笔记-AOP(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">JUC-ConcurrentHashMap(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-JMM/">JUC-JMM(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">JUC-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JUC-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">JUC-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">JUC--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/07/devops初识/">devops初识</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2018 Shuchang
+            </div>
+
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>

@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>java并发从入门到崩溃-ConcurrentHashMap(6) | Shuchang&#39;s Blog</title>
+  <title>JUC-ConcurrentHashMap(6) | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="无论是HashMap还是ConcurrentHashMap都是日常使用和面试中的热点问题，所以必须整理一波。而且java8中对于HashMap的改动还是相当大的。 HashMapHashMap的结构是由数组+链表+红黑树组成的  HashMap的主体是一个Node[]，也就是一个Node数组，图中每个蓝色的球就是一个Node，Node的结构就是一个键值对:Node。顾名思义，HashMap通过ha">
 <meta name="keywords" content="java,并发">
 <meta property="og:type" content="article">
-<meta property="og:title" content="java并发从入门到崩溃-ConcurrentHashMap(6)">
+<meta property="og:title" content="JUC-ConcurrentHashMap(6)">
 <meta property="og:url" content="http://www.shuchang.sc.com/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
 <meta property="og:description" content="无论是HashMap还是ConcurrentHashMap都是日常使用和面试中的热点问题，所以必须整理一波。而且java8中对于HashMap的改动还是相当大的。 HashMapHashMap的结构是由数组+链表+红黑树组成的  HashMap的主体是一个Node[]，也就是一个Node数组，图中每个蓝色的球就是一个Node，Node的结构就是一个键值对:Node。顾名思义，HashMap通过ha">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmjuws4d1vj30e70doq3x.jpg">
-<meta property="og:updated_time" content="2017-12-17T13:05:23.000Z">
+<meta property="og:updated_time" content="2018-01-01T08:04:17.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="java并发从入门到崩溃-ConcurrentHashMap(6)">
+<meta name="twitter:title" content="JUC-ConcurrentHashMap(6)">
 <meta name="twitter:description" content="无论是HashMap还是ConcurrentHashMap都是日常使用和面试中的热点问题，所以必须整理一波。而且java8中对于HashMap的改动还是相当大的。 HashMapHashMap的结构是由数组+链表+红黑树组成的  HashMap的主体是一个Node[]，也就是一个Node数组，图中每个蓝色的球就是一个Node，Node的结构就是一个键值对:Node。顾名思义，HashMap通过ha">
 <meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmjuws4d1vj30e70doq3x.jpg">
   
@@ -151,7 +151,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/JPA/" style="font-size: 12.5px;">JPA</a> <a href="/tags/RabbitMq/" style="font-size: 12.5px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 12.5px;">SpringBoot</a> <a href="/tags/devops/" style="font-size: 10px;">devops</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 12.5px;">jvm</a> <a href="/tags/redis/" style="font-size: 15px;">redis</a> <a href="/tags/spring/" style="font-size: 15px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/并发/" style="font-size: 17.5px;">并发</a>
+                        <a href="/tags/JPA/" style="font-size: 15px;">JPA</a> <a href="/tags/RabbitMq/" style="font-size: 12.5px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/devops/" style="font-size: 10px;">devops</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 12.5px;">jvm</a> <a href="/tags/redis/" style="font-size: 15px;">redis</a> <a href="/tags/spring/" style="font-size: 15px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/并发/" style="font-size: 17.5px;">并发</a>
                     </div>
                 </section>
                 
@@ -248,7 +248,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      java并发从入门到崩溃-ConcurrentHashMap(6)
+      JUC-ConcurrentHashMap(6)
     </h1>
   
 
@@ -387,12 +387,12 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">java并发从入门到崩溃-ConcurrentHashMap(6)</a></p>
+        <p><span>本文标题:</span><a href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">JUC-ConcurrentHashMap(6)</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
         <p><span>发布时间:</span>2017年12月17日 - 16时27分</p>
-        <p><span>最后更新:</span>2017年12月17日 - 21时05分</p>
+        <p><span>最后更新:</span>2018年01月01日 - 16时04分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/" title="java并发从入门到崩溃-ConcurrentHashMap(6)">http://www.shuchang.sc.com/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/</a>
+            <span>原始链接:</span><a class="post-url" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/" title="JUC-ConcurrentHashMap(6)">http://www.shuchang.sc.com/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
@@ -417,7 +417,7 @@
   
   
     <a href="/2017/12/17/java并发从入门到崩溃-JMM/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">java并发从入门到崩溃-JMM(5)</div>
+      <div class="article-nav-title">JUC-JMM(5)</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -500,12 +500,12 @@
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/12/17/java并发从入门到崩溃-JMM/" title="下一篇: java并发从入门到崩溃-JMM(5)">
+            <a href="/2017/12/17/java并发从入门到崩溃-JMM/" title="下一篇: JUC-JMM(5)">
                 <i class="fa fa-angle-right"></i>
             </a>
         
     </div>
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/">SpringBoot-Data JPA之Repository(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/springboot-Data-JPA之对象映射/">SpringBoot-Data JPA之对象映射(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/22/RabbitMq入门-基本概念/">RabbitMq入门-基本概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/">spring4.3.x源码阅读笔记-AOP(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">java并发从入门到崩溃-ConcurrentHashMap(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-JMM/">java并发从入门到崩溃-JMM(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">java并发从入门到崩溃-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">java并发从入门到崩溃-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">java并发从入门到崩溃-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">java并发从入门到崩溃--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/07/devops初识/">devops初识</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/">SpringBoot-Data-Jpa之高级话题(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/">SpringBoot-Data JPA之Repository(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/springboot-Data-JPA之对象映射/">SpringBoot-Data JPA之对象映射(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/22/RabbitMq入门-基本概念/">RabbitMq入门-基本概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/">spring4.3.x源码阅读笔记-AOP(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">JUC-ConcurrentHashMap(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-JMM/">JUC-JMM(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">JUC-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JUC-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">JUC-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">JUC--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/07/devops初识/">devops初识</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
     <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
     <script>
         $(".post-list").addClass("toc-article");
@@ -535,7 +535,7 @@
     <div class="outer">
         <div id="footer-info">
             <div class="footer-left">
-                &copy; 2017 Shuchang
+                &copy; 2018 Shuchang
             </div>
 
         </div>
