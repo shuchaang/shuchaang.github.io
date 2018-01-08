@@ -259,33 +259,12 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>公司里统一使用的是jetty，自己平时写项目都习惯性用tomcat。大概比较一下两个容器。</p>
+              <p>公司里统一使用的是jetty，自己平时写项目都习惯性用tomcat。大概比较一下两个容器。</p>
 <h3 id="Tomcat"><a href="#Tomcat" class="headerlink" title="Tomcat"></a>Tomcat</h3><h4 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h4><p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180105151512096169138.png" alt="tomcat结构"></p>
-<h4 id="接受请求"><a href="#接受请求" class="headerlink" title="接受请求"></a>接受请求</h4><ol>
-<li>BIO: blocking IO</li>
-<li>NIO: non blocking IO</li>
-<li>APR: 操作系统级别解决异步IO，如果应用需要处理高并发的请求，可以配置为apr模式</li>
-</ol>
-<h4 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h4><ol>
-<li>tomcat默认使用BIO的connector协议,并发达到几百会有瓶颈。可以通过修改protocol设置为org.apache.coyote.http11.Http11NioProtocol启动NIO。</li>
-<li>useURIValidation=false关闭URL检查</li>
-<li>enableLookUps=false消除DNS查询影响</li>
-<li>compression=on采取资源压缩</li>
-<li>因为tomcat运行在jvm上，所以可以通过优化jvm提高性能。tomcat默认内存128MB。可以修改Catalina.sh JAVA_OPTS参数，指定-Xms -Xmx，设置初始化大小和最大内存，减少频繁伸缩带来的消耗</li>
-</ol>
-<h3 id="Jetty"><a href="#Jetty" class="headerlink" title="Jetty"></a>Jetty</h3><h4 id="结构-1"><a href="#结构-1" class="headerlink" title="结构"></a>结构</h4><p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180108151537303260693.png" alt="20180108151537303260693.png"></p>
-<p>可以看出jetty结构相比于tomcat要简单了很多，它只有一个数据模型，那就是handler。可以根据规则添加hanlder作为jetty的启动组件。与tomcat相同，每个组件都有一个观察者(LifyCycle接口)，当start、fail、stop事件被触发，listener将会被调用。</p>
-<h4 id="接受请求-1"><a href="#接受请求-1" class="headerlink" title="接受请求"></a>接受请求</h4><ol>
-<li>HTTP协议<ul>
-<li>BIO</li>
-<li>NIO</li>
-</ul>
-</li>
-<li>AJP协议:假设在jboss服务器前加入了nginx服务器，那么nginx会解析http请求，jboss只需要处理nginx处理过的数据包，也就是ajp工作。所以处理ajp请求要快于http请求</li>
-</ol>
-<h3 id="tomcat与jetty比较"><a href="#tomcat与jetty比较" class="headerlink" title="tomcat与jetty比较"></a>tomcat与jetty比较</h3><p>jetty在架构上，核心就是handler。Handler的设计实际上是一个责任链的模式，对于组件生命周期的监控使用了观察者模式。tomcat的结构从server-&gt;service—&gt;container-&gt;engine-&gt;host-&gt;context-&gt;wrapper，是一种分层的设计，非常复杂但是也更加稳重。</p>
-<p>对于J2ee规范，tomcat支持的更广泛，jetty更加轻量响应更快。</p>
-
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
       
       
     </div>
@@ -303,6 +282,10 @@
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaWeb/">JavaWeb</a></li></ul>
     </div>
 
+      
+        <p class="article-more-link">
+          <a  href="/2018/01/08/web容器对比/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
