@@ -3,25 +3,22 @@
 <head>
   <meta charset="utf-8">
   
-  <title>JUC-AQS(3) | Shuchang&#39;s Blog</title>
+  <title>web容器对比 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="什么是AQSAQS是AbstractQueuedSynchronizer的缩写，是用来实现一个锁的底层框架。 为什么要了解AQS(队列同步器)呢？因为我们在并发编程的时候很可能用到锁，而AQS与锁的实现密切相关。可是在图中我们并没有看到AQS与Lock产生直接关联，这是因为在每个锁内部都封装了一个抽象类Sync，而sync继承自AQS，如ReentranLock： AQS是JUC中Lock的实现关">
-<meta name="keywords" content="java,并发">
+  <meta name="description" content="公司里统一使用的是jetty，自己平时写项目都习惯性用tomcat。大概比较一下两个容器。 Tomcat结构 接受请求 BIO: blocking IO NIO: non blocking IO APR: 操作系统级别解决异步IO，如果应用需要处理高并发的请求，可以配置为apr模式  优化 tomcat默认使用BIO的connector协议,并发达到几百会有瓶颈。可以通过修改protocol设置为">
+<meta name="keywords" content="JavaWeb">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JUC-AQS(3)">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/12/09/JAVA并发从入门到崩溃-AQS/index.html">
+<meta property="og:title" content="web容器对比">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/01/08/web容器对比/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="什么是AQSAQS是AbstractQueuedSynchronizer的缩写，是用来实现一个锁的底层框架。 为什么要了解AQS(队列同步器)呢？因为我们在并发编程的时候很可能用到锁，而AQS与锁的实现密切相关。可是在图中我们并没有看到AQS与Lock产生直接关联，这是因为在每个锁内部都封装了一个抽象类Sync，而sync继承自AQS，如ReentranLock： AQS是JUC中Lock的实现关">
-<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1fma8k3ufacj30kf0e7n00.jpg">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fma97wfi6tj30y10810w3.jpg">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fmaa96e2ogj30jp07xq46.jpg">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fmaab2x082j306j05yaah.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tKfTcgy1fmaamazwopj30iq07zdga.jpg">
-<meta property="og:updated_time" content="2018-01-01T08:04:17.000Z">
+<meta property="og:description" content="公司里统一使用的是jetty，自己平时写项目都习惯性用tomcat。大概比较一下两个容器。 Tomcat结构 接受请求 BIO: blocking IO NIO: non blocking IO APR: 操作系统级别解决异步IO，如果应用需要处理高并发的请求，可以配置为apr模式  优化 tomcat默认使用BIO的connector协议,并发达到几百会有瓶颈。可以通过修改protocol设置为">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180105151512096169138.png">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180108151537303260693.png">
+<meta property="og:updated_time" content="2018-01-08T01:35:53.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JUC-AQS(3)">
-<meta name="twitter:description" content="什么是AQSAQS是AbstractQueuedSynchronizer的缩写，是用来实现一个锁的底层框架。 为什么要了解AQS(队列同步器)呢？因为我们在并发编程的时候很可能用到锁，而AQS与锁的实现密切相关。可是在图中我们并没有看到AQS与Lock产生直接关联，这是因为在每个锁内部都封装了一个抽象类Sync，而sync继承自AQS，如ReentranLock： AQS是JUC中Lock的实现关">
-<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1fma8k3ufacj30kf0e7n00.jpg">
+<meta name="twitter:title" content="web容器对比">
+<meta name="twitter:description" content="公司里统一使用的是jetty，自己平时写项目都习惯性用tomcat。大概比较一下两个容器。 Tomcat结构 接受请求 BIO: blocking IO NIO: non blocking IO APR: 操作系统级别解决异步IO，如果应用需要处理高并发的请求，可以配置为apr模式  优化 tomcat默认使用BIO的connector协议,并发达到几百会有瓶颈。可以通过修改protocol设置为">
+<meta name="twitter:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180105151512096169138.png">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -235,11 +232,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-JAVA并发从入门到崩溃-AQS" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-web容器对比" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/12/09/JAVA并发从入门到崩溃-AQS/" class="article-date">
-      <time datetime="2017-12-09T00:45:12.000Z" itemprop="datePublished">2017-12-09</time>
+      <a href="/2018/01/08/web容器对比/" class="article-date">
+      <time datetime="2018-01-08T01:34:35.000Z" itemprop="datePublished">2018-01-08</time>
 </a>
     </div>
   
@@ -252,7 +249,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      JUC-AQS(3)
+      web容器对比
     </h1>
   
 
@@ -261,13 +258,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
+    <a class="article-category-link" href="/categories/随笔/">随笔</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaWeb/">JavaWeb</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -277,40 +274,32 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h3 id="什么是AQS"><a href="#什么是AQS" class="headerlink" title="什么是AQS"></a>什么是AQS</h3><p>AQS是AbstractQueuedSynchronizer的缩写，是用来实现一个锁的底层框架。<br><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1fma8k3ufacj30kf0e7n00.jpg" alt=""></p>
-<p>为什么要了解AQS(队列同步器)呢？因为我们在并发编程的时候很可能用到锁，而AQS与锁的实现密切相关。可是在图中我们并没有看到AQS与Lock产生直接关联，这是因为在每个锁内部都封装了一个抽象类Sync，而sync继承自AQS，如ReentranLock：<br><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fma97wfi6tj30y10810w3.jpg" alt=""></p>
-<p>AQS是JUC中Lock的实现关键，是实现锁或者自定义一个同步组件的基本框架，它使用了一个volatile int state作为同步状态，通过内置的FIFO队列(CLH)完成线程排队工作。AQS同事支持独占式获取同步状态，也支持共享式获取同步状态，以实现不同组件。Lock通过AQS框架，隐藏了具体的实现细节而与用户的交互使用接口，大大简化了锁的实现方式。它封装了线程、挂起唤醒的内部运作，我们只需要通过设置AQS的state值来控制他的线程挂起和唤醒的运作路径，就可以实现我们的同步器类了。</p>
-<p>AQS提供的方法可分为三类:</p>
-<ol>
-<li>独占式获取/释放状态</li>
-<li>共享式获取/释放状态</li>
-<li>查询同步队列情况</li>
+        <p>公司里统一使用的是jetty，自己平时写项目都习惯性用tomcat。大概比较一下两个容器。</p>
+<h3 id="Tomcat"><a href="#Tomcat" class="headerlink" title="Tomcat"></a>Tomcat</h3><h4 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h4><p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180105151512096169138.png" alt="tomcat结构"></p>
+<h4 id="接受请求"><a href="#接受请求" class="headerlink" title="接受请求"></a>接受请求</h4><ol>
+<li>BIO: blocking IO</li>
+<li>NIO: non blocking IO</li>
+<li>APR: 操作系统级别解决异步IO，如果应用需要处理高并发的请求，可以配置为apr模式</li>
 </ol>
-<p>通过以下代码我们就可以简单实现一个互斥锁。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">public class mutex &#123;</div><div class="line">    Sync sync = new Sync();</div><div class="line">    public void lock()&#123;</div><div class="line">        sync.tryAcquire(1);</div><div class="line">    &#125;</div><div class="line">    public void unlock()&#123;</div><div class="line">        sync.tryRelease(0);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    private static class Sync extends AbstractQueuedSynchronizer&#123;</div><div class="line">        @Override</div><div class="line">        protected boolean isHeldExclusively() &#123;</div><div class="line">            return getState() == 1;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        protected boolean tryAcquire(int arg) &#123;</div><div class="line">            if(compareAndSetState(0,1))&#123;</div><div class="line">                setExclusiveOwnerThread(Thread.currentThread());</div><div class="line">                return true;</div><div class="line">            &#125;</div><div class="line">            return false;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        protected boolean tryRelease(int arg) &#123;</div><div class="line">            if(getState()==0)&#123;</div><div class="line">                throw  new IllegalMonitorStateException(&quot;状态不符合预期&quot;);</div><div class="line">            &#125;</div><div class="line">            setExclusiveOwnerThread(null);</div><div class="line">            setState(0);</div><div class="line">            return true;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li><a id="more"></a>
-<the rest="" of="" contents="" |="" 余下全文="">
-
-</the></li>
+<h4 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h4><ol>
+<li>tomcat默认使用BIO的connector协议,并发达到几百会有瓶颈。可以通过修改protocol设置为org.apache.coyote.http11.Http11NioProtocol启动NIO。</li>
+<li>useURIValidation=false关闭URL检查</li>
+<li>enableLookUps=false消除DNS查询影响</li>
+<li>compression=on采取资源压缩</li>
+<li>因为tomcat运行在jvm上，所以可以通过优化jvm提高性能。tomcat默认内存128MB。可以修改Catalina.sh JAVA_OPTS参数，指定-Xms -Xmx，设置初始化大小和最大内存，减少频繁伸缩带来的消耗</li>
+</ol>
+<h3 id="Jetty"><a href="#Jetty" class="headerlink" title="Jetty"></a>Jetty</h3><h4 id="结构-1"><a href="#结构-1" class="headerlink" title="结构"></a>结构</h4><p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180108151537303260693.png" alt="20180108151537303260693.png"></p>
+<p>可以看出jetty结构相比于tomcat要简单了很多，它只有一个数据模型，那就是handler。可以根据规则添加hanlder作为jetty的启动组件。与tomcat相同，每个组件都有一个观察者(LifyCycle接口)，当start、fail、stop事件被触发，listener将会被调用。</p>
+<h4 id="接受请求-1"><a href="#接受请求-1" class="headerlink" title="接受请求"></a>接受请求</h4><ol>
+<li>HTTP协议<ul>
+<li>BIO</li>
+<li>NIO</li>
 </ul>
-<h3 id="AQS实现分析"><a href="#AQS实现分析" class="headerlink" title="AQS实现分析"></a>AQS实现分析</h3><p>AQS内部维护了一个双向队列，队列的没个节点是一个Node内部类，当线程获取同步状态失败时，就会被封装为一个Node。<br><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fmaa96e2ogj30jp07xq46.jpg" alt=""></p>
-<p>可以看到Node类有三个构造函数，参数包括Thread、node模式、等待状态。结合这个图我们就可以知道这个队列的基本形式了。等待进程被封装为Node并标记Node是共享模式还是独占模式，也可以设置它的等待状态。当前节点有前驱节点和后继节点，并有一个专门的变量保存他的下一个等待节点。</p>
-<p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fmaab2x082j306j05yaah.jpg" alt=""></p>
-<p>构成的AQS队列就是这样一种形式</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1fmaamazwopj30iq07zdga.jpg" alt=""></p>
-<p>同步器包含一个头结点和一个尾节点，加入队列的过程必须保证线程安全，因为同时可能有多个线程获取同步状态失败而进入队列尾部，因此AQS提供了<strong><em><em>compareAndSetTail</em></em></strong>方法,而每次出队时只可能有一个线程获取到同步状态，因此出队的方法不需要保证线程安全。</p>
-<h3 id="独占式"><a href="#独占式" class="headerlink" title="独占式"></a>独占式</h3><p>独占式获取同步状态代码如下:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public final void acquire(int arg) &#123;</div><div class="line">    if (!tryAcquire(arg)&amp;&amp;acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</div><div class="line">       selfInterrupt();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>该方法首先完成了获取同步状态，构造加点，加入队列并在同步队列中自旋的工作。首先调用tryAcquire方法保证线程安全的获取同步状态，如果失败则构造EXCLUSIVE独占式节点，加入同步队列尾部。acqireQueued则是自旋等待锁的释放。如果该过程失败了，则调用selfInterrupt方法将自己中断。</p>
-<h3 id="共享式"><a href="#共享式" class="headerlink" title="共享式"></a>共享式</h3><p>共享式获取同步状态代码如下:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">public final void acquireShared(int arg) &#123;</div><div class="line">    if (tryAcquireShared(arg) &lt; 0)</div><div class="line">        doAcquireShared(arg);</div><div class="line">&#125;</div><div class="line"></div><div class="line">private void doAcquireShared(int arg) &#123;</div><div class="line">    final Node node = addWaiter(Node.SHARED);</div><div class="line">    boolean failed = true;</div><div class="line">    try &#123;</div><div class="line">        boolean interrupted = false;</div><div class="line">        for (;;) &#123;</div><div class="line">            final Node p = node.predecessor();</div><div class="line">            if (p == head) &#123;</div><div class="line">                int r = tryAcquireShared(arg);</div><div class="line">                if (r &gt;= 0) &#123;</div><div class="line">                    setHeadAndPropagate(node, r);</div><div class="line">                    p.next = null; // help GC</div><div class="line">                    if (interrupted)</div><div class="line">                        selfInterrupt();</div><div class="line">                    failed = false;</div><div class="line">                    return;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;</div><div class="line">                parkAndCheckInterrupt())</div><div class="line">                interrupted = true;</div><div class="line">        &#125;</div><div class="line">    &#125; finally &#123;</div><div class="line">        if (failed)</div><div class="line">            cancelAcquire(node);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>可以看到方法的主体doAcpuireShared方法会包含一个死循环，也就是一个自旋的过程。只有当前节点是头节点的时候，才会去尝试获取同步状态，如果返回值＞0，表示获取成功退出自旋状态。所以在上面的方法acquireShared，<br>当返回值＜0的时候才会一直进入下面的方法尝试一直获取同步状态。</p>
-<h3 id="阻塞与唤醒"><a href="#阻塞与唤醒" class="headerlink" title="阻塞与唤醒"></a>阻塞与唤醒</h3><p>当一个线程加入到CLH队列中时，如果不是头节点是需要判断该节点是否需要挂起；在释放锁后，需要唤醒该线程的继任节点。AQS使用了LockSupport类中的park方法实现了阻塞：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">private final boolean parkAndCheckInterrupt() &#123;</div><div class="line">    LockSupport.park(this);</div><div class="line">    return Thread.interrupted();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public static void park(Object blocker) &#123;</div><div class="line">    Thread t = Thread.currentThread();</div><div class="line">    setBlocker(t, blocker);</div><div class="line">    UNSAFE.park(false, 0L);</div><div class="line">    setBlocker(t, null);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>LockSupport是用来创建锁和其他同步类的基本线程阻塞原语。每个使用LockSupport的线程都会与一个许可关联，如果该许可可用，并且可在进程中使用，则调用park()将会立即返回，否则可能阻塞。如果许可尚不可用，则可以调用 unpark 使其可用。但是注意许可不可重入，也就是说只能调用一次park()方法，否则会一直阻塞。可以看到park来自于UNSAFE类，UNSAFE中包含了大量的JNI方法，也就是说park和unpark方法是利用了C语言编写的方法，对操作系统底层进行的操作。</p>
+</li>
+<li>AJP协议:假设在jboss服务器前加入了nginx服务器，那么nginx会解析http请求，jboss只需要处理nginx处理过的数据包，也就是ajp工作。所以处理ajp请求要快于http请求</li>
+</ol>
+<h3 id="tomcat与jetty比较"><a href="#tomcat与jetty比较" class="headerlink" title="tomcat与jetty比较"></a>tomcat与jetty比较</h3><p>jetty在架构上，核心就是handler。Handler的设计实际上是一个责任链的模式，对于组件生命周期的监控使用了观察者模式。tomcat的结构从server-&gt;service—&gt;container-&gt;engine-&gt;host-&gt;context-&gt;wrapper，是一种分层的设计，非常复杂但是也更加稳重。</p>
+<p>对于J2ee规范，tomcat支持的更广泛，jetty更加轻量响应更快。</p>
 
       
       
@@ -366,13 +355,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JUC-AQS(3)</a></p>
+        <p><span>本文标题:</span><a href="/2018/01/08/web容器对比/">web容器对比</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2017年12月09日 - 08时45分</p>
-        <p><span>最后更新:</span>2018年01月01日 - 16时04分</p>
+        <p><span>发布时间:</span>2018年01月08日 - 09时34分</p>
+        <p><span>最后更新:</span>2018年01月08日 - 09时35分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/" title="JUC-AQS(3)">http://www.shuchang.sc.com/2017/12/09/JAVA并发从入门到崩溃-AQS/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/12/09/JAVA并发从入门到崩溃-AQS/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/01/08/web容器对比/" title="web容器对比">http://www.shuchang.sc.com/2018/01/08/web容器对比/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/01/08/web容器对比/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -385,18 +374,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/12/13/java并发从入门到崩溃-Lock/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          JUC-Lock(4)
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/12/08/java并发从入门到崩溃-CAS/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">JUC-CAS(2)</div>
+    <a href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">SpringBoot-Data-Jpa之高级话题(3)</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -407,7 +387,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是AQS"><span class="toc-number">1.</span> <span class="toc-text">什么是AQS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AQS实现分析"><span class="toc-number">2.</span> <span class="toc-text">AQS实现分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#独占式"><span class="toc-number">3.</span> <span class="toc-text">独占式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#共享式"><span class="toc-number">4.</span> <span class="toc-text">共享式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#阻塞与唤醒"><span class="toc-number">5.</span> <span class="toc-text">阻塞与唤醒</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Tomcat"><span class="toc-number">1.</span> <span class="toc-text">Tomcat</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#结构"><span class="toc-number">1.1.</span> <span class="toc-text">结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#接受请求"><span class="toc-number">1.2.</span> <span class="toc-text">接受请求</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#优化"><span class="toc-number">1.3.</span> <span class="toc-text">优化</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Jetty"><span class="toc-number">2.</span> <span class="toc-text">Jetty</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#结构-1"><span class="toc-number">2.1.</span> <span class="toc-text">结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#接受请求-1"><span class="toc-number">2.2.</span> <span class="toc-text">接受请求</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tomcat与jetty比较"><span class="toc-number">3.</span> <span class="toc-text">tomcat与jetty比较</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -473,13 +453,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/12/13/java并发从入门到崩溃-Lock/" title="上一篇: JUC-Lock(4)">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/12/08/java并发从入门到崩溃-CAS/" title="下一篇: JUC-CAS(2)">
+            <a href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/" title="下一篇: SpringBoot-Data-Jpa之高级话题(3)">
                 <i class="fa fa-angle-right"></i>
             </a>
         
