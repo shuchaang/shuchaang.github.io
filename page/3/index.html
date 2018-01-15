@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/JPA/" style="font-size: 15px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 12.5px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/devops/" style="font-size: 10px;">devops</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 12.5px;">jvm</a> <a href="/tags/redis/" style="font-size: 15px;">redis</a> <a href="/tags/spring/" style="font-size: 15px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/并发/" style="font-size: 17.5px;">并发</a>
+                        <a href="/tags/JPA/" style="font-size: 14px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 12px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 16px;">SpringBoot</a> <a href="/tags/devops/" style="font-size: 10px;">devops</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 12px;">jvm</a> <a href="/tags/redis/" style="font-size: 14px;">redis</a> <a href="/tags/spring/" style="font-size: 14px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,88 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-redis持久化" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/11/10/redis持久化/" class="article-date">
+      <time datetime="2017-11-10T03:00:41.000Z" itemprop="datePublished">2017-11-10</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/10/redis持久化/">redis持久化</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>Redis的强大功能很大程度上是由于其将所有数据存储在内存中，为了使redis重启后数据不丢失，需要将数据以某种形式保存在硬盘中。</p>
+<p>Redis支持两种持久化方式，RDB和AOF。可以单独使用一种或两种结合。redis默认的持久化方式是RDB。</p>
+<p>RDB通过快照完成，当符合一定条件时redis会自动将内存中的数据进行快照并保存在硬盘上。参数有两个：<strong>时间和改动键的个数</strong>。当指定时间内更改键的个数大于指定值就会快照,默认配置如下，单位为秒。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1flcrw1og6bj304z02na9u.jpg" alt="rdb默认配置"></p>
+<p>可以通过SAVE和BGSAVE指令来手动进行快照。</p>
+<ul>
+<li>SAVE由主进程进行快照，会阻塞其他请求。</li>
+<li>BGSAVE通过fork一个子进程进行快照。</li>
+</ul>
+<h3 id="RDB快照过程"><a href="#RDB快照过程" class="headerlink" title="RDB快照过程"></a>RDB快照过程</h3><ol>
+<li>redis使用fork函数复制一份当前进程的副本。</li>
+<li>父进程继续接受后续指令，子进程还是将内存中的数据写入硬盘中的临时文件。</li>
+<li>子进程写入完成数据后用临时文件替换就得RDB文件。</li>
+</ol>
+<p>可以配置<strong><em>rdbcompression yes</em></strong>来选择是否对rdb进行压缩。<br>压缩的好处显而易见就是减少资源的消耗。缺点就是消耗更多的cpu资源。而选择不压缩就相反。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>s
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/11/10/redis持久化/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-java对象-引用-传递" class="article article-type-post" itemscope itemprop="blogPost">
   
