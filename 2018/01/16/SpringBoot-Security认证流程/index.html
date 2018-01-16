@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>SpringBoot-Security认证流程 | Shuchang&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="基本结构spring security的核心结构如图所示，实际上就是一套过滤器组成，每个过滤器都实现一种功能，用户也可以自定义过滤器加入到过滤器链中。">
+<meta name="keywords" content="SpringBoot,安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot-Security认证流程">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/01/16/SpringBoot-Security认证流程/index.html">
+<meta property="og:site_name" content="Shuchang&#39;s Blog">
+<meta property="og:description" content="基本结构spring security的核心结构如图所示，实际上就是一套过滤器组成，每个过滤器都实现一种功能，用户也可以自定义过滤器加入到过滤器链中。">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180116151608847674631.png">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180116151608956954220.png">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180116151609220621698.png">
+<meta property="og:updated_time" content="2018-01-16T09:03:29.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SpringBoot-Security认证流程">
+<meta name="twitter:description" content="基本结构spring security的核心结构如图所示，实际上就是一套过滤器组成，每个过滤器都实现一种功能，用户也可以自定义过滤器加入到过滤器链中。">
+<meta name="twitter:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180116151608847674631.png">
+  
+    <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Shuchang</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">剑来!</p>
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                            <li><a href="/archives">所有文章</a></li>
+                        
+                            <li><a href="/about">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                            
+                                <a class="fl github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                            
+                                <a class="fl zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                            
+                                <a class="fl weibo" target="_blank" href="#" title="weibo">weibo</a>
+                            
+                                <a class="fl google" target="_blank" href="#" title="google">google</a>
+                            
+                                <a class="fl twitter" target="_blank" href="#" title="twitter">twitter</a>
+                            
+                                <a class="fl linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/JPA/" style="font-size: 14px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 12px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 16px;">SpringBoot</a> <a href="/tags/devops/" style="font-size: 10px;">devops</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 12px;">jvm</a> <a href="/tags/redis/" style="font-size: 14px;">redis</a> <a href="/tags/spring/" style="font-size: 14px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="https://gitee.com/swiftsc/">gitee</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">因为不满足于现状，面对未知，我们努力探索，其实越贴近，越震撼</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Shuchang</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Shuchang</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">剑来!</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                    <li><a href="/archives">所有文章</a></li>
+                
+                    <li><a href="/about">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                    
+                        <a class="github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                    
+                        <a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                    
+                        <a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+                    
+                        <a class="google" target="_blank" href="#" title="google">google</a>
+                    
+                        <a class="twitter" target="_blank" href="#" title="twitter">twitter</a>
+                    
+                        <a class="linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-SpringBoot-Security认证流程" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/01/16/SpringBoot-Security认证流程/" class="article-date">
+      <time datetime="2018-01-16T09:02:31.000Z" itemprop="datePublished">2018-01-16</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      SpringBoot-Security认证流程
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/SpringBoot/">SpringBoot</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringBoot/">SpringBoot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/安全/">安全</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h3 id="基本结构"><a href="#基本结构" class="headerlink" title="基本结构"></a>基本结构</h3><p>spring security的核心结构如图所示，实际上就是一套过滤器组成，每个过滤器都实现一种功能，用户也可以自定义过滤器加入到过滤器链中。</p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180116151608847674631.png" alt="20180116151608847674631.png"></p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br> <a id="more"></a></excerpt></p>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+<h3 id="认证处理流程"><a href="#认证处理流程" class="headerlink" title="认证处理流程"></a>认证处理流程</h3><p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180116151608956954220.png" alt="20180116151608956954220.png"></p>
+<p>整个登录的流程大概可以分为这几个部分，当我们在页面上输入用户名密码点击登录后，Debug一下看看具体的流程是怎样的:</p>
+<blockquote>
+<p>UsernamePasswordAuthenticationFilter.class</p>
+<p>这个类中关键的方法如下，其它都是一些简单的get、set方法。在这个方法中，首先获取到了请求的用户名和密码。</p>
+<p>使用获取到的用户名密码构建了一个UsernamePasswordAuthenticationToken对象，这个对象其实是Authentication接口的一个实现，而Authentication<br>实际上是封装的用户信息</p>
+<p>setDetails方法设置了一些本机的登录信息</p>
+<p>最后返回了getAuthenticationManager对象，也就到了上图的第二步。这个对象本身并不包含验证的逻辑，他的作用是管理第三步中的Authentication<br>Provider，它是真正实现校验逻辑的一个类</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException &#123;</div><div class="line">        if (this.postOnly &amp;&amp; !request.getMethod().equals(&quot;POST&quot;)) &#123;</div><div class="line">            throw new AuthenticationServiceException(&quot;Authentication method not supported: &quot; + request.getMethod());</div><div class="line">        &#125; else &#123;</div><div class="line">            String username = this.obtainUsername(request);</div><div class="line">            String password = this.obtainPassword(request);</div><div class="line">            if (username == null) &#123;</div><div class="line">                username = &quot;&quot;;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            if (password == null) &#123;</div><div class="line">                password = &quot;&quot;;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            username = username.trim();</div><div class="line">            UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);</div><div class="line">            this.setDetails(request, authRequest);</div><div class="line">            return this.getAuthenticationManager().authenticate(authRequest);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>ProviderManager.class</p>
+<p>这里就是流程图的第三步，也就是一个Authentication Provider的实现类，这里继续看这个关键方法</p>
+<p>代码中首先对provider进行了遍历，因为不同的场景可能需要不同的认证方式，例如常见的用户名密码认证，手机验证码认证，图片认证，第三方登录等等<br>manager收到请求时会依次询问provider能不能处理这种认证，也就是provider.supports方法，manager会挑出一个provider对请求进行处理</p>
+<p>如果支持校验，就执行校验逻辑provider.authenticate，如果不支持就跳出本次循环</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line">public Authentication authenticate(Authentication authentication) throws AuthenticationException &#123;</div><div class="line">        Class&lt;? extends Authentication&gt; toTest = authentication.getClass();</div><div class="line">        AuthenticationException lastException = null;</div><div class="line">        Authentication result = null;</div><div class="line">        boolean debug = logger.isDebugEnabled();</div><div class="line">        Iterator var6 = this.getProviders().iterator();</div><div class="line"></div><div class="line">        while(var6.hasNext()) &#123;</div><div class="line">            AuthenticationProvider provider = (AuthenticationProvider)var6.next();</div><div class="line">            if (provider.supports(toTest)) &#123;</div><div class="line">                if (debug) &#123;</div><div class="line">                    logger.debug(&quot;Authentication attempt using &quot; + provider.getClass().getName());</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                try &#123;</div><div class="line">                    result = provider.authenticate(authentication);</div><div class="line">                    if (result != null) &#123;</div><div class="line">                        this.copyDetails(authentication, result);</div><div class="line">                        break;</div><div class="line">                    &#125;</div><div class="line">                &#125; catch (AccountStatusException var11) &#123;</div><div class="line">                    this.prepareException(var11, authentication);</div><div class="line">                    throw var11;</div><div class="line">                &#125; catch (InternalAuthenticationServiceException var12) &#123;</div><div class="line">                    this.prepareException(var12, authentication);</div><div class="line">                    throw var12;</div><div class="line">                &#125; catch (AuthenticationException var13) &#123;</div><div class="line">                    lastException = var13;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (result == null &amp;&amp; this.parent != null) &#123;</div><div class="line">            try &#123;</div><div class="line">                result = this.parent.authenticate(authentication);</div><div class="line">            &#125; catch (ProviderNotFoundException var9) &#123;</div><div class="line">                ;</div><div class="line">            &#125; catch (AuthenticationException var10) &#123;</div><div class="line">                lastException = var10;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (result != null) &#123;</div><div class="line">            if (this.eraseCredentialsAfterAuthentication &amp;&amp; result instanceof CredentialsContainer) &#123;</div><div class="line">                ((CredentialsContainer)result).eraseCredentials();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            this.eventPublisher.publishAuthenticationSuccess(result);</div><div class="line">            return result;</div><div class="line">        &#125; else &#123;</div><div class="line">            if (lastException == null) &#123;</div><div class="line">                lastException = new ProviderNotFoundException(this.messages.getMessage(&quot;ProviderManager.providerNotFound&quot;, new Object[]&#123;toTest.getName()&#125;, &quot;No AuthenticationProvider found for &#123;0&#125;&quot;));</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            this.prepareException((AuthenticationException)lastException, authentication);</div><div class="line">            throw lastException;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>AbstractUserDetailsAuthenticationProvider.class</p>
+<p>方法的主要内容就是先从缓存中尝试获取user信息，并构建一个UserDetails实例，如果缓存中没有，就调用this.retrieveUser方法，也是这个方法的核心。在这里我们就可以用自己的方法控制权限的验证。可以自己新建一个类实现UserDetailsService接口，实现其中的验证逻辑。</p>
+<p>经过验证逻辑之后会调用this.preAuthenticationChecks.check方法，也就是检查用户是否锁定，可用，过期，如果有则抛出异常</p>
+<p>预检查之后执行this.additionalAuthenticationChecks方法，一个附加的检查，作用是检查密码是否匹配</p>
+<p>this.postAuthenticationChecks.check后检查方法，再次检验上面的验证是否通过</p>
+<p>所有的检查都通过之后，就认为用户的认真是成功的，这时拿用户的认证信息创建一个createSuccessAuthentication。创建一个新的Authentication对象并将信息补充完全再返回，也就是一个通过认证的Authentication。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">public Authentication authenticate(Authentication authentication) throws AuthenticationException &#123;</div><div class="line">        Assert.isInstanceOf(UsernamePasswordAuthenticationToken.class, authentication, this.messages.getMessage(&quot;AbstractUserDetailsAuthenticationProvider.onlySupports&quot;, &quot;Only UsernamePasswordAuthenticationToken is supported&quot;));</div><div class="line">        String username = authentication.getPrincipal() == null ? &quot;NONE_PROVIDED&quot; : authentication.getName();</div><div class="line">        boolean cacheWasUsed = true;</div><div class="line">        UserDetails user = this.userCache.getUserFromCache(username);</div><div class="line">        if (user == null) &#123;</div><div class="line">            cacheWasUsed = false;</div><div class="line"></div><div class="line">            try &#123;</div><div class="line">                user = this.retrieveUser(username, (UsernamePasswordAuthenticationToken)authentication);</div><div class="line">            &#125; catch (UsernameNotFoundException var6) &#123;</div><div class="line">                this.logger.debug(&quot;User &apos;&quot; + username + &quot;&apos; not found&quot;);</div><div class="line">                if (this.hideUserNotFoundExceptions) &#123;</div><div class="line">                    throw new BadCredentialsException(this.messages.getMessage(&quot;AbstractUserDetailsAuthenticationProvider.badCredentials&quot;, &quot;Bad credentials&quot;));</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                throw var6;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            Assert.notNull(user, &quot;retrieveUser returned null - a violation of the interface contract&quot;);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        try &#123;</div><div class="line">            this.preAuthenticationChecks.check(user);</div><div class="line">            this.additionalAuthenticationChecks(user, (UsernamePasswordAuthenticationToken)authentication);</div><div class="line">        &#125; catch (AuthenticationException var7) &#123;</div><div class="line">            if (!cacheWasUsed) &#123;</div><div class="line">                throw var7;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            cacheWasUsed = false;</div><div class="line">            user = this.retrieveUser(username, (UsernamePasswordAuthenticationToken)authentication);</div><div class="line">            this.preAuthenticationChecks.check(user);</div><div class="line">            this.additionalAuthenticationChecks(user, (UsernamePasswordAuthenticationToken)authentication);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        this.postAuthenticationChecks.check(user);</div><div class="line">        if (!cacheWasUsed) &#123;</div><div class="line">            this.userCache.putUserInCache(user);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        Object principalToReturn = user;</div><div class="line">        if (this.forcePrincipalAsString) &#123;</div><div class="line">            principalToReturn = user.getUsername();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        return this.createSuccessAuthentication(principalToReturn, authentication, user);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h3 id="认证结果如何在多个请求中间共享"><a href="#认证结果如何在多个请求中间共享" class="headerlink" title="认证结果如何在多个请求中间共享"></a>认证结果如何在多个请求中间共享</h3><p>数据的共享当然是放到了session中，那么它是什么时间将什么东西放进了session中呢</p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180116151609220621698.png" alt="20180116151609220621698.png"></p>
+<blockquote>
+<p>AbstractAuthenticationProcessingFilter.class</p>
+<p>在成功进行了登录流程之后会执行successfulAuthentication方法，在这个方法中可以很明显的看到<br>SecurityContextHolder.getContext().setAuthentication(authResult)，就是把认证成功的信息放入到一个contextHolder中。SecurityContextHolder很简单，封装了Authentication对象，并重写了equals和hashcode方法保证唯一性</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException &#123;</div><div class="line">        if (this.logger.isDebugEnabled()) &#123;</div><div class="line">            this.logger.debug(&quot;Authentication success. Updating SecurityContextHolder to contain: &quot; + authResult);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        SecurityContextHolder.getContext().setAuthentication(authResult);</div><div class="line">        this.rememberMeServices.loginSuccess(request, response, authResult);</div><div class="line">        if (this.eventPublisher != null) &#123;</div><div class="line">            this.eventPublisher.publishEvent(new InteractiveAuthenticationSuccessEvent(authResult, this.getClass()));</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        this.successHandler.onAuthenticationSuccess(request, response, authResult);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>SecurityContextHolder.class</p>
+<p>这个类写的不太好理解，通过init方法才发现它其实是封装了一个ThreadLocal，一个请求和响应大部分都是一个线程来做，所以当请求来的时候SecurityContext PersistenceFilter会尝试取出session，当认证完成，返回响应的时候会将认证信息写入session。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">private static void initialize() &#123;</div><div class="line">    if (!StringUtils.hasText(strategyName)) &#123;</div><div class="line">        strategyName = &quot;MODE_THREADLOCAL&quot;;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (strategyName.equals(&quot;MODE_THREADLOCAL&quot;)) &#123;</div><div class="line">        strategy = new ThreadLocalSecurityContextHolderStrategy();</div><div class="line">    &#125; else if (strategyName.equals(&quot;MODE_INHERITABLETHREADLOCAL&quot;)) &#123;</div><div class="line">        strategy = new InheritableThreadLocalSecurityContextHolderStrategy();</div><div class="line">    &#125; else if (strategyName.equals(&quot;MODE_GLOBAL&quot;)) &#123;</div><div class="line">        strategy = new GlobalSecurityContextHolderStrategy();</div><div class="line">    &#125; else &#123;</div><div class="line">        try &#123;</div><div class="line">            Class&lt;?&gt; clazz = Class.forName(strategyName);</div><div class="line">            Constructor&lt;?&gt; customStrategy = clazz.getConstructor();</div><div class="line">            strategy = (SecurityContextHolderStrategy)customStrategy.newInstance();</div><div class="line">        &#125; catch (Exception var2) &#123;</div><div class="line">            ReflectionUtils.handleReflectionException(var2);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ++initializeCount;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="获取认证过的用户信息"><a href="#获取认证过的用户信息" class="headerlink" title="获取认证过的用户信息"></a>获取认证过的用户信息</h3><blockquote>
+<p>方法一<br>这种方式会返回认证的全部信息，如果只需要和用户相关的信息，可以使用方法三</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@GetMapping(&quot;/me&quot;)</div><div class="line">public Object getCurrentUser()&#123;</div><div class="line">    return SecurityContextHolder.getContext().getAuthentication();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>方法二<br>这种方式会返回认证的全部信息，如果只需要和用户相关的信息，可以使用方法三</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@GetMapping(&quot;/me&quot;)</div><div class="line">public Object getCurrentUser(Authentication authentication)&#123;</div><div class="line">    return authentication;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>方法三<br>返回用户相关信息</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@GetMapping(&quot;/me&quot;)</div><div class="line">public Object getCurrentUser(@AuthenticationPrincipal UserDetails userDetails)&#123;</div><div class="line">    return userDetails;</div><div class="line">&#125;</div></pre></td></tr></table></figure></the>
+      
+      
+        <div class="page-reward">
+          <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang">赏</a></p>
+          <div class="hide_box"></div>
+          <div class="shang_box">
+            <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+            <div class="shang_tit">
+              <p>纯属好玩</p>
+            </div>
+            <div class="shang_payimg">
+              <img src="/img/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+            </div>
+              <div class="pay_explain">扫码打赏，你说多少就多少</div>
+            <div class="shang_payselect">
+              
+                <div class="pay_item checked" data-id="alipay">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/alipay.png" alt="支付宝" /></span>
+                </div>
+              
+              
+                <div class="pay_item" data-id="wechat">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/weixin.png" alt="微信" /></span>
+                </div>
+              
+            </div>
+            <div class="shang_info">
+              <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script type="text/javascript">
+          $(".pay_item").click(function(){
+            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+            var dataid=$(this).attr('data-id');
+            $(".shang_payimg img").attr("src","/img/"+dataid+"img.jpg");
+            $("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+          });
+          function dashangToggle(){
+            
+            $(".hide_box").fadeToggle();
+            $(".shang_box").fadeToggle();
+          }
+        </script>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/01/16/SpringBoot-Security认证流程/">SpringBoot-Security认证流程</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
+        <p><span>发布时间:</span>2018年01月16日 - 17时02分</p>
+        <p><span>最后更新:</span>2018年01月16日 - 17时03分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/01/16/SpringBoot-Security认证流程/" title="SpringBoot-Security认证流程">http://www.shuchang.sc.com/2018/01/16/SpringBoot-Security认证流程/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/01/16/SpringBoot-Security认证流程/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2018/01/15/SpringBoot-异步REST服务/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">SpringBoot-异步REST服务</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本结构"><span class="toc-number">1.</span> <span class="toc-text">基本结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#认证处理流程"><span class="toc-number">2.</span> <span class="toc-text">认证处理流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#认证结果如何在多个请求中间共享"><span class="toc-number">3.</span> <span class="toc-text">认证结果如何在多个请求中间共享</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取认证过的用户信息"><span class="toc-number">4.</span> <span class="toc-text">获取认证过的用户信息</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'shuchaang',
+      repo: 'shuchaang.github.io',
+      oauth: {
+        client_id: 'c5aa96bb5e5656512174',
+        client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2018/01/15/SpringBoot-异步REST服务/" title="下一篇: SpringBoot-异步REST服务">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/01/16/SpringBoot-Security认证流程/">SpringBoot-Security认证流程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/15/SpringBoot-异步REST服务/">SpringBoot-异步REST服务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/08/web容器对比/">web容器对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/">SpringBoot-Data-Jpa之高级话题(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/">SpringBoot-Data JPA之Repository(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/springboot-Data-JPA之对象映射/">SpringBoot-Data JPA之对象映射(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/22/RabbitMq入门-基本概念/">RabbitMq入门-基本概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/">spring4.3.x源码阅读笔记-AOP(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">JUC-ConcurrentHashMap(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-JMM/">JUC-JMM(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">JUC-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JUC-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">JUC-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">JUC--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/07/devops初识/">devops初识</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2018 Shuchang
+            </div>
+
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>
