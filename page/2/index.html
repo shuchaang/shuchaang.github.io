@@ -232,6 +232,90 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-spring4-3-x源码阅读笔记-AOP-3" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/" class="article-date">
+      <time datetime="2017-12-19T10:27:52.000Z" itemprop="datePublished">2017-12-19</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/">spring4.3.x源码阅读笔记-AOP(3)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>Spring AOP部分源码比较复杂，看了书上的内容还是觉得云里雾里，好在这部分的参考资料比较多，感谢原博主。在这里自己整理一下思路。</p>
+<blockquote>
+<p><a href="http://blog.csdn.net/luanlouis/article/details/51155821" target="_blank" rel="external">http://blog.csdn.net/luanlouis/article/details/51155821</a></p>
+<p>《Spring源码深度解析》</p>
+</blockquote>
+<h3 id="AOP的基本概念"><a href="#AOP的基本概念" class="headerlink" title="AOP的基本概念"></a>AOP的基本概念</h3><p>切面（Aspect）：类似于OOP中的Class，一个Aspect存放一个系统功能的所有逻辑；</p>
+<p>连接点（Joinpoint）：程序执行过程中的某一事件，如方法被调用时、抛出异常时；</p>
+<p>切入点（Pointcut）：它是一个表达式，用于确定哪些类的哪些函数需要插入横切逻辑；它只精确到函数，究竟要在函数执行的哪个阶段插入横切逻辑，这就由通知的类型决定；</p>
+<p>通知（Advice）：具体的横切逻辑；</p>
+<p>Spring中有四种Advice：</p>
+<p>前置通知（Before Advice）</p>
+<p>后置通知（After Advice）</p>
+<p>返回通知（After Return Advice）</p>
+<p>环绕通知（Around Advice）</p>
+<p>抛出异常后通知（After Throwing Advice）</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/spring4/">spring4</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-spring4-3-x源码阅读笔记-XML配置文件解析-2" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -918,82 +1002,6 @@
       
         <p class="article-more-link">
           <a  href="/2017/11/23/表面理解jvm-类加载/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-表面理解jvm-内存" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2017/11/22/表面理解jvm-内存/" class="article-date">
-      <time datetime="2017-11-22T07:24:27.000Z" itemprop="datePublished">2017-11-22</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>最近看完了《深入理解java虚拟机》这本书，记录一下所学所思，留作以后复习。</p>
-<h3 id="宏观"><a href="#宏观" class="headerlink" title="宏观"></a>宏观</h3><p>先来说说虚拟机，我们都知道Java程序运行在虚拟机上，虚拟机负责和操作系统打交道，最终通过二进制指令操作电子电路运行，完成数据的读取，运算，输出。<br>虚拟机在加载.class文件的时候会在内存开辟一块区域”方法区”,专门用来存储累的基本信息，同时在”堆”区生成这个类的Class对象，作为类的一个镜像，为反射机制提供一种可能。Java是一门面向对象的语言，程序运行过程中伴随着对象的生成与死亡，有的是临时对象短暂存活，有的是壮年而亡，而有的长命百岁。所以虚拟机就不停地申请内存，回收内存。对象的生成方法很多，对象的回收方法也很多，例如GC、标记清除/整理等。</p>
-<p>垃圾回收首先要确定的是什么是垃圾，什么时候回收，在哪里回收，怎么回收。不同的对象可能需要不同的回收策略。一个很容易想到的方法就是在后台启动一个线程，每隔一段时间扫描一次内存，清除垃圾，如此往复。</p>
-<p>实际情况往往非常复杂，效率、安全性、对当前程序的影响都要考虑进去。于是人们发现，对象的生命周期不同，使用一种GC方法效率很差。于是就有了Hotspot的方案，堆区根据不同的生命周期，分为eden、to survivor、from survivor以及非堆的元数据区(java8之前的永久区)。<br> 每个区采用了不同的清理算法。于是便出现了最初的<code>串行收集器</code>。</p>
-<p>同时，为了最大程度的利用CPU的多核资源，出现了<code>并行收集器</code>，即多个线程一起收集垃圾。</p>
-<p>为了降低垃圾收集对原有程序的影响,如STW,一种全局暂停的现象，<code>并发收集器</code>应运而生。</p>
-<p>到此为止，便可以引出jvm优化中最重要的两部分，jvm内存怎么划分，选择哪一种垃圾收集器，就是我们常说的jvm调优。这就考验一个开发人员对业务系统的理解和眼光，确定优化方向并调整参数。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/jvm/">jvm</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2017/11/22/表面理解jvm-内存/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
