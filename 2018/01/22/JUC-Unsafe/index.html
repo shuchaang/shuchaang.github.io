@@ -12,7 +12,7 @@
 <meta property="og:url" content="http://www.shuchang.sc.com/2018/01/22/JUC-Unsafe/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
 <meta property="og:description" content="什么是Unsafe如果你使用jdk8进行多线程的编程，在很多框架或者lock中随处可以看到compareAndSet方法和weakCompareAndSet这种方法，它实际上是加在CPU级别上的锁，所以相比于synchronized和volatile,CAS更加轻量，开始扮演着越来越重要的作用。找到它们的调用类就可以定位到Unsafe.class，这个类中绝大部分方法都是native方法，也就是使">
-<meta property="og:updated_time" content="2018-01-21T23:56:38.000Z">
+<meta property="og:updated_time" content="2018-01-26T07:31:19.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JUC-Unsafe(7)">
 <meta name="twitter:description" content="什么是Unsafe如果你使用jdk8进行多线程的编程，在很多框架或者lock中随处可以看到compareAndSet方法和weakCompareAndSet这种方法，它实际上是加在CPU级别上的锁，所以相比于synchronized和volatile,CAS更加轻量，开始扮演着越来越重要的作用。找到它们的调用类就可以定位到Unsafe.class，这个类中绝大部分方法都是native方法，也就是使">
@@ -276,6 +276,13 @@
 <p>Java is a safe programming language and prevents programmer from doing a lot of stupid mistakes,most of which based on memory management.But, there is a way to do such mistakes intentionaly,using Unsafe.class.</p>
 </blockquote>
 <p>意思就是java是一个安全的编程语言，让程序员不会犯一些内存管理上的错误。但如果你执意要操作内存，那么使用Unsafe.class。但是作者并不推荐我们直接使用Unsafe，这就是Unsafe的由来，而不是说这个类的方法是非安全的。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li><a id="more"></a>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+</the></li>
+</ul>
 <h3 id="如果获取Unsafe"><a href="#如果获取Unsafe" class="headerlink" title="如果获取Unsafe"></a>如果获取Unsafe</h3><p>通过这个方法我们可以得到一些信息，get unsafe实例的方法会判断当前调用它的类加载器是谁，如果不是系统级的类加载器就会抛出安全异常，我们都知道parent delegete model。所以正常的调用方法是取不到Unsafe实例的，那么利用反射就可以啦，反射就是外挂。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@CallerSensitive</div><div class="line">public static Unsafe getUnsafe() &#123;</div><div class="line">    Class var0 = Reflection.getCallerClass();</div><div class="line">    if (!VM.isSystemDomainLoader(var0.getClassLoader())) &#123;</div><div class="line">        throw new SecurityException(&quot;Unsafe&quot;);</div><div class="line">    &#125; else &#123;</div><div class="line">        return theUnsafe;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>通过反射获取Unsafe</p>
@@ -370,7 +377,7 @@
         <p><span>本文标题:</span><a href="/2018/01/22/JUC-Unsafe/">JUC-Unsafe(7)</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
         <p><span>发布时间:</span>2018年01月22日 - 07时55分</p>
-        <p><span>最后更新:</span>2018年01月22日 - 07时56分</p>
+        <p><span>最后更新:</span>2018年01月26日 - 15时31分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/01/22/JUC-Unsafe/" title="JUC-Unsafe(7)">http://www.shuchang.sc.com/2018/01/22/JUC-Unsafe/</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/01/22/JUC-Unsafe/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
