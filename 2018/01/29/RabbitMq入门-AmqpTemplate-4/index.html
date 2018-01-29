@@ -12,7 +12,7 @@
 <meta property="og:url" content="http://www.shuchang.sc.com/2018/01/29/RabbitMq入门-AmqpTemplate-4/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
 <meta property="og:description" content="简介与Spring Framework及其相关项目提供的许多其他高级抽象一样，Spring AMQP提供了一个扮演主角的“template”。定义主要操作的接口称为AmqpTemplate。这些操作涵盖发送和接收消息的一般行为。换句话说，它们不是唯一的实现，因此名称中有“AMQP”。另一方面，这个接口的实现与AMQP协议的实现有关。与JMS（接口级API本身）不同，AMQP是一个有线协议。该协议的">
-<meta property="og:updated_time" content="2018-01-29T10:20:09.000Z">
+<meta property="og:updated_time" content="2018-01-29T10:23:16.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RabbitMq入门-AmqpTemplate(4)">
 <meta name="twitter:description" content="简介与Spring Framework及其相关项目提供的许多其他高级抽象一样，Spring AMQP提供了一个扮演主角的“template”。定义主要操作的接口称为AmqpTemplate。这些操作涵盖发送和接收消息的一般行为。换句话说，它们不是唯一的实现，因此名称中有“AMQP”。另一方面，这个接口的实现与AMQP协议的实现有关。与JMS（接口级API本身）不同，AMQP是一个有线协议。该协议的">
@@ -279,7 +279,7 @@
 
 </the></li>
 </ul>
-<h3 id="增加重试机制"><a href="#增加重试机制" class="headerlink" title="增加重试机制"></a>增加重试机制</h3><p>从版本1.3开始，现在可以将RabbitTemplate配置为使用RetryTemplate来帮助borker连接问题。以下仅是一个使用指数退避策略的示例，以及默认的SimpleRetryPolicy，它会在向调用方抛出异常之前进行三次尝试。</p>
+<h3 id="增加重试机制"><a href="#增加重试机制" class="headerlink" title="增加重试机制"></a>增加重试机制</h3><p>从版本1.3开始，可以将RabbitTemplate配置为使用RetryTemplate来解决borker连接问题。以下仅是一个使用指数退避策略的示例，以及默认的SimpleRetryPolicy，它会在向调用方抛出异常之前进行三次尝试。</p>
 <p>XML方式:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&lt;rabbit:template id=&quot;template&quot; connection-factory=&quot;connectionFactory&quot; retry-template=&quot;retryTemplate&quot;/&gt;</div><div class="line"></div><div class="line">&lt;bean id=&quot;retryTemplate&quot; class=&quot;org.springframework.retry.support.RetryTemplate&quot;&gt;</div><div class="line">    &lt;property name=&quot;backOffPolicy&quot;&gt;</div><div class="line">        &lt;bean class=&quot;org.springframework.retry.backoff.ExponentialBackOffPolicy&quot;&gt;</div><div class="line">            &lt;property name=&quot;initialInterval&quot; value=&quot;500&quot; /&gt;</div><div class="line">            &lt;property name=&quot;multiplier&quot; value=&quot;10.0&quot; /&gt;</div><div class="line">            &lt;property name=&quot;maxInterval&quot; value=&quot;10000&quot; /&gt;</div><div class="line">        &lt;/bean&gt;</div><div class="line">    &lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
 <p>@Configuration方式:</p>
@@ -365,7 +365,7 @@
         <p><span>本文标题:</span><a href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/">RabbitMq入门-AmqpTemplate(4)</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
         <p><span>发布时间:</span>2018年01月29日 - 16时44分</p>
-        <p><span>最后更新:</span>2018年01月29日 - 18时20分</p>
+        <p><span>最后更新:</span>2018年01月29日 - 18时23分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/" title="RabbitMq入门-AmqpTemplate(4)">http://www.shuchang.sc.com/2018/01/29/RabbitMq入门-AmqpTemplate-4/</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/01/29/RabbitMq入门-AmqpTemplate-4/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
