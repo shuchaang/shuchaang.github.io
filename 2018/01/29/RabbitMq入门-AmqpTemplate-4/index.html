@@ -3,25 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>JUC-AQS(3) | Shuchang&#39;s Blog</title>
+  <title>RabbitMq入门-AmqpTemplate(4) | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="什么是AQSAQS是AbstractQueuedSynchronizer的缩写，是用来实现一个锁的底层框架。 为什么要了解AQS(队列同步器)呢？因为我们在并发编程的时候很可能用到锁，而AQS与锁的实现密切相关。可是在图中我们并没有看到AQS与Lock产生直接关联，这是因为在每个锁内部都封装了一个抽象类Sync，而sync继承自AQS，如ReentranLock： AQS是JUC中Lock的实现关">
-<meta name="keywords" content="java,并发">
+  <meta name="description" content="简介与Spring Framework及其相关项目提供的许多其他高级抽象一样，Spring AMQP提供了一个扮演主角的“template”。定义主要操作的接口称为AmqpTemplate。这些操作涵盖发送和接收消息的一般行为。换句话说，它们不是唯一的实现，因此名称中有“AMQP”。另一方面，这个接口的实现与AMQP协议的实现有关。与JMS（接口级API本身）不同，AMQP是一个有线协议。该协议的">
+<meta name="keywords" content="java,RabbitMq">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JUC-AQS(3)">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/12/09/JAVA并发从入门到崩溃-AQS/index.html">
+<meta property="og:title" content="RabbitMq入门-AmqpTemplate(4)">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/01/29/RabbitMq入门-AmqpTemplate-4/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="什么是AQSAQS是AbstractQueuedSynchronizer的缩写，是用来实现一个锁的底层框架。 为什么要了解AQS(队列同步器)呢？因为我们在并发编程的时候很可能用到锁，而AQS与锁的实现密切相关。可是在图中我们并没有看到AQS与Lock产生直接关联，这是因为在每个锁内部都封装了一个抽象类Sync，而sync继承自AQS，如ReentranLock： AQS是JUC中Lock的实现关">
-<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1fma8k3ufacj30kf0e7n00.jpg">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fma97wfi6tj30y10810w3.jpg">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fmaa96e2ogj30jp07xq46.jpg">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fmaab2x082j306j05yaah.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tKfTcgy1fmaamazwopj30iq07zdga.jpg">
-<meta property="og:updated_time" content="2018-01-01T08:04:17.000Z">
+<meta property="og:description" content="简介与Spring Framework及其相关项目提供的许多其他高级抽象一样，Spring AMQP提供了一个扮演主角的“template”。定义主要操作的接口称为AmqpTemplate。这些操作涵盖发送和接收消息的一般行为。换句话说，它们不是唯一的实现，因此名称中有“AMQP”。另一方面，这个接口的实现与AMQP协议的实现有关。与JMS（接口级API本身）不同，AMQP是一个有线协议。该协议的">
+<meta property="og:updated_time" content="2018-01-29T10:20:09.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JUC-AQS(3)">
-<meta name="twitter:description" content="什么是AQSAQS是AbstractQueuedSynchronizer的缩写，是用来实现一个锁的底层框架。 为什么要了解AQS(队列同步器)呢？因为我们在并发编程的时候很可能用到锁，而AQS与锁的实现密切相关。可是在图中我们并没有看到AQS与Lock产生直接关联，这是因为在每个锁内部都封装了一个抽象类Sync，而sync继承自AQS，如ReentranLock： AQS是JUC中Lock的实现关">
-<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1fma8k3ufacj30kf0e7n00.jpg">
+<meta name="twitter:title" content="RabbitMq入门-AmqpTemplate(4)">
+<meta name="twitter:description" content="简介与Spring Framework及其相关项目提供的许多其他高级抽象一样，Spring AMQP提供了一个扮演主角的“template”。定义主要操作的接口称为AmqpTemplate。这些操作涵盖发送和接收消息的一般行为。换句话说，它们不是唯一的实现，因此名称中有“AMQP”。另一方面，这个接口的实现与AMQP协议的实现有关。与JMS（接口级API本身）不同，AMQP是一个有线协议。该协议的">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -235,11 +229,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-JAVA并发从入门到崩溃-AQS" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-RabbitMq入门-AmqpTemplate-4" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/12/09/JAVA并发从入门到崩溃-AQS/" class="article-date">
-      <time datetime="2017-12-09T00:45:12.000Z" itemprop="datePublished">2017-12-09</time>
+      <a href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/" class="article-date">
+      <time datetime="2018-01-29T08:44:24.000Z" itemprop="datePublished">2018-01-29</time>
 </a>
     </div>
   
@@ -252,7 +246,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      JUC-AQS(3)
+      RabbitMq入门-AmqpTemplate(4)
     </h1>
   
 
@@ -261,13 +255,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
+    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -277,17 +271,7 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h3 id="什么是AQS"><a href="#什么是AQS" class="headerlink" title="什么是AQS"></a>什么是AQS</h3><p>AQS是AbstractQueuedSynchronizer的缩写，是用来实现一个锁的底层框架。<br><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1fma8k3ufacj30kf0e7n00.jpg" alt=""></p>
-<p>为什么要了解AQS(队列同步器)呢？因为我们在并发编程的时候很可能用到锁，而AQS与锁的实现密切相关。可是在图中我们并没有看到AQS与Lock产生直接关联，这是因为在每个锁内部都封装了一个抽象类Sync，而sync继承自AQS，如ReentranLock：<br><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fma97wfi6tj30y10810w3.jpg" alt=""></p>
-<p>AQS是JUC中Lock的实现关键，是实现锁或者自定义一个同步组件的基本框架，它使用了一个volatile int state作为同步状态，通过内置的FIFO队列(CLH)完成线程排队工作。AQS同事支持独占式获取同步状态，也支持共享式获取同步状态，以实现不同组件。Lock通过AQS框架，隐藏了具体的实现细节而与用户的交互使用接口，大大简化了锁的实现方式。它封装了线程、挂起唤醒的内部运作，我们只需要通过设置AQS的state值来控制他的线程挂起和唤醒的运作路径，就可以实现我们的同步器类了。</p>
-<p>AQS提供的方法可分为三类:</p>
-<ol>
-<li>独占式获取/释放状态</li>
-<li>共享式获取/释放状态</li>
-<li>查询同步队列情况</li>
-</ol>
-<p>通过以下代码我们就可以简单实现一个互斥锁。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">public class mutex &#123;</div><div class="line">    Sync sync = new Sync();</div><div class="line">    public void lock()&#123;</div><div class="line">        sync.tryAcquire(1);</div><div class="line">    &#125;</div><div class="line">    public void unlock()&#123;</div><div class="line">        sync.tryRelease(0);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    private static class Sync extends AbstractQueuedSynchronizer&#123;</div><div class="line">        @Override</div><div class="line">        protected boolean isHeldExclusively() &#123;</div><div class="line">            return getState() == 1;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        protected boolean tryAcquire(int arg) &#123;</div><div class="line">            if(compareAndSetState(0,1))&#123;</div><div class="line">                setExclusiveOwnerThread(Thread.currentThread());</div><div class="line">                return true;</div><div class="line">            &#125;</div><div class="line">            return false;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        protected boolean tryRelease(int arg) &#123;</div><div class="line">            if(getState()==0)&#123;</div><div class="line">                throw  new IllegalMonitorStateException(&quot;状态不符合预期&quot;);</div><div class="line">            &#125;</div><div class="line">            setExclusiveOwnerThread(null);</div><div class="line">            setState(0);</div><div class="line">            return true;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>与Spring Framework及其相关项目提供的许多其他高级抽象一样，Spring AMQP提供了一个扮演主角的“template”。定义主要操作的接口称为AmqpTemplate。这些操作涵盖发送和接收消息的一般行为。换句话说，它们不是唯一的实现，因此名称中有“AMQP”。另一方面，这个接口的实现与AMQP协议的实现有关。与JMS（接口级API本身）不同，AMQP是一个有线协议。该协议的实现提供了自己的客户端库，因此AmqpTemplate接口的每个实现都将依赖于特定的客户端库。目前，只有一个实现：RabbitTemplate。</p>
 <p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
 <ul>
 <li><a id="more"></a>
@@ -295,23 +279,35 @@
 
 </the></li>
 </ul>
-<h3 id="AQS实现分析"><a href="#AQS实现分析" class="headerlink" title="AQS实现分析"></a>AQS实现分析</h3><p>AQS内部维护了一个双向队列，队列的没个节点是一个Node内部类，当线程获取同步状态失败时，就会被封装为一个Node。<br><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fmaa96e2ogj30jp07xq46.jpg" alt=""></p>
-<p>可以看到Node类有三个构造函数，参数包括Thread、node模式、等待状态。结合这个图我们就可以知道这个队列的基本形式了。等待进程被封装为Node并标记Node是共享模式还是独占模式，也可以设置它的等待状态。当前节点有前驱节点和后继节点，并有一个专门的变量保存他的下一个等待节点。</p>
-<p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fmaab2x082j306j05yaah.jpg" alt=""></p>
-<p>构成的AQS队列就是这样一种形式</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1fmaamazwopj30iq07zdga.jpg" alt=""></p>
-<p>同步器包含一个头结点和一个尾节点，加入队列的过程必须保证线程安全，因为同时可能有多个线程获取同步状态失败而进入队列尾部，因此AQS提供了<strong><em><em>compareAndSetTail</em></em></strong>方法,而每次出队时只可能有一个线程获取到同步状态，因此出队的方法不需要保证线程安全。</p>
-<h3 id="独占式"><a href="#独占式" class="headerlink" title="独占式"></a>独占式</h3><p>独占式获取同步状态代码如下:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public final void acquire(int arg) &#123;</div><div class="line">    if (!tryAcquire(arg)&amp;&amp;acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</div><div class="line">       selfInterrupt();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>该方法首先完成了获取同步状态，构造加点，加入队列并在同步队列中自旋的工作。首先调用tryAcquire方法保证线程安全的获取同步状态，如果失败则构造EXCLUSIVE独占式节点，加入同步队列尾部。acqireQueued则是自旋等待锁的释放。如果该过程失败了，则调用selfInterrupt方法将自己中断。</p>
-<h3 id="共享式"><a href="#共享式" class="headerlink" title="共享式"></a>共享式</h3><p>共享式获取同步状态代码如下:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">public final void acquireShared(int arg) &#123;</div><div class="line">    if (tryAcquireShared(arg) &lt; 0)</div><div class="line">        doAcquireShared(arg);</div><div class="line">&#125;</div><div class="line"></div><div class="line">private void doAcquireShared(int arg) &#123;</div><div class="line">    final Node node = addWaiter(Node.SHARED);</div><div class="line">    boolean failed = true;</div><div class="line">    try &#123;</div><div class="line">        boolean interrupted = false;</div><div class="line">        for (;;) &#123;</div><div class="line">            final Node p = node.predecessor();</div><div class="line">            if (p == head) &#123;</div><div class="line">                int r = tryAcquireShared(arg);</div><div class="line">                if (r &gt;= 0) &#123;</div><div class="line">                    setHeadAndPropagate(node, r);</div><div class="line">                    p.next = null; // help GC</div><div class="line">                    if (interrupted)</div><div class="line">                        selfInterrupt();</div><div class="line">                    failed = false;</div><div class="line">                    return;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;</div><div class="line">                parkAndCheckInterrupt())</div><div class="line">                interrupted = true;</div><div class="line">        &#125;</div><div class="line">    &#125; finally &#123;</div><div class="line">        if (failed)</div><div class="line">            cancelAcquire(node);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>可以看到方法的主体doAcpuireShared方法会包含一个死循环，也就是一个自旋的过程。只有当前节点是头节点的时候，才会去尝试获取同步状态，如果返回值＞0，表示获取成功退出自旋状态。所以在上面的方法acquireShared，<br>当返回值＜0的时候才会一直进入下面的方法尝试一直获取同步状态。</p>
-<h3 id="阻塞与唤醒"><a href="#阻塞与唤醒" class="headerlink" title="阻塞与唤醒"></a>阻塞与唤醒</h3><p>当一个线程加入到CLH队列中时，如果不是头节点是需要判断该节点是否需要挂起；在释放锁后，需要唤醒该线程的继任节点。AQS使用了LockSupport类中的park方法实现了阻塞：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">private final boolean parkAndCheckInterrupt() &#123;</div><div class="line">    LockSupport.park(this);</div><div class="line">    return Thread.interrupted();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public static void park(Object blocker) &#123;</div><div class="line">    Thread t = Thread.currentThread();</div><div class="line">    setBlocker(t, blocker);</div><div class="line">    UNSAFE.park(false, 0L);</div><div class="line">    setBlocker(t, null);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>LockSupport是用来创建锁和其他同步类的基本线程阻塞原语。每个使用LockSupport的线程都会与一个许可关联，如果该许可可用，并且可在进程中使用，则调用park()将会立即返回，否则可能阻塞。如果许可尚不可用，则可以调用 unpark 使其可用。但是注意许可不可重入，也就是说只能调用一次park()方法，否则会一直阻塞。可以看到park来自于UNSAFE类，UNSAFE中包含了大量的JNI方法，也就是说park和unpark方法是利用了C语言编写的方法，对操作系统底层进行的操作。</p>
-
+<h3 id="增加重试机制"><a href="#增加重试机制" class="headerlink" title="增加重试机制"></a>增加重试机制</h3><p>从版本1.3开始，现在可以将RabbitTemplate配置为使用RetryTemplate来帮助borker连接问题。以下仅是一个使用指数退避策略的示例，以及默认的SimpleRetryPolicy，它会在向调用方抛出异常之前进行三次尝试。</p>
+<p>XML方式:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&lt;rabbit:template id=&quot;template&quot; connection-factory=&quot;connectionFactory&quot; retry-template=&quot;retryTemplate&quot;/&gt;</div><div class="line"></div><div class="line">&lt;bean id=&quot;retryTemplate&quot; class=&quot;org.springframework.retry.support.RetryTemplate&quot;&gt;</div><div class="line">    &lt;property name=&quot;backOffPolicy&quot;&gt;</div><div class="line">        &lt;bean class=&quot;org.springframework.retry.backoff.ExponentialBackOffPolicy&quot;&gt;</div><div class="line">            &lt;property name=&quot;initialInterval&quot; value=&quot;500&quot; /&gt;</div><div class="line">            &lt;property name=&quot;multiplier&quot; value=&quot;10.0&quot; /&gt;</div><div class="line">            &lt;property name=&quot;maxInterval&quot; value=&quot;10000&quot; /&gt;</div><div class="line">        &lt;/bean&gt;</div><div class="line">    &lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+<p>@Configuration方式:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">@Bean</div><div class="line">public AmqpTemplate rabbitTemplate();</div><div class="line">    RabbitTemplate template = new RabbitTemplate(connectionFactory());</div><div class="line">    RetryTemplate retryTemplate = new RetryTemplate();</div><div class="line">    ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();</div><div class="line">    backOffPolicy.setInitialInterval(500);</div><div class="line">    backOffPolicy.setMultiplier(10.0);</div><div class="line">    backOffPolicy.setMaxInterval(10000);</div><div class="line">    retryTemplate.setBackOffPolicy(backOffPolicy);</div><div class="line">    template.setRetryTemplate(retryTemplate);</div><div class="line">    return template;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>###异步发布，如何检测成功还是失败</p>
+<p>发布消息在默认情况下是一种异步机制，RabbitMQ简单地丢弃无法路由的消息。如果成功发布，可以收到一个异步确认信息，我们来考虑两个失败情况：</p>
+<ol>
+<li>发布到exchange，但是没有相匹配的目的队列</li>
+<li>发布到一个不存在exchange</li>
+</ol>
+<p>第一种只需要一个发布确认机制即可。对于第二种情况，会直接丢弃信息而不会产生返回值，底层的channel会因为异常而关闭。默认情况下，这个异常会被记录，你也可以注册一个ConnectionListener获取通知。<br>(在这里官方文档有明显的错误,。本人使用的是1.5.9,函数已经被修改，没有提供异常检测的方法)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">this.connectionFactory.addConnectionListener(new ConnectionListener() &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onCreate(Connection connection) &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onShutDown(ShutdownSignalException signal) &#123;</div><div class="line">        ...</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h3 id="发布确认和返回"><a href="#发布确认和返回" class="headerlink" title="发布确认和返回"></a>发布确认和返回</h3><p>AmqpTemplate的RabbitTemplate实现支持Publisher确认和返回。</p>
+<h4 id="消息返回"><a href="#消息返回" class="headerlink" title="消息返回"></a>消息返回</h4><p>对于返回的消息，必须将模板的mandatory属性设置为true，或者对于特定的消息，必须将mandatory-expression设置为true。此功能需要将其publisherReturns属性设置为true的CachingConnectionFactory。返回通过调用setReturnCallback（ReturnCallback回调）注册一个RabbitTemplate.ReturnCallback发送到客户端。回调必须实现这个方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Component</div><div class="line">public class RabbitCallBack implements RabbitTemplate.ReturnCallback &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void returnedMessage(Message message, int replyCode, String replyText,</div><div class="line">                                String exchange, String routingKey) &#123;</div><div class="line">        System.out.println(&quot;收到消息&quot;+message.getBody()+&quot;响应码&quot;+replyCode+&quot;响应内容&quot;+replyText+&quot;来自Exchange:&quot;+exchange+&quot;RoutingKey&quot;+routingKey);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">将上面的类注入到配置类中</div><div class="line">template.setReturnCallback(rabbitCallBack);</div></pre></td></tr></table></figure>
+<p>需要注意的是，每个RabbitTemplate只支持一个ReturnCallback。</p>
+<p>####消息确认</p>
+<p>对于发布者确认（也称为发布者确认），该模板需要一个将其publisherConfirms属性设置为true。通过调用setConfirmCallback（ConfirmCallback回调）注册一个RabbitTemplate.ConfirmCallback，确认被发送到客户端。回调必须实现这个方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">@Component</div><div class="line">public class RabbitConfirmCallBack implements RabbitTemplate.ConfirmCallback&#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void confirm(CorrelationData correlationData, boolean ack, String cause) &#123;</div><div class="line">		if(ack)&#123;</div><div class="line">            System.out.println(correlationData);</div><div class="line">        &#125;else&#123;</div><div class="line">            System.out.println(cause);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">将上面的类注入到配置类中</div><div class="line">template.setConfirmCallback(rabbitConfirmCallBack);</div></pre></td></tr></table></figure>
+<p>CorrelationData是客户端接收到的原始信息，如果ack为true，表示信息经过确认，如果ack为false，则cause会包含ack为false的原因。</p>
+<p>RabbitTemplate只支持一个ConfirmCallback</p>
+<p>当rabbitTemplate发送操作完成时，通道关闭;当连接工厂缓存已满时，将阻止接收确认或返回消息。当缓存满时，框架将延迟关闭达5秒钟，以便有时间接收确认/返回。当使用确认时，当收到最后一次确认时，频道将被关闭。仅使用返回时，通道将保持打开5秒。通常建议将连接工厂的channelCacheSize设置为足够大的值，以使发布消息的通道返回缓存而不是关闭。您可以使用RabbitMQ management plugin监控频道使用情况;如果您看到频道正在快速打开/关闭，则应考虑增加缓存大小以减少服务器上的开销。</p>
+<h3 id="与spring-message整合"><a href="#与spring-message整合" class="headerlink" title="与spring message整合"></a>与spring message整合</h3><p>从版本1.4开始，构建在RabbitTemplate之上的RabbitMessagingTemplate提供了与Spring Framework消息抽象（即org.springframework.messaging.Message）的集成。这允许你使用spring-messaging Message&lt;?&gt; 抽象来发送和接收消息。其他Spring项目（如Spring Integration和Spring的STOMP支持）使用了这种抽象。有两个消息转换器参与:一个用于在Spring消息传递Message&lt;?&gt;和Spring AMQP的Message抽象之间进行转换，另一个用于在Spring AMQP的Message抽象和底层RabbitMQ客户端库所需的格式之间进行转换。默认情况下，消息的payload由的RabbitTemplate的消息转换器负责转换。或者，你可以注入一个自定义MessagingMessageConverter与其他payload转换器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">MessagingMessageConverter amqpMessageConverter = new MessagingMessageConverter();</div><div class="line">amqpMessageConverter.setPayloadConverter(myPayloadConverter);</div><div class="line">rabbitMessagingTempalte.setAmqpMessageConverter(amqpMessageConverter);</div></pre></td></tr></table></figure>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>对RabbitMq进行配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">@Autowired</div><div class="line">   private RabbitCallBack rabbitCallBack;</div><div class="line">   @Autowired</div><div class="line">   private RabbitConfirmCallBack rabbitConfirmCallBack;</div><div class="line"></div><div class="line">   @Bean</div><div class="line">   public ConnectionFactory rabbitMqConnection() &#123;</div><div class="line">       CachingConnectionFactory connectionFactory = new CachingConnectionFactory();</div><div class="line">       connectionFactory.setHost(&quot;47.95.205.65&quot;);</div><div class="line">       connectionFactory.setPort(5672);</div><div class="line">       connectionFactory.setConnectionNameStrategy(ConnectionFactory -&gt; &quot;MyConnection&quot;);</div><div class="line">       connectionFactory.setVirtualHost(&quot;/&quot;);</div><div class="line">       connectionFactory.setUsername(&quot;admin&quot;);</div><div class="line">       connectionFactory.setPassword(&quot;123&quot;);</div><div class="line">       connectionFactory.setChannelCacheSize(25);</div><div class="line">       //单位是毫秒</div><div class="line">       connectionFactory.setChannelCheckoutTimeout(2000);</div><div class="line">       connectionFactory.setPublisherConfirms(true);</div><div class="line">       connectionFactory.setPublisherReturns(true);</div><div class="line">       connectionFactory.setCacheMode(CachingConnectionFactory.CacheMode.CHANNEL);</div><div class="line">       return connectionFactory;</div><div class="line">   &#125;</div><div class="line"></div><div class="line">   @Bean</div><div class="line">   public AmqpTemplate rabbitTemplate() &#123;</div><div class="line">       RabbitTemplate template = new RabbitTemplate(rabbitMqConnection());</div><div class="line">       RetryTemplate retryTemplate = new RetryTemplate();</div><div class="line">       ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();</div><div class="line">       backOffPolicy.setInitialInterval(500);</div><div class="line">       backOffPolicy.setMultiplier(10.0);</div><div class="line">       backOffPolicy.setMaxInterval(10000);</div><div class="line">       retryTemplate.setBackOffPolicy(backOffPolicy);</div><div class="line">       template.setRetryTemplate(retryTemplate);</div><div class="line">       template.setMandatory(true);</div><div class="line">       template.setReturnCallback(rabbitCallBack);</div><div class="line">       template.setConfirmCallback(rabbitConfirmCallBack);</div><div class="line">       return template;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
       
       
         <div class="page-reward">
@@ -366,13 +362,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JUC-AQS(3)</a></p>
+        <p><span>本文标题:</span><a href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/">RabbitMq入门-AmqpTemplate(4)</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2017年12月09日 - 08时45分</p>
-        <p><span>最后更新:</span>2018年01月01日 - 16时04分</p>
+        <p><span>发布时间:</span>2018年01月29日 - 16时44分</p>
+        <p><span>最后更新:</span>2018年01月29日 - 18时20分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/" title="JUC-AQS(3)">http://www.shuchang.sc.com/2017/12/09/JAVA并发从入门到崩溃-AQS/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/12/09/JAVA并发从入门到崩溃-AQS/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/" title="RabbitMq入门-AmqpTemplate(4)">http://www.shuchang.sc.com/2018/01/29/RabbitMq入门-AmqpTemplate-4/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/01/29/RabbitMq入门-AmqpTemplate-4/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -385,18 +381,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/12/13/java并发从入门到崩溃-Lock/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          JUC-Lock(4)
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/12/08/java并发从入门到崩溃-CAS/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">JUC-CAS(2)</div>
+    <a href="/2018/01/29/RabbitMq入门-连接和资源管理-3/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">RabbitMq入门-连接和资源管理(3)</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -407,7 +394,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是AQS"><span class="toc-number">1.</span> <span class="toc-text">什么是AQS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AQS实现分析"><span class="toc-number">2.</span> <span class="toc-text">AQS实现分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#独占式"><span class="toc-number">3.</span> <span class="toc-text">独占式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#共享式"><span class="toc-number">4.</span> <span class="toc-text">共享式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#阻塞与唤醒"><span class="toc-number">5.</span> <span class="toc-text">阻塞与唤醒</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#增加重试机制"><span class="toc-number">2.</span> <span class="toc-text">增加重试机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#发布确认和返回"><span class="toc-number">3.</span> <span class="toc-text">发布确认和返回</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#消息返回"><span class="toc-number">3.1.</span> <span class="toc-text">消息返回</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#与spring-message整合"><span class="toc-number">4.</span> <span class="toc-text">与spring message整合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -473,13 +460,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/12/13/java并发从入门到崩溃-Lock/" title="上一篇: JUC-Lock(4)">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/12/08/java并发从入门到崩溃-CAS/" title="下一篇: JUC-CAS(2)">
+            <a href="/2018/01/29/RabbitMq入门-连接和资源管理-3/" title="下一篇: RabbitMq入门-连接和资源管理(3)">
                 <i class="fa fa-angle-right"></i>
             </a>
         

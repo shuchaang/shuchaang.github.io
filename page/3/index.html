@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/JPA/" style="font-size: 14px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 16px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 12px;">jvm</a> <a href="/tags/redis/" style="font-size: 14px;">redis</a> <a href="/tags/spring/" style="font-size: 14px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a>
+                        <a href="/tags/JPA/" style="font-size: 13.33px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 15px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 16.67px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.67px;">jvm</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 13.33px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.33px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,80 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-java并发从入门到崩溃-常用篇" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/03/java并发从入门到崩溃-常用篇/" class="article-date">
+      <time datetime="2017-12-03T03:11:17.000Z" itemprop="datePublished">2017-12-03</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/03/java并发从入门到崩溃-常用篇/">JUC--常用篇(1)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h3 id="关于并发的一些思考"><a href="#关于并发的一些思考" class="headerlink" title="关于并发的一些思考"></a>关于并发的一些思考</h3><p>最近看完了《java多线程编程核心技术》、《java并发编程艺术》两本书。第一本更偏向于线程基础技术，看完之后给人一种眼前明亮之感。啊，原来并发编程就是这些操作。当我看完第二本之后，就已经一脸茫然，忘记了第一本的内容 - -!。因为第二本的内容太丰富，涉及到并发的底层原理和框架。于是我又拿出来《java编程思想》找到了并发的一章来看，发现看完已经满脑浆糊了，所以还是要坚持写一下博文，理一下思路也好。</p>
+<p>多线程，任何一个程序员都知道，但是实际工作中，大部分程序员面对的都是业务的CRUD和BUG定位，貌似没有太多机会接触并发。大家都知道程序运行的时候，最关键的是内存和CPU，而CPU运算的时候，是要从内存取值，当然现在很多时候是在L1/L2等Cache中取值，然后放入寄存器，参与运算，得到结果，先放入寄存器，再放入内存。程序执行的指令也放在寄存器，它记录当前程序执行的地址。</p>
+<p>上面说到了，一个数值，进入CPU运算，经过了内存、cache、寄存器。看过jvm我们就知道，当多线程运算同一个值的时候，是每个线程拷贝了一份值的副本到自己的线程工作内存（这里还涉及到java的内存模型），当一个线程计算完毕（计算结果写入寄存器），还没有刷到主存，另一个线程从主存中取到的值还是旧值。所以一个很直观的问题就是如何保证每个线程拿到的数据是最新的，这就是同步机制。最常见的volatile和synchronized就是为了解决这个问题。</p>
+<p>最简单的解决方案就是：共享变量同一时刻只允许有一个线程操作。这就保证了线程要么拿不到值，要么拿到最新的值。于是有了synchronized告诉jvm：这个地方是临界区，只有一把锁。那道锁的那个家伙才能开门进去，否则只能在门口等着。java中的锁，可以是this，方法，对象，类。锁的范围可以是代码块，方法甚至类。jvm会在锁和方法区之间建立联系。jvm生成一个对象会产生很多额外的信息，起码要有对象的内存地址或一个间接的指针，所以要标识一个对象被哪个线程占有并不困难。</p>
+<p>上面的方法虽然可以解决问题，但是很简单粗暴，我们想要一种更灵活的方式。很多时候我们并不关心谁在操作对象，我们只关心这个值到底是多少。于是就有了volatile：保证可见性，不保证原子性。其实意思就是说被volatile修饰的这个对象是一个尊贵的java会员，你要找他必须到他的家（内存）去接它出来，你请它聊天吃饭之后还要把它送回家(内存)。所以这里略过了计算机的高速缓存，读写内存。所以可见性就是说这个值谁都可以看到。至于不保证原子性，就是说这个值谁都可以取来运算。至于说到volatile的效率嘛，肯定也是大打折扣的，因为操作内存很定要比缓存慢的多。就如同数据库，其实我们也是写入了缓存，后台线程刷到磁盘而已。其实从硬件到软件，设计的思想大都是相通的。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/12/03/java并发从入门到崩溃-常用篇/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-表面理解jvm-类加载" class="article article-type-post" itemscope itemprop="blogPost">
   
