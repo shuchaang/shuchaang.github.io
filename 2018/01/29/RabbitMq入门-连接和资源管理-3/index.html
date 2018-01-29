@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>RabbitMq入门-连接和资源管理(3) | Shuchang&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="官方文档  https://docs.spring.io/spring-amqp/docs/2.0.1.RELEASE/reference/html/_reference.html#_introduction_4  简介用于管理与RabbitMQ代理的核心组件是ConnectionFactory接口。ConnectionFactory的实现类负责提供一个org.springframework.a">
+<meta name="keywords" content="java,RabbitMq">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMq入门-连接和资源管理(3)">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/01/29/RabbitMq入门-连接和资源管理-3/index.html">
+<meta property="og:site_name" content="Shuchang&#39;s Blog">
+<meta property="og:description" content="官方文档  https://docs.spring.io/spring-amqp/docs/2.0.1.RELEASE/reference/html/_reference.html#_introduction_4  简介用于管理与RabbitMQ代理的核心组件是ConnectionFactory接口。ConnectionFactory的实现类负责提供一个org.springframework.a">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tKfTcly1fnxha39o1fj30l209c74z.jpg">
+<meta property="og:updated_time" content="2018-01-29T08:23:33.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RabbitMq入门-连接和资源管理(3)">
+<meta name="twitter:description" content="官方文档  https://docs.spring.io/spring-amqp/docs/2.0.1.RELEASE/reference/html/_reference.html#_introduction_4  简介用于管理与RabbitMQ代理的核心组件是ConnectionFactory接口。ConnectionFactory的实现类负责提供一个org.springframework.a">
+<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tKfTcly1fnxha39o1fj30l209c74z.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Shuchang</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">剑来!</p>
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                            <li><a href="/archives">所有文章</a></li>
+                        
+                            <li><a href="/about">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                            
+                                <a class="fl github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                            
+                                <a class="fl zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                            
+                                <a class="fl weibo" target="_blank" href="#" title="weibo">weibo</a>
+                            
+                                <a class="fl google" target="_blank" href="#" title="google">google</a>
+                            
+                                <a class="fl twitter" target="_blank" href="#" title="twitter">twitter</a>
+                            
+                                <a class="fl linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/JPA/" style="font-size: 14px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 16px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 12px;">jvm</a> <a href="/tags/redis/" style="font-size: 14px;">redis</a> <a href="/tags/spring/" style="font-size: 14px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="https://gitee.com/swiftsc/">gitee</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">因为不满足于现状，面对未知，我们努力探索，其实越贴近，越震撼</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Shuchang</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Shuchang</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">剑来!</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                    <li><a href="/archives">所有文章</a></li>
+                
+                    <li><a href="/about">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                    
+                        <a class="github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                    
+                        <a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                    
+                        <a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+                    
+                        <a class="google" target="_blank" href="#" title="google">google</a>
+                    
+                        <a class="twitter" target="_blank" href="#" title="twitter">twitter</a>
+                    
+                        <a class="linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-RabbitMq入门-连接和资源管理-3" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/01/29/RabbitMq入门-连接和资源管理-3/" class="article-date">
+      <time datetime="2018-01-29T05:44:43.000Z" itemprop="datePublished">2018-01-29</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      RabbitMq入门-连接和资源管理(3)
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>官方文档  <a href="https://docs.spring.io/spring-amqp/docs/2.0.1.RELEASE/reference/html/_reference.html#_introduction_4" target="_blank" rel="external">https://docs.spring.io/spring-amqp/docs/2.0.1.RELEASE/reference/html/_reference.html#_introduction_4</a></p>
+</blockquote>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>用于管理与RabbitMQ代理的核心组件是ConnectionFactory接口。ConnectionFactory的实现类负责提供一个org.springframework.amqp.rabbit.connection.Connection的实例，它是com.rabbitmq.client.Connection的一个封装。官方提供的唯一的具体实现是CachingConnectionFactory。默认情况下，它建立一个可以被应用程序共享的连接代理(可以理解为一个全局配置)。因为与AMQP进行消息传递的“工作单元”实际上是一个“通道”（在某些方面，这与JMS中的Connection和Session之间的关系类似），所以可以共享连接。如你所想，连接实例提供了一个createChannel方法。 CachingConnectionFactory实现支持这些通道的高速缓存，并根据它们是否是事务处理来维护通道的单独高速缓存。在创建CachingConnectionFactory的实例时，可以通过构造函数提供主机名,用户名和密码。如果你想配置通道缓存的大小（默认是25），你也可以在这里调用setChannelCacheSize()方法.</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tKfTcly1fnxha39o1fj30l209c74z.jpg" alt=""></p>
+<p>可以看到一个SingleConnectionFactory实现类，它只在框架的单元测试代码中可用。它比CachingConnectionFactory简单，因为它不会缓存通道，但由于缺乏性能和弹性，它不适用于简单测试之外的实际应用。如果由于某种原因需要实现自己的ConnectionFactory，那么可以通过继承AbstractConnectionFactory来实现。</p>
+<p>从版本1.3开始，CachingConnectionFactory可以缓存连接数也可以只缓存通道。在这种情况下，每次调用createConnection()都会创建一个新连接（或从缓存中检索一个空闲连接）。关闭连接会将其返回到缓存（如果尚未达到缓存大小）。在这样的连接上创建的通道也被缓存。</p>
+<p>如果缓存大小为10，则可以使用任意数量的通道。如果超过10个通道正在使用，他们都返回到缓存，10将进入缓存;其余的将被关闭。</p>
+<p>从版本1.6开始，默认通道高速缓存大小从1增加到25.在大容量，多线程环境中，缓存太小意味着频繁地创建和关闭通道。增加默认缓存大小将避免这种开销。可以通过RabbitMQ管理界面监视正在使用的频道，并且如果您看到许多频道正在创建和关闭，请考虑进一步增加缓存大小。缓存只能按需增长（以适应应用程序的并发需求），所以这种改变不会影响现有的低容量应用程序。</p>
+<p>从版本1.4.2开始，CachingConnectionFactory有一个属性channelCheckoutTimeout。当此属性大于零时，channelCacheSize将成为可在连接上创建的通道数的最大值。如果达到限制，调用线程将阻塞，直到有一个通道可用或达到超时，在这种情况下会引发AmqpTimeoutException。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li><a id="more"></a>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+
+</the></li>
+</ul>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><h4 id="标准的连接"><a href="#标准的连接" class="headerlink" title="标准的连接"></a>标准的连接</h4><p>如果没有使用spring框架创建通道，则需要手动的创建通道</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">CachingConnectionFactory connectionFactory = new CachingConnectionFactory(&quot;somehost&quot;);</div><div class="line">connectionFactory.setUsername(&quot;guest&quot;);</div><div class="line">connectionFactory.setPassword(&quot;guest&quot;);</div><div class="line"></div><div class="line">Connection connection = connectionFactory.createConnection();</div></pre></td></tr></table></figure>
+<p>XML配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;connectionFactory&quot;</div><div class="line">      class=&quot;org.springframework.amqp.rabbit.connection.CachingConnectionFactory&quot;&gt;</div><div class="line">    &lt;constructor-arg value=&quot;somehost&quot;/&gt;</div><div class="line">    &lt;property name=&quot;username&quot; value=&quot;guest&quot;/&gt;</div><div class="line">    &lt;property name=&quot;password&quot; value=&quot;guest&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+<p>如果配置了rabbitmq的命名空间，也可以这样做。它会使用默认的配置创建一个CachingConnectionFactory</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;rabbit:connection-factory id=&quot;connectionFactory&quot;/&gt;</div></pre></td></tr></table></figure>
+<p>从版本2.0开始，为注入到AbstractionConnectionFactory提供了一个ConnectionNameStrategy。生成的名称用于目标RabbitMQ连接的应用程序特定标识。如果RabbitMQ服务器支持，连接名称将显示在管理UI中。该值不必是唯一的，并且不能用作连接标识符，例如在HTTP API请求中。该值应该是可以让人理解的，并且是connection_name键下的ClientProperties的一部分。可以简单的使用lambda表达式设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">connectionFactory.setConnectionNameStrategy(ConnectionFactory-&gt;&quot;MyConnection&quot;);</div></pre></td></tr></table></figure>
+<p>当应用程序使用单个CachingConnectionFactory进行配置时，也就是默认情况下使用Spring Boot自动配置。当Broker(rabbitmq实例)阻止连接时，应用程序将停止工作。也就是说当Broker停止工作时，任何client也会无法使用。如果我们在同一个应用程序中有生产者和消费者，那么当生产者阻塞连接时，可能会导致死锁，因为Broker上没有资源，消费者也不能释放它们，因为连接被阻塞。为了缓解这个问题，需要再配置一个CachingConnectionFactory实例，一个用于生产者，一个用于消费者。分离的CachingConnectionFactory不推荐用于事务性生产者，因为事务性的生产者应该与消费者使用相同的通道。</p>
+<h4 id="安全的连接-ssl"><a href="#安全的连接-ssl" class="headerlink" title="安全的连接(ssl)"></a>安全的连接(ssl)</h4><p>从版本1.4开始，提供了一个方便的RabbitConnectionFactoryBean，以便使用依赖注入方便地在底层客户端连接工厂中配置SSL属性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&lt;rabbit:connection-factory id=&quot;rabbitConnectionFactory&quot;</div><div class="line">    connection-factory=&quot;clientConnectionFactory&quot;</div><div class="line">    host=&quot;$&#123;host&#125;&quot;</div><div class="line">    port=&quot;$&#123;port&#125;&quot;</div><div class="line">    virtual-host=&quot;$&#123;vhost&#125;&quot;</div><div class="line">    username=&quot;$&#123;username&#125;&quot; password=&quot;$&#123;password&#125;&quot; /&gt;</div><div class="line"></div><div class="line">&lt;bean id=&quot;clientConnectionFactory&quot;</div><div class="line">        class=&quot;org.springframework.xd.dirt.integration.rabbit.RabbitConnectionFactoryBean&quot;&gt;</div><div class="line">    &lt;property name=&quot;useSSL&quot; value=&quot;true&quot; /&gt;</div><div class="line">    &lt;property name=&quot;sslPropertiesLocation&quot; value=&quot;file:/secrets/rabbitSSL.properties&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+<h4 id="Routing-Connection-Factory"><a href="#Routing-Connection-Factory" class="headerlink" title="Routing Connection Factory"></a>Routing Connection Factory</h4><p>从版本1.3开始，已经引入了AbstractRoutingConnectionFactory。这提供了一种机制来配置多个ConnectionFactory的映射，并在运行时通过一些lookupKey来确定目标ConnectionFactory。通常，实现检查线程绑定的上下文。为了方便起见，Spring AMQP提供了SimpleRoutingConnectionFactory，它从SimpleResourceHolder获取当前线程绑定的lookupKey。其核心的数据结构是一个Map<lookupkey,connection>，看一个使用demo</lookupkey,connection></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;connectionFactory&quot;</div><div class="line">      class=&quot;org.springframework.amqp.rabbit.connection.SimpleRoutingConnectionFactory&quot;&gt;</div><div class="line">	&lt;property name=&quot;targetConnectionFactories&quot;&gt;</div><div class="line">		&lt;map&gt;</div><div class="line">			&lt;entry key=&quot;#&#123;connectionFactory1.virtualHost&#125;&quot; ref=&quot;connectionFactory1&quot;/&gt;</div><div class="line">			&lt;entry key=&quot;#&#123;connectionFactory2.virtualHost&#125;&quot; ref=&quot;connectionFactory2&quot;/&gt;</div><div class="line">		&lt;/map&gt;</div><div class="line">	&lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div><div class="line"></div><div class="line">&lt;rabbit:template id=&quot;template&quot; connection-factory=&quot;connectionFactory&quot; /&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public class MyService &#123;</div><div class="line"></div><div class="line">    @Autowired</div><div class="line">    private RabbitTemplate rabbitTemplate;</div><div class="line"></div><div class="line">    public void service(String vHost, String payload) &#123;</div><div class="line">        SimpleResourceHolder.bind(rabbitTemplate.getConnectionFactory(), vHost);</div><div class="line">        rabbitTemplate.convertAndSend(payload);</div><div class="line">        SimpleResourceHolder.unbind(rabbitTemplate.getConnectionFactory());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>也就是说这种连接工厂支持动态的绑定和解绑你所使用的连接，但是需要注意，在使用完资源之后一定要unbind，就像lock方法一定要进行unlock。</p>
+<h4 id="队列亲和性以及LocalizedQueueConnectionFactory"><a href="#队列亲和性以及LocalizedQueueConnectionFactory" class="headerlink" title="队列亲和性以及LocalizedQueueConnectionFactory"></a>队列亲和性以及LocalizedQueueConnectionFactory</h4><p>在群集中使用高可用队列时，为了获得最佳性能，可能需要连接到主队列所在的物理地址。虽然CachingConnectionFactory可以配置多个地址，但这只是用于故障转移，客户端将尝试按顺序重新连接。 LocalizedQueueConnectionFactory使用admin plugin提供的REST API来确定哪个节点的队列被选为主队列。然后它创建（或从缓存中检索）一个将连接到该节点的CachingConnectionFactory。如果连接失败，则确定新的主节点，并且让客户连接到它。 LocalizedQueueConnectionFactory配置了一个默认的连接工厂，以防队列的物理位置无法确定，在这种情况下，它将正常连接到集群。</p>
+<p>出于这个原因（使用队列名称进行查找），LocalizedQueueConnectionFactory只能在容器配置为侦听单个队列时使用。</p>
+<p>给出一个springboot的配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">@Autowired</div><div class="line">private RabbitProperties props;</div><div class="line"></div><div class="line">private final String[] adminUris = &#123; &quot;http://host1:15672&quot;, &quot;http://host2:15672&quot; &#125;;</div><div class="line"></div><div class="line">private final String[] nodes = &#123; &quot;rabbit@host1&quot;, &quot;rabbit@host2&quot; &#125;;</div><div class="line"></div><div class="line">@Bean</div><div class="line">public ConnectionFactory defaultConnectionFactory() &#123;</div><div class="line">    CachingConnectionFactory cf = new CachingConnectionFactory();</div><div class="line">    cf.setAddresses(this.props.getAddresses());</div><div class="line">    cf.setUsername(this.props.getUsername());</div><div class="line">    cf.setPassword(this.props.getPassword());</div><div class="line">    cf.setVirtualHost(this.props.getVirtualHost());</div><div class="line">    return cf;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@Bean</div><div class="line">public ConnectionFactory queueAffinityCF(</div><div class="line">        @Qualifier(&quot;defaultConnectionFactory&quot;) ConnectionFactory defaultCF) &#123;</div><div class="line">    return new LocalizedQueueConnectionFactory(defaultCF,</div><div class="line">            StringUtils.commaDelimitedListToStringArray(this.props.getAddresses()),</div><div class="line">            this.adminUris, this.nodes,</div><div class="line">            this.props.getVirtualHost(), this.props.getUsername(), this.props.getPassword(),</div><div class="line">            false, null);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="消息发布确认与返回"><a href="#消息发布确认与返回" class="headerlink" title="消息发布确认与返回"></a>消息发布确认与返回</h4><p>通过将CachingConnectionFactory的publisherConfirms和publisherReturns属性分别设置为“true”来支持已确认和返回的消息。</p>
+<p>当这些选项被设置时，由工厂创建的Channel被封装在一个PublisherCallbackChannel中，用于简化回调。当获得这样的channel时，客户端可以在channel上注册一个PublisherCallbackChannel.Listener。 PublisherCallbackChannel实现包含将确认/返回路由到合适的侦听器的逻辑。</p>
+<h4 id="connectionListener和channelListener"><a href="#connectionListener和channelListener" class="headerlink" title="connectionListener和channelListener"></a>connectionListener和channelListener</h4><p>连接工厂支持注册ConnectionListener和ChannelListener实现。这使您可以接收有关connection和channel相关事件的通知。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">connectionFactory.setConnectionListeners();</div><div class="line">connectionFactory.setChannelListeners();</div></pre></td></tr></table></figure>
+<h4 id="通道关闭事件日志"><a href="#通道关闭事件日志" class="headerlink" title="通道关闭事件日志"></a>通道关闭事件日志</h4><p>在1.5版本中引入了一个使用户能够控制日志级别的机制。</p>
+<p>CachingConnectionFactory使用默认策略来记录通道关闭，如下所示：</p>
+<p>正常通道关闭（200 OK）不记录。<br>如果通道由于被动队列声明失败而关闭，则会在调试级别进行记录。<br>如果由于独占消费者条件而导致basic.consume被拒绝，因此频道被关闭，则它将以INFO级别记录。<br>所有其他错误都记录在ERROR级别。</p>
+<p>要修改此行为，请在其closeExceptionLogger属性中将自定义的ConditionalExceptionLogger注入到CachingConnectionFactory中。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>这一节主要是讲了RabbitMq的核心ConnectionFactory的一些配置和要点，根据上面的讲述，自己配置一个ConnectionFactory</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">@Bean</div><div class="line">public ConnectionFactory rabbitMqConnection()&#123;</div><div class="line">    CachingConnectionFactory connectionFactory = new CachingConnectionFactory();</div><div class="line">    connectionFactory.setHost(&quot;47.95.205.65&quot;);</div><div class="line">    connectionFactory.setPort(5672);</div><div class="line">    connectionFactory.setConnectionNameStrategy(ConnectionFactory-&gt;&quot;MyConnection&quot;);</div><div class="line">    connectionFactory.setVirtualHost(&quot;/&quot;);</div><div class="line">    connectionFactory.setUsername(&quot;admin&quot;);</div><div class="line">    connectionFactory.setPassword(&quot;123&quot;);</div><div class="line">    connectionFactory.setChannelCacheSize(25);</div><div class="line">    //单位是毫秒</div><div class="line">    connectionFactory.setChannelCheckoutTimeout(2000);</div><div class="line">    connectionFactory.setPublisherConfirms(true);</div><div class="line">    connectionFactory.setPublisherReturns(true);</div><div class="line">    connectionFactory.setCacheMode(CachingConnectionFactory.CacheMode.CHANNEL);</div><div class="line">    return connectionFactory;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+      
+      
+        <div class="page-reward">
+          <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang">赏</a></p>
+          <div class="hide_box"></div>
+          <div class="shang_box">
+            <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+            <div class="shang_tit">
+              <p>纯属好玩</p>
+            </div>
+            <div class="shang_payimg">
+              <img src="/img/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+            </div>
+              <div class="pay_explain">扫码打赏，你说多少就多少</div>
+            <div class="shang_payselect">
+              
+                <div class="pay_item checked" data-id="alipay">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/alipay.png" alt="支付宝" /></span>
+                </div>
+              
+              
+                <div class="pay_item" data-id="wechat">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/weixin.png" alt="微信" /></span>
+                </div>
+              
+            </div>
+            <div class="shang_info">
+              <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script type="text/javascript">
+          $(".pay_item").click(function(){
+            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+            var dataid=$(this).attr('data-id');
+            $(".shang_payimg img").attr("src","/img/"+dataid+"img.jpg");
+            $("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+          });
+          function dashangToggle(){
+            
+            $(".hide_box").fadeToggle();
+            $(".shang_box").fadeToggle();
+          }
+        </script>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/01/29/RabbitMq入门-连接和资源管理-3/">RabbitMq入门-连接和资源管理(3)</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
+        <p><span>发布时间:</span>2018年01月29日 - 13时44分</p>
+        <p><span>最后更新:</span>2018年01月29日 - 16时23分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/01/29/RabbitMq入门-连接和资源管理-3/" title="RabbitMq入门-连接和资源管理(3)">http://www.shuchang.sc.com/2018/01/29/RabbitMq入门-连接和资源管理-3/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/01/29/RabbitMq入门-连接和资源管理-3/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2018/01/22/JUC-Unsafe/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">JUC-Unsafe(7)</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置"><span class="toc-number">2.</span> <span class="toc-text">配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#标准的连接"><span class="toc-number">2.1.</span> <span class="toc-text">标准的连接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安全的连接-ssl"><span class="toc-number">2.2.</span> <span class="toc-text">安全的连接(ssl)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Routing-Connection-Factory"><span class="toc-number">2.3.</span> <span class="toc-text">Routing Connection Factory</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#队列亲和性以及LocalizedQueueConnectionFactory"><span class="toc-number">2.4.</span> <span class="toc-text">队列亲和性以及LocalizedQueueConnectionFactory</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#消息发布确认与返回"><span class="toc-number">2.5.</span> <span class="toc-text">消息发布确认与返回</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#connectionListener和channelListener"><span class="toc-number">2.6.</span> <span class="toc-text">connectionListener和channelListener</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#通道关闭事件日志"><span class="toc-number">2.7.</span> <span class="toc-text">通道关闭事件日志</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'shuchaang',
+      repo: 'shuchaang.github.io',
+      oauth: {
+        client_id: 'c5aa96bb5e5656512174',
+        client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2018/01/22/JUC-Unsafe/" title="下一篇: JUC-Unsafe(7)">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-连接和资源管理-3/">RabbitMq入门-连接和资源管理(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/22/JUC-Unsafe/">JUC-Unsafe(7)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/16/SpringBoot-Security认证流程/">SpringBoot-Security认证流程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/15/SpringBoot-异步REST服务/">SpringBoot-异步REST服务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/08/web容器对比/">web容器对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/">SpringBoot-Data-Jpa之高级话题(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/">SpringBoot-Data JPA之Repository(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/springboot-Data-JPA之对象映射/">SpringBoot-Data JPA之对象映射(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/22/RabbitMq入门-基本概念/">RabbitMq入门-基本概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/">spring4.3.x源码阅读笔记-AOP(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">JUC-ConcurrentHashMap(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-JMM/">JUC-JMM(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">JUC-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JUC-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">JUC-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">JUC--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2018 Shuchang
+            </div>
+
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>
