@@ -3,24 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>jvm学习笔记-类加载 | Shuchang&#39;s Blog</title>
+  <title>JUC-StampedLock(8) | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="宏观 当我们写好.java程序点击运行的时候发生了什么   当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:   以魔数Magic Number:0xCafeBabe开头 ConstantPool:符号表 FieldInfo:类成员变量表 方法描述 附加节点 …   有了.class文件我们就可以执行java命令">
-<meta name="keywords" content="java,jvm">
+  <meta name="description" content="StampedLockStampedLock字面上理解就是带有时间戳的lock，这个锁是在java8中加入的。为什么要加入这样一个锁呢，原因就要从ReentrantLock和ReadWriteLock给我们带来的便利和问题说起。 ReentrantLock vs synchronized lock的api更加灵活，显式的释放获取锁 lock可以进行扩展，synchronized不可以 lock的效">
+<meta name="keywords" content="java,并发">
 <meta property="og:type" content="article">
-<meta property="og:title" content="jvm学习笔记-类加载">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/11/23/表面理解jvm-类加载/index.html">
+<meta property="og:title" content="JUC-StampedLock(8)">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/01/30/JUC-StampedLock-8/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="宏观 当我们写好.java程序点击运行的时候发生了什么   当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:   以魔数Magic Number:0xCafeBabe开头 ConstantPool:符号表 FieldInfo:类成员变量表 方法描述 附加节点 …   有了.class文件我们就可以执行java命令">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1flrre3ma6nj30km0970t3.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1flrsg7pnfhj30k20dmmzx.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1flrta4ovpij309v085dh2.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1flrtfhpw0aj30m8019jre.jpg">
-<meta property="og:updated_time" content="2017-12-18T08:48:44.000Z">
+<meta property="og:description" content="StampedLockStampedLock字面上理解就是带有时间戳的lock，这个锁是在java8中加入的。为什么要加入这样一个锁呢，原因就要从ReentrantLock和ReadWriteLock给我们带来的便利和问题说起。 ReentrantLock vs synchronized lock的api更加灵活，显式的释放获取锁 lock可以进行扩展，synchronized不可以 lock的效">
+<meta property="og:updated_time" content="2018-01-30T00:36:49.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="jvm学习笔记-类加载">
-<meta name="twitter:description" content="宏观 当我们写好.java程序点击运行的时候发生了什么   当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:   以魔数Magic Number:0xCafeBabe开头 ConstantPool:符号表 FieldInfo:类成员变量表 方法描述 附加节点 …   有了.class文件我们就可以执行java命令">
-<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1flrre3ma6nj30km0970t3.jpg">
+<meta name="twitter:title" content="JUC-StampedLock(8)">
+<meta name="twitter:description" content="StampedLockStampedLock字面上理解就是带有时间戳的lock，这个锁是在java8中加入的。为什么要加入这样一个锁呢，原因就要从ReentrantLock和ReadWriteLock给我们带来的便利和问题说起。 ReentrantLock vs synchronized lock的api更加灵活，显式的释放获取锁 lock可以进行扩展，synchronized不可以 lock的效">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -234,11 +229,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-表面理解jvm-类加载" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-JUC-StampedLock-8" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/11/23/表面理解jvm-类加载/" class="article-date">
-      <time datetime="2017-11-23T00:07:39.000Z" itemprop="datePublished">2017-11-23</time>
+      <a href="/2018/01/30/JUC-StampedLock-8/" class="article-date">
+      <time datetime="2018-01-30T00:32:26.000Z" itemprop="datePublished">2018-01-30</time>
 </a>
     </div>
   
@@ -251,7 +246,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      jvm学习笔记-类加载
+      JUC-StampedLock(8)
     </h1>
   
 
@@ -260,13 +255,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/jvm/">jvm</a>
+    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -276,67 +271,33 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h3 id="宏观"><a href="#宏观" class="headerlink" title="宏观"></a>宏观</h3><blockquote>
-<p>当我们写好.java程序点击运行的时候发生了什么</p>
-</blockquote>
-<ol>
-<li>当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:</li>
-</ol>
-<ul>
-<li>以魔数Magic Number:0xCafeBabe开头</li>
-<li>ConstantPool:符号表</li>
-<li>FieldInfo:类成员变量表</li>
-<li>方法描述</li>
-<li>附加节点</li>
-<li>…</li>
-</ul>
-<ol>
-<li>有了.class文件我们就可以执行java命令运行java程序</li>
-<li>首先JVM装载.class，也就是类加载器加载字节码。但是类加载器本身也是一个java类，所以它也需要被加载，幸运的是有一个类加载器是用c++编写的，叫做<code>Bootstrap类加载器</code>，属于虚拟机内核，用特定于操作系统的本地代码实现。Bootstrap类加载器负责加载javajava核心包中的类(rt.jar)，这些类的Class.getClassLoader()方法返回值会null，表示需要Bootstrap加载器来加载。JAVA核心包中还有两个类加载器:<code>ExtClassLoader</code>和<code>ApplicationClassLoader</code>。他们都用java语言编写，其中ExtClassLoader负责加载<java_home>/jre/lib/ext目录下的jar，ApplicationClassLoader负责加载应用程序的启动执行类，即当使用java命令去启动执行一个类时，JAVA虚拟机使用AppClassLoader加载这个类。所以这里有个小track就是把一些自己常用但是非java自带的jar放到ext目录下，这样就可以少写几个maven dependency。</java_home></li>
+        <h3 id="StampedLock"><a href="#StampedLock" class="headerlink" title="StampedLock"></a>StampedLock</h3><p>StampedLock字面上理解就是带有时间戳的lock，这个锁是在java8中加入的。为什么要加入这样一个锁呢，原因就要从ReentrantLock和ReadWriteLock给我们带来的便利和问题说起。</p>
+<h4 id="ReentrantLock-vs-synchronized"><a href="#ReentrantLock-vs-synchronized" class="headerlink" title="ReentrantLock vs synchronized"></a>ReentrantLock vs synchronized</h4><ol>
+<li>lock的api更加灵活，显式的释放获取锁</li>
+<li>lock可以进行扩展，synchronized不可以</li>
+<li>lock的效率目前略高于synchronized，以为在java每个版本升级中，都会对synchronized关    键字进行优化</li>
 </ol>
 <p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
 <ul>
 <li><a id="more"></a>
 <the rest="" of="" contents="" |="" 余下全文="">
 
+
 </the></li>
 </ul>
-<h3 id="为什么要类加载器"><a href="#为什么要类加载器" class="headerlink" title="为什么要类加载器"></a>为什么要类加载器</h3><ol>
-<li>java类加载都是在程序的运行期完成的</li>
-<li>增加java程序的灵活性，例如：</li>
+<h4 id="ReentrantReadWriteLock-vs-ReentrantLock"><a href="#ReentrantReadWriteLock-vs-ReentrantLock" class="headerlink" title="ReentrantReadWriteLock vs ReentrantLock"></a>ReentrantReadWriteLock vs ReentrantLock</h4><ol>
+<li>解决在并发读的过程中不需要加锁</li>
 </ol>
-<ul>
-<li>面向接口的编程，在程序运行时才指定其具体的实现   类。</li>
-<li>用户自定义类加载器,支持程序从网络或者其他地方加载一个类。</li>
-</ul>
-<h3 id="类的生命周期"><a href="#类的生命周期" class="headerlink" title="类的生命周期"></a>类的生命周期</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1flrre3ma6nj30km0970t3.jpg" alt=""></p>
-<ul>
-<li>①的可控性最强，因为可以自定义类加载器</li>
-<li>①②③⑤的顺序一定。但注意是开始顺序一定，并不保证按顺序完成。</li>
-<li>④过程可能在⑤之后进行，为了支持java的运行时绑定</li>
-</ul>
-<h4 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h4><ol>
-<li>通过一个类的全限定名获取定义此类的二进制字节流</li>
-<li>将字节流转化为方法区的数据结构</li>
-<li>在堆中生成这个类的对象，作为访问此类的入口<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1flrsg7pnfhj30k20dmmzx.jpg" alt="来源网络"><h4 id="连接"><a href="#连接" class="headerlink" title="连接"></a>连接</h4></li>
-<li>验证：确保符合jvm规范，没有安全问题</li>
-<li>准备：在方法区正式为类变量分配内存并设置初始值</li>
-<li>将常量池内的引用符号替换为直接引用（可以理解为将原来的多级指针指向的最终地址替换指针）</li>
-</ol>
-<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p>jvm并没有强制规定什么时候要进行加载，但是规定了五种有且只有的情况立即初始化类，当然在初始化之前要完成前面的几个步骤。</p>
-<ol>
-<li>new一个类的对象</li>
-<li>调用类的静态成员（除了final常量）和静态方法</li>
-<li>使用java.lang.reflect包的方法对类进行反射调用</li>
-<li>当虚拟机启动,加载main方法所在的类</li>
-<li>当初始化一个类，如果其父类没有被初始化，则先初始化它父类</li>
-</ol>
-<h3 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h3><p>如果两个类相等，那么不光要class是相同的，而且需要类加载器相同。</p>
+<h4 id="StampedLock-使用场景"><a href="#StampedLock-使用场景" class="headerlink" title="StampedLock 使用场景"></a>StampedLock 使用场景</h4><p>假设现在有100个线程想要请求资源A，其中99个是读请求，1个是写请求。如果是读请求先获取到资源，那么就可能造成写的饥饿，如果写请求先获取到资源，那么久可能造成读请求的长时间等待。StampedLock的作用就是替换ReentrantLock和ReentrantReadWriteLock,因为StampedLock有这两者的API。ReadWriteLock虽然做到了读写分离，但是它实现的读锁是一个悲观锁，而StampedLock实现了一个乐观的读锁。也就是说在读的同时可以做到写，通过代码看看是怎么做到的。</p>
+<h4 id="模拟"><a href="#模拟" class="headerlink" title="模拟"></a>模拟</h4><p>使用StampedLock分别使用悲观读锁和乐观读锁，7个读线程和1个写线程，观察效果</p>
+<p>使用悲观读锁<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line">public class StampedLockTest &#123;</div><div class="line">    private static StampedLock lock = new StampedLock();</div><div class="line">    private static  List&lt;Long&gt; data = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        ExecutorService executorService = Executors.newFixedThreadPool(30);</div><div class="line">        Runnable runnable = ()-&gt;&#123;</div><div class="line">          while (true)&#123;</div><div class="line">              read();</div><div class="line">          &#125;</div><div class="line">        &#125;;</div><div class="line">        Runnable runnable1 = ()-&gt;&#123;</div><div class="line">            while (true)&#123;</div><div class="line">                write();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;;</div><div class="line">        executorService.submit(runnable);</div><div class="line">        executorService.submit(runnable);</div><div class="line">        executorService.submit(runnable);</div><div class="line">        executorService.submit(runnable);</div><div class="line">        executorService.submit(runnable);</div><div class="line">        executorService.submit(runnable);</div><div class="line">        executorService.submit(runnable);</div><div class="line">        executorService.submit(runnable1);</div><div class="line"></div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void read()&#123;</div><div class="line">        long stamped = -1;</div><div class="line">        try &#123;</div><div class="line">            stamped = lock.readLock();</div><div class="line">            //假设任务是读出data中的数据</div><div class="line">            Optional.of(data.stream().map(String::valueOf)</div><div class="line">                    .collect(Collectors.joining(&quot;#&quot;,&quot;R&quot;,&quot;&quot;)))</div><div class="line">                    .ifPresent(System.out::println);</div><div class="line">            TimeUnit.SECONDS.sleep(1);</div><div class="line">        &#125; catch (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125; finally &#123;</div><div class="line">            lock.unlock(stamped);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    private static void write()&#123;</div><div class="line">        long stamp = -1;</div><div class="line">        try&#123;</div><div class="line">            stamp=lock.writeLock();</div><div class="line">            data.add(System.currentTimeMillis());</div><div class="line">            TimeUnit.SECONDS.sleep(1);</div><div class="line">        &#125; catch (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125; finally&#123;</div><div class="line">            lock.unlock(stamp);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>使用乐观读锁</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line">public class StampedLockTest1 &#123;</div><div class="line">    private static StampedLock lock = new StampedLock();</div><div class="line">    private static  List&lt;Long&gt; data = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        ExecutorService executorService = Executors.newFixedThreadPool(30);</div><div class="line">        Runnable runnable = ()-&gt;&#123;</div><div class="line">          while (true)&#123;</div><div class="line">              read();</div><div class="line">          &#125;</div><div class="line">        &#125;;</div><div class="line">        Runnable runnable1 = ()-&gt;&#123;</div><div class="line">            while (true)&#123;</div><div class="line">                write();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;;</div><div class="line">        executorService.submit(runnable);</div><div class="line">        executorService.submit(runnable);</div><div class="line">        executorService.submit(runnable);</div><div class="line">        executorService.submit(runnable);</div><div class="line">        executorService.submit(runnable);</div><div class="line">        executorService.submit(runnable);</div><div class="line">        executorService.submit(runnable);</div><div class="line">        executorService.submit(runnable1);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void read()&#123;</div><div class="line">        long stamped =lock.tryOptimisticRead();</div><div class="line">        //检查乐观锁是否被修改，如果有就拿不到锁</div><div class="line">        if(!lock.validate(stamped))&#123;</div><div class="line">            try&#123;</div><div class="line">                stamped=lock.readLock();</div><div class="line">                //假设任务是读出data中的数据</div><div class="line">                Optional.of(data.stream().map(String::valueOf)</div><div class="line">                        .collect(Collectors.joining(&quot;#&quot;,&quot;R&quot;,&quot;&quot;)))</div><div class="line">                        .ifPresent(System.out::println);</div><div class="line">                TimeUnit.SECONDS.sleep(1);</div><div class="line">            &#125; catch (InterruptedException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125; finally &#123;</div><div class="line">                lock.unlock(stamped);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    private static void write()&#123;</div><div class="line">        long  stamp = -1;</div><div class="line">        try&#123;</div><div class="line">            stamp=lock.writeLock();</div><div class="line">            data.add(System.currentTimeMillis());</div><div class="line">            TimeUnit.SECONDS.sleep(1);</div><div class="line">        &#125; catch (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125; finally&#123;</div><div class="line">            lock.unlock(stamp);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h4><p>7个读+1个写 乐观锁明显优于悲观锁。程序开始读线程便可写入数据，而悲观锁则需要等待很久</p>
+<p>推荐一篇很好的性能比较的文章</p>
 <blockquote>
-<p>关于双亲委派模型的疑问？？？</p>
+<p><a href="https://blog.takipi.com/java-8-stampedlocks-vs-readwritelocks-and-synchronized/" target="_blank" rel="external">https://blog.takipi.com/java-8-stampedlocks-vs-readwritelocks-and-synchronized/</a></p>
 </blockquote>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1flrta4ovpij309v085dh2.jpg" alt=""></p>
-<p>这个图相信大家都见到过，也就是双亲委派模型(Parents-Delegation-Model)的示意图。详细内容就不作介绍。一点疑问就是当我第一次学这个内容的时候我在考虑双亲的双体现在哪里呢？它只是向上面一级也就是父加载器传递，这个Parents体现的应该是垂直方向，也就是父亲，爷爷这种关系，而不是水平方向上的双亲关系。所以我认为这个模型不应该叫双亲委派模型，英文也应该是(Parent-Delegation-Model),我认为双亲这种说法很容易误导初学者。<br>在《Thinking in jvm》英文原本中印证了我的想法,如图。个人认为这种说法更准确。<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1flrtfhpw0aj30m8019jre.jpg" alt=""></p>
 
       
       
@@ -392,13 +353,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></p>
+        <p><span>本文标题:</span><a href="/2018/01/30/JUC-StampedLock-8/">JUC-StampedLock(8)</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2017年11月23日 - 08时07分</p>
-        <p><span>最后更新:</span>2017年12月18日 - 16时48分</p>
+        <p><span>发布时间:</span>2018年01月30日 - 08时32分</p>
+        <p><span>最后更新:</span>2018年01月30日 - 08时36分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/11/23/表面理解jvm-类加载/" title="jvm学习笔记-类加载">http://www.shuchang.sc.com/2017/11/23/表面理解jvm-类加载/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/11/23/表面理解jvm-类加载/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/01/30/JUC-StampedLock-8/" title="JUC-StampedLock(8)">http://www.shuchang.sc.com/2018/01/30/JUC-StampedLock-8/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/01/30/JUC-StampedLock-8/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -411,18 +372,18 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/12/03/java并发从入门到崩溃-常用篇/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/01/30/JAVA继承机制与多态/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption"><</strong>
       <div class="article-nav-title">
         
-          JUC--常用篇(1)
+          JAVA继承机制与多态
         
       </div>
     </a>
   
   
-    <a href="/2017/11/22/表面理解jvm-内存/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">表面理解jvm-内存</div>
+    <a href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">RabbitMq入门-AmqpTemplate(4)</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -433,7 +394,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#宏观"><span class="toc-number">1.</span> <span class="toc-text">宏观</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么要类加载器"><span class="toc-number">2.</span> <span class="toc-text">为什么要类加载器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类的生命周期"><span class="toc-number">3.</span> <span class="toc-text">类的生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#加载"><span class="toc-number">3.1.</span> <span class="toc-text">加载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#连接"><span class="toc-number">3.2.</span> <span class="toc-text">连接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#初始化"><span class="toc-number">3.3.</span> <span class="toc-text">初始化</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类加载器"><span class="toc-number">4.</span> <span class="toc-text">类加载器</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#StampedLock"><span class="toc-number">1.</span> <span class="toc-text">StampedLock</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ReentrantLock-vs-synchronized"><span class="toc-number">1.1.</span> <span class="toc-text">ReentrantLock vs synchronized</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ReentrantReadWriteLock-vs-ReentrantLock"><span class="toc-number">1.2.</span> <span class="toc-text">ReentrantReadWriteLock vs ReentrantLock</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#StampedLock-使用场景"><span class="toc-number">1.3.</span> <span class="toc-text">StampedLock 使用场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#模拟"><span class="toc-number">1.4.</span> <span class="toc-text">模拟</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#结果"><span class="toc-number">1.5.</span> <span class="toc-text">结果</span></a></li></ol></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -499,13 +460,13 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/12/03/java并发从入门到崩溃-常用篇/" title="上一篇: JUC--常用篇(1)">
+            <a href="/2018/01/30/JAVA继承机制与多态/" title="上一篇: JAVA继承机制与多态">
                 <i class="fa fa-angle-left"></i>
             </a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/11/22/表面理解jvm-内存/" title="下一篇: 表面理解jvm-内存">
+            <a href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/" title="下一篇: RabbitMq入门-AmqpTemplate(4)">
                 <i class="fa fa-angle-right"></i>
             </a>
         
