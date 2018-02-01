@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/JPA/" style="font-size: 14px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 16px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 16px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 12px;">jvm</a> <a href="/tags/redis/" style="font-size: 14px;">redis</a> <a href="/tags/spring/" style="font-size: 14px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a>
+                        <a href="/tags/JPA/" style="font-size: 13.33px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.67px;">jvm</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 13.33px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.33px;">并发</a>
                     </div>
                 </section>
                 
@@ -232,6 +232,77 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-RabbitMq入门-MessageConverter-6" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/02/01/RabbitMq入门-MessageConverter-6/" class="article-date">
+      <time datetime="2018-02-01T05:34:37.000Z" itemprop="datePublished">2018-02-01</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/02/01/RabbitMq入门-MessageConverter-6/">RabbitMq入门-MessageConverter(6)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><p>AmqpTemplate还定义了几种发送和接收消息的方法，这些方法将委托给一个MessageConverter。 MessageConverter本身非常简单。它为每个方向提供一个方法：一个用于将消息转换为Message实体，另一个用于将Message转换为Object。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public interface MessageConverter &#123;</div><div class="line"></div><div class="line">    Message toMessage(Object object, MessageProperties messageProperties)</div><div class="line">            throws MessageConversionException;</div><div class="line"></div><div class="line">    Object fromMessage(Message message) throws MessageConversionException;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/02/01/RabbitMq入门-MessageConverter-6/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-RabbitMq入门-消息发送与接收-5" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -259,8 +330,7 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-              <p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fnzu8p322sj30g40g4dg2.jpg" alt=""></p>
-<blockquote>
+              <blockquote>
 <p>SpringBoot1.5.9   <a href="https://projects.spring.io/spring-amqp/" target="_blank" rel="external">https://projects.spring.io/spring-amqp/</a></p>
 <pre><code>&lt;dependency&gt;
      &lt;groupId&gt;org.springframework.amqp&lt;/groupId&gt;
@@ -892,86 +962,9 @@
 
 
   
-    <article id="post-SpringBoot-Data-Jpa之高级话题" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/" class="article-date">
-      <time datetime="2018-01-01T08:02:44.000Z" itemprop="datePublished">2018-01-01</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/">SpringBoot-Data-Jpa之高级话题(3)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="JPA的一些坑"><a href="#JPA的一些坑" class="headerlink" title="JPA的一些坑"></a>JPA的一些坑</h3><p>如果我们的Repository继承自JpaRepository，那么我们如果执行插入或保存代码的时候会出现异常,比如下面一个方法是会执行失败的:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">@Test</div><div class="line">public void test8()&#123;</div><div class="line">    Book book = new Book();</div><div class="line">    book.setName(&quot;heng&quot;);</div><div class="line">    book.setUpdateDate(new Date());</div><div class="line">    book.setCreateDate(new Date());</div><div class="line">    bookRepository.save(book);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>Connection is read-only. Queries leading to data modification are not allowed</p>
-</blockquote>
-<p>错误提示是ReadOnly，也就是说我们不能修改数据，那么如何解决这个问题呢，很简单。<strong><em><em>只需要在测试类或者方法上加@Transactional注解就可以</em></em></strong>。<br>那么这个问题ReadOnly是从哪里来的呢，我们继承的JpaRepository只是一个接口，那么找问题就要去找它的实现类，可以找到SimpleJpaRepository。在类注解上我们就找到了问题所在</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@Transactional(</div><div class="line">    readOnly = true</div><div class="line">)</div></pre></td></tr></table></figure>
-<p>这里事务标注为只读，所以我们执行修改操作的时候要加事务注解对它进行覆盖。如果你对Repository层写的测试代码，那么你会发现，虽然Junit测试显示成功，sql也打印在了控制台，但是数据库并没有插入或修改这条数据。因为springboot对repository层默认进行了回滚，如果你使用Service层包装了Repository层，对Service写Junit测试，就不会出现事务回滚的情况，要解决这种回滚的情况，需要再添加一个注解:</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/SpringBoot/">SpringBoot</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JPA/">JPA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringBoot/">SpringBoot</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
     </nav>
   
 </div>
