@@ -232,6 +232,75 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-JUC-等等我-一起走-9" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/02/02/JUC-等等我-一起走-9/" class="article-date">
+      <time datetime="2018-02-02T02:44:31.000Z" itemprop="datePublished">2018-02-02</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/02/02/JUC-等等我-一起走-9/">JUC-等等我,一起走(9)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h3 id="CountDownLatch"><a href="#CountDownLatch" class="headerlink" title="CountDownLatch"></a>CountDownLatch</h3><h4 id="coding"><a href="#coding" class="headerlink" title="coding"></a>coding</h4><p>日常使用的最多的一个工具，初始化时需要指定一个int值，可以理解为要执行任务的线程的数量，每次调用countDown()会使int值减一。当int值&lt;=0时，调用await()方法的地方会放行所有线程。一个简单的demo:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">public class CountDownLatchTest &#123;</div><div class="line">    public static CountDownLatch countDownLatch = new CountDownLatch(3);</div><div class="line"></div><div class="line">    static class MyRun implements Runnable&#123;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void run() &#123;</div><div class="line">            System.out.println(Thread.currentThread().getName()+&quot;working&quot;);</div><div class="line">            try &#123;</div><div class="line">                TimeUnit.SECONDS.sleep(1);</div><div class="line">            &#125; catch (InterruptedException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">            countDownLatch.countDown();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) throws InterruptedException &#123;</div><div class="line">        new Thread(new MyRun()).start();</div><div class="line">        new Thread(new MyRun()).start();</div><div class="line">        new Thread(new MyRun()).start();</div><div class="line"></div><div class="line">        countDownLatch.await();</div><div class="line">        System.out.println(&quot;all finish&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/02/02/JUC-等等我-一起走-9/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-RabbitMq入门-MessageConverter-6" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -873,77 +942,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/01/15/SpringBoot-异步REST服务/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-web容器对比" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/01/08/web容器对比/" class="article-date">
-      <time datetime="2018-01-08T01:34:35.000Z" itemprop="datePublished">2018-01-08</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/08/web容器对比/">web容器对比</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>公司里统一使用的是jetty，自己平时写项目都习惯性用tomcat。大概比较一下两个容器。</p>
-<h3 id="Tomcat"><a href="#Tomcat" class="headerlink" title="Tomcat"></a>Tomcat</h3><h4 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h4><p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180105151512096169138.png" alt="tomcat结构"></p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/随笔/">随笔</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaWeb/">JavaWeb</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/01/08/web容器对比/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>

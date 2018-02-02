@@ -232,6 +232,81 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-java并发从入门到崩溃-ConcurrentHashMap-6" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/" class="article-date">
+      <time datetime="2017-12-17T08:27:39.000Z" itemprop="datePublished">2017-12-17</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">JUC-ConcurrentHashMap(6)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>无论是HashMap还是ConcurrentHashMap都是日常使用和面试中的热点问题，所以必须整理一波。而且java8中对于HashMap的改动还是相当大的。</p>
+<h3 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h3><p>HashMap的结构是由数组+链表+红黑树组成的</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmjuws4d1vj30e70doq3x.jpg" alt=""></p>
+<p>HashMap的主体是一个Node[]，也就是一个Node数组，图中每个蓝色的球就是一个Node，Node的结构就是一个键值对:Node<k,v>。顾名思义，HashMap通过hash算法将键值对映射到一个位置，那么具体怎么做呢。</k,v></p>
+<h4 id="定位"><a href="#定位" class="headerlink" title="定位"></a>定位</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">static final int hash(Object key) &#123;</div><div class="line">    int h;</div><div class="line">    return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>hashMap的hash方法并没有我们想象的那么简单。并不是只经过一次hashcode计算，而是把hashcode再与hashcode的高16位进行一次抑或运算。这个如果大家把这个过程自己写一下就发现，这样做这个HashMap里面的元素的位置会尽量分布均匀。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-java并发从入门到崩溃-JMM" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -934,80 +1009,6 @@
       
         <p class="article-more-link">
           <a  href="/2017/11/10/redis持久化/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-java对象-引用-传递" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2017/11/08/java对象-引用-传递/" class="article-date">
-      <time datetime="2017-11-08T06:56:50.000Z" itemprop="datePublished">2017-11-08</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <blockquote>
-<p>在java中，任何对象变量的值都是对存储在另外一个地方的一个对象的引用。</p>
-</blockquote>
-<h2 id="赋值"><a href="#赋值" class="headerlink" title="赋值"></a>赋值</h2><p>在java中有八种基本数据类型，分别是byte、short、int、long、float、double、boolean、char。这八种基本类型的数据，值就保存咋变量中。除去以上八种基本数据类型，其余类型包括自定义的类，都属于引用类型，变量中保存的是引用对象的地址，我们也称为引用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">int x=1;</div><div class="line">int y=x;</div><div class="line">String a = &quot;nihao&quot;;</div><div class="line">String b = a;</div></pre></td></tr></table></figure></p>
-<p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1flap6nqupej30cp09c3yc.jpg" alt=""></p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java基础/">java基础</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2017/11/08/java对象-引用-传递/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>

@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>JUC-等等我,一起走(9) | Shuchang&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="CountDownLatchcoding日常使用的最多的一个工具，初始化时需要指定一个int值，可以理解为要执行任务的线程的数量，每次调用countDown()会使int值减一。当int值&amp;lt;=0时，调用await()方法的地方会放行所有线程。一个简单的demo: 1234567891011121314151617181920212223242526public class CountDown">
+<meta name="keywords" content="java,并发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JUC-等等我,一起走(9)">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/02/02/JUC-等等我-一起走-9/index.html">
+<meta property="og:site_name" content="Shuchang&#39;s Blog">
+<meta property="og:description" content="CountDownLatchcoding日常使用的最多的一个工具，初始化时需要指定一个int值，可以理解为要执行任务的线程的数量，每次调用countDown()会使int值减一。当int值&amp;lt;=0时，调用await()方法的地方会放行所有线程。一个简单的demo: 1234567891011121314151617181920212223242526public class CountDown">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79ly1fo0x4b9jn5j308l084js1.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79ly1fo0y3rqjphj309q0b2q3t.jpg">
+<meta property="og:updated_time" content="2018-02-02T02:45:52.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JUC-等等我,一起走(9)">
+<meta name="twitter:description" content="CountDownLatchcoding日常使用的最多的一个工具，初始化时需要指定一个int值，可以理解为要执行任务的线程的数量，每次调用countDown()会使int值减一。当int值&amp;lt;=0时，调用await()方法的地方会放行所有线程。一个简单的demo: 1234567891011121314151617181920212223242526public class CountDown">
+<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tNc79ly1fo0x4b9jn5j308l084js1.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Shuchang</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">剑来!</p>
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                            <li><a href="/archives">所有文章</a></li>
+                        
+                            <li><a href="/about">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                            
+                                <a class="fl github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                            
+                                <a class="fl zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                            
+                                <a class="fl weibo" target="_blank" href="#" title="weibo">weibo</a>
+                            
+                                <a class="fl google" target="_blank" href="#" title="google">google</a>
+                            
+                                <a class="fl twitter" target="_blank" href="#" title="twitter">twitter</a>
+                            
+                                <a class="fl linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/JPA/" style="font-size: 13.33px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.67px;">jvm</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 13.33px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.33px;">并发</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="https://gitee.com/swiftsc/">gitee</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">因为不满足于现状，面对未知，我们努力探索，其实越贴近，越震撼</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Shuchang</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Shuchang</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">剑来!</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                    <li><a href="/archives">所有文章</a></li>
+                
+                    <li><a href="/about">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                    
+                        <a class="github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                    
+                        <a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                    
+                        <a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+                    
+                        <a class="google" target="_blank" href="#" title="google">google</a>
+                    
+                        <a class="twitter" target="_blank" href="#" title="twitter">twitter</a>
+                    
+                        <a class="linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-JUC-等等我-一起走-9" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/02/02/JUC-等等我-一起走-9/" class="article-date">
+      <time datetime="2018-02-02T02:44:31.000Z" itemprop="datePublished">2018-02-02</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      JUC-等等我,一起走(9)
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h3 id="CountDownLatch"><a href="#CountDownLatch" class="headerlink" title="CountDownLatch"></a>CountDownLatch</h3><h4 id="coding"><a href="#coding" class="headerlink" title="coding"></a>coding</h4><p>日常使用的最多的一个工具，初始化时需要指定一个int值，可以理解为要执行任务的线程的数量，每次调用countDown()会使int值减一。当int值&lt;=0时，调用await()方法的地方会放行所有线程。一个简单的demo:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">public class CountDownLatchTest &#123;</div><div class="line">    public static CountDownLatch countDownLatch = new CountDownLatch(3);</div><div class="line"></div><div class="line">    static class MyRun implements Runnable&#123;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void run() &#123;</div><div class="line">            System.out.println(Thread.currentThread().getName()+&quot;working&quot;);</div><div class="line">            try &#123;</div><div class="line">                TimeUnit.SECONDS.sleep(1);</div><div class="line">            &#125; catch (InterruptedException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">            countDownLatch.countDown();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) throws InterruptedException &#123;</div><div class="line">        new Thread(new MyRun()).start();</div><div class="line">        new Thread(new MyRun()).start();</div><div class="line">        new Thread(new MyRun()).start();</div><div class="line"></div><div class="line">        countDownLatch.await();</div><div class="line">        System.out.println(&quot;all finish&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""><br><a id="more"></a></excerpt></p>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+<p>当三个线程都执行过countDown方法之后，计数器减为0。await()方法放行，输出all finish语句。如果有线程出现错误造成计数器无法减到0就会一直阻塞，解决方法有两种。第一种就是给await方法设定等待时间，超过等待时间就放行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">countDownLatch.await(2,TimeUnit.SECONDS);</div></pre></td></tr></table></figure>
+<p>第二种就是使用try/finally代码块</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public void run() &#123;</div><div class="line">    try &#123;</div><div class="line">        System.out.println(Thread.currentThread().getName()+&quot;working&quot;);</div><div class="line">        TimeUnit.SECONDS.sleep(1);</div><div class="line">    &#125; catch (InterruptedException e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;finally &#123;</div><div class="line">        countDownLatch.countDown();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可能平时不注意就会忘了考虑线程出异常而造成的阻塞这种情况，所以还是建议使用try/finally这种处理，因为可以再finally代码块中记录日志，做一些结束操作。</p>
+<h4 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h4><p>可以看出CountDownLatch算是JUC里比较简单的了，可供调用的方法非常简单，从字面意思就可以看懂怎么用。内部的实现是AQS，那么核心就是看一下它是怎样使用AQS了。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79ly1fo0x4b9jn5j308l084js1.jpg" alt=""></p>
+<p>初始化时调用了内部AQS的初始化，将计数器赋值给state(同步器状态)。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public CountDownLatch(int count) &#123;</div><div class="line">    if (count &lt; 0) throw new IllegalArgumentException(&quot;count &lt; 0&quot;);</div><div class="line">    this.sync = new Sync(count);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>countDown和await方法的内部实现</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">//await时候执行，只查看当前需要countDown数量减为0了，如果为0，说明可以继续执行，否则需要park住，等待countDown次数足够，并且unpark所有等待线程</div><div class="line">public int tryAcquireShared(int acquires) &#123;</div><div class="line">     return getState() == 0? 1 : -1;</div><div class="line">&#125;</div><div class="line"></div><div class="line">//countDown 时候执行，如果当前countDown数量为0，说明没有线程await，直接返回false而不需要唤醒park住线程，如果不为0，得到剩下需要 countDown的数量并且compareAndSet,最终返回剩下的countDown数量是否为0,供AQS判定是否释放所有await线程。</div><div class="line">public boolean tryReleaseShared(int releases) &#123;</div><div class="line">    for (;;) &#123;</div><div class="line">         int c = getState();</div><div class="line">         if (c == 0)</div><div class="line">             return false;</div><div class="line">         int nextc = c-1;</div><div class="line">         if (compareAndSetState(c, nextc))</div><div class="line">             return nextc == 0;</div><div class="line"> &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="CylicBarriar"><a href="#CylicBarriar" class="headerlink" title="CylicBarriar"></a>CylicBarriar</h3><h4 id="coding-1"><a href="#coding-1" class="headerlink" title="coding"></a>coding</h4><p>CyclicBarrier与CountDownLatch的使用有些相似</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">public class CyclicBarrierTest &#123;</div><div class="line">    public static CyclicBarrier cyclicBarrier = new CyclicBarrier(4);</div><div class="line">    public static Random random = new Random();</div><div class="line">    static class MyRun implements Runnable&#123;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void run() &#123;</div><div class="line">            try &#123;</div><div class="line">                System.out.println(Thread.currentThread().getName()+&quot;is working&quot;);</div><div class="line">                TimeUnit.SECONDS.sleep(random.nextInt(5));</div><div class="line">                cyclicBarrier.await();</div><div class="line">                System.out.println(Thread.currentThread().getName()+&quot;after wait&quot;);</div><div class="line">            &#125; catch (Exception e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    public static void main(String[] args) throws BrokenBarrierException, InterruptedException &#123;</div><div class="line">        new Thread(new MyRun()).start();</div><div class="line">        new Thread(new MyRun()).start();</div><div class="line">        new Thread(new MyRun()).start();</div><div class="line">        cyclicBarrier.await();</div><div class="line">        TimeUnit.SECONDS.sleep(1);</div><div class="line">        System.out.println(&quot;all finished&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先对于同样启动3个线程，CountDownLath初始化个数为3，而CyclicBarrier则是4。所以CountDownLath初始化值的意思是要执行任务的线程的个数，而CyclicBarrier初始化值的意思是要等待的线程的个数。因为总要多出一个主线程进入阻塞等待，否则可能导致程序提前退出。</p>
+<p>从上面的demo可以看出，只要有线程还没有到达await方法，其他线程都阻塞在cyclicBarrier.await()这个方法之前，当所有的方法执行到这个屏障的时候，屏障才会打开，所有线程继续抢占cpu执行。</p>
+<p>对于这个工具，我们只使用了一个方法就完成了目标，看一下它的实现代码。</p>
+<h4 id="源码-1"><a href="#源码-1" class="headerlink" title="源码"></a>源码</h4><p><img src="https://ws2.sinaimg.cn/large/006tNc79ly1fo0y3rqjphj309q0b2q3t.jpg" alt=""></p>
+<p>虽然没有使用AQS，但是代码好像复杂很多，多出了一个Generation(分代)的概念，还使用了自旋锁。</p>
+<p>首先CyclicBarrier提供了两个构造函数,第一个构造函数就是传入等待线程的数量，另一个还需要传入一个Runnable。作用就是当所有线程到达同步点时,先执行构造函数中的Runnable,这个Runnable拥有最高的优先级。如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public static CyclicBarrier cyclicBarrier = new CyclicBarrier(4, new Runnable() &#123;</div><div class="line">    @Override</div><div class="line">    public void run() &#123;</div><div class="line">        System.out.println(&quot;所有线程都到达同步点啦，准备冲啊&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">Thread-1is working</div><div class="line">Thread-2is working</div><div class="line">Thread-0is working</div><div class="line">所有线程都到达同步点啦，准备冲啊</div><div class="line">Thread-1after wait</div><div class="line">Thread-2after wait</div><div class="line">Thread-0after wait</div><div class="line">all finished</div></pre></td></tr></table></figure>
+<p>对于await方法，同样提供了带超时和不带超时的功能,核心方法是doawait:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public int await() throws InterruptedException, BrokenBarrierException &#123;</div><div class="line">        try &#123;</div><div class="line">            return dowait(false, 0L);</div><div class="line">        &#125; catch (TimeoutException toe) &#123;</div><div class="line">            throw new Error(toe); // cannot happen</div><div class="line">        &#125;</div><div class="line"> &#125;</div><div class="line"></div><div class="line">public int await(long timeout, TimeUnit unit)</div><div class="line">        throws InterruptedException,</div><div class="line">               BrokenBarrierException,</div><div class="line">               TimeoutException &#123;</div><div class="line">        return dowait(true, unit.toNanos(timeout));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>doWait方法：</p>
+<ol>
+<li>首先每个线程进入方法之后会加一个自旋锁，初始化一个Generation，这个内部类只有一个默认为false的broken属性，然后进行一些异常检测。</li>
+<li>index=–count,将等待线程的数量减一，表示已经到了等待处。</li>
+<li>如果index!=0,循环等待，并进行超时判断。</li>
+<li>如果index==0,判断构造函数有没有传入Runnable，如果有就优先执行。否则执行nextGeneration()，并在最后检查一些异常，解锁退出。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line">private int dowait(boolean timed, long nanos)</div><div class="line">        throws InterruptedException, BrokenBarrierException,</div><div class="line">               TimeoutException &#123;</div><div class="line">        final ReentrantLock lock = this.lock;</div><div class="line">        lock.lock();</div><div class="line">        try &#123;</div><div class="line">            final Generation g = generation;</div><div class="line"></div><div class="line">            if (g.broken)</div><div class="line">                throw new BrokenBarrierException();</div><div class="line"></div><div class="line">            if (Thread.interrupted()) &#123;</div><div class="line">                breakBarrier();</div><div class="line">                throw new InterruptedException();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            int index = --count;</div><div class="line">            if (index == 0) &#123;  // tripped</div><div class="line">                boolean ranAction = false;</div><div class="line">                try &#123;</div><div class="line">                    final Runnable command = barrierCommand;</div><div class="line">                    if (command != null)</div><div class="line">                        command.run();</div><div class="line">                    ranAction = true;</div><div class="line">                    nextGeneration();</div><div class="line">                    return 0;</div><div class="line">                &#125; finally &#123;</div><div class="line">                    if (!ranAction)</div><div class="line">                        breakBarrier();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            // loop until tripped, broken, interrupted, or timed out</div><div class="line">            for (;;) &#123;</div><div class="line">                try &#123;</div><div class="line">                    if (!timed)</div><div class="line">                        trip.await();</div><div class="line">                    else if (nanos &gt; 0L)</div><div class="line">                        nanos = trip.awaitNanos(nanos);</div><div class="line">                &#125; catch (InterruptedException ie) &#123;</div><div class="line">                    if (g == generation &amp;&amp; ! g.broken) &#123;</div><div class="line">                        breakBarrier();</div><div class="line">                        throw ie;</div><div class="line">                    &#125; else &#123;</div><div class="line">                        // We&apos;re about to finish waiting even if we had not</div><div class="line">                        // been interrupted, so this interrupt is deemed to</div><div class="line">                        // &quot;belong&quot; to subsequent execution.</div><div class="line">                        Thread.currentThread().interrupt();</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                if (g.broken)</div><div class="line">                    throw new BrokenBarrierException();</div><div class="line"></div><div class="line">                if (g != generation)</div><div class="line">                    return index;</div><div class="line"></div><div class="line">                if (timed &amp;&amp; nanos &lt;= 0L) &#123;</div><div class="line">                    breakBarrier();</div><div class="line">                    throw new TimeoutException();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125; finally &#123;</div><div class="line">            lock.unlock();</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>那么我们继续来看看nextGeneration这个方法做了什么</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">private void nextGeneration() &#123;</div><div class="line">    // signal completion of last generation</div><div class="line">    trip.signalAll();</div><div class="line">    // set up next generation</div><div class="line">    count = parties;</div><div class="line">    generation = new Generation();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先将broken设置为了true。我们可以把刚刚执行过的线程想象成第一代线程，当第一代线程没有全部执行完时，broken=false。执行完之后broken为true，根据上面的doawait源码，我们就可以理解为对当前cyclicBarrier进行一次flush操作，踢出所有线程将CyclicBarrier恢复原样，等待下一批线程的使用。同时我们可以发现，如果出现异常，调用的breakBarrier方法也是同样的逻辑，将所有等待线程都踢出去，刷新CyclicBarrier，所以本质上它是可以复用的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">private void breakBarrier() &#123;</div><div class="line">    generation.broken = true;</div><div class="line">    count = parties;</div><div class="line">    trip.signalAll();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>所以在执行完之后可以在主函数中打印一下CyclicBarrier的count值,可以发现并没有减为0，而是初始值4.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">System.out.println(cyclicBarrier.getParties());</div></pre></td></tr></table></figure>
+<h4 id="CountDownLatch-vs-CyclicBarrier"><a href="#CountDownLatch-vs-CyclicBarrier" class="headerlink" title="CountDownLatch vs CyclicBarrier"></a>CountDownLatch vs CyclicBarrier</h4><ol>
+<li>构造函数赋值的意义不同，一个是执行任务的线程数量，一个是等待线程的数量</li>
+<li>CyclicBarrier可以重复使用，CountDownLatch使用后会变为0</li>
+</ol>
+<h3 id="Phaser"><a href="#Phaser" class="headerlink" title="Phaser"></a>Phaser</h3><p>与CountDownLatch和CyclicBarrier功能类似，都可以对任务进行不同粒度的划分，但是Phaser支持动态的增加和减少初始化构造器parties的个数,在功能上完全可以替代前面两个。</p>
+<h4 id="coding-2"><a href="#coding-2" class="headerlink" title="coding"></a>coding</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">public class PhaserTest &#123;</div><div class="line">    public static Random random = new Random(System.currentTimeMillis());</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Phaser phaser = new Phaser(5);</div><div class="line">        for (int i = 1; i &lt; 6; i++) &#123;</div><div class="line">            new Athletes(i,phaser).start();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    static class Athletes extends Thread&#123;</div><div class="line">        private final int no;</div><div class="line">        private final Phaser phaser;</div><div class="line"></div><div class="line">        public Athletes(int no, Phaser phaser) &#123;</div><div class="line">            this.no = no;</div><div class="line">            this.phaser = phaser;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void run() &#123;</div><div class="line">            try &#123;</div><div class="line">                System.out.println(&quot;运动员&quot;+no+&quot;开始跑步了&quot;);</div><div class="line">                TimeUnit.SECONDS.sleep(random.nextInt(5));</div><div class="line">                System.out.println(&quot;运动员&quot;+no+&quot;跑完了&quot;);</div><div class="line">                phaser.arriveAndAwaitAdvance();</div><div class="line">                System.out.println(phaser.getPhase());</div><div class="line">                System.out.println(&quot;运动员&quot;+no+&quot;开始骑车了&quot;);</div><div class="line">                TimeUnit.SECONDS.sleep(random.nextInt(5));</div><div class="line">                System.out.println(&quot;运动员&quot;+no+&quot;骑完了&quot;);</div><div class="line">                phaser.arriveAndAwaitAdvance();</div><div class="line">                System.out.println(phaser.getPhase());</div><div class="line">                System.out.println(&quot;运动员&quot;+no+&quot;开始跳远了&quot;);</div><div class="line">                TimeUnit.SECONDS.sleep(random.nextInt(5));</div><div class="line">                System.out.println(&quot;运动员&quot;+no+&quot;完成跳远了&quot;);</div><div class="line">                phaser.arriveAndAwaitAdvance();</div><div class="line">                System.out.println(phaser.getPhase());</div><div class="line"></div><div class="line">            &#125; catch (InterruptedException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">运动员1开始跑步了</div><div class="line">运动员3开始跑步了</div><div class="line">运动员2开始跑步了</div><div class="line">运动员5开始跑步了</div><div class="line">运动员4开始跑步了</div><div class="line">运动员5跑完了</div><div class="line">运动员3跑完了</div><div class="line">运动员1跑完了</div><div class="line">运动员2跑完了</div><div class="line">运动员4跑完了</div><div class="line">运动员4开始骑车了</div><div class="line">运动员5开始骑车了</div><div class="line">运动员1开始骑车了</div><div class="line">运动3开始骑车了</div><div class="line">运动员2开始骑车了</div><div class="line">运动员2骑完了</div><div class="line">运动员5骑完了</div><div class="line">运动员4骑完了</div><div class="line">运动员1骑完了</div><div class="line">运动员3骑完了</div><div class="line">运动员2开始跳远了</div><div class="line">运动员4开始跳远了</div><div class="line">运动员5开始跳远了</div><div class="line">运动员3开始跳远了</div><div class="line">运动员1开始跳远了</div><div class="line">运动员5完成跳远了</div><div class="line">运动员4完成跳远了</div><div class="line">运动员2完成跳远了</div><div class="line">运动员3完成跳远了</div><div class="line">运动员1完成跳远了</div></pre></td></tr></table></figure>
+<p>可以看到Phaser可以做到CyclicBarrier和CountDownLatch相同的功能，但是考虑这样的场景，加入有一个运动员骑车之后受伤了，不能参加第三阶段的比赛那该怎么办呢,模拟一下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line">public class PhaserTest &#123;</div><div class="line">    public static Random random = new Random(System.currentTimeMillis());</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Phaser phaser = new Phaser(5);</div><div class="line">        for (int i = 1; i &lt; 5; i++) &#123;</div><div class="line">            new Athletes(i,phaser).start();</div><div class="line">        &#125;</div><div class="line">        new Injured(6,phaser).start();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    static class Athletes extends Thread&#123;</div><div class="line">        private final int no;</div><div class="line">        private final Phaser phaser;</div><div class="line"></div><div class="line">        public Athletes(int no, Phaser phaser) &#123;</div><div class="line">            this.no = no;</div><div class="line">            this.phaser = phaser;</div><div class="line">        &#125;</div><div class="line">        @Override</div><div class="line">        public void run() &#123;</div><div class="line">            try &#123;</div><div class="line">                sport(phaser,&quot;运动员&quot;+no+&quot;开始跑步了&quot;,&quot;运动员&quot;+no+&quot;跑完了&quot;);</div><div class="line">                sport(phaser,&quot;运动员&quot;+no+&quot;开始骑车了&quot;,&quot;运动员&quot;+no+&quot;骑完了&quot;);</div><div class="line">                sport(phaser,&quot;运动员&quot;+no+&quot;开始跳远了&quot;,&quot;运动员&quot;+no+&quot;完成跳远了&quot;);</div><div class="line">            &#125; catch (InterruptedException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    static class Injured extends Thread&#123;</div><div class="line">        private final int no;</div><div class="line">        private final Phaser phaser;</div><div class="line"></div><div class="line">        public Injured(int no, Phaser phaser) &#123;</div><div class="line">            this.no = no;</div><div class="line">            this.phaser = phaser;</div><div class="line">        &#125;</div><div class="line">        @Override</div><div class="line">        public void run() &#123;</div><div class="line">            try &#123;</div><div class="line">                sport(phaser,&quot;运动员&quot;+no+&quot;开始跑步了&quot;,&quot;运动员&quot;+no+&quot;跑完了&quot;);</div><div class="line">                sport(phaser,&quot;运动员&quot;+no+&quot;开始骑车了&quot;,&quot;运动员&quot;+no+&quot;骑完了&quot;);</div><div class="line">                System.out.println(&quot;我受伤了&quot;);</div><div class="line">            &#125; catch (InterruptedException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    public static void sport(Phaser phaser,String s1,String s2) throws InterruptedException &#123;</div><div class="line">        System.out.println(s1);</div><div class="line">        TimeUnit.SECONDS.sleep(random.nextInt(5));</div><div class="line">        System.out.println(s2);</div><div class="line">        phaser.arriveAndAwaitAdvance();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">....</div><div class="line">运动员4开始跳远了</div><div class="line">运动员2开始跳远了</div><div class="line">运动员1开始跳远了</div><div class="line">运动员3开始跳远了</div><div class="line">我受伤了</div><div class="line">运动员3完成跳远了</div><div class="line">运动员2完成跳远了</div><div class="line">运动员4完成跳远了</div><div class="line">运动员1完成跳远了</div></pre></td></tr></table></figure>
+<p>可以看到结果可以输出，但是程序并不会停止，因为第三阶段的线程没有达到预定的数目，全部都进入无限等待中。<br>那么按照正常的逻辑，一个运动员受伤后应该离开赛场，不应该影响其他运动员的比赛。而我们写的程序确是将运动员留在赛场上，所以为了程序正常退出，应该这样做:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">sport(phaser,&quot;运动员&quot;+no+&quot;开始跑步了&quot;,&quot;运动员&quot;+no+&quot;跑完了&quot;);</div><div class="line">sport(phaser,&quot;运动员&quot;+no+&quot;开始骑车了&quot;,&quot;运动员&quot;+no+&quot;骑完了&quot;);</div><div class="line">System.out.println(&quot;我受伤了&quot;);</div><div class="line">phaser.arriveAndDeregister();</div></pre></td></tr></table></figure>
+<p>通过这个方法，线程与phaser动态解绑，程序正常退出。</p>
+<p>考虑4x100接力赛的场景，从相同的起点出发，每个赛道的选手只需要和下一位队友接棒就可以，并不需要等待其他对手到达再跑。那么我们可以使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">phaser.arrive();</div></pre></td></tr></table></figure>
+<p>它的作用就是在每个阶段的终点大喊一声”我到啦”,然后继续执行，并不会等待其他线程到齐。</p>
+<p>另一个phaser常用的方法就是awaitAdvace()，这个方法接受一个int值，当且劲当int值==phaser.getPhase()时，程序阻塞，填入其他任意值将不会阻塞。</p>
+<p>还有很多方法就不作介绍了，主要是一些中断方法以及观察phaser状态的方法。日常的使用都是灵活组合arriveXXX()方法和awaitXXX()方法。</p>
+<h4 id="源码-2"><a href="#源码-2" class="headerlink" title="源码"></a>源码</h4><blockquote>
+<p><a href="https://www.cnblogs.com/lytwajue/p/7258278.html" target="_blank" rel="external">https://www.cnblogs.com/lytwajue/p/7258278.html</a></p>
+</blockquote>
+<p>源码自己看了很久都没看懂，尤其是phaser的堆叠部分。看了这篇文章才有点理解，能力有限，这里就不解释了。</p>
+</the>
+      
+      
+        <div class="page-reward">
+          <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang">赏</a></p>
+          <div class="hide_box"></div>
+          <div class="shang_box">
+            <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+            <div class="shang_tit">
+              <p>纯属好玩</p>
+            </div>
+            <div class="shang_payimg">
+              <img src="/img/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+            </div>
+              <div class="pay_explain">扫码打赏，你说多少就多少</div>
+            <div class="shang_payselect">
+              
+                <div class="pay_item checked" data-id="alipay">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/alipay.png" alt="支付宝" /></span>
+                </div>
+              
+              
+                <div class="pay_item" data-id="wechat">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/weixin.png" alt="微信" /></span>
+                </div>
+              
+            </div>
+            <div class="shang_info">
+              <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script type="text/javascript">
+          $(".pay_item").click(function(){
+            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+            var dataid=$(this).attr('data-id');
+            $(".shang_payimg img").attr("src","/img/"+dataid+"img.jpg");
+            $("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+          });
+          function dashangToggle(){
+            
+            $(".hide_box").fadeToggle();
+            $(".shang_box").fadeToggle();
+          }
+        </script>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/02/02/JUC-等等我-一起走-9/">JUC-等等我,一起走(9)</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
+        <p><span>发布时间:</span>2018年02月02日 - 10时44分</p>
+        <p><span>最后更新:</span>2018年02月02日 - 10时45分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/02/02/JUC-等等我-一起走-9/" title="JUC-等等我,一起走(9)">http://www.shuchang.sc.com/2018/02/02/JUC-等等我-一起走-9/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/02/02/JUC-等等我-一起走-9/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2018/02/01/RabbitMq入门-MessageConverter-6/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">RabbitMq入门-MessageConverter(6)</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#CountDownLatch"><span class="toc-number">1.</span> <span class="toc-text">CountDownLatch</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#coding"><span class="toc-number">1.1.</span> <span class="toc-text">coding</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#源码"><span class="toc-number">1.2.</span> <span class="toc-text">源码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CylicBarriar"><span class="toc-number">2.</span> <span class="toc-text">CylicBarriar</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#coding-1"><span class="toc-number">2.1.</span> <span class="toc-text">coding</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#源码-1"><span class="toc-number">2.2.</span> <span class="toc-text">源码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CountDownLatch-vs-CyclicBarrier"><span class="toc-number">2.3.</span> <span class="toc-text">CountDownLatch vs CyclicBarrier</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Phaser"><span class="toc-number">3.</span> <span class="toc-text">Phaser</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#coding-2"><span class="toc-number">3.1.</span> <span class="toc-text">coding</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#源码-2"><span class="toc-number">3.2.</span> <span class="toc-text">源码</span></a></li></ol></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'shuchaang',
+      repo: 'shuchaang.github.io',
+      oauth: {
+        client_id: 'c5aa96bb5e5656512174',
+        client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2018/02/01/RabbitMq入门-MessageConverter-6/" title="下一篇: RabbitMq入门-MessageConverter(6)">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/02/02/JUC-等等我-一起走-9/">JUC-等等我,一起走(9)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/01/RabbitMq入门-MessageConverter-6/">RabbitMq入门-MessageConverter(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/31/RabbitMq入门-消息发送与接收-5/">RabbitMq入门-消息发送与接收(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/30/JAVA继承机制与多态/">JAVA继承机制与多态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/30/JUC-StampedLock-8/">JUC-StampedLock(8)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/">RabbitMq入门-AmqpTemplate(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-连接和资源管理-3/">RabbitMq入门-连接和资源管理(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/22/JUC-Unsafe/">JUC-Unsafe(7)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/16/SpringBoot-Security认证流程/">SpringBoot-Security认证流程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/15/SpringBoot-异步REST服务/">SpringBoot-异步REST服务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/08/web容器对比/">web容器对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/">SpringBoot-Data-Jpa之高级话题(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/">SpringBoot-Data JPA之Repository(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/springboot-Data-JPA之对象映射/">SpringBoot-Data JPA之对象映射(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/22/RabbitMq入门-基本概念/">RabbitMq入门-基本概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/">spring4.3.x源码阅读笔记-AOP(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">JUC-ConcurrentHashMap(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-JMM/">JUC-JMM(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">JUC-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JUC-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">JUC-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">JUC--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2018 Shuchang
+            </div>
+
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>
