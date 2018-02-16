@@ -232,6 +232,74 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-JUC-CompletableFuture使用-12" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/02/16/JUC-CompletableFuture使用-12/" class="article-date">
+      <time datetime="2018-02-16T07:37:13.000Z" itemprop="datePublished">2018-02-16</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/02/16/JUC-CompletableFuture使用-12/">JUC-CompletableFuture使用(12)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>CompletableFuture是java8中新加入的一个API，主要的目的是解决future的使用痛点:调用get()方法会陷入阻塞。CompletableFuture的思想就是你不需要来问我任务有没有完成而是当我任务完成了主动返回给你。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/02/16/JUC-CompletableFuture使用-12/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-JUC-阻塞队列-11" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -870,80 +938,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/01/29/RabbitMq入门-连接和资源管理-3/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-JUC-Unsafe" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/01/22/JUC-Unsafe/" class="article-date">
-      <time datetime="2018-01-21T23:55:07.000Z" itemprop="datePublished">2018-01-22</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/22/JUC-Unsafe/">JUC-Unsafe(7)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="什么是Unsafe"><a href="#什么是Unsafe" class="headerlink" title="什么是Unsafe"></a>什么是Unsafe</h3><p>如果你使用jdk8进行多线程的编程，在很多框架或者lock中随处可以看到compareAndSet方法和weakCompareAndSet这种方法，它实际上是加在CPU级别上的锁，所以相比于synchronized和volatile,CAS更加轻量，开始扮演着越来越重要的作用。找到它们的调用类就可以定位到Unsafe.class，这个类中绝大部分方法都是native方法，也就是使用c++编写的一些方法，jvm帮我们屏蔽掉了具体的细节。那么Unsafe的作用是什么呢?一句话可以概括。</p>
-<blockquote>
-<p>Java is a safe programming language and prevents programmer from doing a lot of stupid mistakes,most of which based on memory management.But, there is a way to do such mistakes intentionaly,using Unsafe.class.</p>
-</blockquote>
-<p>意思就是java是一个安全的编程语言，让程序员不会犯一些内存管理上的错误。但如果你执意要操作内存，那么使用Unsafe.class。但是作者并不推荐我们直接使用Unsafe，这就是Unsafe的由来，而不是说这个类的方法是非安全的。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/01/22/JUC-Unsafe/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
