@@ -232,6 +232,60 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-haha" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/02/25/haha/" class="article-date">
+      <time datetime="2018-02-25T04:36:20.000Z" itemprop="datePublished">2018-02-25</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/02/25/haha/">haha</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-JUC-CompletableFuture使用-12" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -859,85 +913,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-RabbitMq入门-连接和资源管理-3" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/01/29/RabbitMq入门-连接和资源管理-3/" class="article-date">
-      <time datetime="2018-01-29T05:44:43.000Z" itemprop="datePublished">2018-01-29</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/29/RabbitMq入门-连接和资源管理-3/">RabbitMq入门-连接和资源管理(3)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <blockquote>
-<p>官方文档  <a href="https://docs.spring.io/spring-amqp/docs/2.0.1.RELEASE/reference/html/_reference.html#_introduction_4" target="_blank" rel="external">https://docs.spring.io/spring-amqp/docs/2.0.1.RELEASE/reference/html/_reference.html#_introduction_4</a></p>
-</blockquote>
-<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>用于管理与RabbitMQ代理的核心组件是ConnectionFactory接口。ConnectionFactory的实现类负责提供一个org.springframework.amqp.rabbit.connection.Connection的实例，它是com.rabbitmq.client.Connection的一个封装。官方提供的唯一的具体实现是CachingConnectionFactory。默认情况下，它建立一个可以被应用程序共享的连接代理(可以理解为一个全局配置)。因为与AMQP进行消息传递的“工作单元”实际上是一个“通道”（在某些方面，这与JMS中的Connection和Session之间的关系类似），所以可以共享连接。如你所想，连接实例提供了一个createChannel方法。 CachingConnectionFactory实现支持这些通道的高速缓存，并根据它们是否是事务处理来维护通道的单独高速缓存。在创建CachingConnectionFactory的实例时，可以通过构造函数提供主机名,用户名和密码。如果你想配置通道缓存的大小（默认是25），你也可以在这里调用setChannelCacheSize()方法.</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tKfTcly1fnxha39o1fj30l209c74z.jpg" alt=""></p>
-<p>可以看到一个SingleConnectionFactory实现类，它只在框架的单元测试代码中可用。它比CachingConnectionFactory简单，因为它不会缓存通道，但由于缺乏性能和弹性，它不适用于简单测试之外的实际应用。如果由于某种原因需要实现自己的ConnectionFactory，那么可以通过继承AbstractConnectionFactory来实现。</p>
-<p>从版本1.3开始，CachingConnectionFactory可以缓存连接数也可以只缓存通道。在这种情况下，每次调用createConnection()都会创建一个新连接（或从缓存中检索一个空闲连接）。关闭连接会将其返回到缓存（如果尚未达到缓存大小）。在这样的连接上创建的通道也被缓存。</p>
-<p>如果缓存大小为10，则可以使用任意数量的通道。如果超过10个通道正在使用，他们都返回到缓存，10将进入缓存;其余的将被关闭。</p>
-<p>从版本1.6开始，默认通道高速缓存大小从1增加到25.在大容量，多线程环境中，缓存太小意味着频繁地创建和关闭通道。增加默认缓存大小将避免这种开销。可以通过RabbitMQ管理界面监视正在使用的频道，并且如果您看到许多频道正在创建和关闭，请考虑进一步增加缓存大小。缓存只能按需增长（以适应应用程序的并发需求），所以这种改变不会影响现有的低容量应用程序。</p>
-<p>从版本1.4.2开始，CachingConnectionFactory有一个属性channelCheckoutTimeout。当此属性大于零时，channelCacheSize将成为可在连接上创建的通道数的最大值。如果达到限制，调用线程将阻塞，直到有一个通道可用或达到超时，在这种情况下会引发AmqpTimeoutException。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/01/29/RabbitMq入门-连接和资源管理-3/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
