@@ -5,16 +5,20 @@
   
   <title>ElasticSearch优化总结 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="身怀利器，杀心自起，慎而重之">
+  <meta name="description" content="索引结构优化一份没有经过优化的索引结构如下，由于单机版,这里备份数量和分片数量要根据生产中的实际情况来设置 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777">
+<meta name="keywords" content="ElasticSearch">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ElasticSearch优化总结">
 <meta property="og:url" content="http://www.shuchang.sc.com/2018/02/27/ElasticSearch优化总结/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="身怀利器，杀心自起，慎而重之">
-<meta property="og:updated_time" content="2018-02-27T11:14:52.606Z">
+<meta property="og:description" content="索引结构优化一份没有经过优化的索引结构如下，由于单机版,这里备份数量和分片数量要根据生产中的实际情况来设置 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fov9llidtoj30qs0hzaac.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fovu6clrptj30hx0600sp.jpg">
+<meta property="og:updated_time" content="2018-02-28T11:03:12.318Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ElasticSearch优化总结">
-<meta name="twitter:description" content="身怀利器，杀心自起，慎而重之">
+<meta name="twitter:description" content="索引结构优化一份没有经过优化的索引结构如下，由于单机版,这里备份数量和分片数量要根据生产中的实际情况来设置 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777">
+<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fov9llidtoj30qs0hzaac.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -148,7 +152,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/JPA/" style="font-size: 13.33px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.67px;">jvm</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 13.33px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.33px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 10px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 13.33px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.67px;">jvm</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 13.33px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.33px;">并发</a>
                     </div>
                 </section>
                 
@@ -253,8 +257,16 @@
       
       <div class="article-info article-info-post">
         
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
+    </div>
+
 
         
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
+    </div>
+
         <div class="clearfix"></div>
       </div>
       
@@ -262,7 +274,126 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        
+        <h3 id="索引结构优化"><a href="#索引结构优化" class="headerlink" title="索引结构优化"></a>索引结构优化</h3><p>一份没有经过优化的索引结构如下，由于单机版,这里备份数量和分片数量要根据生产中的实际情况来设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;settings&quot;: &#123;</div><div class="line">    &quot;number_of_replicas&quot;: 0</div><div class="line">  &#125;,</div><div class="line">  &quot;mappings&quot;: &#123;</div><div class="line">    &quot;house&quot;: &#123;</div><div class="line">      &quot;dynamic&quot;: false,</div><div class="line">      &quot;properties&quot;: &#123;</div><div class="line">        &quot;houseId&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;title&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;price&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;area&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;createTime&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;date&quot;,</div><div class="line">          &quot;format&quot;: &quot;strict_date_optional_time||epoch_millis&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;lastUpdateTime&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;date&quot;,</div><div class="line">          &quot;format&quot;: &quot;strict_date_optional_time||epoch_millis&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;cityEnName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;regionEnName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;direction&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;distanceToSubWay&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;subWayLineName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;subWayStationName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;tags&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;street&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;location&quot;:&#123;</div><div class="line">        	&quot;type&quot;:&quot;geo_point&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;district&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;description&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;layoutDesc&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;traffic&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;roundService&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;rentWay&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""><br><a id="more"></a></excerpt></p>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+<ol>
+<li>文件读写方式优化<br>文件的读写方式在不同的操作系统甚至不同位数的操作系统上都会有不同的实现，默认索引存储方式正是基于文件系统的存储。NIO是Java中一个高效的IO库，可以大幅度提高文件读写的吞吐量,所以我们可以指定使用nio的方式读写文件。由于JAVA NIO在windows系统会出现未修复的错误，所以不建议在windows系统中开启，但是在生产环境中，服务器一般都是linux机器，所以这时是可以打开的。</li>
+</ol>
+<blockquote>
+<p>“index.store.type”:”niofs”</p>
+</blockquote>
+<ol>
+<li>动态映射<br>当ES在文档中碰到一个以前没见过的字段时,它会利用动态映射来决定该字段的类型,并自动地对该字段添加映射。所以当我们的索引结构相对稳定时，可以通过设置</li>
+</ol>
+<blockquote>
+<p>“dynamic”:false 或者 “dynamic”:”strict” </p>
+</blockquote>
+<p>来关闭es索引的动态映射,这个配置默认是true。</p>
+<ol>
+<li><p>禁用_all</p>
+<p>es中的查询返回中除了_source之外还有一个_all字段，这个字段会将所有的索引字段添加空格并连接起来，有时候会利用这个字段做全文检索，但实际上性能非常差。如果使用最新的es6则不用担心这个问题，因为在es6中,_all已经被废弃了。</p>
+</li>
+</ol>
+<blockquote>
+<p>“_all”:{“enabled”:false}</p>
+</blockquote>
+<ol>
+<li>默认索引字段</li>
+</ol>
+<p>当_all字段不可用时，最佳实践是指定默认检索字段</p>
+<blockquote>
+<p>“index.query.default_field”:”title”</p>
+</blockquote>
+<ol>
+<li>恢复策略</li>
+</ol>
+<p>Elasticsearch 将自动在可用节点间进行分片均衡，包括新节点的加入和现有节点的离线。</p>
+<p>理论上来说，这个是理想的行为，我们想要提拔副本分片来尽快恢复丢失的主分片。 我们同时也希望保证资源在整个集群的均衡，用以避免热点。</p>
+<p>然而，在实践中，立即的再均衡所造成的问题会比其解决的更多。举例来说，考虑到以下情形：</p>
+<p>Node（节点） 19 在网络中失联了（某个家伙踢到了电源线)<br>Master 立即注意到了这个节点的离线，它决定在集群内提拔其他拥有 Node 19 上面的主分片对应的副本分片为主分片<br>在副本被提拔为主分片以后，master 节点开始执行恢复操作来重建缺失的副本。集群中的节点之间互相拷贝分片数据，网卡压力剧增，集群状态尝试变绿。<br>由于目前集群处于非平衡状态，这个过程还有可能会触发小规模的分片移动。其他不相关的分片将在节点间迁移来达到一个最佳的平衡状态<br>与此同时，那个踢到电源线的倒霉管理员，把服务器插好电源线进行了重启，现在节点 Node 19 又重新加入到了集群。不幸的是，这个节点被告知当前的数据已经没有用了， 数据已经在其他节点上重新分配了。所以 Node 19 把本地的数据进行删除，然后重新开始恢复集群的其他分片（然后这又导致了一个新的再平衡）</p>
+<p>如果这一切听起来是不必要的且开销极大，那就对了。是的，不过前提是你知道这个节点会很快回来。如果节点 Node 19 真的丢了，上面的流程确实正是我们想要发生的。</p>
+<p>为了解决这种瞬时中断的问题，Elasticsearch 可以推迟分片的分配。这可以让你的集群在重新分配之前有时间去检测这个节点是否会再次重新加入。一般我们可以设置为5分钟。</p>
+<blockquote>
+<p>“index.unassigned.node_left.delayed_timeout”: “5min”</p>
+</blockquote>
+<p>经过一些简单优化之后,索引设置如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;settings&quot;: &#123;</div><div class="line">    &quot;number_of_replicas&quot;: 0,</div><div class="line">    &quot;index.store.type&quot;:&quot;niofs&quot;,</div><div class="line">    &quot;index.query.default_field&quot;:&quot;title&quot;,</div><div class="line">    &quot;index.unassigned.node_left.delayed_timeout&quot;: &quot;5min&quot;</div><div class="line">  &#125;,</div><div class="line">  &quot;mappings&quot;: &#123;</div><div class="line">    &quot;house&quot;: &#123;</div><div class="line">      &quot;dynamic&quot;: false,</div><div class="line">      &quot;_all&quot;:&#123;</div><div class="line">      		&quot;enabled&quot;:false	</div><div class="line">      	&#125;,</div><div class="line">      &quot;properties&quot;: &#123;</div><div class="line">        &quot;houseId&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;title&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;price&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;area&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;createTime&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;date&quot;,</div><div class="line">          &quot;format&quot;: &quot;strict_date_optional_time||epoch_millis&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;lastUpdateTime&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;date&quot;,</div><div class="line">          &quot;format&quot;: &quot;strict_date_optional_time||epoch_millis&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;cityEnName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;regionEnName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;direction&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;distanceToSubWay&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;subWayLineName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;subWayStationName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;tags&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;street&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;location&quot;:&#123;</div><div class="line">        	&quot;type&quot;:&quot;geo_point&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;district&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;description&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;layoutDesc&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;traffic&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;roundService&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;rentWay&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="配置优化"><a href="#配置优化" class="headerlink" title="配置优化"></a>配置优化</h3><ol>
+<li>禁用通配符</li>
+</ol>
+<p>比如两条索引结构esa和esb,这时我们可以通过es*删除这两条索引。但这时很有可能造成误删，因为es的索引不可恢复，所以出于安全考虑，要禁用通配符<br><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fov9llidtoj30qs0hzaac.jpg" alt=""></p>
+<p>这里的transient可以替换为persistent,区别是transient在es重启后会失效,而persistent不会。</p>
+<ol>
+<li>刷新时间</li>
+</ol>
+<p>es默认的索引刷新时间是每秒钟进行一次，如果需要更高的性能则可以降低刷新的频率,设置为30s一次。这个配置不支持动态的修改，所以要在配置文件中添加配置项后重启生效。</p>
+<blockquote>
+<p>index.refresh_interval:30s</p>
+</blockquote>
+<ol>
+<li>集群发现超时优化</li>
+</ol>
+<p>集群之间需要进行通信，来确定节点是否添加或丢失，进而进行一些决策。当集群压力很大，jvm就会频繁的进行gc，某些节点就可能出现stw现象。节点之间通信失败，就会造成分片数据的重新分配。但其实这个过程是我们不想看到的。短时间内回复几十甚至几百G的消耗都是非常大的。这时我们可以调整ping的参数来避免这种现象。同样要在配置文件中修改:</p>
+<blockquote>
+<p>discovery.zen.fd.ping_interval:10s<br>discovery.zen.fd.ping_timeout: 120s<br>divcovery.zen.fd.ping_retries: 5</p>
+</blockquote>
+<p>在5.x以上的版本中，支持通过http动态修改interval,所以在5.x以上版本这样设置是会报错的。所以5.x版本可以这样设置。<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fovu6clrptj30hx0600sp.jpg" alt=""></p>
+<ol>
+<li>各司其职</li>
+</ol>
+<p>在配置文件中有这样的默认配置:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">node.name:xxx</div><div class="line">node.master:true</div><div class="line">node.data:true</div></pre></td></tr></table></figure>
+<p>这表明这个节点既可以成为master节点，也可以成为数据节点。但其实我们可以让节点只做一项工作，来减少性能的消耗，提高稳定性。比如配置3个节点作为master节点，只用来指挥调度不参与数据存储。更多的节点用于存储数据而不参与指挥调度。具体配置视服务器情况而定。</p>
+<p>对于数据节点，我们可以关闭它的http功能，而只留下tcp功能做数据交互。配置如下:</p>
+<blockquote>
+<p>http.enable: false</p>
+</blockquote>
+<p>所以这时一些监控插件或者工具就只能运行在master节点上了。</p>
+<p>另外还有一种节点叫做负载均衡节点,这种节点master为false,data也是false.主要用来查询时候做负载均衡，由于分布式的原因，我们需要在不同的节点上查询数据最终汇总到客户端，这时这个节点就会用来做汇总工作与客户端交互，但是很多时候我们并不会用es的节点来做负载均衡，因为这样做单节点的压力会非常大，常见的工具就是NGINX，因为它的性能更好。</p>
+<ol>
+<li>内存大小</li>
+</ol>
+<p>内存的大小并不是越大越好，因为es是运行在jvm上，jvm中会有默认的-Xms和-Xmx限制内存的大小，所以最终是由jvm决定。由于jvm的指针压缩技术在内存大于32G的时候是不会启用的，所以es内存的设置最大不要<br>超过32G，否则很容易就OOM了。及时你可用为64G内存，也应该设置为两个32G的内存。</p>
+<ol>
+<li>SSD</li>
+</ol>
+<p>由于es是一个基于文件系统的操作，所以使用SSD能更好的发挥性能优势。</p>
+<h3 id="基于NGINX负载均衡"><a href="#基于NGINX负载均衡" class="headerlink" title="基于NGINX负载均衡"></a>基于NGINX负载均衡</h3><p>使用的NGINX版本为1.12,ES版本为5.6。如果使用nginx1.9及以下的版本是需要额外安装模块的。首先nginx需要开启一项配置。</p>
+<blockquote>
+<p>./configure –with-stream</p>
+</blockquote>
+<p>然后进入nginx.config文件添加配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">stream&#123;</div><div class="line">	upstream backend&#123;</div><div class="line">		server 127.0.0.1:9300;</div><div class="line">	&#125;</div><div class="line">	server&#123;</div><div class="line">		listen 9999;</div><div class="line">		proxy_timeout:20s</div><div class="line">		proxy_pass backend;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这时我们就可以通过9999端口访问ES集群了，新增ES节点只需要在upstream中添加地址就可以了。</p>
+<h3 id="基础运维"><a href="#基础运维" class="headerlink" title="基础运维"></a>基础运维</h3><p>当项目上线,地址都是向外暴露的，所以安全配置是非常重要的。主要是配置一下nginx和es的安全策略。 首先把上面对nginx的配置注释掉，或者使用一个新的nginx。</p>
+<p>当我们使用es的时候,可能会启动一些图形化界面来观察es的运行情况与索引结构，这里我用了elasticsearch-head插件,如果插件的启动ip暴露，攻击者就可以看到我们的集群状况并且进行攻击。</p>
+<p>首先打开es的配置文件: 可能已经配置了如下的文件,这种就是方便个人开发测试,线上肯定是不合适的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">network.host : 0.0.0.0</div><div class="line">network.publish_host: xx.xx.xx.xx</div></pre></td></tr></table></figure>
+<p>对其进行修改</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">network.host:127.0.0.1</div><div class="line">#network.publish_host: xx.xx.xx.xx</div></pre></td></tr></table></figure>
+<p>这时再使用公网ip就访问不到es了，但是这时你希望可以和其他同事合作，让某些人可以看到，这时就要用到nginx了。</p>
+<p>修改nginx配置文件:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">upstream es&#123;</div><div class="line">	server: 127.0.0.1:9200</div><div class="line">&#125;</div><div class="line"></div><div class="line">server&#123;</div><div class="line">	listen: 8888;</div><div class="line">	server_name: localhost;</div><div class="line">	</div><div class="line">	auth_basic &quot;Protection&quot;</div><div class="line">	auth_basic_user_file /usr/local/nginx/pwd/passwords</div><div class="line">	</div><div class="line">	location / &#123;</div><div class="line">		proxy_pass http://es;</div><div class="line">		proxy_redirect off;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>auth_basic_user_file 这里的路径配置做法是:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">cd /usr/local/nginx/pwd</div><div class="line">printf &quot;sc:$(openssl passwd -crypt 123)\n&quot; &gt; passwords</div><div class="line"></div><div class="line">这时路径下会有一个passwords文件,将路径拷贝就可以了</div></pre></td></tr></table></figure>
+<p>这时访问服务使用8888端口了，但是会发现elasticsearch-head插件还是无法连接。<br>这时访问的路径是:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">xx.xx.xx.xx:9100/?auth_user=sc&amp;auth_password=123&amp;base_uri=http://xx.xx.xx.xx:8888</div></pre></td></tr></table></figure>
+<p>打开调试可以发现是因为跨域访问的问题，所以如果需要跨域访问可以继续添加配置:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">server&#123;</div><div class="line">	listen: 8888;</div><div class="line">	server_name: localhost;</div><div class="line">	</div><div class="line">	auth_basic &quot;Protection&quot;</div><div class="line">	auth_basic_user_file /usr/local/nginx/pwd/passwords</div><div class="line">	</div><div class="line">	location / &#123;</div><div class="line">		proxy_pass http://es;</div><div class="line">		proxy_redirect off;</div><div class="line">		if(request_method=&apos;OPTIONS&apos;)&#123;</div><div class="line">			add_header &apos;Access-Control-Allow-Origin&apos; &apos;*&apos;;</div><div class="line">			add_header &apos;Access_Control-Allow-Methods &apos;GET ,POST,PUT,OPTIONS&apos;</div><div class="line">			add_header &apos;Access-Control-Allow-Header&apos; &apos;Authorization,DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range&apos;;</div><div class="line">			add_header &apos;Access-Control-Max-Age&apos; &apos;172800&apos;;</div><div class="line">			add_header &apos;Content-Type&apos; &apos;text/plain;charset=utf-8&apos;;</div><div class="line">			add_header &apos;Content-Length&apos; 0;</div><div class="line">			return 204;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>重启nginx之后,head插件应该就可以使用了，服务也走了安全的代理。同时这里禁止掉了Delete操作，也就是说只有本机才能进行delete操作，通过nginx传过来的请求则不允许删除。</p>
+<p>通过以上的配置，就完成对es的安全访问。你可以通过head插件访问</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">xx.xx.xx.xx:9100/?auth_user=sc&amp;auth_password=123&amp;base_uri=http://xx.xx.xx.xx:8888</div></pre></td></tr></table></figure>
+<p>也可以通过</p>
+<blockquote>
+<p>xx.xx.xx.xx:8888输入用户名密码访问</p>
+</blockquote>
+<p>但此时可能发现,有时候我们进行一些get等一些无害的查看操作还是需要验证，比如上面的head插件的url，还是相当于暴露了服务地址，并没有起到作用，对于head插件中查看的一些操作，我们不想进行权限拦截，那么我们可以继续配置nginx，添加location。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">location @general &#123;</div><div class="line">	proxy_pass http://es;</div><div class="line">	proxy_redirect off;</div><div class="line">&#125;</div><div class="line"></div><div class="line">location @need_protection&#123;</div><div class="line">	proxy_pass http://es;</div><div class="line">	proxy_redirect off;</div><div class="line">	auth_basic &quot;Protection&quot;</div><div class="line">	auth_basic_user_file /usr/local/nginx/pwd/passwords</div><div class="line">&#125;</div><div class="line"></div><div class="line">location / &#123;</div><div class="line">		if(request_method=&apos;OPTIONS&apos;)&#123;</div><div class="line">			add_header &apos;Access-Control-Allow-Origin&apos; &apos;*&apos;;</div><div class="line">			add_header &apos;Access_Control-Allow-Methods &apos;GET ,POST,PUT,OPTIONS&apos;</div><div class="line">			add_header &apos;Access-Control-Allow-Header&apos; &apos;Authorization,DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range&apos;;</div><div class="line">			add_header &apos;Access-Control-Max-Age&apos; &apos;172800&apos;;</div><div class="line">			add_header &apos;Content-Type&apos; &apos;text/plain;charset=utf-8&apos;;</div><div class="line">			add_header &apos;Content-Length&apos; 0;</div><div class="line">			return 204;</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		</div><div class="line">		//状态码设置随意 一般是一些用不到的</div><div class="line">		error_page 598 @general;</div><div class="line">		error_page 599 @need_protection;</div><div class="line">		</div><div class="line">		if($request_uri ~ ^/(_cat|_cluster)/.*$)&#123;</div><div class="line">			return 598;</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		return 599;</div><div class="line">		</div><div class="line">		</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>通过上面的设置就对用户进行了简单的分组，当访问_cat路径和_cluster下的接口不需要身份验证，其它路径则需要身份验证。这样暴露这些接口可以方便我们自己写代码对es集群的健康状况进行监控.</p>
+</the>
       
       
         <div class="page-reward">
@@ -320,7 +451,7 @@
         <p><span>本文标题:</span><a href="/2018/02/27/ElasticSearch优化总结/">ElasticSearch优化总结</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
         <p><span>发布时间:</span>2018年02月27日 - 19时14分</p>
-        <p><span>最后更新:</span>2018年02月27日 - 19时14分</p>
+        <p><span>最后更新:</span>2018年02月28日 - 19时03分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/02/27/ElasticSearch优化总结/" title="ElasticSearch优化总结">http://www.shuchang.sc.com/2018/02/27/ElasticSearch优化总结/</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/02/27/ElasticSearch优化总结/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -349,7 +480,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#索引结构优化"><span class="toc-number">1.</span> <span class="toc-text">索引结构优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置优化"><span class="toc-number">2.</span> <span class="toc-text">配置优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基于NGINX负载均衡"><span class="toc-number">3.</span> <span class="toc-text">基于NGINX负载均衡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基础运维"><span class="toc-number">4.</span> <span class="toc-text">基础运维</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
