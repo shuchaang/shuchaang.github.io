@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>JUC-自己动手写跳表(13) | Shuchang&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="什么是跳表在我们日常工作中经常接触链表。对于链表这种数据结构我们再熟悉不过，那么我们也知道链表的一个缺点就是查找速度慢，因为它只能进行顺序的查找。那么如何对链表进行优化提高它的查询速度呢?我们可以借鉴AVL或者说二分查找的思路。首先链表必须有序,然后按照某种算法提取链表中的一些元素，我们对提取出来的元素做比较，就可以知道目标元素的大概位置。理论上,我们可以将查找的时间复杂度从O(n)降低到O(lg">
+<meta name="keywords" content="java,并发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JUC-自己动手写跳表(13)">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/03/02/JUC-跳表-12/index.html">
+<meta property="og:site_name" content="Shuchang&#39;s Blog">
+<meta property="og:description" content="什么是跳表在我们日常工作中经常接触链表。对于链表这种数据结构我们再熟悉不过，那么我们也知道链表的一个缺点就是查找速度慢，因为它只能进行顺序的查找。那么如何对链表进行优化提高它的查询速度呢?我们可以借鉴AVL或者说二分查找的思路。首先链表必须有序,然后按照某种算法提取链表中的一些元素，我们对提取出来的元素做比较，就可以知道目标元素的大概位置。理论上,我们可以将查找的时间复杂度从O(n)降低到O(lg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1foyv6ckwv8j30zk0b8dfs.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1foyvz55ahyj318c04mdg1.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1foyvz2cvqxj318k05it8x.jpg">
+<meta property="og:updated_time" content="2018-03-02T15:29:12.559Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JUC-自己动手写跳表(13)">
+<meta name="twitter:description" content="什么是跳表在我们日常工作中经常接触链表。对于链表这种数据结构我们再熟悉不过，那么我们也知道链表的一个缺点就是查找速度慢，因为它只能进行顺序的查找。那么如何对链表进行优化提高它的查询速度呢?我们可以借鉴AVL或者说二分查找的思路。首先链表必须有序,然后按照某种算法提取链表中的一些元素，我们对提取出来的元素做比较，就可以知道目标元素的大概位置。理论上,我们可以将查找的时间复杂度从O(n)降低到O(lg">
+<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1foyv6ckwv8j30zk0b8dfs.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Shuchang</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">剑来!</p>
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                            <li><a href="/archives">所有文章</a></li>
+                        
+                            <li><a href="/about">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                            
+                                <a class="fl github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                            
+                                <a class="fl zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                            
+                                <a class="fl weibo" target="_blank" href="#" title="weibo">weibo</a>
+                            
+                                <a class="fl google" target="_blank" href="#" title="google">google</a>
+                            
+                                <a class="fl twitter" target="_blank" href="#" title="twitter">twitter</a>
+                            
+                                <a class="fl linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/ElasticSearch/" style="font-size: 10px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 13.33px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.67px;">jvm</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 13.33px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.33px;">并发</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="https://gitee.com/swiftsc/">gitee</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">因为不满足于现状，面对未知，我们努力探索，其实越贴近，越震撼</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Shuchang</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Shuchang</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">剑来!</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                    <li><a href="/archives">所有文章</a></li>
+                
+                    <li><a href="/about">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                    
+                        <a class="github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                    
+                        <a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                    
+                        <a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+                    
+                        <a class="google" target="_blank" href="#" title="google">google</a>
+                    
+                        <a class="twitter" target="_blank" href="#" title="twitter">twitter</a>
+                    
+                        <a class="linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-JUC-跳表-12" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/03/02/JUC-跳表-12/" class="article-date">
+      <time datetime="2018-03-02T14:05:14.000Z" itemprop="datePublished">2018-03-02</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      JUC-自己动手写跳表(13)
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h2 id="什么是跳表"><a href="#什么是跳表" class="headerlink" title="什么是跳表"></a>什么是跳表</h2><p>在我们日常工作中经常接触链表。对于链表这种数据结构我们再熟悉不过，那么我们也知道链表的一个缺点就是查找速度慢，因为它只能进行顺序的查找。那么如何对链表进行优化提高它的查询速度呢?我们可以借鉴AVL或者说二分查找的思路。首先链表必须有序,然后按照某种算法提取链表中的一些元素，我们对提取出来的元素做比较，就可以知道目标元素的大概位置。理论上,我们可以将查找的时间复杂度从O(n)降低到O(lgn)。在某些状态下，跳表这种数据结构可以和红黑树相媲美。用图形来展示可以更直观的理解跳表</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1foyv6ckwv8j30zk0b8dfs.jpg" alt=""></p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br><a id="more"></a></excerpt></p>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+
+<p>如图所示就是跳表的一个简单结构,这里画的不太标准，其实每个元素之间是双向的连接，包括上下元素之间也是双向的。最底层就是我们的原链表,通过算法抽取其中的元素再向上加层。其实很容易理解，跳表这种数据结构就是一种典型的空间换时间算法,同时我们理想中的跳表结构就是这种小山的形状，因为这样最大程度上模拟了红黑树,将时间复杂度降为logN。</p>
+<p>java8中提供了多种跳表的数据结构,因为这种结构看起来比较容易实现，所以我们可以先自己写代码模拟一下，因为这样可以发现难点在哪里。</p>
+<h2 id="自己写一个跳表"><a href="#自己写一个跳表" class="headerlink" title="自己写一个跳表"></a>自己写一个跳表</h2><p>首先观察跳表的整体结构,头结点、尾节点以及数据节点，我们对他们作标记</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">private final static byte HEAD_NODE=(byte)-1;</div><div class="line">private final static byte DATA_NODE=(byte)0;</div><div class="line">private final static byte TAIL_NODE=(byte)-1;</div></pre></td></tr></table></figure>
+<p>可以将每个节点封装为Node，每个Node节点有上下左右四个方向的相邻节点。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public static class Node&#123;</div><div class="line">    private Integer value;</div><div class="line">    private Node up,down,left,right;</div><div class="line">    private byte bit;</div><div class="line"></div><div class="line">    public Node(Integer value,byte bit)&#123;</div><div class="line">        this.value=value;</div><div class="line">        this.bit=bit;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public Node(Integer value)&#123;</div><div class="line">        this(value,DATA_NODE);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>查找元素的方法,从整个跳表的最高层链表开始查起，如果ele等于目标元素,则直接降到最底层源链表的位置,如果没有找到相等的，则找到最后一个比ele元素小的元素,然后向下层链表查找，如果找到最后一层都没有相等的，则返回最后一个比ele小的元素。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">private Node find(Integer ele)&#123;</div><div class="line">    Node current = head;</div><div class="line">    for (;;)&#123;</div><div class="line">        while (current.right.bit!=TAIL_NODE&amp;&amp;current.right.value&lt;=ele)&#123;</div><div class="line">            current=current.right;</div><div class="line">        &#125;</div><div class="line">        if(current.down!=null)&#123;</div><div class="line">            current =current.down;</div><div class="line">        &#125;else</div><div class="line">        &#123;</div><div class="line">            break;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return current;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>最复杂的就是add方法,这里因为是双向链表，所以写的时候思路一定要清晰，否则就会出现链表链接乱的情况。</p>
+<p>首先找到插入元素的左边和右边，然后修正链接关系。</p>
+<p>然后简单的随机判断是否提取元素，如果需要则增加层高</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line">public void add(Integer ele)&#123;</div><div class="line">        //调整左右关系</div><div class="line">        Node near = find(ele);</div><div class="line">        Node newNode = new Node(ele);</div><div class="line">        Node rightNode = near.right;</div><div class="line">        newNode.left=near;</div><div class="line">        newNode.right=rightNode;</div><div class="line">        rightNode.left=newNode;</div><div class="line">        near.right=newNode;</div><div class="line"></div><div class="line"></div><div class="line">        //是否增加层高</div><div class="line">        int currentLevel = 0;</div><div class="line">        while (random.nextDouble()&lt;0.5d)&#123;</div><div class="line">            if(currentLevel&gt;=height)&#123;</div><div class="line">                height++;</div><div class="line">                Node highHead = new Node(null,HEAD_NODE);</div><div class="line">                Node highTail = new Node(null,TAIL_NODE);</div><div class="line">                highHead.right=highTail;</div><div class="line">                highTail.left=highHead;</div><div class="line">                highHead.down=head;</div><div class="line">                head.up=highHead;</div><div class="line">                highTail.down=tail;</div><div class="line">                tail.up=highTail;</div><div class="line">                head=highHead;</div><div class="line">                tail=highTail;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            while ((near!=null)&amp;&amp;near.up==null)&#123;</div><div class="line">                near=near.left;</div><div class="line">            &#125;</div><div class="line">            near = near.up;</div><div class="line">            Node upNode = new Node(ele);</div><div class="line">            upNode.left=near;</div><div class="line">            upNode.right=near.right;</div><div class="line">            near.right.left = upNode;</div><div class="line">            near.right=upNode;</div><div class="line">            upNode.down = newNode;</div><div class="line">            newNode.up=upNode;</div><div class="line">            currentLevel++;</div><div class="line">        &#125;</div><div class="line">        size++;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>最后自己又增加了一些简单的方法，便于观测。最终跳表的代码如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div></pre></td><td class="code"><pre><div class="line">public class MySkip &#123;</div><div class="line"></div><div class="line">    private final static byte HEAD_NODE=(byte)-1;</div><div class="line">    private final static byte DATA_NODE=(byte)0;</div><div class="line">    private final static byte TAIL_NODE=(byte)-1;</div><div class="line"></div><div class="line"></div><div class="line">    public static class Node&#123;</div><div class="line">        private Integer value;</div><div class="line">        private Node up,down,left,right;</div><div class="line">        private byte bit;</div><div class="line"></div><div class="line">        public Node(Integer value,byte bit)&#123;</div><div class="line">            this.value=value;</div><div class="line">            this.bit=bit;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        public Node(Integer value)&#123;</div><div class="line">            this(value,DATA_NODE);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Node head;</div><div class="line">    private Node tail;</div><div class="line">    private int size;</div><div class="line">    private int height;</div><div class="line">    private Random random;</div><div class="line"></div><div class="line"></div><div class="line">    public MySkip()&#123;</div><div class="line">        this.head = new Node(null,HEAD_NODE);</div><div class="line">        this.tail = new Node(null,TAIL_NODE);</div><div class="line">        this.size=0;</div><div class="line">        head.right=tail;</div><div class="line">        tail.left = head;</div><div class="line">        this.random = new Random(System.currentTimeMillis());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public boolean isEmpty()&#123;</div><div class="line">        return size()==0;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int size()&#123;</div><div class="line">        return size;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Node find(Integer ele)&#123;</div><div class="line">        Node current = head;</div><div class="line">        for (;;)&#123;</div><div class="line">            while (current.right.bit!=TAIL_NODE&amp;&amp;current.right.value&lt;=ele)&#123;</div><div class="line">                current=current.right;</div><div class="line">            &#125;</div><div class="line">            if(current.down!=null)&#123;</div><div class="line">                current =current.down;</div><div class="line">            &#125;else</div><div class="line">            &#123;</div><div class="line">                break;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return current;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    public boolean contains(Integer ele)&#123;</div><div class="line">        Node node = this.find(ele);</div><div class="line">        if(node.value==ele)&#123;</div><div class="line">            return true;</div><div class="line">        &#125;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public Integer get(Integer ele)&#123;</div><div class="line">        Node node = this.find(ele);</div><div class="line">        return node.value==ele?node.value:null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void add(Integer ele)&#123;</div><div class="line">        //调整左右关系</div><div class="line">        Node near = find(ele);</div><div class="line">        Node newNode = new Node(ele);</div><div class="line">        Node rightNode = near.right;</div><div class="line">        newNode.left=near;</div><div class="line">        newNode.right=rightNode;</div><div class="line">        rightNode.left=newNode;</div><div class="line">        near.right=newNode;</div><div class="line"></div><div class="line"></div><div class="line">        //是否增加层高</div><div class="line">        int currentLevel = 0;</div><div class="line">        while (random.nextDouble()&lt;0.5d)&#123;</div><div class="line">            if(currentLevel&gt;=height)&#123;</div><div class="line">                height++;</div><div class="line">                Node highHead = new Node(null,HEAD_NODE);</div><div class="line">                Node highTail = new Node(null,TAIL_NODE);</div><div class="line">                highHead.right=highTail;</div><div class="line">                highTail.left=highHead;</div><div class="line">                highHead.down=head;</div><div class="line">                head.up=highHead;</div><div class="line">                highTail.down=tail;</div><div class="line">                tail.up=highTail;</div><div class="line">                head=highHead;</div><div class="line">                tail=highTail;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            while ((near!=null)&amp;&amp;near.up==null)&#123;</div><div class="line">                near=near.left;</div><div class="line">            &#125;</div><div class="line">            near = near.up;</div><div class="line">            Node upNode = new Node(ele);</div><div class="line">            upNode.left=near;</div><div class="line">            upNode.right=near.right;</div><div class="line">            near.right.left = upNode;</div><div class="line">            near.right=upNode;</div><div class="line">            upNode.down = newNode;</div><div class="line">            newNode.up=upNode;</div><div class="line">            currentLevel++;</div><div class="line">        &#125;</div><div class="line">        size++;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void dumpList()&#123;</div><div class="line">        Node temp  = head;</div><div class="line">        for(int i=height;i&gt;=0;i--)&#123;</div><div class="line">            System.out.printf(&quot;total height [%d] current [%d]&quot;,height+1,i+1);</div><div class="line">            Node node = temp.right;</div><div class="line">            while (node.bit!=TAIL_NODE)&#123;</div><div class="line">                System.out.printf(&quot;-&gt;%d&quot;,node.value);</div><div class="line">                node=node.right;</div><div class="line">            &#125;</div><div class="line">            System.out.printf(&quot;\n&quot;);</div><div class="line">            temp = temp.down;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        MySkip mySkip = new MySkip();</div><div class="line">        Random random = new Random();</div><div class="line">        for (int i = 0; i &lt; 10; i++) &#123;</div><div class="line">            mySkip.add(random.nextInt(1000));</div><div class="line">        &#125;</div><div class="line">        mySkip.dumpList();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="测试效果"><a href="#测试效果" class="headerlink" title="测试效果"></a>测试效果</h2><p>可以看到随机算法提取元素并不理想，生成的跳表有明显的偏向性。所以暂时可以得出一个结论，元素的提取算法是一个非常重要的部分，这个算法的好坏直接关系到跳表的可用性。明天继续看看JDK中是怎么解决跳表的这些问题。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1foyvz55ahyj318c04mdg1.jpg" alt=""></p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1foyvz2cvqxj318k05it8x.jpg" alt=""></p>
+</the>
+      
+      
+        <div class="page-reward">
+          <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang">赏</a></p>
+          <div class="hide_box"></div>
+          <div class="shang_box">
+            <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+            <div class="shang_tit">
+              <p>纯属好玩</p>
+            </div>
+            <div class="shang_payimg">
+              <img src="/img/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+            </div>
+              <div class="pay_explain">扫码打赏，你说多少就多少</div>
+            <div class="shang_payselect">
+              
+                <div class="pay_item checked" data-id="alipay">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/alipay.png" alt="支付宝" /></span>
+                </div>
+              
+              
+                <div class="pay_item" data-id="wechat">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/weixin.png" alt="微信" /></span>
+                </div>
+              
+            </div>
+            <div class="shang_info">
+              <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script type="text/javascript">
+          $(".pay_item").click(function(){
+            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+            var dataid=$(this).attr('data-id');
+            $(".shang_payimg img").attr("src","/img/"+dataid+"img.jpg");
+            $("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+          });
+          function dashangToggle(){
+            
+            $(".hide_box").fadeToggle();
+            $(".shang_box").fadeToggle();
+          }
+        </script>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/03/02/JUC-跳表-12/">JUC-自己动手写跳表(13)</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
+        <p><span>发布时间:</span>2018年03月02日 - 22时05分</p>
+        <p><span>最后更新:</span>2018年03月02日 - 23时29分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/03/02/JUC-跳表-12/" title="JUC-自己动手写跳表(13)">http://www.shuchang.sc.com/2018/03/02/JUC-跳表-12/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/03/02/JUC-跳表-12/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2018/02/27/ElasticSearch优化总结/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">ElasticSearch优化总结</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是跳表"><span class="toc-number">1.</span> <span class="toc-text">什么是跳表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自己写一个跳表"><span class="toc-number">2.</span> <span class="toc-text">自己写一个跳表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#测试效果"><span class="toc-number">3.</span> <span class="toc-text">测试效果</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'shuchaang',
+      repo: 'shuchaang.github.io',
+      oauth: {
+        client_id: 'c5aa96bb5e5656512174',
+        client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2018/02/27/ElasticSearch优化总结/" title="下一篇: ElasticSearch优化总结">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/03/02/JUC-跳表-12/">JUC-自己动手写跳表(13)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/27/ElasticSearch优化总结/">ElasticSearch优化总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/16/JUC-CompletableFuture使用-12/">JUC-CompletableFuture使用(12)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/13/JUC-阻塞队列-11/">JUC-阻塞队列(11)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/11/JUC-Executor框架-10/">JUC-Executor框架(10)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/02/JUC-等等我-一起走-9/">JUC-等等我,一起走(9)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/01/RabbitMq入门-MessageConverter-6/">RabbitMq入门-MessageConverter(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/31/RabbitMq入门-消息发送与接收-5/">RabbitMq入门-消息发送与接收(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/30/JAVA继承机制与多态/">JAVA继承机制与多态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/30/JUC-StampedLock-8/">JUC-StampedLock(8)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/">RabbitMq入门-AmqpTemplate(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-连接和资源管理-3/">RabbitMq入门-连接和资源管理(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/22/JUC-Unsafe/">JUC-Unsafe(7)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/16/SpringBoot-Security认证流程/">SpringBoot-Security认证流程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/15/SpringBoot-异步REST服务/">SpringBoot-异步REST服务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/08/web容器对比/">web容器对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/">SpringBoot-Data-Jpa之高级话题(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/">SpringBoot-Data JPA之Repository(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/springboot-Data-JPA之对象映射/">SpringBoot-Data JPA之对象映射(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/22/RabbitMq入门-基本概念/">RabbitMq入门-基本概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/">spring4.3.x源码阅读笔记-AOP(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">JUC-ConcurrentHashMap(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-JMM/">JUC-JMM(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">JUC-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JUC-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">JUC-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">JUC--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2018 Shuchang
+            </div>
+
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>

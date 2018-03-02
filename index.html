@@ -232,6 +232,75 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-JUC-跳表-12" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/03/02/JUC-跳表-12/" class="article-date">
+      <time datetime="2018-03-02T14:05:14.000Z" itemprop="datePublished">2018-03-02</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/02/JUC-跳表-12/">JUC-自己动手写跳表(13)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h2 id="什么是跳表"><a href="#什么是跳表" class="headerlink" title="什么是跳表"></a>什么是跳表</h2><p>在我们日常工作中经常接触链表。对于链表这种数据结构我们再熟悉不过，那么我们也知道链表的一个缺点就是查找速度慢，因为它只能进行顺序的查找。那么如何对链表进行优化提高它的查询速度呢?我们可以借鉴AVL或者说二分查找的思路。首先链表必须有序,然后按照某种算法提取链表中的一些元素，我们对提取出来的元素做比较，就可以知道目标元素的大概位置。理论上,我们可以将查找的时间复杂度从O(n)降低到O(lgn)。在某些状态下，跳表这种数据结构可以和红黑树相媲美。用图形来展示可以更直观的理解跳表</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1foyv6ckwv8j30zk0b8dfs.jpg" alt=""></p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/03/02/JUC-跳表-12/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-ElasticSearch优化总结" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -858,76 +927,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/01/30/JUC-StampedLock-8/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-RabbitMq入门-AmqpTemplate-4" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/" class="article-date">
-      <time datetime="2018-01-29T08:44:24.000Z" itemprop="datePublished">2018-01-29</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/">RabbitMq入门-AmqpTemplate(4)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>与Spring Framework及其相关项目提供的许多其他高级抽象一样，Spring AMQP提供了一个扮演主角的“template”。定义主要操作的接口称为AmqpTemplate。这些操作涵盖发送和接收消息的一般行为。换句话说，它们不是唯一的实现，因此名称中有“AMQP”。另一方面，这个接口的实现与AMQP协议的实现有关。与JMS（接口级API本身）不同，AMQP是一个有线协议。该协议的实现提供了自己的客户端库，因此AmqpTemplate接口的每个实现都将依赖于特定的客户端库。目前，只有一个实现：RabbitTemplate。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>

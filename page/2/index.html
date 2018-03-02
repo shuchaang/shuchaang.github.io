@@ -232,6 +232,76 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-RabbitMq入门-AmqpTemplate-4" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/" class="article-date">
+      <time datetime="2018-01-29T08:44:24.000Z" itemprop="datePublished">2018-01-29</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/">RabbitMq入门-AmqpTemplate(4)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>与Spring Framework及其相关项目提供的许多其他高级抽象一样，Spring AMQP提供了一个扮演主角的“template”。定义主要操作的接口称为AmqpTemplate。这些操作涵盖发送和接收消息的一般行为。换句话说，它们不是唯一的实现，因此名称中有“AMQP”。另一方面，这个接口的实现与AMQP协议的实现有关。与JMS（接口级API本身）不同，AMQP是一个有线协议。该协议的实现提供了自己的客户端库，因此AmqpTemplate接口的每个实现都将依赖于特定的客户端库。目前，只有一个实现：RabbitTemplate。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-RabbitMq入门-连接和资源管理-3" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -878,83 +948,6 @@
       
         <p class="article-more-link">
           <a  href="/2017/12/30/redis分布式原理及操作/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-RabbitMq入门-实现微博关注demo-2" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/" class="article-date">
-      <time datetime="2017-12-23T08:05:24.000Z" itemprop="datePublished">2017-12-23</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>在网上看了很多RabbitMq的demo，发现都是Exchange三种路由模式的demo，很少有真实案例的demo，在这里分享一个自己写的模拟微博关注的demo,方便理解和学习。</p>
-<h3 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h3><p>SpringBoot  RabbitMq</p>
-<h3 id="构思"><a href="#构思" class="headerlink" title="构思"></a>构思</h3><ol>
-<li>美女发布消息，关注她的人可以接收到消息</li>
-<li>关注和取关都记录到日志中</li>
-<li>美女和关注者都可以动态添加,添加一个美女就是添加一个Fanout模式的Exchange，一个关注者就是一个队列绑定到对应美女的Exchange</li>
-</ol>
-<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmpi6l7tvbj30hm0bn75v.jpg" alt=""></p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
