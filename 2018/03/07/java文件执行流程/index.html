@@ -3,28 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>redis分布式原理及操作 | Shuchang&#39;s Blog</title>
+  <title>java文件执行流程 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="传统分布式算法举个栗子假设我们有20个数据需要缓存，并且有4个分布式redis节点。数据直接通过编号对4进行取余，得到他们Hash到的位置，并放置在对应的redis节点上。效果如图  但是随着我们业务的变化，Redis节点的数量可能会增加或者减少。假设我们增加一个redis节点">
-<meta name="keywords" content="redis">
+  <meta name="description" content="我们以一个简单的java文件作为入口，看看从Java类到对象的创建过程都做了些啥？内存中的对象是啥样的？ 12345class Test&amp;#123;	public static void main()&amp;#123;		Object object = new Object();	&amp;#125;&amp;#125; jvm的结构如下所示">
+<meta name="keywords" content="jvm">
 <meta property="og:type" content="article">
-<meta property="og:title" content="redis分布式原理及操作">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/12/30/redis分布式原理及操作/index.html">
+<meta property="og:title" content="java文件执行流程">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/03/07/java文件执行流程/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="传统分布式算法举个栗子假设我们有20个数据需要缓存，并且有4个分布式redis节点。数据直接通过编号对4进行取余，得到他们Hash到的位置，并放置在对应的redis节点上。效果如图  但是随着我们业务的变化，Redis节点的数量可能会增加或者减少。假设我们增加一个redis节点">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fmyrl9l2i8j30f70avt9h.jpg">
-<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmyrqg77cfj30dl0e5gmh.jpg">
-<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmysqyxksfj307p06xdfx.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fmyt2pww53j30e80bv74o.jpg">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fmyt7o8709j30e90b6mxl.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fmytartexsj30du0bmgm6.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fmytk2wik1j30ey0b5dg7.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fmytsc78azj30e10bf3yw.jpg">
-<meta property="og:updated_time" content="2017-12-30T08:46:24.000Z">
+<meta property="og:description" content="我们以一个简单的java文件作为入口，看看从Java类到对象的创建过程都做了些啥？内存中的对象是啥样的？ 12345class Test&amp;#123;	public static void main()&amp;#123;		Object object = new Object();	&amp;#125;&amp;#125; jvm的结构如下所示">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fp3zehefq9j30w80ty3yr.jpg">
+<meta property="og:updated_time" content="2018-03-07T01:23:57.329Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="redis分布式原理及操作">
-<meta name="twitter:description" content="传统分布式算法举个栗子假设我们有20个数据需要缓存，并且有4个分布式redis节点。数据直接通过编号对4进行取余，得到他们Hash到的位置，并放置在对应的redis节点上。效果如图  但是随着我们业务的变化，Redis节点的数量可能会增加或者减少。假设我们增加一个redis节点">
-<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fmyrl9l2i8j30f70avt9h.jpg">
+<meta name="twitter:title" content="java文件执行流程">
+<meta name="twitter:description" content="我们以一个简单的java文件作为入口，看看从Java类到对象的创建过程都做了些啥？内存中的对象是啥样的？ 12345class Test&amp;#123;	public static void main()&amp;#123;		Object object = new Object();	&amp;#125;&amp;#125; jvm的结构如下所示">
+<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fp3zehefq9j30w80ty3yr.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -238,11 +231,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-redis分布式原理及操作" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-java文件执行流程" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/12/30/redis分布式原理及操作/" class="article-date">
-      <time datetime="2017-12-30T08:43:50.000Z" itemprop="datePublished">2017-12-30</time>
+      <a href="/2018/03/07/java文件执行流程/" class="article-date">
+      <time datetime="2018-03-07T01:13:00.000Z" itemprop="datePublished">2018-03-07</time>
 </a>
     </div>
   
@@ -255,7 +248,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      redis分布式原理及操作
+      java文件执行流程
     </h1>
   
 
@@ -264,13 +257,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
+    <a class="article-category-link" href="/categories/jvm/">jvm</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -280,38 +273,30 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h3 id="传统分布式算法"><a href="#传统分布式算法" class="headerlink" title="传统分布式算法"></a>传统分布式算法</h3><h4 id="举个栗子"><a href="#举个栗子" class="headerlink" title="举个栗子"></a>举个栗子</h4><p>假设我们有20个数据需要缓存，并且有4个分布式redis节点。数据直接通过编号对4进行取余，得到他们Hash到的位置，并放置在对应的redis节点上。效果如图</p>
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fmyrl9l2i8j30f70avt9h.jpg" alt=""></p>
-<p>但是随着我们业务的变化，Redis节点的数量可能会增加或者减少。假设我们增加一个redis节点</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li><a id="more"></a>
+        <p>我们以一个简单的java文件作为入口，看看从Java类到对象的创建过程都做了些啥？内存中的对象是啥样的？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">class Test&#123;</div><div class="line">	public static void main()&#123;</div><div class="line">		Object object = new Object();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>jvm的结构如下所示</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fp3zehefq9j30w80ty3yr.jpg" alt=""></p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br> <a id="more"></a></excerpt></p>
 <the rest="" of="" contents="" |="" 余下全文="">
 
-
-</the></li>
-</ul>
-<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmyrqg77cfj30dl0e5gmh.jpg" alt=""></p>
-<p>重新进行hash之后，对应关系如图所示，绿色的部分就是我们两次hash，数据还映射到同一个redis的数据，总共有4个，也就是说，在传统的分布式算法下，增加一个节点，数据的命中率下降到了4/20=20%。我们演示只用了20个数据，在实际生产环境中，很可能是成千上万的数据，那么这些miss的数据就会直接去访问数据库，对数据库造成巨大的压力。那么如何解决或者降低这种缓存miss的概率呢，一个解决方案就是redis采用的一致性hash算法。</p>
-<h3 id="Consistent-hashing一致性算法原理"><a href="#Consistent-hashing一致性算法原理" class="headerlink" title="Consistent hashing一致性算法原理"></a>Consistent hashing一致性算法原理</h3><h4 id="环形hash空间"><a href="#环形hash空间" class="headerlink" title="环形hash空间"></a>环形hash空间</h4><p>通常hash算法都是将value映射到一个32位的key值当中，我们假设将这个数轴首尾相接形成一个环</p>
-<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmysqyxksfj307p06xdfx.jpg" alt=""></p>
-<p>现在映射空间已经形成，我们要考虑如何将数据映射到空间上。</p>
-<p>假设有4个对象O1~O4,可以通过hash函数计算出hash值的key，映射到如下的位置</p>
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fmyt2pww53j30e80bv74o.jpg" alt=""></p>
-<p>接着我们使用相同的hash算法把缓存实例(redis)映射到环形空间，一般是通过hash IP地址或者机器名等等</p>
-<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fmyt7o8709j30e90b6mxl.jpg" alt=""></p>
-<p>通过hash算法我们现在已经把reids和数据都进行了hash，那么怎么确定哪个数据映射到哪个redis上呢<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmytartexsj30du0bmgm6.jpg" alt=""></p>
-<p>映射方法如图，我们顺时针看这个圈，每个数据O按顺时针方向找到第一个R，那么这个O就存储在这个R节点上。现在并没有看出这个算法的优势，现在我们假设移除一个Redis节点R2，那么O4数据就会miss，那么这个算法会按原来的方案，将数据映射到R3上。如果我们移除R3节点，受影响的就是O2和O3，其实我们发现，移除或者增加节点，只会影响到新增R与逆时针的第一个R节点之间的数据，其他数据不会受到影响。而使用传统的Hash算法，基本上每个节点都会受到影响，这就体现了一致性Hash的一个优势，那就是<strong><em><em>缩小了影响范围</em></em></strong>。</p>
-<h4 id="Hash算法的倾斜性"><a href="#Hash算法的倾斜性" class="headerlink" title="Hash算法的倾斜性"></a>Hash算法的倾斜性</h4><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmytk2wik1j30ey0b5dg7.jpg" alt=""><br>在实际的Hash计算中，很可能会出现上图中描述的现象。从这个图中我们可以看出来，大量的数据映射到R1节点上，R2,R3都非常空闲。这样会造成R1节点的负载很高，这就是Hash算法的倾斜性。<br>那么如何解决这种Hash倾斜性带来的问题呢</p>
-<h4 id="虚拟节点"><a href="#虚拟节点" class="headerlink" title="虚拟节点"></a>虚拟节点</h4><p>假设我们增加3个虚拟节点，将其均匀的分布在环上。</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmytsc78azj30e10bf3yw.jpg" alt=""></p>
-<p>可以看出这时的环比刚才而言均匀了许多，我们可以让映射到V1的节点实际上存储到R1,V2存储到R2，V3存储到R3。这样R1 R2 R3之间的负载就均衡了。实际在Redis中，虚拟节点可能会建立成百上千个。Redis通过建立虚拟节点，并将虚拟节点Hash到实际的Redis节点上，通过这种方法将真实节点进行放大，就解决了这种Hash倾斜性造成的问题。在Jedis的源码中，我们可以再Sharded这个类的init方法中看到，每个实例的虚拟节点默认是160个。</p>
-<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>一致性Hash算法最大限度上抑制了key的重新分布，并且随着缓存实例数量的增加，对key命中的影响会越来越小，而传统的Hash算法，影响只会越来越大。</p>
-<h3 id="Jedis配置"><a href="#Jedis配置" class="headerlink" title="Jedis配置"></a>Jedis配置</h3><p>首先在服务器启动两个Redis节点并在本地项目中配置相应的端口和IP</p>
-<p>ShardedPool配置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line">public class RedisShardedPool &#123;</div><div class="line"></div><div class="line"></div><div class="line">    private static ShardedJedisPool pool;</div><div class="line">    private static Integer maxTotal = Integer.parseInt(PropertiesUtil.getProperty(&quot;redis.max.total&quot;,&quot;20&quot;));</div><div class="line">    private static Integer maxIdle = Integer.parseInt(PropertiesUtil.getProperty(&quot;redis.max.idle&quot;,&quot;20&quot;));</div><div class="line">    private static Integer minIdle = Integer.parseInt(PropertiesUtil.getProperty(&quot;redis.min.idle&quot;,&quot;20&quot;));</div><div class="line"></div><div class="line">    private static Boolean testOnBorrow = Boolean.parseBoolean(PropertiesUtil.getProperty(&quot;redis.test.borrow&quot;,&quot;true&quot;));</div><div class="line">    private static Boolean testOnReturn = Boolean.parseBoolean(PropertiesUtil.getProperty(&quot;redis.test.return&quot;,&quot;true&quot;));</div><div class="line"></div><div class="line">    private static String redisIp = PropertiesUtil.getProperty(&quot;redis.ip&quot;);</div><div class="line">    private static Integer redisPort = Integer.parseInt(PropertiesUtil.getProperty(&quot;redis.port&quot;));</div><div class="line"></div><div class="line">    private static String redis2Ip = PropertiesUtil.getProperty(&quot;redis2.ip&quot;);</div><div class="line">    private static Integer redis2Port = Integer.parseInt(PropertiesUtil.getProperty(&quot;redis2.port&quot;));</div><div class="line"></div><div class="line"></div><div class="line">    private static void initPool()&#123;</div><div class="line">        JedisPoolConfig conf = new JedisPoolConfig();</div><div class="line">        conf.setMaxTotal(maxTotal);</div><div class="line">        conf.setMaxIdle(maxIdle);</div><div class="line">        conf.setMinIdle(minIdle);</div><div class="line">        conf.setTestOnBorrow(testOnBorrow);</div><div class="line">        conf.setTestOnReturn(testOnReturn);</div><div class="line">        conf.setBlockWhenExhausted(true);</div><div class="line">        JedisShardInfo info1 = new JedisShardInfo(redisIp,redisPort);</div><div class="line">        JedisShardInfo info2 = new JedisShardInfo(redis2Ip,redis2Port);</div><div class="line">        List&lt;JedisShardInfo&gt; list = Arrays.asList(info1,info2);</div><div class="line">        //MURMUR Hash就是一致性算法</div><div class="line">        pool = new ShardedJedisPool(conf,list, Hashing.MURMUR_HASH, Sharded.DEFAULT_KEY_TAG_PATTERN);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    static &#123;</div><div class="line">        initPool();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static ShardedJedis   getJedis()&#123;</div><div class="line">        return pool.getResource();</div><div class="line">    &#125;</div><div class="line">    public static void returnBrokenResource(ShardedJedis jedis)&#123;</div><div class="line">        pool.returnBrokenResource(jedis);</div><div class="line">    &#125;</div><div class="line">    public static void returnResource(ShardedJedis jedis)&#123;</div><div class="line">        pool.returnResource(jedis);</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line"></div><div class="line">        for (int i = 0; i &lt; 10; i++) &#123;</div><div class="line">            ShardedJedis jedis = pool.getResource();</div><div class="line">            jedis.set(i+&quot;&quot;,i+&quot;&quot;);</div><div class="line">            returnResource(jedis);</div><div class="line">        &#125;</div><div class="line">        pool.destroy();</div><div class="line">        System.out.println(&quot;end&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>操作方法类</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div></pre></td><td class="code"><pre><div class="line">@Slf4j</div><div class="line">public class RedisShardedPoolUtil &#123;</div><div class="line">    public static String set(String key,String value)&#123;</div><div class="line">        ShardedJedis jedis = null;</div><div class="line">        String result= null;</div><div class="line">        try &#123;</div><div class="line">            jedis = RedisShardedPool.getJedis();</div><div class="line">            result = jedis.set(key, value);</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            log.error(&quot;set key:&#123;&#125; value:&#123;&#125; error&quot;,key,value);</div><div class="line">            RedisShardedPool.returnBrokenResource(jedis);</div><div class="line">            return result;</div><div class="line">        &#125;</div><div class="line">        RedisShardedPool.returnResource(jedis);</div><div class="line">        return result;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    public static String get(String key)&#123;</div><div class="line">        ShardedJedis jedis = null;</div><div class="line">        String reslut= null;</div><div class="line">        try &#123;</div><div class="line">            jedis = RedisShardedPool.getJedis();</div><div class="line">            reslut = jedis.get(key);</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            log.error(&quot;get key:&#123;&#125; error&quot;,key);</div><div class="line">            RedisShardedPool.returnBrokenResource(jedis);</div><div class="line">            return reslut;</div><div class="line">        &#125;</div><div class="line">        RedisShardedPool.returnResource(jedis);</div><div class="line">        return reslut;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 时间单位是秒</div><div class="line">     */</div><div class="line">    public static String setEx(String key,String value,int exTime)&#123;</div><div class="line">        ShardedJedis jedis = null;</div><div class="line">        String result= null;</div><div class="line">        try &#123;</div><div class="line">            jedis = RedisShardedPool.getJedis();</div><div class="line">            result = jedis.setex(key,exTime,value);</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            log.error(&quot;setex key:&#123;&#125; value:&#123;&#125; error&quot;,key,value);</div><div class="line">            RedisShardedPool.returnBrokenResource(jedis);</div><div class="line">            return result;</div><div class="line">        &#125;</div><div class="line">        RedisShardedPool.returnResource(jedis);</div><div class="line">        return result;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    public static Long expire(String key,int exTime)&#123;</div><div class="line">        ShardedJedis jedis = null;</div><div class="line">        Long result= null;</div><div class="line">        try &#123;</div><div class="line">            jedis = RedisShardedPool.getJedis();</div><div class="line">            result = jedis.expire(key,exTime);</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            log.error(&quot;expire key:&#123;&#125;  error&quot;,key);</div><div class="line">            RedisShardedPool.returnBrokenResource(jedis);</div><div class="line">            return result;</div><div class="line">        &#125;</div><div class="line">        RedisShardedPool.returnResource(jedis);</div><div class="line">        return result;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Long del(String key)&#123;</div><div class="line">        ShardedJedis jedis = null;</div><div class="line">        Long result= null;</div><div class="line">        try &#123;</div><div class="line">            jedis = RedisShardedPool.getJedis();</div><div class="line">            result = jedis.del(key);</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            log.error(&quot;del key:&#123;&#125;  error&quot;,key);</div><div class="line">            RedisShardedPool.returnBrokenResource(jedis);</div><div class="line">            return result;</div><div class="line">        &#125;</div><div class="line">        RedisShardedPool.returnResource(jedis);</div><div class="line">        return result;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>Java程序执行时，第一步系统创建虚拟机进程，然后虚拟器用类加载器Class Loader加载java程序类文件到方法区。</li>
+<li><p>类加载完成后，主线程运行static main（）时在虚拟机栈中建栈帧，压栈。</p>
+</li>
+<li><p>当虚拟机执行到new指令时，它先在常量池中查找Object，看能否定位到Object类的符号引用；如果能，说明这个类已经被加载到方法区了，则继续执行。如果没有，就让Class Loader先执行类的加载。</p>
+</li>
+<li>虚拟机开始为该对象分配内存，对象所需要的内存大小在类加载完成后就已经确定了。这时候只要在堆中按需求分配空间即可</li>
+<li>内存分配到后，虚拟机将分配的内存空间都初始化为零值(不包括对象头)。实例变量按变量类型初始化相应的默认值（数值型为0，boolan为false），所以实例变量不赋初值也能使用。接着设置对象头信息，比如对象的哈希值，GC分代年龄等。</li>
+<li>执行Object类的构造函数,这里因为Object是顶级类，所以没有父类。如果要执行一个有父类的类的构造函数,需要先加载父类,也就是再执行上面几步,执行父类的静态代码块、构造函数,再执行子类的构造</li>
+<li>经过上面的几步,new 运算符返回堆中对象的引用。</li>
+</ol>
+<p>此刻，会根据object这个变量是实例变量、局部变量或静态变量的不同将引用放在不同的地方：</p>
+<p>如果object局部变量，object变量在栈帧的局部变量表，这个对象的引用就放在栈帧。</p>
+<p>如果object是实例变量，object变量在堆中，对象的引用就放在堆。</p>
+<p>如果object是静态变量，object变量在方法区，对象的引用就放在方法区。</p>
+<p>在此代码中object是实例变量，所以放在堆中</p>
+</the>
       
       
         <div class="page-reward">
@@ -366,13 +351,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a></p>
+        <p><span>本文标题:</span><a href="/2018/03/07/java文件执行流程/">java文件执行流程</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2017年12月30日 - 16时43分</p>
-        <p><span>最后更新:</span>2017年12月30日 - 16时46分</p>
+        <p><span>发布时间:</span>2018年03月07日 - 09时13分</p>
+        <p><span>最后更新:</span>2018年03月07日 - 09时23分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/12/30/redis分布式原理及操作/" title="redis分布式原理及操作">http://www.shuchang.sc.com/2017/12/30/redis分布式原理及操作/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/12/30/redis分布式原理及操作/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/03/07/java文件执行流程/" title="java文件执行流程">http://www.shuchang.sc.com/2018/03/07/java文件执行流程/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/03/07/java文件执行流程/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -385,18 +370,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/12/31/springboot-Data-JPA之对象映射/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          SpringBoot-Data JPA之对象映射(1)
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">RabbitMq入门-实现微博关注demo(2)</div>
+    <a href="/2018/03/02/JUC-跳表-12/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">JUC-自己动手写跳表(13)</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -407,7 +383,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#传统分布式算法"><span class="toc-number">1.</span> <span class="toc-text">传统分布式算法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#举个栗子"><span class="toc-number">1.1.</span> <span class="toc-text">举个栗子</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Consistent-hashing一致性算法原理"><span class="toc-number">2.</span> <span class="toc-text">Consistent hashing一致性算法原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#环形hash空间"><span class="toc-number">2.1.</span> <span class="toc-text">环形hash空间</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Hash算法的倾斜性"><span class="toc-number">2.2.</span> <span class="toc-text">Hash算法的倾斜性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#虚拟节点"><span class="toc-number">2.3.</span> <span class="toc-text">虚拟节点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结论"><span class="toc-number">3.</span> <span class="toc-text">结论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Jedis配置"><span class="toc-number">4.</span> <span class="toc-text">Jedis配置</span></a></li></ol>
+    
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -473,13 +449,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/12/31/springboot-Data-JPA之对象映射/" title="上一篇: SpringBoot-Data JPA之对象映射(1)">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/" title="下一篇: RabbitMq入门-实现微博关注demo(2)">
+            <a href="/2018/03/02/JUC-跳表-12/" title="下一篇: JUC-自己动手写跳表(13)">
                 <i class="fa fa-angle-right"></i>
             </a>
         

@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 10px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 13.33px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.67px;">jvm</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 13.33px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.33px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 10px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 12px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 16px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 12px;">jvm</a> <a href="/tags/redis/" style="font-size: 12px;">redis</a> <a href="/tags/spring/" style="font-size: 12px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,77 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-java文件执行流程" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/03/07/java文件执行流程/" class="article-date">
+      <time datetime="2018-03-07T01:13:00.000Z" itemprop="datePublished">2018-03-07</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/07/java文件执行流程/">java文件执行流程</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>我们以一个简单的java文件作为入口，看看从Java类到对象的创建过程都做了些啥？内存中的对象是啥样的？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">class Test&#123;</div><div class="line">	public static void main()&#123;</div><div class="line">		Object object = new Object();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>jvm的结构如下所示</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fp3zehefq9j30w80ty3yr.jpg" alt=""></p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/jvm/">jvm</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/03/07/java文件执行流程/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-JUC-跳表-12" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -852,81 +923,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/01/30/JAVA继承机制与多态/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-JUC-StampedLock-8" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/01/30/JUC-StampedLock-8/" class="article-date">
-      <time datetime="2018-01-30T00:32:26.000Z" itemprop="datePublished">2018-01-30</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/30/JUC-StampedLock-8/">JUC-StampedLock(8)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="StampedLock"><a href="#StampedLock" class="headerlink" title="StampedLock"></a>StampedLock</h3><p>StampedLock字面上理解就是带有时间戳的lock，这个锁是在java8中加入的。为什么要加入这样一个锁呢，原因就要从ReentrantLock和ReadWriteLock给我们带来的便利和问题说起。</p>
-<h4 id="ReentrantLock-vs-synchronized"><a href="#ReentrantLock-vs-synchronized" class="headerlink" title="ReentrantLock vs synchronized"></a>ReentrantLock vs synchronized</h4><ol>
-<li>lock的api更加灵活，显式的释放获取锁</li>
-<li>lock可以进行扩展，synchronized不可以</li>
-<li>lock的效率目前略高于synchronized，以为在java每个版本升级中，都会对synchronized关    键字进行优化</li>
-</ol>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/01/30/JUC-StampedLock-8/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
