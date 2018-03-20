@@ -3,21 +3,22 @@
 <head>
   <meta charset="utf-8">
   
-  <title>java文件执行流程 | Shuchang&#39;s Blog</title>
+  <title>死磕netty(1)-简介 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="我们以一个简单的java文件作为入口，看看从Java类到对象的创建过程都做了些啥？内存中的对象是啥样的？ 12345class Test&amp;#123;	public static void main()&amp;#123;		Object object = new Object();	&amp;#125;&amp;#125; jvm的结构如下所示">
-<meta name="keywords" content="jvm">
+  <meta name="description" content="JAVA IO 通信BIO通信BIO通信通常会有一个专门的线程Acceptor负责接收客户端的请求，并对每一个请求创建一个线程为其服务。服务完成后通过应答流返回给客户端，最后线程销毁。这就是典型的一应答一请求。由于线程是服务器非常宝贵的一种资源，所以这种模型在大并发的情况先引起线程数量膨胀最终会导致整个服务不可用或者Stack Overflow的错误，所以BIO模型缺乏弹性伸缩的能力。  伪异步通">
+<meta name="keywords" content="netty">
 <meta property="og:type" content="article">
-<meta property="og:title" content="java文件执行流程">
-<meta property="og:url" content="http://www.shuchang.sc.com/2018/03/07/java文件执行流程/index.html">
+<meta property="og:title" content="死磕netty(1)-简介">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/03/20/死磕netty-1/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="我们以一个简单的java文件作为入口，看看从Java类到对象的创建过程都做了些啥？内存中的对象是啥样的？ 12345class Test&amp;#123;	public static void main()&amp;#123;		Object object = new Object();	&amp;#125;&amp;#125; jvm的结构如下所示">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fp3zehefq9j30w80ty3yr.jpg">
-<meta property="og:updated_time" content="2018-03-07T01:23:57.329Z">
+<meta property="og:description" content="JAVA IO 通信BIO通信BIO通信通常会有一个专门的线程Acceptor负责接收客户端的请求，并对每一个请求创建一个线程为其服务。服务完成后通过应答流返回给客户端，最后线程销毁。这就是典型的一应答一请求。由于线程是服务器非常宝贵的一种资源，所以这种模型在大并发的情况先引起线程数量膨胀最终会导致整个服务不可用或者Stack Overflow的错误，所以BIO模型缺乏弹性伸缩的能力。  伪异步通">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/2018032015215281991618.png">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180320152152850232450.png">
+<meta property="og:updated_time" content="2018-03-20T07:04:59.994Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="java文件执行流程">
-<meta name="twitter:description" content="我们以一个简单的java文件作为入口，看看从Java类到对象的创建过程都做了些啥？内存中的对象是啥样的？ 12345class Test&amp;#123;	public static void main()&amp;#123;		Object object = new Object();	&amp;#125;&amp;#125; jvm的结构如下所示">
-<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fp3zehefq9j30w80ty3yr.jpg">
+<meta name="twitter:title" content="死磕netty(1)-简介">
+<meta name="twitter:description" content="JAVA IO 通信BIO通信BIO通信通常会有一个专门的线程Acceptor负责接收客户端的请求，并对每一个请求创建一个线程为其服务。服务完成后通过应答流返回给客户端，最后线程销毁。这就是典型的一应答一请求。由于线程是服务器非常宝贵的一种资源，所以这种模型在大并发的情况先引起线程数量膨胀最终会导致整个服务不可用或者Stack Overflow的错误，所以BIO模型缺乏弹性伸缩的能力。  伪异步通">
+<meta name="twitter:image" content="http://p1vpfd8u5.bkt.clouddn.com/2018032015215281991618.png">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -151,7 +152,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 10px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 12px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 16px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 12px;">jvm</a> <a href="/tags/redis/" style="font-size: 12px;">redis</a> <a href="/tags/spring/" style="font-size: 12px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 10px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 13.33px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.67px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 13.33px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.33px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,11 +232,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-java文件执行流程" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-死磕netty-1" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/03/07/java文件执行流程/" class="article-date">
-      <time datetime="2018-03-07T01:13:00.000Z" itemprop="datePublished">2018-03-07</time>
+      <a href="/2018/03/20/死磕netty-1/" class="article-date">
+      <time datetime="2018-03-20T06:37:03.000Z" itemprop="datePublished">2018-03-20</time>
 </a>
     </div>
   
@@ -248,7 +249,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      java文件执行流程
+      死磕netty(1)-简介
     </h1>
   
 
@@ -257,13 +258,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/jvm/">jvm</a>
+    <a class="article-category-link" href="/categories/netty/">netty</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/netty/">netty</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -273,30 +274,29 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>我们以一个简单的java文件作为入口，看看从Java类到对象的创建过程都做了些啥？内存中的对象是啥样的？</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">class Test&#123;</div><div class="line">	public static void main()&#123;</div><div class="line">		Object object = new Object();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>jvm的结构如下所示</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fp3zehefq9j30w80ty3yr.jpg" alt=""></p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br> <a id="more"></a></excerpt></p>
-<the rest="" of="" contents="" |="" 余下全文="">
-
-<ol>
-<li>Java程序执行时，第一步系统创建虚拟机进程，然后虚拟器用类加载器Class Loader加载java程序类文件到方法区。</li>
-<li><p>类加载完成后，主线程运行static main（）时在虚拟机栈中建栈帧，压栈。</p>
-</li>
-<li><p>当虚拟机执行到new指令时，它先在常量池中查找Object，看能否定位到Object类的符号引用；如果能，说明这个类已经被加载到方法区了，则继续执行。如果没有，就让Class Loader先执行类的加载。</p>
-</li>
-<li>虚拟机开始为该对象分配内存，对象所需要的内存大小在类加载完成后就已经确定了。这时候只要在堆中按需求分配空间即可</li>
-<li>内存分配到后，虚拟机将分配的内存空间都初始化为零值(不包括对象头)。实例变量按变量类型初始化相应的默认值（数值型为0，boolan为false），所以实例变量不赋初值也能使用。接着设置对象头信息，比如对象的哈希值，GC分代年龄等。</li>
-<li>执行Object类的构造函数,这里因为Object是顶级类，所以没有父类。如果要执行一个有父类的类的构造函数,需要先加载父类,也就是再执行上面几步,执行父类的静态代码块、构造函数,再执行子类的构造</li>
-<li>经过上面的几步,new 运算符返回堆中对象的引用。</li>
+        <h2 id="JAVA-IO-通信"><a href="#JAVA-IO-通信" class="headerlink" title="JAVA IO 通信"></a>JAVA IO 通信</h2><h3 id="BIO通信"><a href="#BIO通信" class="headerlink" title="BIO通信"></a>BIO通信</h3><p>BIO通信通常会有一个专门的线程Acceptor负责接收客户端的请求，并对每一个请求创建一个线程为其服务。服务完成后通过应答流返回给客户端，最后线程销毁。这就是典型的一应答一请求。由于线程是服务器非常宝贵的一种资源，所以这种模型在大并发的情况先引起线程数量膨胀最终会导致整个服务不可用或者Stack Overflow的错误，所以BIO模型缺乏弹性伸缩的能力。</p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/2018032015215281991618.png" alt="2018032015215281991618.png"></p>
+<h3 id="伪异步通信"><a href="#伪异步通信" class="headerlink" title="伪异步通信"></a>伪异步通信</h3><p>伪异步通信当接收到用户请求时，不需要创建新线程，而是把它封装成一个Task,交给线程池来做服务。这样我们就可以通过配置线程池来控制线程创建的数量，线程池问题具体可以看看JDK的Executor框架。但是这种模型不足之处在于，当请求数量庞大，线程池可能会出现阻塞。</p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180320152152850232450.png" alt="20180320152152850232450.png"></p>
+<h3 id="NIO通信"><a href="#NIO通信" class="headerlink" title="NIO通信"></a>NIO通信</h3><p>先要了解几个关键概念:</p>
+<ul>
+<li>缓冲区  Buffer   在NIO模型中，所有数据都是用缓冲区来处理。也就是读取数据从缓冲区读，写入数据是写入缓冲区。</li>
+<li>通道   Channel  网络数据都是通过Channel来读取和写入。Channel和Stream的区别在于，Stream只能单向，而Channel是双向的。</li>
+<li>多路复用器 Selector  它是java Nio的基础，它提供了选择就绪任务的能力。也就是说selector会不断轮询绑定在其上的channel，如果某个channel上发生了读或写事件，它就会被轮训出来。然后通过selectionKey获取就绪任务的集合进行后续的io操作，由于JDK使用了epoll代替了传统的select实现，所以并没有最大链接数的限制。</li>
+</ul>
+<h3 id="AIO通信"><a href="#AIO通信" class="headerlink" title="AIO通信"></a>AIO通信</h3><p>AIO是一种异步的通信方式，上面的几种都属于同步模式。当有用户请求进入，AIO会注册它的读写时间和返回函数，当IO操作完成后主动通知用户请求讲数据取走。对应于Unix网络编程中的事件驱动IO</p>
+<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><ul>
+<li>线程数量: BIO(m:m)&gt;伪异步(m:n)&gt;NIO(m:1)&gt;AIO(m:0)</li>
+<li>IO类型 : BIO(同步阻塞) 伪异步(同步阻塞) NIO（同步非阻塞) AIO(异步)</li>
+</ul>
+<h2 id="为什么用netty"><a href="#为什么用netty" class="headerlink" title="为什么用netty"></a>为什么用netty</h2><ol>
+<li>原生NIO有缺陷，类库繁杂不易操作</li>
+<li>JDK NIO bug (epoll bug)</li>
+<li>netty api简单 并且修复了jdk bug</li>
+<li>netty 性能高</li>
+<li>netty成熟的使用，如dubbo,springcloud,reddison等大量框架底层都使用netty </li>
 </ol>
-<p>此刻，会根据object这个变量是实例变量、局部变量或静态变量的不同将引用放在不同的地方：</p>
-<p>如果object局部变量，object变量在栈帧的局部变量表，这个对象的引用就放在栈帧。</p>
-<p>如果object是实例变量，object变量在堆中，对象的引用就放在堆。</p>
-<p>如果object是静态变量，object变量在方法区，对象的引用就放在方法区。</p>
-<p>在此代码中object是实例变量，所以放在堆中</p>
-</the>
+
       
       
         <div class="page-reward">
@@ -351,13 +351,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/03/07/java文件执行流程/">java文件执行流程</a></p>
+        <p><span>本文标题:</span><a href="/2018/03/20/死磕netty-1/">死磕netty(1)-简介</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2018年03月07日 - 09时13分</p>
-        <p><span>最后更新:</span>2018年03月07日 - 09时23分</p>
+        <p><span>发布时间:</span>2018年03月20日 - 14时37分</p>
+        <p><span>最后更新:</span>2018年03月20日 - 15时04分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/03/07/java文件执行流程/" title="java文件执行流程">http://www.shuchang.sc.com/2018/03/07/java文件执行流程/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/03/07/java文件执行流程/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/03/20/死磕netty-1/" title="死磕netty(1)-简介">http://www.shuchang.sc.com/2018/03/20/死磕netty-1/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/03/20/死磕netty-1/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -383,7 +383,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#JAVA-IO-通信"><span class="toc-number">1.</span> <span class="toc-text">JAVA IO 通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BIO通信"><span class="toc-number">1.1.</span> <span class="toc-text">BIO通信</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#伪异步通信"><span class="toc-number">1.2.</span> <span class="toc-text">伪异步通信</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NIO通信"><span class="toc-number">1.3.</span> <span class="toc-text">NIO通信</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AIO通信"><span class="toc-number">1.4.</span> <span class="toc-text">AIO通信</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对比"><span class="toc-number">2.</span> <span class="toc-text">对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么用netty"><span class="toc-number">3.</span> <span class="toc-text">为什么用netty</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -458,7 +458,7 @@
             </a>
         
     </div>
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/03/07/java文件执行流程/">java文件执行流程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/02/JUC-跳表-12/">JUC-自己动手写跳表(13)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/27/ElasticSearch优化总结/">ElasticSearch优化总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/16/JUC-CompletableFuture使用-12/">JUC-CompletableFuture使用(12)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/13/JUC-阻塞队列-11/">JUC-阻塞队列(11)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/11/JUC-Executor框架-10/">JUC-Executor框架(10)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/02/JUC-等等我-一起走-9/">JUC-等等我,一起走(9)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/01/RabbitMq入门-MessageConverter-6/">RabbitMq入门-MessageConverter(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/31/RabbitMq入门-消息发送与接收-5/">RabbitMq入门-消息发送与接收(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/30/JAVA继承机制与多态/">JAVA继承机制与多态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/30/JUC-StampedLock-8/">JUC-StampedLock(8)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/">RabbitMq入门-AmqpTemplate(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-连接和资源管理-3/">RabbitMq入门-连接和资源管理(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/22/JUC-Unsafe/">JUC-Unsafe(7)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/16/SpringBoot-Security认证流程/">SpringBoot-Security认证流程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/15/SpringBoot-异步REST服务/">SpringBoot-异步REST服务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/08/web容器对比/">web容器对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/">SpringBoot-Data-Jpa之高级话题(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/">SpringBoot-Data JPA之Repository(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/springboot-Data-JPA之对象映射/">SpringBoot-Data JPA之对象映射(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/22/RabbitMq入门-基本概念/">RabbitMq入门-基本概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/">spring4.3.x源码阅读笔记-AOP(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">JUC-ConcurrentHashMap(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-JMM/">JUC-JMM(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">JUC-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JUC-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">JUC-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">JUC--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/03/20/死磕netty-1/">死磕netty(1)-简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/02/JUC-跳表-12/">JUC-自己动手写跳表(13)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/27/ElasticSearch优化总结/">ElasticSearch优化总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/16/JUC-CompletableFuture使用-12/">JUC-CompletableFuture使用(12)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/13/JUC-阻塞队列-11/">JUC-阻塞队列(11)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/11/JUC-Executor框架-10/">JUC-Executor框架(10)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/02/JUC-等等我-一起走-9/">JUC-等等我,一起走(9)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/01/RabbitMq入门-MessageConverter-6/">RabbitMq入门-MessageConverter(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/31/RabbitMq入门-消息发送与接收-5/">RabbitMq入门-消息发送与接收(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/30/JAVA继承机制与多态/">JAVA继承机制与多态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/30/JUC-StampedLock-8/">JUC-StampedLock(8)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/">RabbitMq入门-AmqpTemplate(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-连接和资源管理-3/">RabbitMq入门-连接和资源管理(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/22/JUC-Unsafe/">JUC-Unsafe(7)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/16/SpringBoot-Security认证流程/">SpringBoot-Security认证流程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/15/SpringBoot-异步REST服务/">SpringBoot-异步REST服务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/08/web容器对比/">web容器对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/">SpringBoot-Data-Jpa之高级话题(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/">SpringBoot-Data JPA之Repository(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/springboot-Data-JPA之对象映射/">SpringBoot-Data JPA之对象映射(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/22/RabbitMq入门-基本概念/">RabbitMq入门-基本概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/">spring4.3.x源码阅读笔记-AOP(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">JUC-ConcurrentHashMap(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-JMM/">JUC-JMM(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">JUC-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JUC-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">JUC-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">JUC--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
     <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
     <script>
         $(".post-list").addClass("toc-article");
