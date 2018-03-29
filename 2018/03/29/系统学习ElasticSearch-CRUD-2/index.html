@@ -3,22 +3,25 @@
 <head>
   <meta charset="utf-8">
   
-  <title>web容器对比 | Shuchang&#39;s Blog</title>
+  <title>系统学习ElasticSearch-CRUD(2) | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="公司里统一使用的是jetty，自己平时写项目都习惯性用tomcat。大概比较一下两个容器。 Tomcat结构">
-<meta name="keywords" content="JavaWeb">
+  <meta name="description" content="环境 ES 5.5  kibana 5.5   电商案例假设我们有一个java pojo 1234567public class product&amp;#123;    private String name;    private String desc;    private Integer price;    private String producer;    private List  ta">
+<meta name="keywords" content="ElasticSearch">
 <meta property="og:type" content="article">
-<meta property="og:title" content="web容器对比">
-<meta property="og:url" content="http://www.shuchang.sc.com/2018/01/08/web容器对比/index.html">
+<meta property="og:title" content="系统学习ElasticSearch-CRUD(2)">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/03/29/系统学习ElasticSearch-CRUD-2/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="公司里统一使用的是jetty，自己平时写项目都习惯性用tomcat。大概比较一下两个容器。 Tomcat结构">
-<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180105151512096169138.png">
-<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180108151537303260693.png">
-<meta property="og:updated_time" content="2018-01-08T01:36:44.000Z">
+<meta property="og:description" content="环境 ES 5.5  kibana 5.5   电商案例假设我们有一个java pojo 1234567public class product&amp;#123;    private String name;    private String desc;    private Integer price;    private String producer;    private List  ta">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/2018032915223340444178.png">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180329152233469761469.png">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180329152233513023560.png">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180329152233554191011.png">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180329152233564161234.png">
+<meta property="og:updated_time" content="2018-03-29T15:03:09.673Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="web容器对比">
-<meta name="twitter:description" content="公司里统一使用的是jetty，自己平时写项目都习惯性用tomcat。大概比较一下两个容器。 Tomcat结构">
-<meta name="twitter:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180105151512096169138.png">
+<meta name="twitter:title" content="系统学习ElasticSearch-CRUD(2)">
+<meta name="twitter:description" content="环境 ES 5.5  kibana 5.5   电商案例假设我们有一个java pojo 1234567public class product&amp;#123;    private String name;    private String desc;    private Integer price;    private String producer;    private List  ta">
+<meta name="twitter:image" content="http://p1vpfd8u5.bkt.clouddn.com/2018032915223340444178.png">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -232,11 +235,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-web容器对比" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-系统学习ElasticSearch-CRUD-2" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/01/08/web容器对比/" class="article-date">
-      <time datetime="2018-01-08T01:34:35.000Z" itemprop="datePublished">2018-01-08</time>
+      <a href="/2018/03/29/系统学习ElasticSearch-CRUD-2/" class="article-date">
+      <time datetime="2018-03-29T13:23:18.000Z" itemprop="datePublished">2018-03-29</time>
 </a>
     </div>
   
@@ -249,7 +252,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      web容器对比
+      系统学习ElasticSearch-CRUD(2)
     </h1>
   
 
@@ -258,13 +261,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/随笔/">随笔</a>
+    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaWeb/">JavaWeb</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -274,39 +277,44 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>公司里统一使用的是jetty，自己平时写项目都习惯性用tomcat。大概比较一下两个容器。</p>
-<h3 id="Tomcat"><a href="#Tomcat" class="headerlink" title="Tomcat"></a>Tomcat</h3><h4 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h4><p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180105151512096169138.png" alt="tomcat结构"></p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li><a id="more"></a>
-<the rest="" of="" contents="" |="" 余下全文="">
-
-</the></li>
-</ul>
-<h4 id="接受请求"><a href="#接受请求" class="headerlink" title="接受请求"></a>接受请求</h4><ol>
-<li>BIO: blocking IO</li>
-<li>NIO: non blocking IO</li>
-<li>APR: 操作系统级别解决异步IO，如果应用需要处理高并发的请求，可以配置为apr模式</li>
-</ol>
-<h4 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h4><ol>
-<li>tomcat默认使用BIO的connector协议,并发达到几百会有瓶颈。可以通过修改protocol设置为org.apache.coyote.http11.Http11NioProtocol启动NIO。</li>
-<li>useURIValidation=false关闭URL检查</li>
-<li>enableLookUps=false消除DNS查询影响</li>
-<li>compression=on采取资源压缩</li>
-<li>因为tomcat运行在jvm上，所以可以通过优化jvm提高性能。tomcat默认内存128MB。可以修改Catalina.sh JAVA_OPTS参数，指定-Xms -Xmx，设置初始化大小和最大内存，减少频繁伸缩带来的消耗</li>
-</ol>
-<h3 id="Jetty"><a href="#Jetty" class="headerlink" title="Jetty"></a>Jetty</h3><h4 id="结构-1"><a href="#结构-1" class="headerlink" title="结构"></a>结构</h4><p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180108151537303260693.png" alt="20180108151537303260693.png"></p>
-<p>可以看出jetty结构相比于tomcat要简单了很多，它只有一个数据模型，那就是handler。可以根据规则添加hanlder作为jetty的启动组件。与tomcat相同，每个组件都有一个观察者(LifyCycle接口)，当start、fail、stop事件被触发，listener将会被调用。</p>
-<h4 id="接受请求-1"><a href="#接受请求-1" class="headerlink" title="接受请求"></a>接受请求</h4><ol>
-<li>HTTP协议<ul>
-<li>BIO</li>
-<li>NIO</li>
-</ul>
-</li>
-<li>AJP协议:假设在jboss服务器前加入了nginx服务器，那么nginx会解析http请求，jboss只需要处理nginx处理过的数据包，也就是ajp工作。所以处理ajp请求要快于http请求</li>
-</ol>
-<h3 id="tomcat与jetty比较"><a href="#tomcat与jetty比较" class="headerlink" title="tomcat与jetty比较"></a>tomcat与jetty比较</h3><p>jetty在架构上，核心就是handler。Handler的设计实际上是一个责任链的模式，对于组件生命周期的监控使用了观察者模式。tomcat的结构从server-&gt;service—&gt;container-&gt;engine-&gt;host-&gt;context-&gt;wrapper，是一种分层的设计，非常复杂但是也更加稳重。</p>
-<p>对于J2ee规范，tomcat支持的更广泛，jetty更加轻量响应更快。</p>
+        <h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><blockquote>
+<p>ES 5.5  kibana 5.5 </p>
+</blockquote>
+<h2 id="电商案例"><a href="#电商案例" class="headerlink" title="电商案例"></a>电商案例</h2><p>假设我们有一个java pojo</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class product&#123;</div><div class="line">    private String name;</div><div class="line">    private String desc;</div><div class="line">    private Integer price;</div><div class="line">    private String producer;</div><div class="line">    private List  tags;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>那么我们首先将pojo对应的一条数据存储到ES中,相信大家都知道将上上面的pojo存储到数据库中应该怎么做,ES是面向文档(document)的搜索分析引擎,文档中存储的数据结构,与面向对象的数据结构是一样的,基于这样的数据结构,ES可以提供复杂的索引,全文检索,分析聚合等功能,ES的document使用json来表达。</p>
+<h3 id="新增"><a href="#新增" class="headerlink" title="新增"></a>新增</h3><p>使用kibana的dev tools,新增的语法为:</p>
+<blockquote>
+<p>PUT /索引名称/类型名称/ID {数据}</p>
+</blockquote>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/2018032915223340444178.png" alt="2018032915223340444178.png"></p>
+<p>如上我们建立了一个索引放入ES中,就像对数据库的表中加入了一条记录</p>
+<h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p>查询的语法相对比较简单,这里的查询是指单单查找这一条记录,而不是根据条件进行搜索。</p>
+<blockquote>
+<p>GET /索引名称/类型名称/ID {数据}</p>
+</blockquote>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180329152233469761469.png" alt="20180329152233469761469.png"></p>
+<p>可以看到索引的一些基本信息,数据信息是在source下的,同时有一个version字段,表示这条索引的修改次数，同时也可以用于并发控制</p>
+<h3 id="修改"><a href="#修改" class="headerlink" title="修改"></a>修改</h3><p>修改索引有两种方式,第一种是替换,另一种是更新</p>
+<p>先来看替换</p>
+<blockquote>
+<p>PUT /索引名称/类型名称/ID {数据}</p>
+</blockquote>
+<p>使用这种方式,对于没有更新的数据也要带上,否则就会认为没有这个字段</p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180329152233513023560.png" alt="20180329152233513023560.png"></p>
+<p>这里我们修改一下name字段,可以看到version自增,reslut和created字段也表明了更新成功。</p>
+<p>更新文档方式</p>
+<blockquote>
+<p>POST /索引名称/类型名称/ID/_update {<br>    “doc”:{“字段名”:数据}<br>}</p>
+</blockquote>
+<p>这种方式对于不需要修改的字段,不需要添加进去</p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180329152233554191011.png" alt="20180329152233554191011.png"></p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180329152233564161234.png" alt="20180329152233564161234.png"></p>
+<p>可以看到通过这种方式,我们就将想修改的字段单独做了修改</p>
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><blockquote>
+<p>delete /索引名称/类型名称/ID</p>
+</blockquote>
+<p>这样在使用get方式就无法查询到这条数据啦</p>
 
       
       
@@ -362,13 +370,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/01/08/web容器对比/">web容器对比</a></p>
+        <p><span>本文标题:</span><a href="/2018/03/29/系统学习ElasticSearch-CRUD-2/">系统学习ElasticSearch-CRUD(2)</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2018年01月08日 - 09时34分</p>
-        <p><span>最后更新:</span>2018年01月08日 - 09时36分</p>
+        <p><span>发布时间:</span>2018年03月29日 - 21时23分</p>
+        <p><span>最后更新:</span>2018年03月29日 - 23时03分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/01/08/web容器对比/" title="web容器对比">http://www.shuchang.sc.com/2018/01/08/web容器对比/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/01/08/web容器对比/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/03/29/系统学习ElasticSearch-CRUD-2/" title="系统学习ElasticSearch-CRUD(2)">http://www.shuchang.sc.com/2018/03/29/系统学习ElasticSearch-CRUD-2/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/03/29/系统学习ElasticSearch-CRUD-2/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -381,18 +389,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2018/01/15/SpringBoot-异步REST服务/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          SpringBoot-异步REST服务
-        
-      </div>
-    </a>
   
-  
-    <a href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">SpringBoot-Data-Jpa之高级话题(3)</div>
+    <a href="/2018/03/27/系统学习ElasticSearch-概念-1/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">系统学习ElasticSearch-概念(1)</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -403,7 +402,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Tomcat"><span class="toc-number">1.</span> <span class="toc-text">Tomcat</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#结构"><span class="toc-number">1.1.</span> <span class="toc-text">结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#接受请求"><span class="toc-number">1.2.</span> <span class="toc-text">接受请求</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#优化"><span class="toc-number">1.3.</span> <span class="toc-text">优化</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Jetty"><span class="toc-number">2.</span> <span class="toc-text">Jetty</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#结构-1"><span class="toc-number">2.1.</span> <span class="toc-text">结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#接受请求-1"><span class="toc-number">2.2.</span> <span class="toc-text">接受请求</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tomcat与jetty比较"><span class="toc-number">3.</span> <span class="toc-text">tomcat与jetty比较</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#环境"><span class="toc-number">1.</span> <span class="toc-text">环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#电商案例"><span class="toc-number">2.</span> <span class="toc-text">电商案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#新增"><span class="toc-number">2.1.</span> <span class="toc-text">新增</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查询"><span class="toc-number">2.2.</span> <span class="toc-text">查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改"><span class="toc-number">2.3.</span> <span class="toc-text">修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除"><span class="toc-number">2.4.</span> <span class="toc-text">删除</span></a></li></ol></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -469,13 +468,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2018/01/15/SpringBoot-异步REST服务/" title="上一篇: SpringBoot-异步REST服务">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/" title="下一篇: SpringBoot-Data-Jpa之高级话题(3)">
+            <a href="/2018/03/27/系统学习ElasticSearch-概念-1/" title="下一篇: 系统学习ElasticSearch-概念(1)">
                 <i class="fa fa-angle-right"></i>
             </a>
         

@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 11.67px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 13.33px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.67px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 13.33px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.33px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 13.33px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 13.33px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.67px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 13.33px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.33px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,79 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-SpringBoot-Data-JPA之Repository-2" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/" class="article-date">
+      <time datetime="2017-12-31T05:52:38.000Z" itemprop="datePublished">2017-12-31</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/">SpringBoot-Data JPA之Repository(2)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h3 id="Repository"><a href="#Repository" class="headerlink" title="Repository"></a>Repository</h3><p>首先进行一下配置，让我们更方便的观察sql语句</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">spring.jpa.properties.hibernate.format_sql = true  //格式化sql</div><div class="line"></div><div class="line">spring.jpa.show-sql=true  //显示sql</div></pre></td></tr></table></figure>
+<p>我们先实现一个简单的查找，通过继承Repository接口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">@Component</div><div class="line">public interface BookRepository extends Repository&lt;Book,Long&gt;&#123;</div><div class="line">    /**</div><div class="line">     * 根据名字查找</div><div class="line">     */</div><div class="line">    List&lt;Book&gt; findByName(String name);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/SpringBoot/">SpringBoot</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JPA/">JPA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringBoot/">SpringBoot</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-springboot-Data-JPA之对象映射" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -901,79 +974,6 @@
       
         <p class="article-more-link">
           <a  href="/2017/12/17/java并发从入门到崩溃-JMM/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-java并发从入门到崩溃-Lock" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2017/12/13/java并发从入门到崩溃-Lock/" class="article-date">
-      <time datetime="2017-12-13T09:09:47.000Z" itemprop="datePublished">2017-12-13</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/13/java并发从入门到崩溃-Lock/">JUC-Lock(4)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>我们可以先来看看有哪些类实现了Lock接口，有我们很熟悉的ReentrantLock、ReadLock、WriteLock、ConcurrentHashMap中的Segment内部类以及在JAVA8中新加入的StampedLock，接下来一一分析一下这些锁的实现。<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmf9asltb1j30ny05c40l.jpg" alt=""></p>
-<h3 id="ReentrantLock"><a href="#ReentrantLock" class="headerlink" title="ReentrantLock"></a>ReentrantLock</h3><p>可重入锁也是JUC中的一位元老级的人物了。可重入锁，顾名思义就是就是支持一个线程对资源的重复加锁，此外可重入锁还支持公平或非公平加锁。<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmfb64413cj30bb0dfwfo.jpg" alt=""></p>
-<p>ReentrantLock的类结构如图所示，一个内部抽象类Sync继承自AQS，作为一个同步器。NonfairSync和FairSync都继承Sync用于实现不同的加锁方法。ReentrantLock类中的方法都是通过调用内部类的方法实现的加锁与释放。因为AQS是用来构建锁或其他同步器的基本框架。分析ReentrantLock的核心就是加锁的方法，根据代码，公平锁和非公锁都实现各自的Lock和tryAcquire方法</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">//非公平锁</div><div class="line"> static final class NonfairSync extends Sync &#123;</div><div class="line">        final void lock() &#123;</div><div class="line">            if (compareAndSetState(0, 1))</div><div class="line">                setExclusiveOwnerThread(Thread.currentThread());</div><div class="line">            else</div><div class="line">                acquire(1);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        protected final boolean tryAcquire(int acquires) &#123;</div><div class="line">            return nonfairTryAcquire(acquires);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">//公平锁</div><div class="line">    static final class FairSync extends Sync &#123;</div><div class="line"></div><div class="line">        final void lock() &#123;</div><div class="line">            acquire(1);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        protected final boolean tryAcquire(int acquires) &#123;</div><div class="line">            final Thread current = Thread.currentThread();</div><div class="line">            int c = getState();</div><div class="line">            if (c == 0) &#123;</div><div class="line">                if (!hasQueuedPredecessors() &amp;&amp;</div><div class="line">                    compareAndSetState(0, acquires)) &#123;</div><div class="line">                    setExclusiveOwnerThread(current);</div><div class="line">                    return true;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            else if (current == getExclusiveOwnerThread()) &#123;</div><div class="line">                int nextc = c + acquires;</div><div class="line">                if (nextc &lt; 0)</div><div class="line">                    throw new Error(&quot;Maximum lock count exceeded&quot;);</div><div class="line">                setState(nextc);</div><div class="line">                return true;</div><div class="line">            &#125;</div><div class="line">            return false;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2017/12/13/java并发从入门到崩溃-Lock/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
