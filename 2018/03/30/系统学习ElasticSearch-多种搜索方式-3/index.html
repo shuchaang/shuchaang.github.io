@@ -3,24 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>RabbitMq入门-实现微博关注demo(2) | Shuchang&#39;s Blog</title>
+  <title>系统学习ElasticSearch-多种搜索方式(3) | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="在网上看了很多RabbitMq的demo，发现都是Exchange三种路由模式的demo，很少有真实案例的demo，在这里分享一个自己写的模拟微博关注的demo,方便理解和学习。 工具SpringBoot  RabbitMq 构思 美女发布消息，关注她的人可以接收到消息 关注和取关都记录到日志中 美女和关注者都可以动态添加,添加一个美女就是添加一个Fanout模式的Exchange，一个关注者就是">
-<meta name="keywords" content="java,RabbitMq">
+  <meta name="description" content="ES中提供了多种索引的搜索方式,总结起来应该有六种,那么依次展示以下这些搜索方式,环境基于上一篇CRUD的数据。 Query String Search例如我想查找所有的商品信息,那么可以这样做  GET /索引名称/类型名称/_search   下面解释一下返回信息中几个关键字段的含义: 12345took: 耗费了多少毫秒shards: 这里数据被拆成了五个分配,那么对于搜索请求,会打到所有的">
+<meta name="keywords" content="ElasticSearch">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RabbitMq入门-实现微博关注demo(2)">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/12/23/RabbitMq入门-实现微博关注demo-2/index.html">
+<meta property="og:title" content="系统学习ElasticSearch-多种搜索方式(3)">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/03/30/系统学习ElasticSearch-多种搜索方式-3/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="在网上看了很多RabbitMq的demo，发现都是Exchange三种路由模式的demo，很少有真实案例的demo，在这里分享一个自己写的模拟微博关注的demo,方便理解和学习。 工具SpringBoot  RabbitMq 构思 美女发布消息，关注她的人可以接收到消息 关注和取关都记录到日志中 美女和关注者都可以动态添加,添加一个美女就是添加一个Fanout模式的Exchange，一个关注者就是">
-<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmpi6l7tvbj30hm0bn75v.jpg">
-<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmqrsrah7ij30cp0dqjuz.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fmqrw8gd75j305j02djrd.jpg">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fmqp9ou0irj308q083gmi.jpg">
-<meta property="og:updated_time" content="2017-12-23T08:27:04.000Z">
+<meta property="og:description" content="ES中提供了多种索引的搜索方式,总结起来应该有六种,那么依次展示以下这些搜索方式,环境基于上一篇CRUD的数据。 Query String Search例如我想查找所有的商品信息,那么可以这样做  GET /索引名称/类型名称/_search   下面解释一下返回信息中几个关键字段的含义: 12345took: 耗费了多少毫秒shards: 这里数据被拆成了五个分配,那么对于搜索请求,会打到所有的">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180330152237444945639.png">
+<meta property="og:updated_time" content="2018-03-30T02:42:43.484Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="RabbitMq入门-实现微博关注demo(2)">
-<meta name="twitter:description" content="在网上看了很多RabbitMq的demo，发现都是Exchange三种路由模式的demo，很少有真实案例的demo，在这里分享一个自己写的模拟微博关注的demo,方便理解和学习。 工具SpringBoot  RabbitMq 构思 美女发布消息，关注她的人可以接收到消息 关注和取关都记录到日志中 美女和关注者都可以动态添加,添加一个美女就是添加一个Fanout模式的Exchange，一个关注者就是">
-<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmpi6l7tvbj30hm0bn75v.jpg">
+<meta name="twitter:title" content="系统学习ElasticSearch-多种搜索方式(3)">
+<meta name="twitter:description" content="ES中提供了多种索引的搜索方式,总结起来应该有六种,那么依次展示以下这些搜索方式,环境基于上一篇CRUD的数据。 Query String Search例如我想查找所有的商品信息,那么可以这样做  GET /索引名称/类型名称/_search   下面解释一下返回信息中几个关键字段的含义: 12345took: 耗费了多少毫秒shards: 这里数据被拆成了五个分配,那么对于搜索请求,会打到所有的">
+<meta name="twitter:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180330152237444945639.png">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -234,11 +231,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-RabbitMq入门-实现微博关注demo-2" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-系统学习ElasticSearch-多种搜索方式-3" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/" class="article-date">
-      <time datetime="2017-12-23T08:05:24.000Z" itemprop="datePublished">2017-12-23</time>
+      <a href="/2018/03/30/系统学习ElasticSearch-多种搜索方式-3/" class="article-date">
+      <time datetime="2018-03-30T01:34:15.000Z" itemprop="datePublished">2018-03-30</time>
 </a>
     </div>
   
@@ -251,7 +248,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      RabbitMq入门-实现微博关注demo(2)
+      系统学习ElasticSearch-多种搜索方式(3)
     </h1>
   
 
@@ -260,13 +257,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
+    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -276,37 +273,38 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>在网上看了很多RabbitMq的demo，发现都是Exchange三种路由模式的demo，很少有真实案例的demo，在这里分享一个自己写的模拟微博关注的demo,方便理解和学习。</p>
-<h3 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h3><p>SpringBoot  RabbitMq</p>
-<h3 id="构思"><a href="#构思" class="headerlink" title="构思"></a>构思</h3><ol>
-<li>美女发布消息，关注她的人可以接收到消息</li>
-<li>关注和取关都记录到日志中</li>
-<li>美女和关注者都可以动态添加,添加一个美女就是添加一个Fanout模式的Exchange，一个关注者就是一个队列绑定到对应美女的Exchange</li>
-</ol>
-<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmpi6l7tvbj30hm0bn75v.jpg" alt=""></p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li><a id="more"></a>
-<the rest="" of="" contents="" |="" 余下全文="">
-
-</the></li>
-</ul>
-<h3 id="测试类"><a href="#测试类" class="headerlink" title="测试类"></a>测试类</h3><p>列出想要实现的接口</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">@RestController</div><div class="line">public class Controller &#123;</div><div class="line"></div><div class="line">    @Autowired</div><div class="line">    private LikeService likeService;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 美女注册</div><div class="line">     */</div><div class="line">    @GetMapping(&quot;/addBeauty&quot;)</div><div class="line">    public void addBeauty(String name)&#123;</div><div class="line">        likeService.addBeauty(name);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 关注她</div><div class="line">     */</div><div class="line">    @GetMapping(&quot;/like&quot;)</div><div class="line">    public void like(String boyName,String girlName)</div><div class="line">    &#123;</div><div class="line">        likeService.like(boyName,girlName);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 取关</div><div class="line">     */</div><div class="line">    @GetMapping(&quot;/unlike&quot;)</div><div class="line">    public void unlike(String boyName,String girlName)&#123;</div><div class="line">        likeService.unlike(boyName,girlName);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 美女发朋友圈了</div><div class="line">     */</div><div class="line">    @GetMapping(&quot;/post&quot;)</div><div class="line">    public void postMessage(String girlName,String message)&#123;</div><div class="line">         likeService.postMessage(girlName,message);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="配置类"><a href="#配置类" class="headerlink" title="配置类"></a>配置类</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line">@Configuration</div><div class="line">public class BaseRabbitConfig &#123;</div><div class="line"></div><div class="line">    @Bean</div><div class="line">    public ConnectionFactory connectionFactory()&#123;</div><div class="line">        CachingConnectionFactory factory = new CachingConnectionFactory();</div><div class="line">        factory.setVirtualHost(&quot;/&quot;);</div><div class="line">        factory.setUsername(&quot;用户名&quot;);</div><div class="line">        factory.setPassword(&quot;密码&quot;);</div><div class="line">        factory.setAddresses(&quot;IP+PORT&quot;);</div><div class="line">        return factory;</div><div class="line">    &#125;</div><div class="line">    @Bean</div><div class="line">    public RabbitManagementTemplate rabbitManagementTemplate()&#123;</div><div class="line">        return new RabbitManagementTemplate(&quot;http://用户名:密码@IP+PORT/api/&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Bean</div><div class="line">    public AmqpAdmin amqpAdmin()&#123;</div><div class="line">        return new RabbitAdmin(connectionFactory());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Bean</div><div class="line">    public RabbitTemplate rabbitTemplate()&#123;</div><div class="line">        return new RabbitTemplate(connectionFactory());</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">@Configuration</div><div class="line">public class LogRabbitConfig extends BaseRabbitConfig &#123;</div><div class="line"></div><div class="line">    public static final String LOG_QUEUE = &quot;LOG_QUEUE&quot;;</div><div class="line">    public static final String LOG_EXCHANGE = &quot;LOG_EXCHANGE&quot;;</div><div class="line">    public final static String ROUTING_KEY=&quot;log&quot;;</div><div class="line">    @Bean</div><div class="line">    public Queue logQueue()&#123;</div><div class="line">        return new Queue(LOG_QUEUE);</div><div class="line">    &#125;</div><div class="line">    /**</div><div class="line">     * 监听容器</div><div class="line">     */</div><div class="line">    @Bean</div><div class="line">    public SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, LogListener logListener)&#123;</div><div class="line">        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();</div><div class="line">        container.setConnectionFactory(connectionFactory);</div><div class="line">        container.setQueueNames(new String[]&#123;LOG_QUEUE&#125;);</div><div class="line">        container.setMessageListener(logListener);</div><div class="line">        return container;</div><div class="line">    &#125;</div><div class="line">    @Bean</div><div class="line">    LogListener logListener()&#123;</div><div class="line">        return new LogListener();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Bean</div><div class="line">    public DirectExchange directExchange()&#123;</div><div class="line">        return new DirectExchange(LOG_EXCHANGE);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Bean</div><div class="line">    Binding binding(Queue logQueue,DirectExchange directExchange)&#123;</div><div class="line">        return BindingBuilder.bind(logQueue).to(directExchange).with(ROUTING_KEY);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这里我注册了一个RabbitManagementTemplate，作用是调用HttpApi。因为我的构想是希望能够实现队列和交换器的热插拔，这时要解决的问题就是实时获取Exchange的列表和一些绑定的信息，但在网上并没有找到相关的资料。<br>这里一个技巧就是查找函数了，在IDEA中可以双击shift搜索函数。比如我想要的功能是getExchanges(),因为我猜这个功能的调用函数就叫这个名字，果然在这里发现了:</p>
-<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmqrsrah7ij30cp0dqjuz.jpg" alt=""></p>
-<p>可以看到还可以取到队列，绑定的信息，这就是我们实现热插拔的必要条件了，接着看到它的构造函数：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public RabbitManagementTemplate() &#123;</div><div class="line">        this(&quot;http://guest:guest@localhost:15672/api/&quot;);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<p>所以只要我们把地址填成我们自己的rabbitmq配置就可以，这个对象其实就是调用了RabbitMq的HttpApi。我们可以打开RabbitMq的webUI，拉到最下面</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmqrw8gd75j305j02djrd.jpg" alt=""></p>
-<p>点击这个Http API就可以通过Restful的方式调用这些API</p>
-<h3 id="业务实现"><a href="#业务实现" class="headerlink" title="业务实现"></a>业务实现</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">@Service</div><div class="line">public class LikeService &#123;</div><div class="line">    @Autowired</div><div class="line">    private RabbitTemplate rabbitTemplate;</div><div class="line">    @Autowired</div><div class="line">    private AmqpAdmin amqpAdmin;</div><div class="line">    @Autowired</div><div class="line">    private RabbitManagementTemplate rabbitManagementTemplate;</div><div class="line">    public void addBeauty(String name) &#123;</div><div class="line">        try &#123;</div><div class="line">            FanoutExchange fanoutExchange = new FanoutExchange(name);</div><div class="line">            amqpAdmin.declareExchange(fanoutExchange);</div><div class="line">            System.out.println(&quot;初始化交换器成功 :&quot;+name);</div><div class="line">            rabbitTemplate.convertAndSend(LogRabbitConfig.LOG_EXCHANGE,LogRabbitConfig.ROUTING_KEY,&quot;初始化交换器&quot;+name);</div><div class="line"></div><div class="line">        &#125;catch (Exception e)&#123;</div><div class="line">            System.out.println(&quot;初始化交换器失败 :&quot;+name);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void like(String boyName, String girlName) &#123;</div><div class="line"></div><div class="line">        Queue queue = new Queue(boyName);</div><div class="line">        FanoutExchange fanoutExchange = (FanoutExchange) rabbitManagementTemplate.getExchange(girlName);</div><div class="line">        amqpAdmin.declareQueue(queue);</div><div class="line">        amqpAdmin.declareBinding(BindingBuilder.bind(queue).to(fanoutExchange));</div><div class="line">        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();</div><div class="line">        container.setQueueNames(boyName);</div><div class="line">        container.setConnectionFactory(rabbitTemplate.getConnectionFactory());</div><div class="line">        container.setMessageListener(new BoyListener());</div><div class="line">        container.start();</div><div class="line">        System.out.println(boyName+&quot;关注了&quot;+girlName);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void postMessage(String girlName, String message) &#123;</div><div class="line">        System.out.println(girlName+&quot;发了一条微博&quot;+message);</div><div class="line">        rabbitTemplate.convertAndSend(girlName,&quot;&quot;,message);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void unlike(String boyName, String girlName) &#123;</div><div class="line">            Queue queue = rabbitManagementTemplate.getQueue(boyName);</div><div class="line">            rabbitManagementTemplate.deleteQueue(queue);</div><div class="line">        rabbitTemplate.convertAndSend(LogRabbitConfig.LOG_EXCHANGE,LogRabbitConfig.ROUTING_KEY,boyName+&quot;取关了&quot;+girlName);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@RabbitListener</div><div class="line">public class BoyListener implements MessageListener&#123;</div><div class="line">    @Override</div><div class="line">    public void onMessage(org.springframework.amqp.core.Message message) &#123;</div><div class="line">        System.out.println(message.getMessageProperties().getConsumerQueue()+&quot;看到&quot;+message.getMessageProperties().getReceivedExchange()+&quot;发朋友圈&quot;+new String(message.getBody()));</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">@Service</div><div class="line">public class LogListener implements MessageListener&#123;</div><div class="line">    @Override</div><div class="line">    public void onMessage(Message message) &#123;</div><div class="line">        System.out.println(&quot;LOG QUEUE ============&quot;);</div><div class="line">        System.out.println(new String(message.getBody()));</div><div class="line">        //写入文件</div><div class="line">        System.out.println(&quot;======================&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fmqp9ou0irj308q083gmi.jpg" alt=""></p>
-<p>这里中文出现了乱码，目前已经解决问题,代码在这里</p>
+        <p>ES中提供了多种索引的搜索方式,总结起来应该有六种,那么依次展示以下这些搜索方式,环境基于上一篇CRUD的数据。</p>
+<h2 id="Query-String-Search"><a href="#Query-String-Search" class="headerlink" title="Query String Search"></a>Query String Search</h2><p>例如我想查找所有的商品信息,那么可以这样做</p>
 <blockquote>
-<p><a href="https://gitee.com/swiftsc/RabbitMq-mockweipo" target="_blank" rel="external">https://gitee.com/swiftsc/RabbitMq-mockweipo</a></p>
+<p>GET /索引名称/类型名称/_search</p>
 </blockquote>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180330152237444945639.png" alt="20180330152237444945639.png"></p>
+<p>下面解释一下返回信息中几个关键字段的含义:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">took: 耗费了多少毫秒</div><div class="line">shards: 这里数据被拆成了五个分配,那么对于搜索请求,会打到所有的primary shard(或者它的某个replica shard)上去,共成功了五个。</div><div class="line">hits.total: 查询结果的数量,共3个document</div><div class="line">max_score: document对于一个search的相关度的匹配分数,越相关分数就越高</div><div class="line">hits.hits:包含了匹配搜索的document的详细数据</div></pre></td></tr></table></figure>
+<p>接下来进行一下复杂一点的查询,要求商品名称包含gaolujie,并且按价格降序排序</p>
+<blockquote>
+<p>get /ecomic/product/_search?q=name:gaolujie&amp;sort=price:desc</p>
+</blockquote>
+<p>对于Query String这种方式来说,我们在生产环境中其实很少会用,因为它把参数全部放入了url中,所以构建一个复杂查询是非常困难的,仅限于学习测试。</p>
+<h2 id="Query-DSL"><a href="#Query-DSL" class="headerlink" title="Query DSL"></a>Query DSL</h2><p>DSL全程是Domain Specified Language 特定领域语言,也就是ES中的特定语法</p>
+<p>同样是查询所有商品,我们看一下语法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Get /索引名称/类型名称/_search</div><div class="line">&#123;</div><div class="line">    &quot;query&quot;:&#123;&quot;match_all&quot;:&#123;&#125;&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>DSL会将所有的查询条件放入query的body中,这样构建复杂的查询语法就比较容易</p>
+<p>条件查询:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">GET /ecomic/product/_search</div><div class="line">&#123;</div><div class="line">    &quot;query&quot;:&#123;</div><div class="line">        &quot;match&quot;:&#123;</div><div class="line">            &quot;name&quot;:&quot;gaolujie&quot;</div><div class="line">        &#125;</div><div class="line">    &#125;,</div><div class="line">    &quot;sort&quot;:[</div><div class="line">        &quot;price&quot;:&quot;desc&quot;</div><div class="line">    ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>这里有个细节要注意,如果使用Kibana,GET/POST/PUT/DELETE 一定要大写,否则返回值可能就是错误的</p>
+</blockquote>
+<p>分页查询:</p>
+<blockquote>
+<p>GET /ecomic/product/_search {<br>    “query”:{“match_all”:{}},<br>    “from”:1,<br>    “size”:2<br>}</p>
+</blockquote>
+<p>表示从第一条数据开始,共查询两条数据</p>
+<p>指定要查询的字段:</p>
+<blockquote>
+<p>GET /ecomic/product/_search<br>{<br>    “query”:{“match_all”:{}},<br>    “_source”: [“name”,”price”]<br>}</p>
+</blockquote>
+<p>这样查询就只包含name和price两个字段</p>
 
       
       
@@ -362,13 +360,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a></p>
+        <p><span>本文标题:</span><a href="/2018/03/30/系统学习ElasticSearch-多种搜索方式-3/">系统学习ElasticSearch-多种搜索方式(3)</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2017年12月23日 - 16时05分</p>
-        <p><span>最后更新:</span>2017年12月23日 - 16时27分</p>
+        <p><span>发布时间:</span>2018年03月30日 - 09时34分</p>
+        <p><span>最后更新:</span>2018年03月30日 - 10时42分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/" title="RabbitMq入门-实现微博关注demo(2)">http://www.shuchang.sc.com/2017/12/23/RabbitMq入门-实现微博关注demo-2/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/12/23/RabbitMq入门-实现微博关注demo-2/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/03/30/系统学习ElasticSearch-多种搜索方式-3/" title="系统学习ElasticSearch-多种搜索方式(3)">http://www.shuchang.sc.com/2018/03/30/系统学习ElasticSearch-多种搜索方式-3/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/03/30/系统学习ElasticSearch-多种搜索方式-3/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -381,18 +379,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/12/30/redis分布式原理及操作/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          redis分布式原理及操作
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/12/22/RabbitMq入门-基本概念/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">RabbitMq入门-基本概念(1)</div>
+    <a href="/2018/03/29/系统学习ElasticSearch-CRUD-2/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">系统学习ElasticSearch-CRUD(2)</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -403,7 +392,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#工具"><span class="toc-number">1.</span> <span class="toc-text">工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构思"><span class="toc-number">2.</span> <span class="toc-text">构思</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试类"><span class="toc-number">3.</span> <span class="toc-text">测试类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置类"><span class="toc-number">4.</span> <span class="toc-text">配置类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#业务实现"><span class="toc-number">5.</span> <span class="toc-text">业务实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#效果"><span class="toc-number">6.</span> <span class="toc-text">效果</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Query-String-Search"><span class="toc-number">1.</span> <span class="toc-text">Query String Search</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Query-DSL"><span class="toc-number">2.</span> <span class="toc-text">Query DSL</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -469,13 +458,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/12/30/redis分布式原理及操作/" title="上一篇: redis分布式原理及操作">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/12/22/RabbitMq入门-基本概念/" title="下一篇: RabbitMq入门-基本概念(1)">
+            <a href="/2018/03/29/系统学习ElasticSearch-CRUD-2/" title="下一篇: 系统学习ElasticSearch-CRUD(2)">
                 <i class="fa fa-angle-right"></i>
             </a>
         
