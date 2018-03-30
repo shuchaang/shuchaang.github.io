@@ -259,39 +259,16 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>ES中提供了多种索引的搜索方式,总结起来应该有六种,那么依次展示以下这些搜索方式,环境基于上一篇CRUD的数据。</p>
+              <p>ES中提供了多种索引的搜索方式,总结起来应该有六种,那么依次展示以下这些搜索方式,环境基于上一篇CRUD的数据。</p>
 <h2 id="Query-String-Search"><a href="#Query-String-Search" class="headerlink" title="Query String Search"></a>Query String Search</h2><p>例如我想查找所有的商品信息,那么可以这样做</p>
 <blockquote>
 <p>GET /索引名称/类型名称/_search</p>
 </blockquote>
 <p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180330152237444945639.png" alt="20180330152237444945639.png"></p>
-<p>下面解释一下返回信息中几个关键字段的含义:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">took: 耗费了多少毫秒</div><div class="line">shards: 这里数据被拆成了五个分配,那么对于搜索请求,会打到所有的primary shard(或者它的某个replica shard)上去,共成功了五个。</div><div class="line">hits.total: 查询结果的数量,共3个document</div><div class="line">max_score: document对于一个search的相关度的匹配分数,越相关分数就越高</div><div class="line">hits.hits:包含了匹配搜索的document的详细数据</div></pre></td></tr></table></figure>
-<p>接下来进行一下复杂一点的查询,要求商品名称包含gaolujie,并且按价格降序排序</p>
-<blockquote>
-<p>get /ecomic/product/_search?q=name:gaolujie&amp;sort=price:desc</p>
-</blockquote>
-<p>对于Query String这种方式来说,我们在生产环境中其实很少会用,因为它把参数全部放入了url中,所以构建一个复杂查询是非常困难的,仅限于学习测试。</p>
-<h2 id="Query-DSL"><a href="#Query-DSL" class="headerlink" title="Query DSL"></a>Query DSL</h2><p>DSL全程是Domain Specified Language 特定领域语言,也就是ES中的特定语法</p>
-<p>同样是查询所有商品,我们看一下语法:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Get /索引名称/类型名称/_search</div><div class="line">&#123;</div><div class="line">    &quot;query&quot;:&#123;&quot;match_all&quot;:&#123;&#125;&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>DSL会将所有的查询条件放入query的body中,这样构建复杂的查询语法就比较容易</p>
-<p>条件查询:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">GET /ecomic/product/_search</div><div class="line">&#123;</div><div class="line">    &quot;query&quot;:&#123;</div><div class="line">        &quot;match&quot;:&#123;</div><div class="line">            &quot;name&quot;:&quot;gaolujie&quot;</div><div class="line">        &#125;</div><div class="line">    &#125;,</div><div class="line">    &quot;sort&quot;:[</div><div class="line">        &quot;price&quot;:&quot;desc&quot;</div><div class="line">    ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>这里有个细节要注意,如果使用Kibana,GET/POST/PUT/DELETE 一定要大写,否则返回值可能就是错误的</p>
-</blockquote>
-<p>分页查询:</p>
-<blockquote>
-<p>GET /ecomic/product/_search {<br>    “query”:{“match_all”:{}},<br>    “from”:1,<br>    “size”:2<br>}</p>
-</blockquote>
-<p>表示从第一条数据开始,共查询两条数据</p>
-<p>指定要查询的字段:</p>
-<blockquote>
-<p>GET /ecomic/product/_search<br>{<br>    “query”:{“match_all”:{}},<br>    “_source”: [“name”,”price”]<br>}</p>
-</blockquote>
-<p>这样查询就只包含name和price两个字段</p>
-
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
       
       
     </div>
@@ -309,6 +286,10 @@
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
     </div>
 
+      
+        <p class="article-more-link">
+          <a  href="/2018/03/30/系统学习ElasticSearch-多种搜索方式-3/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
