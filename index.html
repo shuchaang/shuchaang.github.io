@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 14.29px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 12.86px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 17.14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15.71px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.43px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/spring/" style="font-size: 12.86px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.57px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 15px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 13.33px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.67px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 13.33px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.33px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,103 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-系统学习ElasticSearch-聚合分析-4" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/" class="article-date">
+      <time datetime="2018-03-31T06:25:43.000Z" itemprop="datePublished">2018-03-31</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/">系统学习ElasticSearch-简单聚合分析(4)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>环境方面继续使用上一篇的数据环境,根据模拟不同的需求,体验不同的聚合分析语法</p>
+<ol>
+<li>简单聚合: 计算每个tag下的商品数量</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">GET /ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_tag&quot;: &#123;</div><div class="line">      &quot;terms&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;tags&quot;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>语法如上,但是返回结果可能会出现如下错误:</p>
+<blockquote>
+<p>default. Set fielddata=true on [tags] in order to load fielddata in memory by uninverting the inverted index. Note that this can however use significant memory. Alternatively use a keyword field instead.”</p>
+</blockquote>
+<p>这段错误提示的意思就是需要对索引进行一些额外的配置,fielddata=true,因为我们在使用聚合功能的时候,ES会对索引进行正排,并且把正排数据放入内存中来进行聚合分析操作,具体的fielddata会在以后解释。</p>
+<p>这里我们需要一些操作</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">PUT /ecomic/_mapping/product</div><div class="line">&#123;</div><div class="line">  &quot;properties&quot;:&#123;</div><div class="line">    &quot;tags&quot;:&#123;</div><div class="line">      &quot;type&quot;:&quot;text&quot;,</div><div class="line">      &quot;fielddata&quot;:true</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样再次使用聚合查询就可以了,并且在返回结果中多了这样一个字段</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">&quot;aggregations&quot;: &#123;</div><div class="line">  &quot;group_by_tags&quot;: &#123;</div><div class="line">    &quot;doc_count_error_upper_bound&quot;: 0,</div><div class="line">    &quot;sum_other_doc_count&quot;: 0,</div><div class="line">    &quot;buckets&quot;: [</div><div class="line">      &#123;</div><div class="line">        &quot;key&quot;: &quot;fangzhu&quot;,</div><div class="line">        &quot;doc_count&quot;: 4</div><div class="line">      &#125;,</div><div class="line">      &#123;</div><div class="line">        &quot;key&quot;: &quot;meibai&quot;,</div><div class="line">        &quot;doc_count&quot;: 4</div><div class="line">      &#125;,</div><div class="line">      &#123;</div><div class="line">        &quot;key&quot;: &quot;sb&quot;,</div><div class="line">        &quot;doc_count&quot;: 3</div><div class="line">      &#125;</div><div class="line">    ]</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>其中bucket就是对聚合结果进行分组,每个tag就是一个bucket。这样就是一个简单的数据聚合,可以发现,聚合数据还返回了原有的全部数据,如果不想返回这些数据,只需要添加size:0就可以了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">GET ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;size&quot;: 0, </div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_tags&quot;: &#123;</div><div class="line">      &quot;terms&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;tags&quot;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>聚合+搜索: 对名称中包含gaolujie的商品,计算每个tag的商品数量</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">GET ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;size&quot;: 0, </div><div class="line">  &quot;query&quot;: &#123;</div><div class="line">    &quot;match&quot;: &#123;</div><div class="line">      &quot;name&quot;: &quot;gaolujie&quot;</div><div class="line">    &#125;</div><div class="line">  &#125;, </div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_tags&quot;: &#123;</div><div class="line">      &quot;terms&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;tags&quot;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>很简单,aggs+query就可以做到先搜索再分析</p>
+<ol>
+<li>嵌套聚合:计算每个tag下商品的平均价格</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">GET ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;size&quot;: 0, </div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_tags&quot;: &#123;</div><div class="line">      &quot;terms&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;tags&quot;</div><div class="line">      &#125;,</div><div class="line">      &quot;aggs&quot;: &#123;</div><div class="line">        &quot;avg_price&quot;: &#123;</div><div class="line">          &quot;avg&quot;: &#123;</div><div class="line">            &quot;field&quot;: &quot;price&quot;</div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到我们先用aggs对tag进行了分组,分组之后再嵌套了一层aggs对价格求avg也就是平均值</p>
+<ol>
+<li>加入排序: 我们使用3的数据,并对聚合价格进行降序排序</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">GET ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;size&quot;: 0, </div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_tags&quot;: &#123;</div><div class="line">      &quot;terms&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;tags&quot;,</div><div class="line">        &quot;order&quot;: &#123;</div><div class="line">          &quot;avg_price&quot;: &quot;desc&quot;</div><div class="line">        &#125;</div><div class="line">      &#125;,</div><div class="line">      &quot;aggs&quot;: &#123;</div><div class="line">        &quot;avg_price&quot;: &#123;</div><div class="line">          &quot;avg&quot;: &#123;</div><div class="line">            &quot;field&quot;: &quot;price&quot;</div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>按照指定的价格范围区间进行分组.然后在每组内再按照tag进行分组,最后再计算每组的平均价格(这个需求看起来很复杂,单其实就是三层的aggs嵌套)</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">GET ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;size&quot;: 0, </div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_price&quot;: &#123;</div><div class="line">      &quot;range&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;price&quot;,</div><div class="line">        &quot;ranges&quot;: [</div><div class="line">          &#123;</div><div class="line">            &quot;from&quot;: 0,</div><div class="line">            &quot;to&quot;: 30</div><div class="line">          &#125;,&#123;</div><div class="line">            &quot;from&quot;: 30,</div><div class="line">            &quot;to&quot;: 50</div><div class="line">          &#125;,&#123;</div><div class="line">            &quot;from&quot;: 50,</div><div class="line">            &quot;to&quot;: 100</div><div class="line">          &#125;</div><div class="line">        ]</div><div class="line">      &#125;, </div><div class="line">      &quot;aggs&quot;: &#123;</div><div class="line">        &quot;group_by_tags&quot;: &#123;</div><div class="line">          &quot;terms&quot;: &#123;</div><div class="line">            &quot;field&quot;: &quot;tags&quot;</div><div class="line">          &#125;,</div><div class="line">          &quot;aggs&quot;: &#123;</div><div class="line">            &quot;avg_price&quot;: &#123;</div><div class="line">              &quot;avg&quot;: &#123;</div><div class="line">                &quot;field&quot;: &quot;price&quot;</div><div class="line">              &#125;</div><div class="line">            &#125;</div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如上,相比于需求4,增加了一个range字段,用于进行分组</p>
+
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-系统学习ElasticSearch-多种搜索方式-3" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -903,75 +1000,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/02/11/JUC-Executor框架-10/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-JUC-等等我-一起走-9" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/02/02/JUC-等等我-一起走-9/" class="article-date">
-      <time datetime="2018-02-02T02:44:31.000Z" itemprop="datePublished">2018-02-02</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/02/JUC-等等我-一起走-9/">JUC-等等我,一起走(9)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="CountDownLatch"><a href="#CountDownLatch" class="headerlink" title="CountDownLatch"></a>CountDownLatch</h3><h4 id="coding"><a href="#coding" class="headerlink" title="coding"></a>coding</h4><p>日常使用的最多的一个工具，初始化时需要指定一个int值，可以理解为要执行任务的线程的数量，每次调用countDown()会使int值减一。当int值&lt;=0时，调用await()方法的地方会放行所有线程。一个简单的demo:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">public class CountDownLatchTest &#123;</div><div class="line">    public static CountDownLatch countDownLatch = new CountDownLatch(3);</div><div class="line"></div><div class="line">    static class MyRun implements Runnable&#123;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void run() &#123;</div><div class="line">            System.out.println(Thread.currentThread().getName()+&quot;working&quot;);</div><div class="line">            try &#123;</div><div class="line">                TimeUnit.SECONDS.sleep(1);</div><div class="line">            &#125; catch (InterruptedException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">            countDownLatch.countDown();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) throws InterruptedException &#123;</div><div class="line">        new Thread(new MyRun()).start();</div><div class="line">        new Thread(new MyRun()).start();</div><div class="line">        new Thread(new MyRun()).start();</div><div class="line"></div><div class="line">        countDownLatch.await();</div><div class="line">        System.out.println(&quot;all finish&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/02/02/JUC-等等我-一起走-9/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
