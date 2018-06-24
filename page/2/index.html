@@ -232,75 +232,6 @@
 </nav>
       <div class="body-wrap">
   
-    <article id="post-ElasticSearch优化总结" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/02/27/ElasticSearch优化总结/" class="article-date">
-      <time datetime="2018-02-27T11:14:52.000Z" itemprop="datePublished">2018-02-27</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/27/ElasticSearch优化总结/">ElasticSearch优化总结</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="索引结构优化"><a href="#索引结构优化" class="headerlink" title="索引结构优化"></a>索引结构优化</h3><p>一份没有经过优化的索引结构如下，由于单机版,这里备份数量和分片数量要根据生产中的实际情况来设置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;settings&quot;: &#123;</div><div class="line">    &quot;number_of_replicas&quot;: 0</div><div class="line">  &#125;,</div><div class="line">  &quot;mappings&quot;: &#123;</div><div class="line">    &quot;house&quot;: &#123;</div><div class="line">      &quot;dynamic&quot;: false,</div><div class="line">      &quot;properties&quot;: &#123;</div><div class="line">        &quot;houseId&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;title&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;price&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;area&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;createTime&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;date&quot;,</div><div class="line">          &quot;format&quot;: &quot;strict_date_optional_time||epoch_millis&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;lastUpdateTime&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;date&quot;,</div><div class="line">          &quot;format&quot;: &quot;strict_date_optional_time||epoch_millis&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;cityEnName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;regionEnName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;direction&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;distanceToSubWay&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;subWayLineName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;subWayStationName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;tags&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;street&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;location&quot;:&#123;</div><div class="line">        	&quot;type&quot;:&quot;geo_point&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;district&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;description&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;layoutDesc&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;traffic&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;roundService&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;rentWay&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/02/27/ElasticSearch优化总结/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
     <article id="post-JUC-CompletableFuture使用-12" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -928,6 +859,85 @@
       
         <p class="article-more-link">
           <a  href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-RabbitMq入门-连接和资源管理-3" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/01/29/RabbitMq入门-连接和资源管理-3/" class="article-date">
+      <time datetime="2018-01-29T05:44:43.000Z" itemprop="datePublished">2018-01-29</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/29/RabbitMq入门-连接和资源管理-3/">RabbitMq入门-连接和资源管理(3)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <blockquote>
+<p>官方文档  <a href="https://docs.spring.io/spring-amqp/docs/2.0.1.RELEASE/reference/html/_reference.html#_introduction_4" target="_blank" rel="external">https://docs.spring.io/spring-amqp/docs/2.0.1.RELEASE/reference/html/_reference.html#_introduction_4</a></p>
+</blockquote>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>用于管理与RabbitMQ代理的核心组件是ConnectionFactory接口。ConnectionFactory的实现类负责提供一个org.springframework.amqp.rabbit.connection.Connection的实例，它是com.rabbitmq.client.Connection的一个封装。官方提供的唯一的具体实现是CachingConnectionFactory。默认情况下，它建立一个可以被应用程序共享的连接代理(可以理解为一个全局配置)。因为与AMQP进行消息传递的“工作单元”实际上是一个“通道”（在某些方面，这与JMS中的Connection和Session之间的关系类似），所以可以共享连接。如你所想，连接实例提供了一个createChannel方法。 CachingConnectionFactory实现支持这些通道的高速缓存，并根据它们是否是事务处理来维护通道的单独高速缓存。在创建CachingConnectionFactory的实例时，可以通过构造函数提供主机名,用户名和密码。如果你想配置通道缓存的大小（默认是25），你也可以在这里调用setChannelCacheSize()方法.</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tKfTcly1fnxha39o1fj30l209c74z.jpg" alt=""></p>
+<p>可以看到一个SingleConnectionFactory实现类，它只在框架的单元测试代码中可用。它比CachingConnectionFactory简单，因为它不会缓存通道，但由于缺乏性能和弹性，它不适用于简单测试之外的实际应用。如果由于某种原因需要实现自己的ConnectionFactory，那么可以通过继承AbstractConnectionFactory来实现。</p>
+<p>从版本1.3开始，CachingConnectionFactory可以缓存连接数也可以只缓存通道。在这种情况下，每次调用createConnection()都会创建一个新连接（或从缓存中检索一个空闲连接）。关闭连接会将其返回到缓存（如果尚未达到缓存大小）。在这样的连接上创建的通道也被缓存。</p>
+<p>如果缓存大小为10，则可以使用任意数量的通道。如果超过10个通道正在使用，他们都返回到缓存，10将进入缓存;其余的将被关闭。</p>
+<p>从版本1.6开始，默认通道高速缓存大小从1增加到25.在大容量，多线程环境中，缓存太小意味着频繁地创建和关闭通道。增加默认缓存大小将避免这种开销。可以通过RabbitMQ管理界面监视正在使用的频道，并且如果您看到许多频道正在创建和关闭，请考虑进一步增加缓存大小。缓存只能按需增长（以适应应用程序的并发需求），所以这种改变不会影响现有的低容量应用程序。</p>
+<p>从版本1.4.2开始，CachingConnectionFactory有一个属性channelCheckoutTimeout。当此属性大于零时，channelCacheSize将成为可在连接上创建的通道数的最大值。如果达到限制，调用线程将阻塞，直到有一个通道可用或达到超时，在这种情况下会引发AmqpTimeoutException。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/01/29/RabbitMq入门-连接和资源管理-3/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>

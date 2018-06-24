@@ -232,61 +232,6 @@
 </nav>
       <div class="body-wrap">
   
-    <article id="post-afdsadf" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/06/24/afdsadf/" class="article-date">
-      <time datetime="2018-06-24T07:02:45.000Z" itemprop="datePublished">2018-06-24</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/24/afdsadf/">afdsadf</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <p>sdfsdfs df sd</p>
-
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
     <article id="post-Kafka-Streaming-分支" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -976,6 +921,75 @@
       
         <p class="article-more-link">
           <a  href="/2018/03/02/JUC-跳表-12/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-ElasticSearch优化总结" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/02/27/ElasticSearch优化总结/" class="article-date">
+      <time datetime="2018-02-27T11:14:52.000Z" itemprop="datePublished">2018-02-27</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/02/27/ElasticSearch优化总结/">ElasticSearch优化总结</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h3 id="索引结构优化"><a href="#索引结构优化" class="headerlink" title="索引结构优化"></a>索引结构优化</h3><p>一份没有经过优化的索引结构如下，由于单机版,这里备份数量和分片数量要根据生产中的实际情况来设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;settings&quot;: &#123;</div><div class="line">    &quot;number_of_replicas&quot;: 0</div><div class="line">  &#125;,</div><div class="line">  &quot;mappings&quot;: &#123;</div><div class="line">    &quot;house&quot;: &#123;</div><div class="line">      &quot;dynamic&quot;: false,</div><div class="line">      &quot;properties&quot;: &#123;</div><div class="line">        &quot;houseId&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;title&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;price&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;area&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;createTime&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;date&quot;,</div><div class="line">          &quot;format&quot;: &quot;strict_date_optional_time||epoch_millis&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;lastUpdateTime&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;date&quot;,</div><div class="line">          &quot;format&quot;: &quot;strict_date_optional_time||epoch_millis&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;cityEnName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;regionEnName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;direction&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;distanceToSubWay&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;subWayLineName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;subWayStationName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;tags&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;street&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;location&quot;:&#123;</div><div class="line">        	&quot;type&quot;:&quot;geo_point&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;district&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;description&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;layoutDesc&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;traffic&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;roundService&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;rentWay&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/02/27/ElasticSearch优化总结/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
