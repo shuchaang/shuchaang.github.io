@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 15px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 13.33px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.67px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 13.33px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.33px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 15px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 13.33px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.67px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 13.33px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.33px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,236 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-spring4-3-x源码阅读笔记-AOP-3" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/" class="article-date">
+      <time datetime="2017-12-19T10:27:52.000Z" itemprop="datePublished">2017-12-19</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/">spring4.3.x源码阅读笔记-AOP(3)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>Spring AOP部分源码比较复杂，看了书上的内容还是觉得云里雾里，好在这部分的参考资料比较多，感谢原博主。在这里自己整理一下思路。</p>
+<blockquote>
+<p><a href="http://blog.csdn.net/luanlouis/article/details/51155821" target="_blank" rel="external">http://blog.csdn.net/luanlouis/article/details/51155821</a></p>
+<p>《Spring源码深度解析》</p>
+</blockquote>
+<h3 id="AOP的基本概念"><a href="#AOP的基本概念" class="headerlink" title="AOP的基本概念"></a>AOP的基本概念</h3><p>切面（Aspect）：类似于OOP中的Class，一个Aspect存放一个系统功能的所有逻辑；</p>
+<p>连接点（Joinpoint）：程序执行过程中的某一事件，如方法被调用时、抛出异常时；</p>
+<p>切入点（Pointcut）：它是一个表达式，用于确定哪些类的哪些函数需要插入横切逻辑；它只精确到函数，究竟要在函数执行的哪个阶段插入横切逻辑，这就由通知的类型决定；</p>
+<p>通知（Advice）：具体的横切逻辑；</p>
+<p>Spring中有四种Advice：</p>
+<p>前置通知（Before Advice）</p>
+<p>后置通知（After Advice）</p>
+<p>返回通知（After Return Advice）</p>
+<p>环绕通知（Around Advice）</p>
+<p>抛出异常后通知（After Throwing Advice）</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/spring4/">spring4</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-spring4-3-x源码阅读笔记-XML配置文件解析-2" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/" class="article-date">
+      <time datetime="2017-12-18T08:51:41.000Z" itemprop="datePublished">2017-12-18</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h3 id="验证XML"><a href="#验证XML" class="headerlink" title="验证XML"></a>验证XML</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</div><div class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</div><div class="line">       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;</div><div class="line">       xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;</div><div class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans</div><div class="line">       http://www.springframework.org/schema/beans/spring-beans.xsd</div><div class="line">       http://www.springframework.org/schema/context</div><div class="line">       http://www.springframework.org/schema/context/spring-context.xsd</div><div class="line">       http://www.springframework.org/schema/mvc</div><div class="line">       http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd&quot;&gt;</div></pre></td></tr></table></figure>
+<p>我们在编写spring.xml文件时都会在头部加入这样一段代码，这段代码就是通过xsd模式验证XML文件结构的正确性。另一种验证方法就是DTD模式验证，不过现在很少使用了。读取XML之前，spring会验证XML文件内的标签是否符合要求，符合要求才会进行下一步。XML的错误验证，一般在编译器就可以发现。</p>
+<h3 id="获取Document对象"><a href="#获取Document对象" class="headerlink" title="获取Document对象"></a>获取Document对象</h3><p>XML通过验证后，spring会读取配置文件，读取的过程XML会转化为InputSream对象，并最终转换为一个Document对象</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/spring4/">spring4</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-spring4-3-x源码阅读笔记-容器基础" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/" class="article-date">
+      <time datetime="2017-12-18T05:55:55.000Z" itemprop="datePublished">2017-12-18</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>环境:Spring4.3.5、IDEA</p>
+<p>网络上很多对spring源码讲解的博客基本上使用的都是spring3的版本，跟着做了一下发现最开始的XMLBeanFactory类已经废弃了，spring4中使用最频繁的是ClassPathXmlApplicationContext,所以自己也打打断点看代码，看看有什么变化。</p>
+<h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>基于maven的spring4.3项目，创建一个User类，给一个简单的构造函数。在classpath下新建一个spring的xml文件，配置User Bean。最后创建一个类，在主方法中获取类的信息，观察调用栈。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">1.</div><div class="line">public class User &#123;</div><div class="line">    private int id;</div><div class="line">    private String email;</div><div class="line">    private String password;</div><div class="line">    private String username;</div><div class="line">    private String role;</div><div class="line">    private int status;</div><div class="line">    private Date regTime;</div><div class="line"></div><div class="line"></div><div class="line">    public User()&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public User(String username)&#123;</div><div class="line">        this.username = username;</div><div class="line">    &#125;</div><div class="line">    //get/set省略</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">2.</div><div class="line">    &lt;bean class=&quot;com.sc.model.User&quot; id=&quot;user&quot;&gt;</div><div class="line">        &lt;constructor-arg value=&quot;hello world&quot;/&gt;</div><div class="line">    &lt;/bean&gt;</div><div class="line"></div><div class="line"></div><div class="line">3.</div><div class="line">    public class Start &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;spring-mybatis.xml&quot;);</div><div class="line">        User user = (User) applicationContext.getBean(&quot;user&quot;);</div><div class="line">        System.out.println(user.getUsername());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这段代码正确的结果会打印出:hello world</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/spring4/">spring4</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-java并发从入门到崩溃-ConcurrentHashMap-6" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -772,243 +1002,6 @@
       
         <p class="article-more-link">
           <a  href="/2017/11/23/表面理解jvm-类加载/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-表面理解jvm-内存" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2017/11/22/表面理解jvm-内存/" class="article-date">
-      <time datetime="2017-11-22T07:24:27.000Z" itemprop="datePublished">2017-11-22</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>最近看完了《深入理解java虚拟机》这本书，记录一下所学所思，留作以后复习。</p>
-<h3 id="宏观"><a href="#宏观" class="headerlink" title="宏观"></a>宏观</h3><p>先来说说虚拟机，我们都知道Java程序运行在虚拟机上，虚拟机负责和操作系统打交道，最终通过二进制指令操作电子电路运行，完成数据的读取，运算，输出。<br>虚拟机在加载.class文件的时候会在内存开辟一块区域”方法区”,专门用来存储累的基本信息，同时在”堆”区生成这个类的Class对象，作为类的一个镜像，为反射机制提供一种可能。Java是一门面向对象的语言，程序运行过程中伴随着对象的生成与死亡，有的是临时对象短暂存活，有的是壮年而亡，而有的长命百岁。所以虚拟机就不停地申请内存，回收内存。对象的生成方法很多，对象的回收方法也很多，例如GC、标记清除/整理等。</p>
-<p>垃圾回收首先要确定的是什么是垃圾，什么时候回收，在哪里回收，怎么回收。不同的对象可能需要不同的回收策略。一个很容易想到的方法就是在后台启动一个线程，每隔一段时间扫描一次内存，清除垃圾，如此往复。</p>
-<p>实际情况往往非常复杂，效率、安全性、对当前程序的影响都要考虑进去。于是人们发现，对象的生命周期不同，使用一种GC方法效率很差。于是就有了Hotspot的方案，堆区根据不同的生命周期，分为eden、to survivor、from survivor以及非堆的元数据区(java8之前的永久区)。<br> 每个区采用了不同的清理算法。于是便出现了最初的<code>串行收集器</code>。</p>
-<p>同时，为了最大程度的利用CPU的多核资源，出现了<code>并行收集器</code>，即多个线程一起收集垃圾。</p>
-<p>为了降低垃圾收集对原有程序的影响,如STW,一种全局暂停的现象，<code>并发收集器</code>应运而生。</p>
-<p>到此为止，便可以引出jvm优化中最重要的两部分，jvm内存怎么划分，选择哪一种垃圾收集器，就是我们常说的jvm调优。这就考验一个开发人员对业务系统的理解和眼光，确定优化方向并调整参数。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/jvm/">jvm</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2017/11/22/表面理解jvm-内存/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-SpringMvc浅谈" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2017/11/11/SpringMvc浅谈/" class="article-date">
-      <time datetime="2017-11-11T07:00:47.000Z" itemprop="datePublished">2017-11-11</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <h3 id="springmvc在哪里"><a href="#springmvc在哪里" class="headerlink" title="springmvc在哪里"></a>springmvc在哪里</h3><p>springmvc是spring体系的一部分，位于web部分。<br><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fle36iwgwmj30fq0d7aak.jpg" alt=""></p>
-<h3 id="springmvc的设计模式"><a href="#springmvc的设计模式" class="headerlink" title="springmvc的设计模式"></a>springmvc的设计模式</h3><p>先来看一个简化版:<br><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fle3d2iyonj30g5078wec.jpg" alt=""><br>用户请求到达控制器，控制器并没有处理业务逻辑的能力，于是把请求交给后台的一个model做处理，并将处理的结果返回给控制器。当控制器拿到数据后，就要找到视图并做渲染，并将渲染好的结果返回给用户，这就是一个通用的mvc设计模式。</p>
-<excerpt in="" index="" |="" 首页摘要="">
-
-<p><the rest="" of="" contents="" |="" 余下全文=""></the></p>
-<blockquote>
-<p> spirngmvc架构：</p>
-</blockquote>
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fle4abaf20j30q00d2t91.jpg" alt=""><br>可以看到这个架构的入口就是DispatcherServlet，其本质也是一个servlet，同时这也显示出了它与struts2的区别之一，Struts2的入口是一个过滤器。DispatcherServlet也没有处理事务的能力，仅作为一个数据的分发中心，将数据交给后面的过程来处理。DispatcherServlet通过HandlerMapping来查找Handler，HandlerMapping会返回两部分内容，其一是handler对象，也就是后台模型对象，还有一部分是拦截器数组。前端控制器拿到这些返回数据时，其实就应该来执行handler对象，因为执行handler对象就可以处理具体的业务逻辑。但是springmvc并没有这样做，它将数据利用HandlerAdapter适配器进行包装，也就到了图中的Handler部分。Handler处理过后返回一个ModelAndView对象，包括两部分：Model和view，Model就是数据，view就是视图名称，而不是视图对象。<br>这时前端控制器既有数据，又有视图名称，这时通过视图解析器返回真正的视图对象，最后将视图对象进行渲染并返回给用户。</p>
-<blockquote>
-<p>springmvc为什么要设计适配器？没有行不行？</p>
-</blockquote>
-<p>首先要明确的是在springmvc框架中controller的类型有很多种，比较常见的是<strong><em>@controller</em></strong>类型和<strong><em>实现Handler接口</em></strong>的类型，如果没有适配器，前端控制器就需要做一个类型判断，每种类型需要做哪些不同的处理。这时判断逻辑就会写死在代码中，并不符合springmvc的可扩展行的设计，一旦用户需要自己创建一个类型，那么就需要修改spring源码，这显然是不可取的。但有了适配器问题就方便了很多，每种类型只需要定义一种适配器即可。</p>
-<blockquote>
-<p>springmvc为什么要设计视图解析器？没有行不行？</p>
-</blockquote>
-<p>其实答案和上一个问题一样，当然都是可以的，只是这样需要在前端控制器加入逻辑判断，并不优雅也不易扩展。</p>
-</excerpt>
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/springmvc/">springmvc</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/springmvc/">springmvc</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-redis持久化" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2017/11/10/redis持久化/" class="article-date">
-      <time datetime="2017-11-10T03:00:41.000Z" itemprop="datePublished">2017-11-10</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/10/redis持久化/">redis持久化</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>Redis的强大功能很大程度上是由于其将所有数据存储在内存中，为了使redis重启后数据不丢失，需要将数据以某种形式保存在硬盘中。</p>
-<p>Redis支持两种持久化方式，RDB和AOF。可以单独使用一种或两种结合。redis默认的持久化方式是RDB。</p>
-<p>RDB通过快照完成，当符合一定条件时redis会自动将内存中的数据进行快照并保存在硬盘上。参数有两个：<strong>时间和改动键的个数</strong>。当指定时间内更改键的个数大于指定值就会快照,默认配置如下，单位为秒。</p>
-<p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1flcrw1og6bj304z02na9u.jpg" alt="rdb默认配置"></p>
-<p>可以通过SAVE和BGSAVE指令来手动进行快照。</p>
-<ul>
-<li>SAVE由主进程进行快照，会阻塞其他请求。</li>
-<li>BGSAVE通过fork一个子进程进行快照。</li>
-</ul>
-<h3 id="RDB快照过程"><a href="#RDB快照过程" class="headerlink" title="RDB快照过程"></a>RDB快照过程</h3><ol>
-<li>redis使用fork函数复制一份当前进程的副本。</li>
-<li>父进程继续接受后续指令，子进程还是将内存中的数据写入硬盘中的临时文件。</li>
-<li>子进程写入完成数据后用临时文件替换就得RDB文件。</li>
-</ol>
-<p>可以配置<strong><em>rdbcompression yes</em></strong>来选择是否对rdb进行压缩。<br>压缩的好处显而易见就是减少资源的消耗。缺点就是消耗更多的cpu资源。而选择不压缩就相反。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>s
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2017/11/10/redis持久化/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
