@@ -12,7 +12,7 @@
 <meta property="og:url" content="http://www.shuchang.sc.com/2018/03/31/系统学习ElasticSearch-聚合分析-4/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
 <meta property="og:description" content="环境方面继续使用上一篇的数据环境,根据模拟不同的需求,体验不同的聚合分析语法  简单聚合: 计算每个tag下的商品数量  12345678910GET /ecomic/product/_search&amp;#123;  &amp;quot;aggs&amp;quot;: &amp;#123;    &amp;quot;group_by_tag&amp;quot;: &amp;#123;      &amp;quot;terms&amp;quot;: &amp;#123;">
-<meta property="og:updated_time" content="2018-04-01T06:38:01.578Z">
+<meta property="og:updated_time" content="2018-06-24T03:25:43.515Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="系统学习ElasticSearch-简单聚合分析(4)">
 <meta name="twitter:description" content="环境方面继续使用上一篇的数据环境,根据模拟不同的需求,体验不同的聚合分析语法  简单聚合: 计算每个tag下的商品数量  12345678910GET /ecomic/product/_search&amp;#123;  &amp;quot;aggs&amp;quot;: &amp;#123;    &amp;quot;group_by_tag&amp;quot;: &amp;#123;      &amp;quot;terms&amp;quot;: &amp;#123;">
@@ -276,6 +276,14 @@
 <li>简单聚合: 计算每个tag下的商品数量</li>
 </ol>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">GET /ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_tag&quot;: &#123;</div><div class="line">      &quot;terms&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;tags&quot;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li><a id="more"></a>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+
+</the></li>
+</ul>
 <p>语法如上,但是返回结果可能会出现如下错误:</p>
 <blockquote>
 <p>default. Set fielddata=true on [tags] in order to load fielddata in memory by uninverting the inverted index. Note that this can however use significant memory. Alternatively use a keyword field instead.”</p>
@@ -364,7 +372,7 @@
         <p><span>本文标题:</span><a href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/">系统学习ElasticSearch-简单聚合分析(4)</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
         <p><span>发布时间:</span>2018年03月31日 - 14时25分</p>
-        <p><span>最后更新:</span>2018年04月01日 - 14时38分</p>
+        <p><span>最后更新:</span>2018年06月24日 - 11时25分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/" title="系统学习ElasticSearch-简单聚合分析(4)">http://www.shuchang.sc.com/2018/03/31/系统学习ElasticSearch-聚合分析-4/</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/03/31/系统学习ElasticSearch-聚合分析-4/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
