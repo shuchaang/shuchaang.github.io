@@ -3,24 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>jvm学习笔记-类加载 | Shuchang&#39;s Blog</title>
+  <title>Kafka架构与核心概念 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="宏观 当我们写好.java程序点击运行的时候发生了什么   当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:   以魔数Magic Number:0xCafeBabe开头 ConstantPool:符号表 FieldInfo:类成员变量表 方法描述 附加节点 …   有了.class文件我们就可以执行java命令">
-<meta name="keywords" content="java,jvm">
+  <meta name="description" content="架构Kafka是是一个高性能跨语言分布式发布订阅消息队列系统,具有消息持久化,吞吐量高,支持消息分区等特点。Kafka自0.10版本提供对流式计算的支持。  Producer   提供消息的系统  Consumer  消费消息的系统  Broker  一个Kafka实例就是一个Broker,多个Kafka就是多个Broker构成的Kafka集群。Producer向某个Topic发送消息,Brok">
+<meta name="keywords" content="Kafka">
 <meta property="og:type" content="article">
-<meta property="og:title" content="jvm学习笔记-类加载">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/11/23/表面理解jvm-类加载/index.html">
+<meta property="og:title" content="Kafka架构与核心概念">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/06/24/Kafka-核心概念/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="宏观 当我们写好.java程序点击运行的时候发生了什么   当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:   以魔数Magic Number:0xCafeBabe开头 ConstantPool:符号表 FieldInfo:类成员变量表 方法描述 附加节点 …   有了.class文件我们就可以执行java命令">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1flrre3ma6nj30km0970t3.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1flrsg7pnfhj30k20dmmzx.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1flrta4ovpij309v085dh2.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1flrtfhpw0aj30m8019jre.jpg">
-<meta property="og:updated_time" content="2017-12-18T08:48:44.000Z">
+<meta property="og:description" content="架构Kafka是是一个高性能跨语言分布式发布订阅消息队列系统,具有消息持久化,吞吐量高,支持消息分区等特点。Kafka自0.10版本提供对流式计算的支持。  Producer   提供消息的系统  Consumer  消费消息的系统  Broker  一个Kafka实例就是一个Broker,多个Kafka就是多个Broker构成的Kafka集群。Producer向某个Topic发送消息,Brok">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1fsm7slh4efj30hy097jso.jpg">
+<meta property="og:updated_time" content="2018-06-24T07:07:46.339Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="jvm学习笔记-类加载">
-<meta name="twitter:description" content="宏观 当我们写好.java程序点击运行的时候发生了什么   当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:   以魔数Magic Number:0xCafeBabe开头 ConstantPool:符号表 FieldInfo:类成员变量表 方法描述 附加节点 …   有了.class文件我们就可以执行java命令">
-<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1flrre3ma6nj30km0970t3.jpg">
+<meta name="twitter:title" content="Kafka架构与核心概念">
+<meta name="twitter:description" content="架构Kafka是是一个高性能跨语言分布式发布订阅消息队列系统,具有消息持久化,吞吐量高,支持消息分区等特点。Kafka自0.10版本提供对流式计算的支持。  Producer   提供消息的系统  Consumer  消费消息的系统  Broker  一个Kafka实例就是一个Broker,多个Kafka就是多个Broker构成的Kafka集群。Producer向某个Topic发送消息,Brok">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1fsm7slh4efj30hy097jso.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -234,11 +231,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-表面理解jvm-类加载" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Kafka-核心概念" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/11/23/表面理解jvm-类加载/" class="article-date">
-      <time datetime="2017-11-23T00:07:39.000Z" itemprop="datePublished">2017-11-23</time>
+      <a href="/2018/06/24/Kafka-核心概念/" class="article-date">
+      <time datetime="2018-06-24T04:15:04.000Z" itemprop="datePublished">2018-06-24</time>
 </a>
     </div>
   
@@ -251,7 +248,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      jvm学习笔记-类加载
+      Kafka架构与核心概念
     </h1>
   
 
@@ -260,13 +257,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/jvm/">jvm</a>
+    <a class="article-category-link" href="/categories/Kafka/">Kafka</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/">Kafka</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -276,68 +273,81 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h3 id="宏观"><a href="#宏观" class="headerlink" title="宏观"></a>宏观</h3><blockquote>
-<p>当我们写好.java程序点击运行的时候发生了什么</p>
-</blockquote>
-<ol>
-<li>当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:</li>
-</ol>
+        <p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1fsm7slh4efj30hy097jso.jpg" alt=""></p>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p>Kafka是是一个高性能跨语言分布式发布订阅消息队列系统,具有消息持久化,吞吐量高,支持消息分区等特点。Kafka自0.10版本提供对流式计算的支持。</p>
 <ul>
-<li>以魔数Magic Number:0xCafeBabe开头</li>
-<li>ConstantPool:符号表</li>
-<li>FieldInfo:类成员变量表</li>
-<li>方法描述</li>
-<li>附加节点</li>
-<li>…</li>
+<li>Producer </li>
 </ul>
-<ol>
-<li>有了.class文件我们就可以执行java命令运行java程序</li>
-<li>首先JVM装载.class，也就是类加载器加载字节码。但是类加载器本身也是一个java类，所以它也需要被加载，幸运的是有一个类加载器是用c++编写的，叫做<code>Bootstrap类加载器</code>，属于虚拟机内核，用特定于操作系统的本地代码实现。Bootstrap类加载器负责加载javajava核心包中的类(rt.jar)，这些类的Class.getClassLoader()方法返回值会null，表示需要Bootstrap加载器来加载。JAVA核心包中还有两个类加载器:<code>ExtClassLoader</code>和<code>ApplicationClassLoader</code>。他们都用java语言编写，其中ExtClassLoader负责加载<java_home>/jre/lib/ext目录下的jar，ApplicationClassLoader负责加载应用程序的启动执行类，即当使用java命令去启动执行一个类时，JAVA虚拟机使用AppClassLoader加载这个类。所以这里有个小track就是把一些自己常用但是非java自带的jar放到ext目录下，这样就可以少写几个maven dependency。</java_home></li>
-</ol>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<p>提供消息的系统</p>
 <ul>
-<li><a id="more"></a>
+<li>Consumer</li>
+</ul>
+<p>消费消息的系统</p>
+<ul>
+<li>Broker</li>
+</ul>
+<p>一个Kafka实例就是一个Broker,多个Kafka就是多个Broker构成的Kafka集群。Producer向某个Topic发送消息,Broker负责向订阅这个topic的所有consumer传递消息。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br><a id="more"></a></excerpt></p>
 <the rest="" of="" contents="" |="" 余下全文="">
 
-</the></li>
-</ul>
-<h3 id="为什么要类加载器"><a href="#为什么要类加载器" class="headerlink" title="为什么要类加载器"></a>为什么要类加载器</h3><ol>
-<li>java类加载都是在程序的运行期完成的</li>
-<li>增加java程序的灵活性，例如：</li>
-</ol>
-<ul>
-<li>面向接口的编程，在程序运行时才指定其具体的实现   类。</li>
-<li>用户自定义类加载器,支持程序从网络或者其他地方加载一个类。</li>
-</ul>
-<h3 id="类的生命周期"><a href="#类的生命周期" class="headerlink" title="类的生命周期"></a>类的生命周期</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1flrre3ma6nj30km0970t3.jpg" alt=""></p>
-<ul>
-<li>①的可控性最强，因为可以自定义类加载器</li>
-<li>①②③⑤的顺序一定。但注意是开始顺序一定，并不保证按顺序完成。</li>
-<li>④过程可能在⑤之后进行，为了支持java的运行时绑定</li>
-</ul>
-<h4 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h4><ol>
-<li>通过一个类的全限定名获取定义此类的二进制字节流</li>
-<li>将字节流转化为方法区的数据结构</li>
-<li>在堆中生成这个类的对象，作为访问此类的入口<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1flrsg7pnfhj30k20dmmzx.jpg" alt="来源网络"><h4 id="连接"><a href="#连接" class="headerlink" title="连接"></a>连接</h4></li>
-<li>验证：确保符合jvm规范，没有安全问题</li>
-<li>准备：在方法区正式为类变量分配内存并设置初始值</li>
-<li>将常量池内的引用符号替换为直接引用（可以理解为将原来的多级指针指向的最终地址替换指针）</li>
-</ol>
-<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p>jvm并没有强制规定什么时候要进行加载，但是规定了五种有且只有的情况立即初始化类，当然在初始化之前要完成前面的几个步骤。</p>
-<ol>
-<li>new一个类的对象</li>
-<li>调用类的静态成员（除了final常量）和静态方法</li>
-<li>使用java.lang.reflect包的方法对类进行反射调用</li>
-<li>当虚拟机启动,加载main方法所在的类</li>
-<li>当初始化一个类，如果其父类没有被初始化，则先初始化它父类</li>
-</ol>
-<h3 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h3><p>如果两个类相等，那么不光要class是相同的，而且需要类加载器相同。</p>
+<h2 id="Topic"><a href="#Topic" class="headerlink" title="Topic"></a>Topic</h2><p>Kafka消息的发送和接收都依赖于Topic这个概念,producer把消息send到topic A,consumer订阅topic A,当producer发送消息,consumer就会接收到消息</p>
+<h3 id="Partition"><a href="#Partition" class="headerlink" title="Partition"></a>Partition</h3><p>每个Topic都可以设置多个Partition,Partition是一个有序的队列,是topic物理上的分组,即一个磁盘上的文件夹,这样做的目的是为了提高Kafka的吞吐量。</p>
+<p>实际上Producer发送一条消息到broker,消息会被分发到这个topic下的某个partition中,consuemr按照consumer group来接收数据.每个partition的数据只能由同一个consumer group的同一个consumer来消费,如果同时想要多个consumer消费一个partition,则需要设置不同的consumer group。</p>
+<p>所以在设置Partition的数量时最好和consumer的数量保持一致,consumer多,则有的consumer没有数据可以消费,consumer少则其他的consumer负载就会过大。</p>
+<p>在 Kafka 内部存在两种默认的分区分配策略：Range 和 RoundRobin,通过Java API我们可以更加灵活的控制消息分配到哪个Partition以及指定consumer消费哪个partition</p>
 <blockquote>
-<p>关于双亲委派模型的疑问？？？</p>
+<p>Range策略</p>
 </blockquote>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1flrta4ovpij309v085dh2.jpg" alt=""></p>
-<p>这个图相信大家都见到过，也就是双亲委派模型(Parents-Delegation-Model)的示意图。详细内容就不作介绍。一点疑问就是当我第一次学这个内容的时候我在考虑双亲的双体现在哪里呢？它只是向上面一级也就是父加载器传递，这个Parents体现的应该是垂直方向，也就是父亲，爷爷这种关系，而不是水平方向上的双亲关系。所以我认为这个模型不应该叫双亲委派模型，英文也应该是(Parent-Delegation-Model),我认为双亲这种说法很容易误导初学者。<br>在《Thinking in jvm》英文原本中印证了我的想法,如图。个人认为这种说法更准确。<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1flrtfhpw0aj30m8019jre.jpg" alt=""></p>
-
+<p>Kafka的默认分配策略,首先对同一个topic里面的分区按照序号进行排序，并对消费者按照字母顺序进行排序,如果除不尽,则前面的consumer group会多得到几个partition。例如，排完序的分区将会是0, 1, 2, 3, 4, 5, 6, 7, 8, 9；消费者线程排完序将会是C1-0, C2-0, C2-1。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">C1-0 将消费 0, 1, 2, 3 分区</div><div class="line">C2-0 将消费 4, 5, 6 分区</div><div class="line">C2-1 将消费 7, 8, 9 分区</div></pre></td></tr></table></figure>
+<h3 id="offset"><a href="#offset" class="headerlink" title="offset"></a>offset</h3><p>每个partition都由一系列有序的、不可变的消息组成，这些消息被连续的追加到partition中。partition中的每个消息都有一个连续的序列号叫做offset，用于partition唯一标识一条消息。Kafka对于消息可靠性的保证都是围绕着offset这一概念展开的。</p>
+<p>对于一个消息系统,客户消费了哪些信息,即消费状态是一个消息系统必须提供的功能,Kafka提供3种消息传输一致性语义:</p>
+<ul>
+<li><p>at most once </p>
+<p>  消息最多发送一次,这种有可能造成数据丢失。consumer fetch消息,然后commit offset并处理消息。但是在消息处理过程中consumer进程失效(crash),导致消息未能完成处理.那么此后可能其他consumer会接管当前consumer的数据,但是因为offset已经commit,那么新的consumer将不能fetch到未处理完成的数据,这就是”at most once”.</p>
+</li>
+<li><p>at least once </p>
+<p>  消息最少发送一次,会造成消息的重复消费。consumer fetch消息,然后处理消息commit offset.如果消息处理成功之后,但是在commit offset阶段zookeeper异常或其他原因,导致commit offset失败,这就导致接下来再次fetch时可能获得上次已经处理过的消息,这就是”at least once”.</p>
+</li>
+<li><p>exactly once </p>
+<p>  并不是指真正只传输一次，只不过有一个机制。确保不会出现“数据被重复处理”和“数据丢失”的情况。最少1次＋consumer的输出中额外增加已处理消息最大编号：由于已处理消息最大编号的存在，不会出现重复处理消息的情况。</p>
+</li>
+</ul>
+<h3 id="Replication"><a href="#Replication" class="headerlink" title="Replication"></a>Replication</h3><p>Kafka通过多副本机制实现故障自动转移，当Kafka集群中一个Broker失效情况下仍然保证服务可用。replication策略是基于partition,而不是topic。kafka将每个partition数据复制到多个server上,任何一个partition有一个leader和多个follower(可以没有)。replica的个数可以通过broker配置文件来设定。leader处理所有的read-write请求,follower需要和leader保持同步.Follower就像一个”consumer”,消费消息并保存在本地日志中。当生产者发送一条消息到Broker,leader写入消息。一条消息只有被ISR里的所有follower都从leader复制过去才会被认为已提交。而对于producer而言，它可以选择是否等待消息 commit，这可以通过 request.required.acks 来设置。消息复制延迟受最慢的follower限制,重要的是快速检测慢副本,如果follower”落后”太多或者失效,leader将会把它从replicas从ISR移除。</p>
+<blockquote>
+<p>ISR队列</p>
+</blockquote>
+<p>ISR即In-Sync Replica,Replica定期的主动向Leader请求同步数据。在默认情况下,只有在Isr中的replica才有资格进行leader 选举。如果配置了unclean.election=true,这种情况下虽然保证了可用性,但是会造成数据的大量丢失,也叫脏选举。</p>
+<p>一个replica在isr中表示,这个副本与leader的状态非常接近,即使leader crash,这个副本也可以保证数据的丢失在可容忍的范围内。具体可以看两条配置:</p>
+<ul>
+<li>replica.lag.max.messages=3</li>
+<li>replica.lag.time.max=500ms</li>
+</ul>
+<p>表示副本的数据与leader相比最多相差三条,否则被踢出isr队列,同时必须在500ms内发送同步请求,否则也会被踢出isr。</p>
+<h2 id="Reblance"><a href="#Reblance" class="headerlink" title="Reblance"></a>Reblance</h2><h3 id="触发rebalane-的时机"><a href="#触发rebalane-的时机" class="headerlink" title="触发rebalane 的时机"></a>触发rebalane 的时机</h3><ul>
+<li><p>消费者加入或退出消费者组</p>
+</li>
+<li><p>消费者组订阅的topic出现分区数量变化</p>
+</li>
+<li><p>消费者调用unsubscrible取消对某topic的订阅</p>
+</li>
+</ul>
+<h3 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h3><p>总体上可以分为两步:Join和Sync</p>
+<ol>
+<li><p>Join</p>
+<p> 所有成员都向协调器发送JoinGroup请求，请求入组。一旦所有成员都发送了JoinGroup请求，coordinator会从中选择一个consumer担任leader的角色，并把组成员信息以及订阅信息发给leader</p>
+</li>
+<li><p>Sync</p>
+<p> 这一步leader开始分配消费方案，即哪个consumer负责消费哪些topic的哪些partition。一旦完成分配，leader会将这个方案封装进SyncGroup请求中发给coordinator，非leader也会发SyncGroup请求，只是内容为空。coordinator接收到分配方案之后会把方案塞进SyncGroup的response中发给各个consumer。这样组内的所有成员就都知道自己应该消费哪些分区了</p>
+</li>
+</ol>
+<h2 id="Leader-选举"><a href="#Leader-选举" class="headerlink" title="Leader 选举"></a>Leader 选举</h2><p>  如果partition所在的leader发生故障导致不可用，kafka会从该分区的其他的副本中选择一个作为新的Leader。之后所有的读写就会转移到这个新的Leader上。显然，只有那些跟Leader保持同步的Follower才应该被选作新的Leader。</p>
+<p>  Kafka会在Zookeeper上针对每个Topic维护一个称为ISR（in-sync replica，已同步的副本）的集合，该集合中是一些分区的副本。如果某个分区的Leader不可用，Kafka就会从ISR集合中选择一个副本作为新的Leader。</p>
+<blockquote>
+<p>如果所有的ISR副本都失败了怎么办</p>
+</blockquote>
+<p>  此时有两种方法可选，一种是等待ISR集合中的副本复活，一种是选择任何一个立即可用的副本，而这个副本不一定是在ISR集合中(unclean.election).如果要等待ISR副本复活，虽然可以保证一致性，但可能需要很长时间。而如果选择立即可用的副本，则很可能该副本并不一致。</p>
+</the>
       
       
         <div class="page-reward">
@@ -392,13 +402,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></p>
+        <p><span>本文标题:</span><a href="/2018/06/24/Kafka-核心概念/">Kafka架构与核心概念</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2017年11月23日 - 08时07分</p>
-        <p><span>最后更新:</span>2017年12月18日 - 16时48分</p>
+        <p><span>发布时间:</span>2018年06月24日 - 12时15分</p>
+        <p><span>最后更新:</span>2018年06月24日 - 15时07分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/11/23/表面理解jvm-类加载/" title="jvm学习笔记-类加载">http://www.shuchang.sc.com/2017/11/23/表面理解jvm-类加载/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/11/23/表面理解jvm-类加载/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/24/Kafka-核心概念/" title="Kafka架构与核心概念">http://www.shuchang.sc.com/2018/06/24/Kafka-核心概念/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/06/24/Kafka-核心概念/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -411,18 +421,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/12/03/java并发从入门到崩溃-常用篇/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          JUC--常用篇(1)
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/11/22/表面理解jvm-内存/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">表面理解jvm-内存</div>
+    <a href="/2018/06/24/Kafka-Streaming-分支/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Kafka Streaming 分支</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -433,7 +434,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#宏观"><span class="toc-number">1.</span> <span class="toc-text">宏观</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么要类加载器"><span class="toc-number">2.</span> <span class="toc-text">为什么要类加载器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类的生命周期"><span class="toc-number">3.</span> <span class="toc-text">类的生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#加载"><span class="toc-number">3.1.</span> <span class="toc-text">加载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#连接"><span class="toc-number">3.2.</span> <span class="toc-text">连接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#初始化"><span class="toc-number">3.3.</span> <span class="toc-text">初始化</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类加载器"><span class="toc-number">4.</span> <span class="toc-text">类加载器</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#架构"><span class="toc-number">1.</span> <span class="toc-text">架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Topic"><span class="toc-number">2.</span> <span class="toc-text">Topic</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Partition"><span class="toc-number">2.1.</span> <span class="toc-text">Partition</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#offset"><span class="toc-number">2.2.</span> <span class="toc-text">offset</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Replication"><span class="toc-number">2.3.</span> <span class="toc-text">Replication</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reblance"><span class="toc-number">3.</span> <span class="toc-text">Reblance</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#触发rebalane-的时机"><span class="toc-number">3.1.</span> <span class="toc-text">触发rebalane 的时机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#过程"><span class="toc-number">3.2.</span> <span class="toc-text">过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Leader-选举"><span class="toc-number">4.</span> <span class="toc-text">Leader 选举</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -499,13 +500,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/12/03/java并发从入门到崩溃-常用篇/" title="上一篇: JUC--常用篇(1)">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/11/22/表面理解jvm-内存/" title="下一篇: 表面理解jvm-内存">
+            <a href="/2018/06/24/Kafka-Streaming-分支/" title="下一篇: Kafka Streaming 分支">
                 <i class="fa fa-angle-right"></i>
             </a>
         

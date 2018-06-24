@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 15px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 13.33px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.67px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 13.33px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.33px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 15.71px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 12.86px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 14.29px;">Kafka</a> <a href="/tags/RabbitMq/" style="font-size: 17.14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15.71px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.43px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/spring/" style="font-size: 12.86px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.57px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,93 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-表面理解jvm-类加载" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/11/23/表面理解jvm-类加载/" class="article-date">
+      <time datetime="2017-11-23T00:07:39.000Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h3 id="宏观"><a href="#宏观" class="headerlink" title="宏观"></a>宏观</h3><blockquote>
+<p>当我们写好.java程序点击运行的时候发生了什么</p>
+</blockquote>
+<ol>
+<li>当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:</li>
+</ol>
+<ul>
+<li>以魔数Magic Number:0xCafeBabe开头</li>
+<li>ConstantPool:符号表</li>
+<li>FieldInfo:类成员变量表</li>
+<li>方法描述</li>
+<li>附加节点</li>
+<li>…</li>
+</ul>
+<ol>
+<li>有了.class文件我们就可以执行java命令运行java程序</li>
+<li>首先JVM装载.class，也就是类加载器加载字节码。但是类加载器本身也是一个java类，所以它也需要被加载，幸运的是有一个类加载器是用c++编写的，叫做<code>Bootstrap类加载器</code>，属于虚拟机内核，用特定于操作系统的本地代码实现。Bootstrap类加载器负责加载javajava核心包中的类(rt.jar)，这些类的Class.getClassLoader()方法返回值会null，表示需要Bootstrap加载器来加载。JAVA核心包中还有两个类加载器:<code>ExtClassLoader</code>和<code>ApplicationClassLoader</code>。他们都用java语言编写，其中ExtClassLoader负责加载<java_home>/jre/lib/ext目录下的jar，ApplicationClassLoader负责加载应用程序的启动执行类，即当使用java命令去启动执行一个类时，JAVA虚拟机使用AppClassLoader加载这个类。所以这里有个小track就是把一些自己常用但是非java自带的jar放到ext目录下，这样就可以少写几个maven dependency。</java_home></li>
+</ol>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/jvm/">jvm</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/11/23/表面理解jvm-类加载/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-表面理解jvm-内存" class="article article-type-post" itemscope itemprop="blogPost">
   
