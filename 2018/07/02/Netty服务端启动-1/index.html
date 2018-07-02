@@ -14,7 +14,7 @@
 <meta property="og:description" content="服务端代码12345678910111213141516171819202122232425public static void main(String[] args) &amp;#123;        ServerBootstrap serverBootstrap = new ServerBootstrap();        EventLoopGroup boss = new NioEventLo">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fsv8rbjw9gj30u30l3my4.jpg">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fsvapazei0j314w0hkmz8.jpg">
-<meta property="og:updated_time" content="2018-07-02T02:16:59.865Z">
+<meta property="og:updated_time" content="2018-07-02T02:18:34.124Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Netty源码(1)-服务端启动">
 <meta name="twitter:description" content="服务端代码12345678910111213141516171819202122232425public static void main(String[] args) &amp;#123;        ServerBootstrap serverBootstrap = new ServerBootstrap();        EventLoopGroup boss = new NioEventLo">
@@ -277,6 +277,10 @@
         <p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fsv8rbjw9gj30u30l3my4.jpg" alt=""></p>
 <h2 id="服务端代码"><a href="#服务端代码" class="headerlink" title="服务端代码"></a>服务端代码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">public static void main(String[] args) &#123;</div><div class="line">        ServerBootstrap serverBootstrap = new ServerBootstrap();</div><div class="line">        EventLoopGroup boss = new NioEventLoopGroup(1);</div><div class="line">        EventLoopGroup worker = new NioEventLoopGroup();</div><div class="line">        try &#123;</div><div class="line">            serverBootstrap.group(boss, worker)</div><div class="line">                    .channel(NioServerSocketChannel.class)</div><div class="line">                    .option(ChannelOption.SO_BACKLOG, 128)</div><div class="line">                    .childOption(ChannelOption.SO_KEEPALIVE, false)</div><div class="line">                    .childHandler(new ChannelInitializer&lt;SocketChannel&gt;() &#123;</div><div class="line">                        @Override</div><div class="line">                        public void initChannel(SocketChannel socketChannel) throws Exception &#123;</div><div class="line">                            ocketChannel.pipeline().addLast(new MyHandler());</div><div class="line"></div><div class="line">                        &#125;</div><div class="line">                    &#125;);</div><div class="line">            ChannelFuture channelFuture = serverBootstrap.bind(8080).sync();</div><div class="line">            channelFuture.channel().closeFuture().sync();</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125; finally &#123;</div><div class="line">            boss.shutdownGracefully();</div><div class="line">            worker.shutdownGracefully();</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
 <p>以上是一段Netty官网提供的一个最简单的server端代码,通过这段代码来分析Netty服务端的启动过程</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br><a id="more"></a></excerpt></p>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+
 <h2 id="Netty服务端启动流程"><a href="#Netty服务端启动流程" class="headerlink" title="Netty服务端启动流程"></a>Netty服务端启动流程</h2><ul>
 <li>创建服务端Channel</li>
 <li>初始化服务端Channel</li>
@@ -339,7 +343,7 @@
 <p>我们在注册这个Channel的时候,selectKey赋予了0,在这里重新注册了accept事件(readInterestOp),也就是说从此开始,selector再轮询到新的连接接入事件,就可以交给这个NettyChannel来处理了。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fsvapazei0j314w0hkmz8.jpg" alt=""></p>
 <p>首先创建一个JDK底层Channel,然后Netty将它包装为自己的Channel,同时创建一些基本的组件并绑定。然后调用init方法,初始化channel,最重要的就是为服务端Channel创建一个连接处理器,随后调用register注册Selector,即将JDK底层Channel绑定到Selector,并将Netty的服务端channel作为attachement绑定,最后调用dobind,并重新注册一个OP_ACCEPT事件,这样Netty就可以接收新的连接了。</p>
-
+</the>
       
       
         <div class="page-reward">
@@ -397,7 +401,7 @@
         <p><span>本文标题:</span><a href="/2018/07/02/Netty服务端启动-1/">Netty源码(1)-服务端启动</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
         <p><span>发布时间:</span>2018年07月02日 - 09时01分</p>
-        <p><span>最后更新:</span>2018年07月02日 - 10时16分</p>
+        <p><span>最后更新:</span>2018年07月02日 - 10时18分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/07/02/Netty服务端启动-1/" title="Netty源码(1)-服务端启动">http://www.shuchang.sc.com/2018/07/02/Netty服务端启动-1/</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/07/02/Netty服务端启动-1/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
