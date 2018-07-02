@@ -3,17 +3,22 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Shuchang&#39;s Blog</title>
+  <title>Netty源码(1)-服务端启动 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="身怀利器，杀心自起，慎而重之">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Shuchang&#39;s Blog">
-<meta property="og:url" content="http://www.shuchang.sc.com/index.html">
+  <meta name="description" content="服务端代码12345678910111213141516171819202122232425public static void main(String[] args) &amp;#123;        ServerBootstrap serverBootstrap = new ServerBootstrap();        EventLoopGroup boss = new NioEventLo">
+<meta name="keywords" content="Netty JAVA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty源码(1)-服务端启动">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/07/02/Netty服务端启动-1/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="身怀利器，杀心自起，慎而重之">
+<meta property="og:description" content="服务端代码12345678910111213141516171819202122232425public static void main(String[] args) &amp;#123;        ServerBootstrap serverBootstrap = new ServerBootstrap();        EventLoopGroup boss = new NioEventLo">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fsv8rbjw9gj30u30l3my4.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fsvapazei0j314w0hkmz8.jpg">
+<meta property="og:updated_time" content="2018-07-02T02:16:59.865Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Shuchang&#39;s Blog">
-<meta name="twitter:description" content="身怀利器，杀心自起，慎而重之">
+<meta name="twitter:title" content="Netty源码(1)-服务端启动">
+<meta name="twitter:description" content="服务端代码12345678910111213141516171819202122232425public static void main(String[] args) &amp;#123;        ServerBootstrap serverBootstrap = new ServerBootstrap();        EventLoopGroup boss = new NioEventLo">
+<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fsv8rbjw9gj30u30l3my4.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -27,9 +32,6 @@
   <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   
-    
-    
-  
   
       <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
   
@@ -41,8 +43,8 @@
           rootUrl: '/',
           fancybox: true,
           animate: true,
-          isHome: true,
-          isPost: false,
+          isHome: false,
+          isPost: true,
           isArchive: false,
           isTag: false,
           isCategory: false,
@@ -230,9 +232,7 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap">
-  
-    <article id="post-Netty服务端启动-1" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Netty服务端启动-1" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
       <a href="/2018/07/02/Netty服务端启动-1/" class="article-date">
@@ -248,12 +248,27 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/02/Netty服务端启动-1/">Netty源码(1)-服务端启动</a>
+    <h1 class="article-title" itemprop="name">
+      Netty源码(1)-服务端启动
     </h1>
   
 
       </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Netty/">Netty</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty-JAVA/">Netty JAVA</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
       
     
     <div class="article-entry" itemprop="articleBody">
@@ -327,762 +342,190 @@
 
       
       
-    </div>
-    
-    <div class="article-info article-info-index">
+        <div class="page-reward">
+          <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang">赏</a></p>
+          <div class="hide_box"></div>
+          <div class="shang_box">
+            <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+            <div class="shang_tit">
+              <p>纯属好玩</p>
+            </div>
+            <div class="shang_payimg">
+              <img src="/img/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+            </div>
+              <div class="pay_explain">扫码打赏，你说多少就多少</div>
+            <div class="shang_payselect">
+              
+                <div class="pay_item checked" data-id="alipay">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/alipay.png" alt="支付宝" /></span>
+                </div>
+              
+              
+                <div class="pay_item" data-id="wechat">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/weixin.png" alt="微信" /></span>
+                </div>
+              
+            </div>
+            <div class="shang_info">
+              <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script type="text/javascript">
+          $(".pay_item").click(function(){
+            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+            var dataid=$(this).attr('data-id');
+            $(".shang_payimg img").attr("src","/img/"+dataid+"img.jpg");
+            $("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+          });
+          function dashangToggle(){
+            
+            $(".hide_box").fadeToggle();
+            $(".shang_box").fadeToggle();
+          }
+        </script>
       
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Netty/">Netty</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty-JAVA/">Netty JAVA</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
     </div>
     
   </div>
   
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Kafka-核心概念" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/06/24/Kafka-核心概念/" class="article-date">
-      <time datetime="2018-06-24T04:15:04.000Z" itemprop="datePublished">2018-06-24</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
     
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/24/Kafka-核心概念/">Kafka架构与核心概念</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1fsm7slh4efj30hy097jso.jpg" alt=""></p>
-<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p>Kafka是是一个高性能跨语言分布式发布订阅消息队列系统,具有消息持久化,吞吐量高,支持消息分区等特点。Kafka自0.10版本提供对流式计算的支持。</p>
-<ul>
-<li>Producer </li>
-</ul>
-<p>提供消息的系统</p>
-<ul>
-<li>Consumer</li>
-</ul>
-<p>消费消息的系统</p>
-<ul>
-<li>Broker</li>
-</ul>
-<p>一个Kafka实例就是一个Broker,多个Kafka就是多个Broker构成的Kafka集群。Producer向某个Topic发送消息,Broker负责向订阅这个topic的所有consumer传递消息。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Kafka/">Kafka</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/">Kafka</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/06/24/Kafka-核心概念/#more">嘿嘿嘿、进来看看呗 >></a>
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/07/02/Netty服务端启动-1/">Netty源码(1)-服务端启动</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
+        <p><span>发布时间:</span>2018年07月02日 - 09时01分</p>
+        <p><span>最后更新:</span>2018年07月02日 - 10时16分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/07/02/Netty服务端启动-1/" title="Netty源码(1)-服务端启动">http://www.shuchang.sc.com/2018/07/02/Netty服务端启动-1/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/07/02/Netty服务端启动-1/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Kafka-Streaming-分支" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/06/24/Kafka-Streaming-分支/" class="article-date">
-      <time datetime="2018-06-24T03:20:48.000Z" itemprop="datePublished">2018-06-24</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/24/Kafka-Streaming-分支/">Kafka Streaming 分支</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h2 id="Branch"><a href="#Branch" class="headerlink" title="Branch"></a>Branch</h2><p>首先创建一个输入源 topic s-in,有多个partition</p>
-<ul>
-<li>./kafka-topics.sh –create –topic s-in –partitions 3 –zookeeper localhost:2181 –replication-factor 1 </li>
-<li>./kafka-topics.sh –create –topic s1 –partitions 1 –zookeeper localhost:2181 –replication-factor 1 </li>
-<li>./kafka-topics.sh –create –topic s2 –partitions 1 –zookeeper localhost:2181 –replication-factor 1 </li>
-</ul>
-<p>我们可以通过一定的业务逻辑判断,让stream将不同的消息处理后发送给不同的topic,这里简单的通过判断字符串长度,发送给s1和s2两个不同的topic</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Kafka/">Kafka</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/">Kafka</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/06/24/Kafka-Streaming-分支/#more">嘿嘿嘿、进来看看呗 >></a>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
         </p>
-      
-      <div class="clearfix"></div>
     </div>
-    
-  </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2018/06/24/Kafka-核心概念/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Kafka架构与核心概念</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
   
 </article>
 
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#服务端代码"><span class="toc-number">1.</span> <span class="toc-text">服务端代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Netty服务端启动流程"><span class="toc-number">2.</span> <span class="toc-text">Netty服务端启动流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建服务端Channel"><span class="toc-number">3.</span> <span class="toc-text">创建服务端Channel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#初始化服务端Channel"><span class="toc-number">4.</span> <span class="toc-text">初始化服务端Channel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注册Selector"><span class="toc-number">5.</span> <span class="toc-text">注册Selector</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务端端口绑定"><span class="toc-number">6.</span> <span class="toc-text">服务端端口绑定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
 
 
 
 
 
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
 
 
 
-  
-    <article id="post-Kafka-Streaming-入门" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/06/24/Kafka-Streaming-入门/" class="article-date">
-      <time datetime="2018-06-24T03:19:33.000Z" itemprop="datePublished">2018-06-24</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
+
     
-      <input type="hidden" class="isFancy" />
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'shuchaang',
+      repo: 'shuchaang.github.io',
+      oauth: {
+        client_id: 'c5aa96bb5e5656512174',
+        client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+      },
+    })
+    gitment.render('gitments')
+</script>
     
-    
-      <header class="article-header">
+
+
+
+    <div class="scroll" id="post-nav-button">
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/24/Kafka-Streaming-入门/">Kafka Streaming 入门</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fsl9w3d2iqj30fp05edgr.jpg" alt=""></p>
-<h2 id="什么是流式计算"><a href="#什么是流式计算" class="headerlink" title="什么是流式计算"></a>什么是流式计算</h2><p>流的本质特征是one pass和sequence。可以想象一条管道,数据经过管道,在管道内经过一系列计算。数据以流的形式,不可逆的向前流动。大多数将响应异步的返回,然后增量地更新。一句话概括就是持续输入,持续输出,各个输入输出之间没有明显的边界。</p>
-<h2 id="Kafka-Stream-优势在哪"><a href="#Kafka-Stream-优势在哪" class="headerlink" title="Kafka Stream 优势在哪"></a>Kafka Stream 优势在哪</h2><ol>
-<li>目前流式计算已经有了很多成熟的框架,如spark streaming,strom以及flink。这些框架对于kafka的劣势就在于过于笨重,非常依赖于框架本身的调度,需要将流式的作业提交到计算平台,通过平台来计算。而Kafka流式计算则是提供一个库,通过调用Api即可实现流式计算,但是这些Api的数据来源都必须是一个Topic。所以相比于其他流式计算框架,Kafka streaming 更加轻量,仅依赖kafka本身。 </li>
-</ol>
-<p>但是Kafka streaming并不可能去替代spark streaming这样一种流计算框架,可以把它视作spark streaming的local model</p>
-<ol>
-<li>由于kafka本身提供了诸如partition,replica,reblance,数据持久化等机制,所以Kafka streaming可以在线动态调整并行度,实现重新消费或者数据回滚等操作</li>
-</ol>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Kafka/">Kafka</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/">Kafka</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/06/24/Kafka-Streaming-入门/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Kafka消息可靠性保证" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/06/24/Kafka消息可靠性保证/" class="article-date">
-      <time datetime="2018-06-24T03:16:38.000Z" itemprop="datePublished">2018-06-24</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/24/Kafka消息可靠性保证/">Kafka消息可靠性保证</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1fs9xddv57oj30gm0933z8.jpg" alt=""></p>
-<h2 id="Reliability-Guarantees"><a href="#Reliability-Guarantees" class="headerlink" title="Reliability Guarantees"></a>Reliability Guarantees</h2><p>kafka会把每个topic分为若干个partition。可以把topic理解为一个表,partition就是它的多个分区,一个partition会存放到单独的一个磁盘。每个partition都有多个副本(replica),其中一个会被选举为leader,所有的读写操作都是由leader来执行，其他的副本仅仅是用来维持一个In-Sync的状态,也就是说follower会不断地向leader发起一些fetch request，获取数据。</p>
-<p>一个副本被认为是处于In-Sync(可参与leader选举)的状态必须满足几个条件:</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Kafka/">Kafka</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/">Kafka</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/06/24/Kafka消息可靠性保证/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-系统学习ElasticSearch-聚合分析-4" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/" class="article-date">
-      <time datetime="2018-03-31T06:25:43.000Z" itemprop="datePublished">2018-03-31</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/">系统学习ElasticSearch-简单聚合分析(4)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>环境方面继续使用上一篇的数据环境,根据模拟不同的需求,体验不同的聚合分析语法</p>
-<ol>
-<li>简单聚合: 计算每个tag下的商品数量</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">GET /ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_tag&quot;: &#123;</div><div class="line">      &quot;terms&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;tags&quot;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-系统学习ElasticSearch-多种搜索方式-3" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/30/系统学习ElasticSearch-多种搜索方式-3/" class="article-date">
-      <time datetime="2018-03-30T01:34:15.000Z" itemprop="datePublished">2018-03-30</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+            <a href="/2018/06/24/Kafka-核心概念/" title="下一篇: Kafka架构与核心概念">
+                <i class="fa fa-angle-right"></i>
+            </a>
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/30/系统学习ElasticSearch-多种搜索方式-3/">系统学习ElasticSearch-多种搜索方式(3)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>ES中提供了多种索引的搜索方式,总结起来应该有六种,那么依次展示以下这些搜索方式,环境基于上一篇CRUD的数据。</p>
-<h2 id="Query-String-Search"><a href="#Query-String-Search" class="headerlink" title="Query String Search"></a>Query String Search</h2><p>例如我想查找所有的商品信息,那么可以这样做</p>
-<blockquote>
-<p>GET /索引名称/类型名称/_search</p>
-</blockquote>
-<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180330152237444945639.png" alt="20180330152237444945639.png"></p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
     </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/03/30/系统学习ElasticSearch-多种搜索方式-3/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/07/02/Netty服务端启动-1/">Netty源码(1)-服务端启动</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/24/Kafka-核心概念/">Kafka架构与核心概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/24/Kafka-Streaming-分支/">Kafka Streaming 分支</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/24/Kafka-Streaming-入门/">Kafka Streaming 入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/24/Kafka消息可靠性保证/">Kafka消息可靠性保证</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/">系统学习ElasticSearch-简单聚合分析(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/30/系统学习ElasticSearch-多种搜索方式-3/">系统学习ElasticSearch-多种搜索方式(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/29/系统学习ElasticSearch-CRUD-2/">系统学习ElasticSearch-CRUD(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/27/系统学习ElasticSearch-概念-1/">系统学习ElasticSearch-概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/20/死磕netty-1/">死磕netty(1)-简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/02/JUC-跳表-12/">JUC-自己动手写跳表(13)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/27/ElasticSearch优化总结/">ElasticSearch优化总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/16/JUC-CompletableFuture使用-12/">JUC-CompletableFuture使用(12)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/13/JUC-阻塞队列-11/">JUC-阻塞队列(11)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/11/JUC-Executor框架-10/">JUC-Executor框架(10)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/02/JUC-等等我-一起走-9/">JUC-等等我,一起走(9)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/01/RabbitMq入门-MessageConverter-6/">RabbitMq入门-MessageConverter(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/31/RabbitMq入门-消息发送与接收-5/">RabbitMq入门-消息发送与接收(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/30/JAVA继承机制与多态/">JAVA继承机制与多态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/30/JUC-StampedLock-8/">JUC-StampedLock(8)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/">RabbitMq入门-AmqpTemplate(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-连接和资源管理-3/">RabbitMq入门-连接和资源管理(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/22/JUC-Unsafe/">JUC-Unsafe(7)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/16/SpringBoot-Security认证流程/">SpringBoot-Security认证流程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/15/SpringBoot-异步REST服务/">SpringBoot-异步REST服务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/08/web容器对比/">web容器对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/">SpringBoot-Data-Jpa之高级话题(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/">SpringBoot-Data JPA之Repository(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/springboot-Data-JPA之对象映射/">SpringBoot-Data JPA之对象映射(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/22/RabbitMq入门-基本概念/">RabbitMq入门-基本概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/">spring4.3.x源码阅读笔记-AOP(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">JUC-ConcurrentHashMap(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-JMM/">JUC-JMM(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">JUC-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JUC-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">JUC-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">JUC--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
 
 
 
-
-
-
-
-
-
-  
-    <article id="post-系统学习ElasticSearch-CRUD-2" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/29/系统学习ElasticSearch-CRUD-2/" class="article-date">
-      <time datetime="2018-03-29T13:23:18.000Z" itemprop="datePublished">2018-03-29</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+    <script>
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/29/系统学习ElasticSearch-CRUD-2/">系统学习ElasticSearch-CRUD(2)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><blockquote>
-<p>ES 5.5  kibana 5.5 </p>
-</blockquote>
-<h2 id="电商案例"><a href="#电商案例" class="headerlink" title="电商案例"></a>电商案例</h2><p>假设我们有一个java pojo</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class product&#123;</div><div class="line">    private String name;</div><div class="line">    private String desc;</div><div class="line">    private Integer price;</div><div class="line">    private String producer;</div><div class="line">    private List  tags;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>那么我们首先将pojo对应的一条数据存储到ES中,相信大家都知道将上上面的pojo存储到数据库中应该怎么做,ES是面向文档(document)的搜索分析引擎,文档中存储的数据结构,与面向对象的数据结构是一样的,基于这样的数据结构,ES可以提供复杂的索引,全文检索,分析聚合等功能,ES的document使用json来表达。</p>
-<h3 id="新增"><a href="#新增" class="headerlink" title="新增"></a>新增</h3><p>使用kibana的dev tools,新增的语法为:</p>
-<blockquote>
-<p>PUT /索引名称/类型名称/ID {数据}</p>
-</blockquote>
-<p><img src="http://p1vpfd8u5.bkt.clouddn.com/2018032915223340444178.png" alt="2018032915223340444178.png"></p>
-<p>如上我们建立了一个索引放入ES中,就像对数据库的表中加入了一条记录</p>
-<h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p>查询的语法相对比较简单,这里的查询是指单单查找这一条记录,而不是根据条件进行搜索。</p>
-<blockquote>
-<p>GET /索引名称/类型名称/ID {数据}</p>
-</blockquote>
-<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180329152233469761469.png" alt="20180329152233469761469.png"></p>
-<p>可以看到索引的一些基本信息,数据信息是在source下的,同时有一个version字段,表示这条索引的修改次数，同时也可以用于并发控制</p>
-<h3 id="修改"><a href="#修改" class="headerlink" title="修改"></a>修改</h3><p>修改索引有两种方式,第一种是替换,另一种是更新</p>
-<p>先来看替换</p>
-<blockquote>
-<p>PUT /索引名称/类型名称/ID {数据}</p>
-</blockquote>
-<p>使用这种方式,对于没有更新的数据也要带上,否则就会认为没有这个字段</p>
-<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180329152233513023560.png" alt="20180329152233513023560.png"></p>
-<p>这里我们修改一下name字段,可以看到version自增,reslut和created字段也表明了更新成功。</p>
-<p>更新文档方式</p>
-<blockquote>
-<p>POST /索引名称/类型名称/ID/_update {<br>    “doc”:{“字段名”:数据}<br>}</p>
-</blockquote>
-<p>这种方式对于不需要修改的字段,不需要添加进去</p>
-<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180329152233554191011.png" alt="20180329152233554191011.png"></p>
-<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180329152233564161234.png" alt="20180329152233564161234.png"></p>
-<p>可以看到通过这种方式,我们就将想修改的字段单独做了修改</p>
-<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><blockquote>
-<p>delete /索引名称/类型名称/ID</p>
-</blockquote>
-<p>这样在使用get方式就无法查询到这条数据啦</p>
-
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-系统学习ElasticSearch-概念-1" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/27/系统学习ElasticSearch-概念-1/" class="article-date">
-      <time datetime="2018-03-27T14:23:18.000Z" itemprop="datePublished">2018-03-27</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/27/系统学习ElasticSearch-概念-1/">系统学习ElasticSearch-概念(1)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180328152224709191016.jpg" alt="20180328152224709191016.jpg"></p>
-<h2 id="Lucene和ES"><a href="#Lucene和ES" class="headerlink" title="Lucene和ES"></a>Lucene和ES</h2><p>lucene是最强大最先进的搜索库,但是直接基于lucene开发,api非常复杂,不易扩展,需要深入理解原理(索引结构)。</p>
-<p>ES直接基于lucene，隐藏复杂性，提供便利的rest API接口，强大之处在于</p>
-<ol>
-<li>分布式,便于扩展</li>
-<li>既可以作为搜索引擎,也可以作为数据分析引擎</li>
-<li>支持PB级数据</li>
-<li>开箱即用,优秀的默认设置,完全开源</li>
-</ol>
-<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><ol>
-<li>NRT(近实时):从数据写入到数据可以被搜索，延迟在秒级别。基于ES的搜索和分析耗时也在秒级别。</li>
-<li>Cluster(集群): 包含多个节点,节点属于哪个集群是通过集群名称来进行配置的,(默认elasticsearch)</li>
-<li>Node(节点): 每个节点都有名称(默认随机分配),默认会加入elasticsearch这个集群,如果启动一堆节点,就会自动加入elasticsearch集群。</li>
-<li>Document(文档): es中最小的数据单元,一个document可能是一条客户数据,一条订单数据,通常用json数据表示。每个index下的type，都可以存储多个document,每个document里都有多个field,一个field就是一个字段</li>
-<li>Index(索引): 包含一堆有相似结构的文档数据,比如有一个客户索引,订单索引等,索引都有名称,index可以包含多个document</li>
-<li>Type(类型): 每个索引里都有一个或多个type,type是index中的一个逻辑分类,一个type下的document,都有相同的field。比如一个blog,有用户数据type,博客评论type,评论数据type</li>
-<li>shard: 单台机器无法存储大量的数据,es可以将索引中的数据切分为多个shard,分布在多台机器上存储。有了shard就可以横向扩展，提高吞吐量和性能,每个shard都是一个lucene index</li>
-<li>replica: 任何一个服务器都有可能随时宕机,此时shard就有可能丢失,因此可以给shard创建多个replica副本,用于备份容灾</li>
-</ol>
-<h2 id="对比数据库"><a href="#对比数据库" class="headerlink" title="对比数据库"></a>对比数据库</h2><p>ES                数据库</p>
-<p>Document            行</p>
-<p>Type                表</p>
-<p>Index               库</p>
-
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-死磕netty-1" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/20/死磕netty-1/" class="article-date">
-      <time datetime="2018-03-20T06:37:03.000Z" itemprop="datePublished">2018-03-20</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/20/死磕netty-1/">死磕netty(1)-简介</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <h2 id="JAVA-IO-通信"><a href="#JAVA-IO-通信" class="headerlink" title="JAVA IO 通信"></a>JAVA IO 通信</h2><h3 id="BIO通信"><a href="#BIO通信" class="headerlink" title="BIO通信"></a>BIO通信</h3><p>BIO通信通常会有一个专门的线程Acceptor负责接收客户端的请求，并对每一个请求创建一个线程为其服务。服务完成后通过应答流返回给客户端，最后线程销毁。这就是典型的一应答一请求。由于线程是服务器非常宝贵的一种资源，所以这种模型在大并发的情况先引起线程数量膨胀最终会导致整个服务不可用或者Stack Overflow的错误，所以BIO模型缺乏弹性伸缩的能力。</p>
-<p><img src="http://p1vpfd8u5.bkt.clouddn.com/2018032015215281991618.png" alt="2018032015215281991618.png"></p>
-<h3 id="伪异步通信"><a href="#伪异步通信" class="headerlink" title="伪异步通信"></a>伪异步通信</h3><p>伪异步通信当接收到用户请求时，不需要创建新线程，而是把它封装成一个Task,交给线程池来做服务。这样我们就可以通过配置线程池来控制线程创建的数量，线程池问题具体可以看看JDK的Executor框架。但是这种模型不足之处在于，当请求数量庞大，线程池可能会出现阻塞。</p>
-<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180320152152850232450.png" alt="20180320152152850232450.png"></p>
-<h3 id="NIO通信"><a href="#NIO通信" class="headerlink" title="NIO通信"></a>NIO通信</h3><p>先要了解几个关键概念:</p>
-<ul>
-<li>缓冲区  Buffer   在NIO模型中，所有数据都是用缓冲区来处理。也就是读取数据从缓冲区读，写入数据是写入缓冲区。</li>
-<li>通道   Channel  网络数据都是通过Channel来读取和写入。Channel和Stream的区别在于，Stream只能单向，而Channel是双向的。</li>
-<li>多路复用器 Selector  它是java Nio的基础，它提供了选择就绪任务的能力。也就是说selector会不断轮询绑定在其上的channel，如果某个channel上发生了读或写事件，它就会被轮训出来。然后通过selectionKey获取就绪任务的集合进行后续的io操作，由于JDK使用了epoll代替了传统的select实现，所以并没有最大链接数的限制。</li>
-</ul>
-<h3 id="AIO通信"><a href="#AIO通信" class="headerlink" title="AIO通信"></a>AIO通信</h3><p>AIO是一种异步的通信方式，上面的几种都属于同步模式。当有用户请求进入，AIO会注册它的读写时间和返回函数，当IO操作完成后主动通知用户请求讲数据取走。对应于Unix网络编程中的事件驱动IO</p>
-<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><ul>
-<li>线程数量: BIO(m:m)&gt;伪异步(m:n)&gt;NIO(m:1)&gt;AIO(m:0)</li>
-<li>IO类型 : BIO(同步阻塞) 伪异步(同步阻塞) NIO（同步非阻塞) AIO(异步)</li>
-</ul>
-<h2 id="为什么用netty"><a href="#为什么用netty" class="headerlink" title="为什么用netty"></a>为什么用netty</h2><ol>
-<li>原生NIO有缺陷，类库繁杂不易操作</li>
-<li>JDK NIO bug (epoll bug)</li>
-<li>netty api简单 并且修复了jdk bug</li>
-<li>netty 性能高</li>
-<li>netty成熟的使用，如dubbo,springcloud,reddison等大量框架底层都使用netty </li>
-</ol>
-
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/netty/">netty</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/netty/">netty</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-  
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
-    </nav>
-  
+    </script>
 </div>
       <footer id="footer">
     <div class="outer">
