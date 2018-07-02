@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 15.71px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 12.86px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 14.29px;">Kafka</a> <a href="/tags/Netty-JAVA/" style="font-size: 10px;">Netty JAVA</a> <a href="/tags/RabbitMq/" style="font-size: 17.14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15.71px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.43px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/spring/" style="font-size: 12.86px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.57px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 15.71px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 12.86px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 14.29px;">Kafka</a> <a href="/tags/Netty-JAVA/" style="font-size: 11.43px;">Netty JAVA</a> <a href="/tags/RabbitMq/" style="font-size: 17.14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15.71px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.43px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/spring/" style="font-size: 12.86px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.57px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,78 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-redis分布式原理及操作" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/30/redis分布式原理及操作/" class="article-date">
+      <time datetime="2017-12-30T08:43:50.000Z" itemprop="datePublished">2017-12-30</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h3 id="传统分布式算法"><a href="#传统分布式算法" class="headerlink" title="传统分布式算法"></a>传统分布式算法</h3><h4 id="举个栗子"><a href="#举个栗子" class="headerlink" title="举个栗子"></a>举个栗子</h4><p>假设我们有20个数据需要缓存，并且有4个分布式redis节点。数据直接通过编号对4进行取余，得到他们Hash到的位置，并放置在对应的redis节点上。效果如图</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fmyrl9l2i8j30f70avt9h.jpg" alt=""></p>
+<p>但是随着我们业务的变化，Redis节点的数量可能会增加或者减少。假设我们增加一个redis节点</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/12/30/redis分布式原理及操作/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-RabbitMq入门-实现微博关注demo-2" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -902,96 +974,6 @@
         <p class="article-more-link">
           <a  href="/2017/12/09/JAVA并发从入门到崩溃-AQS/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-java并发从入门到崩溃-CAS" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2017/12/08/java并发从入门到崩溃-CAS/" class="article-date">
-      <time datetime="2017-12-08T07:50:42.000Z" itemprop="datePublished">2017-12-08</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/08/java并发从入门到崩溃-CAS/">JUC-CAS(2)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <h3 id="Compare-And-Set"><a href="#Compare-And-Set" class="headerlink" title="Compare And Set"></a>Compare And Set</h3><p>CAS是java并发中最底层的一种技术支持，对内存中的共享数据的读写保证其原子操作。过程如下：首先CPU将内存中的将要被修改的数据与预期的值进行比较，如果这两个值相等，CPU则会将内存中数值替换为新值，否则不做操作。最后，CPU会将旧值返回。CAS的工作方式更多的是与硬件层面的CPU进行交互，而不在语言层面，所以很多资料都是点到为止：一种底层的原子性操作。</p>
-<p>我们可以在AtomicBoolean.class中找到代码</p>
-<p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fm9fu944hej30m903zgm9.jpg" alt=""></p>
-<p>可以看到这里有<strong>CAS</strong>操作，再进入到unsafe.class中，可以发现CAS操作都是native型的，即调用了JNI的方法。</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1fm9fxr2hc7j30m0043dgm.jpg" alt=""></p>
-<p>所以当我们需要对一个数据进行原子操作的时候，java给我们提供了13个原子操作类:</p>
-<ul>
-<li>AtomicBoolean</li>
-<li>AtomicIngeger</li>
-<li>AtomicLong</li>
-<li>AtomicIntegerArray</li>
-<li>AtomicLongArray</li>
-<li>AtomicReferenceArray</li>
-<li>….</li>
-</ul>
-<h3 id="CAS存在的问题"><a href="#CAS存在的问题" class="headerlink" title="CAS存在的问题"></a>CAS存在的问题</h3><ol>
-<li>ABA问题</li>
-<li>循环开销大</li>
-<li>无法保证对多个共享变量的原子操作</li>
-</ol>
-<h2 id="为什么是volatile和cas作底层"><a href="#为什么是volatile和cas作底层" class="headerlink" title="为什么是volatile和cas作底层"></a>为什么是volatile和cas作底层</h2><p>由于java的CAS同时具有volatile读和volatile写的内存语义，因此java之间线程通信目前有以下几种形式。</p>
-<ol>
-<li>A线程写volatile变量，B线程读这个volatile变量</li>
-<li>A线程写volatile变量，B线程以cas更新volatile变量</li>
-<li>A线程cas更新一个volatile变量，B线程cas更新这个volatile变量</li>
-<li>A线程cas更新一个volatile变量，B线程读这个volatile变量</li>
-</ol>
-<p>JAVA的CAS会使用现代处理器上提供的高效机器级别的原子指令，这些指令以原子的形式对内存执行读写操作。同时volatile和CAS一起使用可以实现线程之间的通信，因此构成了JUC的基石。</p>
-
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
-    </div>
-
       
       <div class="clearfix"></div>
     </div>
