@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 15.71px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 12.86px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 14.29px;">Kafka</a> <a href="/tags/Netty-JAVA/" style="font-size: 11.43px;">Netty JAVA</a> <a href="/tags/RabbitMq/" style="font-size: 17.14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15.71px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.43px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/spring/" style="font-size: 12.86px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.57px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 15.71px;">ElasticSearch</a> <a href="/tags/JAVA/" style="font-size: 12.86px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.86px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 14.29px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 12.86px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 17.14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15.71px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.43px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/spring/" style="font-size: 12.86px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.57px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,91 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-系统学习ElasticSearch-概念-1" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/03/27/系统学习ElasticSearch-概念-1/" class="article-date">
+      <time datetime="2018-03-27T14:23:18.000Z" itemprop="datePublished">2018-03-27</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/27/系统学习ElasticSearch-概念-1/">系统学习ElasticSearch-概念(1)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180328152224709191016.jpg" alt="20180328152224709191016.jpg"></p>
+<h2 id="Lucene和ES"><a href="#Lucene和ES" class="headerlink" title="Lucene和ES"></a>Lucene和ES</h2><p>lucene是最强大最先进的搜索库,但是直接基于lucene开发,api非常复杂,不易扩展,需要深入理解原理(索引结构)。</p>
+<p>ES直接基于lucene，隐藏复杂性，提供便利的rest API接口，强大之处在于</p>
+<ol>
+<li>分布式,便于扩展</li>
+<li>既可以作为搜索引擎,也可以作为数据分析引擎</li>
+<li>支持PB级数据</li>
+<li>开箱即用,优秀的默认设置,完全开源</li>
+</ol>
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><ol>
+<li>NRT(近实时):从数据写入到数据可以被搜索，延迟在秒级别。基于ES的搜索和分析耗时也在秒级别。</li>
+<li>Cluster(集群): 包含多个节点,节点属于哪个集群是通过集群名称来进行配置的,(默认elasticsearch)</li>
+<li>Node(节点): 每个节点都有名称(默认随机分配),默认会加入elasticsearch这个集群,如果启动一堆节点,就会自动加入elasticsearch集群。</li>
+<li>Document(文档): es中最小的数据单元,一个document可能是一条客户数据,一条订单数据,通常用json数据表示。每个index下的type，都可以存储多个document,每个document里都有多个field,一个field就是一个字段</li>
+<li>Index(索引): 包含一堆有相似结构的文档数据,比如有一个客户索引,订单索引等,索引都有名称,index可以包含多个document</li>
+<li>Type(类型): 每个索引里都有一个或多个type,type是index中的一个逻辑分类,一个type下的document,都有相同的field。比如一个blog,有用户数据type,博客评论type,评论数据type</li>
+<li>shard: 单台机器无法存储大量的数据,es可以将索引中的数据切分为多个shard,分布在多台机器上存储。有了shard就可以横向扩展，提高吞吐量和性能,每个shard都是一个lucene index</li>
+<li>replica: 任何一个服务器都有可能随时宕机,此时shard就有可能丢失,因此可以给shard创建多个replica副本,用于备份容灾</li>
+</ol>
+<h2 id="对比数据库"><a href="#对比数据库" class="headerlink" title="对比数据库"></a>对比数据库</h2><p>ES                数据库</p>
+<p>Document            行</p>
+<p>Type                表</p>
+<p>Index               库</p>
+
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-死磕netty-1" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -860,82 +945,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/01/31/RabbitMq入门-消息发送与接收-5/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-JAVA继承机制与多态" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/01/30/JAVA继承机制与多态/" class="article-date">
-      <time datetime="2018-01-30T00:34:27.000Z" itemprop="datePublished">2018-01-30</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/30/JAVA继承机制与多态/">JAVA继承机制与多态</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>java的继承机制无论在工作中还是面试中，都是一个让人非常迷惑的地方。今天被一个朋友的问题难住了，所以查阅了一下相关的资料，在此整理一下</p>
-<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><ol>
-<li>java不支持多继承但支持实现多个接口</li>
-<li>在多态情况下,重写方法会调用派生类的方法。非多态情况下会调用本类的方法</li>
-<li>对于不同的访问修饰符，成员变量的覆盖情况不同</li>
-</ol>
-<p>下面举几个例子加深理解，题目来源于网络</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java基础/">java基础</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/01/30/JAVA继承机制与多态/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>

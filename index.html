@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 15.71px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 12.86px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 14.29px;">Kafka</a> <a href="/tags/Netty-JAVA/" style="font-size: 11.43px;">Netty JAVA</a> <a href="/tags/RabbitMq/" style="font-size: 17.14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15.71px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.43px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/spring/" style="font-size: 12.86px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.57px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 15.71px;">ElasticSearch</a> <a href="/tags/JAVA/" style="font-size: 12.86px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.86px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 14.29px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 12.86px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 17.14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15.71px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.43px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/spring/" style="font-size: 12.86px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.57px;">并发</a>
                     </div>
                 </section>
                 
@@ -232,6 +232,112 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-Netty-新连接接入-3" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/07/03/Netty-新连接接入-3/" class="article-date">
+      <time datetime="2018-07-03T01:31:54.000Z" itemprop="datePublished">2018-07-03</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/03/Netty-新连接接入-3/">Netty 新连接接入-3</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>提出两个问题</p>
+</blockquote>
+<ul>
+<li><p>Netty在哪里检测到新连接的接入</p>
+</li>
+<li><p>新连接怎样注册到NioEventLoop线程</p>
+</li>
+</ul>
+<p>我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤</p>
+<ol>
+<li><p>检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件</p>
+</li>
+<li><p>创建Channel:基于JDK的nioChannel创建出Netty NioSocketChannel</p>
+</li>
+<li><p>Netty给客户端channel分配NioEventLoop,并将channel绑定</p>
+</li>
+<li><p>向selector注册读事件</p>
+</li>
+</ol>
+<h2 id="检测新连接"><a href="#检测新连接" class="headerlink" title="检测新连接"></a>检测新连接</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">processSelectedKey(key,channel) [入口]</div><div class="line">    NioMessageUnsafe.read()</div><div class="line">        doReadMessage()  [while 循环]</div><div class="line">            javaChannel().accept()</div></pre></td></tr></table></figure>
+<h2 id="创建NioSocketChannel"><a href="#创建NioSocketChannel" class="headerlink" title="创建NioSocketChannel"></a>创建NioSocketChannel</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">new NioSocketChannel(parent,ch)  [入口]</div><div class="line">    AbstractNioByteChannel(p,ch,opread)</div><div class="line">        configBlocking(false) &amp; interest_op [注册事件]</div><div class="line">        create id,unsafe,pipeline</div><div class="line">    new NioSocketChannelConfig()  [创建绑定配置]</div><div class="line">        setTcpNoDelay(true)       [禁止Nagle算法,小数据包尽量快发送]</div></pre></td></tr></table></figure>
+<p>跟进到NioServerSocketChannel.doReadMessages(buf):</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">protected int doReadMessages(List&lt;Object&gt; buf) throws Exception &#123;</div><div class="line">    SocketChannel ch = SocketUtils.accept(javaChannel());</div><div class="line">    try &#123;</div><div class="line">        if (ch != null) &#123;</div><div class="line">            buf.add(new NioSocketChannel(this, ch));</div><div class="line">            return 1;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>首先创建一个jdk的channel,然后将jdk的channel与当前类this,共同构造一个Netty的NioSocketChannel</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public NioSocketChannel(Channel parent, SocketChannel socket) &#123;</div><div class="line">    super(parent, socket);</div><div class="line">    config = new NioSocketChannelConfig(this, socket.socket());</div><div class="line">&#125;</div><div class="line"></div><div class="line">protected AbstractNioByteChannel(Channel parent, SelectableChannel ch) &#123;</div><div class="line">        super(parent, ch, SelectionKey.OP_READ);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在这里跟进到父类,发现Netty默认传递了一个OP_READ事件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">protected AbstractNioChannel(Channel parent, SelectableChannel ch, int readInterestOp) &#123;</div><div class="line">    super(parent);</div><div class="line">    this.ch = ch;</div><div class="line">    this.readInterestOp = readInterestOp;</div><div class="line">    try &#123;</div><div class="line">        ch.configureBlocking(false);</div><div class="line">    &#125;</div><div class="line">    ....</div></pre></td></tr></table></figure>
+<p>在这里,将read事件注册到了channel,并且设置为非阻塞模式,继续向上跟进父类,就会创建id,unsafe,pipeline组件。NioSocketChannelConfig主要作用就是设置setTcpNoDelay(true)。如果是false,则会将小的数据包尽量集合成大的数据包然后发送出去,而Netty默认是关闭的,如果运行在Android系统上,则默认开启。</p>
+<h2 id="Netty中Channel的分类"><a href="#Netty中Channel的分类" class="headerlink" title="Netty中Channel的分类"></a>Netty中Channel的分类</h2><h3 id="Channel层级关系"><a href="#Channel层级关系" class="headerlink" title="Channel层级关系"></a>Channel层级关系</h3><p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180704153067048025149.png" alt="20180704153067048025149.png"></p>
+<p>顶层接口channel主要定义了网络IO的读写,绑定,是一个最顶级的抽象。AbstractChannel是一个抽象的实现,并且定义了重要的成员变量。</p>
+<p>接着是AbstractNioChannel,他有两个子类channel,这两个子类差别主要是向AbstractNioChannel注册的io事件不同,可以看一下构造函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public NioServerSocketChannel(ServerSocketChannel channel) &#123;</div><div class="line">        super(null, channel, SelectionKey.OP_ACCEPT);</div><div class="line">        config = new NioServerSocketChannelConfig(this, javaChannel().socket());</div><div class="line">&#125;</div><div class="line"></div><div class="line">protected AbstractNioByteChannel(Channel parent, SelectableChannel ch) &#123;</div><div class="line">    super(parent, ch, SelectionKey.OP_READ);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到服务端channel感兴趣的是accept事件,而客户端channel感兴趣的是read事件。除此之外可以发现,服务端channel和客户端channel对应的unsafe不同,对于服务端NioMessageUnsafe处理的是连接的读取,而客户端NioByteUnsafe是字节读取。</p>
+<p>客户端和服务端都有相应的config进行配置</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fsxmlg099gj30zc0j6ach.jpg" alt=""></p>
+<h2 id="新连接NioEventLoop分配和selector注册"><a href="#新连接NioEventLoop分配和selector注册" class="headerlink" title="新连接NioEventLoop分配和selector注册"></a>新连接NioEventLoop分配和selector注册</h2><p>方法的入口为MultithreadEventLoopGroup</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public ChannelFuture register(Channel channel) &#123;</div><div class="line">    return next().register(channel);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里会next()返回一个NioEventLoop,然后chooser选择一个NioEventLoop,调用register方法,过程中利用了串行无锁化技术,调用底层jdk channel,注册一个accept事件</p>
+<h2 id="NioSocketChannel读事件注册"><a href="#NioSocketChannel读事件注册" class="headerlink" title="NioSocketChannel读事件注册"></a>NioSocketChannel读事件注册</h2><p>入口方法位于AbstractChannel的register0()</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">if (isActive()) &#123;</div><div class="line">    if (firstRegistration) &#123;</div><div class="line">        pipeline.fireChannelActive();</div><div class="line">    &#125; else if (config().isAutoRead()) &#123;</div><div class="line">        beginRead();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里因为新连接已经介入,所以isActive()返回true,并且firstRegistration也为true。调用  pipeline.fireChannelActive();后续会调用readIfIsAutoRead(),默认情况下是自动读的,AbstractNioChannel.beginRead()。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">protected void doBeginRead() throws Exception &#123;</div><div class="line">    // Channel.read() or ChannelHandlerContext.read() was called</div><div class="line">    final SelectionKey selectionKey = this.selectionKey;</div><div class="line">    if (!selectionKey.isValid()) &#123;</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    readPending = true;</div><div class="line"></div><div class="line">    final int interestOps = selectionKey.interestOps();</div><div class="line">    if ((interestOps &amp; readInterestOp) == 0) &#123;</div><div class="line">        selectionKey.interestOps(interestOps | readInterestOp);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里由于初始化设置interestOps为0,所以会再添加一个readInterestOp,也就可以监听OP_READ事件了。 </p>
+
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Netty/">Netty</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-Netty-NioEventLoop-2" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -287,7 +393,7 @@
 
       
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty-JAVA/">Netty JAVA</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
     </div>
 
       
@@ -357,7 +463,7 @@
 
       
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty-JAVA/">Netty JAVA</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
     </div>
 
       
@@ -896,91 +1002,6 @@
 <p>delete /索引名称/类型名称/ID</p>
 </blockquote>
 <p>这样在使用get方式就无法查询到这条数据啦</p>
-
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-系统学习ElasticSearch-概念-1" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/27/系统学习ElasticSearch-概念-1/" class="article-date">
-      <time datetime="2018-03-27T14:23:18.000Z" itemprop="datePublished">2018-03-27</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/27/系统学习ElasticSearch-概念-1/">系统学习ElasticSearch-概念(1)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180328152224709191016.jpg" alt="20180328152224709191016.jpg"></p>
-<h2 id="Lucene和ES"><a href="#Lucene和ES" class="headerlink" title="Lucene和ES"></a>Lucene和ES</h2><p>lucene是最强大最先进的搜索库,但是直接基于lucene开发,api非常复杂,不易扩展,需要深入理解原理(索引结构)。</p>
-<p>ES直接基于lucene，隐藏复杂性，提供便利的rest API接口，强大之处在于</p>
-<ol>
-<li>分布式,便于扩展</li>
-<li>既可以作为搜索引擎,也可以作为数据分析引擎</li>
-<li>支持PB级数据</li>
-<li>开箱即用,优秀的默认设置,完全开源</li>
-</ol>
-<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><ol>
-<li>NRT(近实时):从数据写入到数据可以被搜索，延迟在秒级别。基于ES的搜索和分析耗时也在秒级别。</li>
-<li>Cluster(集群): 包含多个节点,节点属于哪个集群是通过集群名称来进行配置的,(默认elasticsearch)</li>
-<li>Node(节点): 每个节点都有名称(默认随机分配),默认会加入elasticsearch这个集群,如果启动一堆节点,就会自动加入elasticsearch集群。</li>
-<li>Document(文档): es中最小的数据单元,一个document可能是一条客户数据,一条订单数据,通常用json数据表示。每个index下的type，都可以存储多个document,每个document里都有多个field,一个field就是一个字段</li>
-<li>Index(索引): 包含一堆有相似结构的文档数据,比如有一个客户索引,订单索引等,索引都有名称,index可以包含多个document</li>
-<li>Type(类型): 每个索引里都有一个或多个type,type是index中的一个逻辑分类,一个type下的document,都有相同的field。比如一个blog,有用户数据type,博客评论type,评论数据type</li>
-<li>shard: 单台机器无法存储大量的数据,es可以将索引中的数据切分为多个shard,分布在多台机器上存储。有了shard就可以横向扩展，提高吞吐量和性能,每个shard都是一个lucene index</li>
-<li>replica: 任何一个服务器都有可能随时宕机,此时shard就有可能丢失,因此可以给shard创建多个replica副本,用于备份容灾</li>
-</ol>
-<h2 id="对比数据库"><a href="#对比数据库" class="headerlink" title="对比数据库"></a>对比数据库</h2><p>ES                数据库</p>
-<p>Document            行</p>
-<p>Type                表</p>
-<p>Index               库</p>
 
       
       

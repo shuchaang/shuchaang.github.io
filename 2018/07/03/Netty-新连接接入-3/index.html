@@ -3,24 +3,22 @@
 <head>
   <meta charset="utf-8">
   
-  <title>jvm学习笔记-类加载 | Shuchang&#39;s Blog</title>
+  <title>Netty 新连接接入-3 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="宏观 当我们写好.java程序点击运行的时候发生了什么   当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:   以魔数Magic Number:0xCafeBabe开头 ConstantPool:符号表 FieldInfo:类成员变量表 方法描述 附加节点 …   有了.class文件我们就可以执行java命令">
-<meta name="keywords" content="java,jvm">
+  <meta name="description" content="提出两个问题   Netty在哪里检测到新连接的接入  新连接怎样注册到NioEventLoop线程   我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤  检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件  创建Channel:基于JDK的nioChannel创建出Netty NioS">
+<meta name="keywords" content="Netty,JAVA">
 <meta property="og:type" content="article">
-<meta property="og:title" content="jvm学习笔记-类加载">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/11/23/表面理解jvm-类加载/index.html">
+<meta property="og:title" content="Netty 新连接接入-3">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/07/03/Netty-新连接接入-3/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="宏观 当我们写好.java程序点击运行的时候发生了什么   当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:   以魔数Magic Number:0xCafeBabe开头 ConstantPool:符号表 FieldInfo:类成员变量表 方法描述 附加节点 …   有了.class文件我们就可以执行java命令">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1flrre3ma6nj30km0970t3.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1flrsg7pnfhj30k20dmmzx.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1flrta4ovpij309v085dh2.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1flrtfhpw0aj30m8019jre.jpg">
-<meta property="og:updated_time" content="2017-12-18T08:48:44.000Z">
+<meta property="og:description" content="提出两个问题   Netty在哪里检测到新连接的接入  新连接怎样注册到NioEventLoop线程   我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤  检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件  创建Channel:基于JDK的nioChannel创建出Netty NioS">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180704153067048025149.png">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fsxmlg099gj30zc0j6ach.jpg">
+<meta property="og:updated_time" content="2018-07-04T05:38:08.910Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="jvm学习笔记-类加载">
-<meta name="twitter:description" content="宏观 当我们写好.java程序点击运行的时候发生了什么   当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:   以魔数Magic Number:0xCafeBabe开头 ConstantPool:符号表 FieldInfo:类成员变量表 方法描述 附加节点 …   有了.class文件我们就可以执行java命令">
-<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1flrre3ma6nj30km0970t3.jpg">
+<meta name="twitter:title" content="Netty 新连接接入-3">
+<meta name="twitter:description" content="提出两个问题   Netty在哪里检测到新连接的接入  新连接怎样注册到NioEventLoop线程   我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤  检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件  创建Channel:基于JDK的nioChannel创建出Netty NioS">
+<meta name="twitter:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180704153067048025149.png">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -234,11 +232,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-表面理解jvm-类加载" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Netty-新连接接入-3" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/11/23/表面理解jvm-类加载/" class="article-date">
-      <time datetime="2017-11-23T00:07:39.000Z" itemprop="datePublished">2017-11-23</time>
+      <a href="/2018/07/03/Netty-新连接接入-3/" class="article-date">
+      <time datetime="2018-07-03T01:31:54.000Z" itemprop="datePublished">2018-07-03</time>
 </a>
     </div>
   
@@ -251,7 +249,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      jvm学习笔记-类加载
+      Netty 新连接接入-3
     </h1>
   
 
@@ -260,13 +258,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/jvm/">jvm</a>
+    <a class="article-category-link" href="/categories/Netty/">Netty</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -276,67 +274,50 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h3 id="宏观"><a href="#宏观" class="headerlink" title="宏观"></a>宏观</h3><blockquote>
-<p>当我们写好.java程序点击运行的时候发生了什么</p>
+        <blockquote>
+<p>提出两个问题</p>
 </blockquote>
+<ul>
+<li><p>Netty在哪里检测到新连接的接入</p>
+</li>
+<li><p>新连接怎样注册到NioEventLoop线程</p>
+</li>
+</ul>
+<p>我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤</p>
 <ol>
-<li>当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:</li>
+<li><p>检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件</p>
+</li>
+<li><p>创建Channel:基于JDK的nioChannel创建出Netty NioSocketChannel</p>
+</li>
+<li><p>Netty给客户端channel分配NioEventLoop,并将channel绑定</p>
+</li>
+<li><p>向selector注册读事件</p>
+</li>
 </ol>
-<ul>
-<li>以魔数Magic Number:0xCafeBabe开头</li>
-<li>ConstantPool:符号表</li>
-<li>FieldInfo:类成员变量表</li>
-<li>方法描述</li>
-<li>附加节点</li>
-<li>…</li>
-</ul>
-<ol>
-<li>有了.class文件我们就可以执行java命令运行java程序</li>
-<li>首先JVM装载.class，也就是类加载器加载字节码。但是类加载器本身也是一个java类，所以它也需要被加载，幸运的是有一个类加载器是用c++编写的，叫做<code>Bootstrap类加载器</code>，属于虚拟机内核，用特定于操作系统的本地代码实现。Bootstrap类加载器负责加载javajava核心包中的类(rt.jar)，这些类的Class.getClassLoader()方法返回值会null，表示需要Bootstrap加载器来加载。JAVA核心包中还有两个类加载器:<code>ExtClassLoader</code>和<code>ApplicationClassLoader</code>。他们都用java语言编写，其中ExtClassLoader负责加载<java_home>/jre/lib/ext目录下的jar，ApplicationClassLoader负责加载应用程序的启动执行类，即当使用java命令去启动执行一个类时，JAVA虚拟机使用AppClassLoader加载这个类。所以这里有个小track就是把一些自己常用但是非java自带的jar放到ext目录下，这样就可以少写几个maven dependency。</java_home></li>
-</ol>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li><a id="more"></a>
-<the rest="" of="" contents="" |="" 余下全文="">
-
-</the></li>
-</ul>
-<h3 id="为什么要类加载器"><a href="#为什么要类加载器" class="headerlink" title="为什么要类加载器"></a>为什么要类加载器</h3><ol>
-<li>java类加载都是在程序的运行期完成的</li>
-<li>增加java程序的灵活性，例如：</li>
-</ol>
-<ul>
-<li>面向接口的编程，在程序运行时才指定其具体的实现   类。</li>
-<li>用户自定义类加载器,支持程序从网络或者其他地方加载一个类。</li>
-</ul>
-<h3 id="类的生命周期"><a href="#类的生命周期" class="headerlink" title="类的生命周期"></a>类的生命周期</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1flrre3ma6nj30km0970t3.jpg" alt=""></p>
-<ul>
-<li>①的可控性最强，因为可以自定义类加载器</li>
-<li>①②③⑤的顺序一定。但注意是开始顺序一定，并不保证按顺序完成。</li>
-<li>④过程可能在⑤之后进行，为了支持java的运行时绑定</li>
-</ul>
-<h4 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h4><ol>
-<li>通过一个类的全限定名获取定义此类的二进制字节流</li>
-<li>将字节流转化为方法区的数据结构</li>
-<li>在堆中生成这个类的对象，作为访问此类的入口<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1flrsg7pnfhj30k20dmmzx.jpg" alt="来源网络"><h4 id="连接"><a href="#连接" class="headerlink" title="连接"></a>连接</h4></li>
-<li>验证：确保符合jvm规范，没有安全问题</li>
-<li>准备：在方法区正式为类变量分配内存并设置初始值</li>
-<li>将常量池内的引用符号替换为直接引用（可以理解为将原来的多级指针指向的最终地址替换指针）</li>
-</ol>
-<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p>jvm并没有强制规定什么时候要进行加载，但是规定了五种有且只有的情况立即初始化类，当然在初始化之前要完成前面的几个步骤。</p>
-<ol>
-<li>new一个类的对象</li>
-<li>调用类的静态成员（除了final常量）和静态方法</li>
-<li>使用java.lang.reflect包的方法对类进行反射调用</li>
-<li>当虚拟机启动,加载main方法所在的类</li>
-<li>当初始化一个类，如果其父类没有被初始化，则先初始化它父类</li>
-</ol>
-<h3 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h3><p>如果两个类相等，那么不光要class是相同的，而且需要类加载器相同。</p>
-<blockquote>
-<p>关于双亲委派模型的疑问？？？</p>
-</blockquote>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1flrta4ovpij309v085dh2.jpg" alt=""></p>
-<p>这个图相信大家都见到过，也就是双亲委派模型(Parents-Delegation-Model)的示意图。详细内容就不作介绍。一点疑问就是当我第一次学这个内容的时候我在考虑双亲的双体现在哪里呢？它只是向上面一级也就是父加载器传递，这个Parents体现的应该是垂直方向，也就是父亲，爷爷这种关系，而不是水平方向上的双亲关系。所以我认为这个模型不应该叫双亲委派模型，英文也应该是(Parent-Delegation-Model),我认为双亲这种说法很容易误导初学者。<br>在《Thinking in jvm》英文原本中印证了我的想法,如图。个人认为这种说法更准确。<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1flrtfhpw0aj30m8019jre.jpg" alt=""></p>
+<h2 id="检测新连接"><a href="#检测新连接" class="headerlink" title="检测新连接"></a>检测新连接</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">processSelectedKey(key,channel) [入口]</div><div class="line">    NioMessageUnsafe.read()</div><div class="line">        doReadMessage()  [while 循环]</div><div class="line">            javaChannel().accept()</div></pre></td></tr></table></figure>
+<h2 id="创建NioSocketChannel"><a href="#创建NioSocketChannel" class="headerlink" title="创建NioSocketChannel"></a>创建NioSocketChannel</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">new NioSocketChannel(parent,ch)  [入口]</div><div class="line">    AbstractNioByteChannel(p,ch,opread)</div><div class="line">        configBlocking(false) &amp; interest_op [注册事件]</div><div class="line">        create id,unsafe,pipeline</div><div class="line">    new NioSocketChannelConfig()  [创建绑定配置]</div><div class="line">        setTcpNoDelay(true)       [禁止Nagle算法,小数据包尽量快发送]</div></pre></td></tr></table></figure>
+<p>跟进到NioServerSocketChannel.doReadMessages(buf):</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">protected int doReadMessages(List&lt;Object&gt; buf) throws Exception &#123;</div><div class="line">    SocketChannel ch = SocketUtils.accept(javaChannel());</div><div class="line">    try &#123;</div><div class="line">        if (ch != null) &#123;</div><div class="line">            buf.add(new NioSocketChannel(this, ch));</div><div class="line">            return 1;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>首先创建一个jdk的channel,然后将jdk的channel与当前类this,共同构造一个Netty的NioSocketChannel</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public NioSocketChannel(Channel parent, SocketChannel socket) &#123;</div><div class="line">    super(parent, socket);</div><div class="line">    config = new NioSocketChannelConfig(this, socket.socket());</div><div class="line">&#125;</div><div class="line"></div><div class="line">protected AbstractNioByteChannel(Channel parent, SelectableChannel ch) &#123;</div><div class="line">        super(parent, ch, SelectionKey.OP_READ);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在这里跟进到父类,发现Netty默认传递了一个OP_READ事件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">protected AbstractNioChannel(Channel parent, SelectableChannel ch, int readInterestOp) &#123;</div><div class="line">    super(parent);</div><div class="line">    this.ch = ch;</div><div class="line">    this.readInterestOp = readInterestOp;</div><div class="line">    try &#123;</div><div class="line">        ch.configureBlocking(false);</div><div class="line">    &#125;</div><div class="line">    ....</div></pre></td></tr></table></figure>
+<p>在这里,将read事件注册到了channel,并且设置为非阻塞模式,继续向上跟进父类,就会创建id,unsafe,pipeline组件。NioSocketChannelConfig主要作用就是设置setTcpNoDelay(true)。如果是false,则会将小的数据包尽量集合成大的数据包然后发送出去,而Netty默认是关闭的,如果运行在Android系统上,则默认开启。</p>
+<h2 id="Netty中Channel的分类"><a href="#Netty中Channel的分类" class="headerlink" title="Netty中Channel的分类"></a>Netty中Channel的分类</h2><h3 id="Channel层级关系"><a href="#Channel层级关系" class="headerlink" title="Channel层级关系"></a>Channel层级关系</h3><p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180704153067048025149.png" alt="20180704153067048025149.png"></p>
+<p>顶层接口channel主要定义了网络IO的读写,绑定,是一个最顶级的抽象。AbstractChannel是一个抽象的实现,并且定义了重要的成员变量。</p>
+<p>接着是AbstractNioChannel,他有两个子类channel,这两个子类差别主要是向AbstractNioChannel注册的io事件不同,可以看一下构造函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public NioServerSocketChannel(ServerSocketChannel channel) &#123;</div><div class="line">        super(null, channel, SelectionKey.OP_ACCEPT);</div><div class="line">        config = new NioServerSocketChannelConfig(this, javaChannel().socket());</div><div class="line">&#125;</div><div class="line"></div><div class="line">protected AbstractNioByteChannel(Channel parent, SelectableChannel ch) &#123;</div><div class="line">    super(parent, ch, SelectionKey.OP_READ);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到服务端channel感兴趣的是accept事件,而客户端channel感兴趣的是read事件。除此之外可以发现,服务端channel和客户端channel对应的unsafe不同,对于服务端NioMessageUnsafe处理的是连接的读取,而客户端NioByteUnsafe是字节读取。</p>
+<p>客户端和服务端都有相应的config进行配置</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fsxmlg099gj30zc0j6ach.jpg" alt=""></p>
+<h2 id="新连接NioEventLoop分配和selector注册"><a href="#新连接NioEventLoop分配和selector注册" class="headerlink" title="新连接NioEventLoop分配和selector注册"></a>新连接NioEventLoop分配和selector注册</h2><p>方法的入口为MultithreadEventLoopGroup</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public ChannelFuture register(Channel channel) &#123;</div><div class="line">    return next().register(channel);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里会next()返回一个NioEventLoop,然后chooser选择一个NioEventLoop,调用register方法,过程中利用了串行无锁化技术,调用底层jdk channel,注册一个accept事件</p>
+<h2 id="NioSocketChannel读事件注册"><a href="#NioSocketChannel读事件注册" class="headerlink" title="NioSocketChannel读事件注册"></a>NioSocketChannel读事件注册</h2><p>入口方法位于AbstractChannel的register0()</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">if (isActive()) &#123;</div><div class="line">    if (firstRegistration) &#123;</div><div class="line">        pipeline.fireChannelActive();</div><div class="line">    &#125; else if (config().isAutoRead()) &#123;</div><div class="line">        beginRead();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里因为新连接已经介入,所以isActive()返回true,并且firstRegistration也为true。调用  pipeline.fireChannelActive();后续会调用readIfIsAutoRead(),默认情况下是自动读的,AbstractNioChannel.beginRead()。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">protected void doBeginRead() throws Exception &#123;</div><div class="line">    // Channel.read() or ChannelHandlerContext.read() was called</div><div class="line">    final SelectionKey selectionKey = this.selectionKey;</div><div class="line">    if (!selectionKey.isValid()) &#123;</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    readPending = true;</div><div class="line"></div><div class="line">    final int interestOps = selectionKey.interestOps();</div><div class="line">    if ((interestOps &amp; readInterestOp) == 0) &#123;</div><div class="line">        selectionKey.interestOps(interestOps | readInterestOp);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里由于初始化设置interestOps为0,所以会再添加一个readInterestOp,也就可以监听OP_READ事件了。 </p>
 
       
       
@@ -392,13 +373,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></p>
+        <p><span>本文标题:</span><a href="/2018/07/03/Netty-新连接接入-3/">Netty 新连接接入-3</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2017年11月23日 - 08时07分</p>
-        <p><span>最后更新:</span>2017年12月18日 - 16时48分</p>
+        <p><span>发布时间:</span>2018年07月03日 - 09时31分</p>
+        <p><span>最后更新:</span>2018年07月04日 - 13时38分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/11/23/表面理解jvm-类加载/" title="jvm学习笔记-类加载">http://www.shuchang.sc.com/2017/11/23/表面理解jvm-类加载/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/11/23/表面理解jvm-类加载/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/07/03/Netty-新连接接入-3/" title="Netty 新连接接入-3">http://www.shuchang.sc.com/2018/07/03/Netty-新连接接入-3/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/07/03/Netty-新连接接入-3/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -411,18 +392,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/12/03/java并发从入门到崩溃-常用篇/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          JUC--常用篇(1)
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/11/22/表面理解jvm-内存/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">表面理解jvm-内存</div>
+    <a href="/2018/07/02/Netty-NioEventLoop-2/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Netty NioEventLoop-2</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -433,7 +405,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#宏观"><span class="toc-number">1.</span> <span class="toc-text">宏观</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么要类加载器"><span class="toc-number">2.</span> <span class="toc-text">为什么要类加载器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类的生命周期"><span class="toc-number">3.</span> <span class="toc-text">类的生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#加载"><span class="toc-number">3.1.</span> <span class="toc-text">加载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#连接"><span class="toc-number">3.2.</span> <span class="toc-text">连接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#初始化"><span class="toc-number">3.3.</span> <span class="toc-text">初始化</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类加载器"><span class="toc-number">4.</span> <span class="toc-text">类加载器</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#检测新连接"><span class="toc-number">1.</span> <span class="toc-text">检测新连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建NioSocketChannel"><span class="toc-number">2.</span> <span class="toc-text">创建NioSocketChannel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Netty中Channel的分类"><span class="toc-number">3.</span> <span class="toc-text">Netty中Channel的分类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Channel层级关系"><span class="toc-number">3.1.</span> <span class="toc-text">Channel层级关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新连接NioEventLoop分配和selector注册"><span class="toc-number">4.</span> <span class="toc-text">新连接NioEventLoop分配和selector注册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NioSocketChannel读事件注册"><span class="toc-number">5.</span> <span class="toc-text">NioSocketChannel读事件注册</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -499,13 +471,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/12/03/java并发从入门到崩溃-常用篇/" title="上一篇: JUC--常用篇(1)">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/11/22/表面理解jvm-内存/" title="下一篇: 表面理解jvm-内存">
+            <a href="/2018/07/02/Netty-NioEventLoop-2/" title="下一篇: Netty NioEventLoop-2">
                 <i class="fa fa-angle-right"></i>
             </a>
         
