@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 15.71px;">ElasticSearch</a> <a href="/tags/JPA/" style="font-size: 12.86px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 14.29px;">Kafka</a> <a href="/tags/RabbitMq/" style="font-size: 17.14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15.71px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.43px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/spring/" style="font-size: 12.86px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.57px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 15.71px;">ElasticSearch</a> <a href="/tags/JAVA/" style="font-size: 12.86px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.86px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 14.29px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 12.86px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 17.14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15.71px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.43px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/spring/" style="font-size: 12.86px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.57px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,236 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-springboot-Data-JPA之对象映射" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/31/springboot-Data-JPA之对象映射/" class="article-date">
+      <time datetime="2017-12-31T05:47:04.000Z" itemprop="datePublished">2017-12-31</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/31/springboot-Data-JPA之对象映射/">SpringBoot-Data JPA之对象映射(1)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>由于公司使用的是mybatis框架，所以自己学了学Hibernate。用的最多的应该就是SpringBoot-Data-Jpa，记录一下学习笔记。</p>
+<h3 id="基本属性"><a href="#基本属性" class="headerlink" title="基本属性"></a>基本属性</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">@Entity</div><div class="line">@Data</div><div class="line">@Table(name=&quot;sc_category&quot;)</div><div class="line">public class Category &#123;</div><div class="line">    @Id</div><div class="line">    @GeneratedValue</div><div class="line">    private int id;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>@Table 指定表的名称</p>
+<p>@Entity注解表示该对象可以映射成数据库的一张表</p>
+<p>@Id表示该字段为主键</p>
+<p>@GeneratedValue表示主键策略,它包含两个属性，strategy和generator。其中strategy默认为AUTO，generator默认为“”。generator用于自定义主键生成策略，需要额外添加一个@GenericGenerator注解。<br>strategy四个属性为：</p>
+<ul>
+<li>TABLE:根据特定表格生成主键</li>
+<li>SEQUENCE:按照序列生成主键，需要数据库支持</li>
+<li>IDENTITY:主键列自增长</li>
+<li>AUTO: 根据数据库自动选择策略。mysql会选择IDENTITY</li>
+</ul>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/SpringBoot/">SpringBoot</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JPA/">JPA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringBoot/">SpringBoot</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/12/31/springboot-Data-JPA之对象映射/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-redis分布式原理及操作" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/30/redis分布式原理及操作/" class="article-date">
+      <time datetime="2017-12-30T08:43:50.000Z" itemprop="datePublished">2017-12-30</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h3 id="传统分布式算法"><a href="#传统分布式算法" class="headerlink" title="传统分布式算法"></a>传统分布式算法</h3><h4 id="举个栗子"><a href="#举个栗子" class="headerlink" title="举个栗子"></a>举个栗子</h4><p>假设我们有20个数据需要缓存，并且有4个分布式redis节点。数据直接通过编号对4进行取余，得到他们Hash到的位置，并放置在对应的redis节点上。效果如图</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fmyrl9l2i8j30f70avt9h.jpg" alt=""></p>
+<p>但是随着我们业务的变化，Redis节点的数量可能会增加或者减少。假设我们增加一个redis节点</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/12/30/redis分布式原理及操作/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-RabbitMq入门-实现微博关注demo-2" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/" class="article-date">
+      <time datetime="2017-12-23T08:05:24.000Z" itemprop="datePublished">2017-12-23</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>在网上看了很多RabbitMq的demo，发现都是Exchange三种路由模式的demo，很少有真实案例的demo，在这里分享一个自己写的模拟微博关注的demo,方便理解和学习。</p>
+<h3 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h3><p>SpringBoot  RabbitMq</p>
+<h3 id="构思"><a href="#构思" class="headerlink" title="构思"></a>构思</h3><ol>
+<li>美女发布消息，关注她的人可以接收到消息</li>
+<li>关注和取关都记录到日志中</li>
+<li>美女和关注者都可以动态添加,添加一个美女就是添加一个Fanout模式的Exchange，一个关注者就是一个队列绑定到对应美女的Exchange</li>
+</ol>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmpi6l7tvbj30hm0bn75v.jpg" alt=""></p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-RabbitMq入门-基本概念" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -744,250 +974,6 @@
       
         <p class="article-more-link">
           <a  href="/2017/12/13/java并发从入门到崩溃-Lock/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-JAVA并发从入门到崩溃-AQS" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2017/12/09/JAVA并发从入门到崩溃-AQS/" class="article-date">
-      <time datetime="2017-12-09T00:45:12.000Z" itemprop="datePublished">2017-12-09</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JUC-AQS(3)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="什么是AQS"><a href="#什么是AQS" class="headerlink" title="什么是AQS"></a>什么是AQS</h3><p>AQS是AbstractQueuedSynchronizer的缩写，是用来实现一个锁的底层框架。<br><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1fma8k3ufacj30kf0e7n00.jpg" alt=""></p>
-<p>为什么要了解AQS(队列同步器)呢？因为我们在并发编程的时候很可能用到锁，而AQS与锁的实现密切相关。可是在图中我们并没有看到AQS与Lock产生直接关联，这是因为在每个锁内部都封装了一个抽象类Sync，而sync继承自AQS，如ReentranLock：<br><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fma97wfi6tj30y10810w3.jpg" alt=""></p>
-<p>AQS是JUC中Lock的实现关键，是实现锁或者自定义一个同步组件的基本框架，它使用了一个volatile int state作为同步状态，通过内置的FIFO队列(CLH)完成线程排队工作。AQS同事支持独占式获取同步状态，也支持共享式获取同步状态，以实现不同组件。Lock通过AQS框架，隐藏了具体的实现细节而与用户的交互使用接口，大大简化了锁的实现方式。它封装了线程、挂起唤醒的内部运作，我们只需要通过设置AQS的state值来控制他的线程挂起和唤醒的运作路径，就可以实现我们的同步器类了。</p>
-<p>AQS提供的方法可分为三类:</p>
-<ol>
-<li>独占式获取/释放状态</li>
-<li>共享式获取/释放状态</li>
-<li>查询同步队列情况</li>
-</ol>
-<p>通过以下代码我们就可以简单实现一个互斥锁。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">public class mutex &#123;</div><div class="line">    Sync sync = new Sync();</div><div class="line">    public void lock()&#123;</div><div class="line">        sync.tryAcquire(1);</div><div class="line">    &#125;</div><div class="line">    public void unlock()&#123;</div><div class="line">        sync.tryRelease(0);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    private static class Sync extends AbstractQueuedSynchronizer&#123;</div><div class="line">        @Override</div><div class="line">        protected boolean isHeldExclusively() &#123;</div><div class="line">            return getState() == 1;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        protected boolean tryAcquire(int arg) &#123;</div><div class="line">            if(compareAndSetState(0,1))&#123;</div><div class="line">                setExclusiveOwnerThread(Thread.currentThread());</div><div class="line">                return true;</div><div class="line">            &#125;</div><div class="line">            return false;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        protected boolean tryRelease(int arg) &#123;</div><div class="line">            if(getState()==0)&#123;</div><div class="line">                throw  new IllegalMonitorStateException(&quot;状态不符合预期&quot;);</div><div class="line">            &#125;</div><div class="line">            setExclusiveOwnerThread(null);</div><div class="line">            setState(0);</div><div class="line">            return true;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2017/12/09/JAVA并发从入门到崩溃-AQS/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-java并发从入门到崩溃-CAS" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2017/12/08/java并发从入门到崩溃-CAS/" class="article-date">
-      <time datetime="2017-12-08T07:50:42.000Z" itemprop="datePublished">2017-12-08</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/08/java并发从入门到崩溃-CAS/">JUC-CAS(2)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <h3 id="Compare-And-Set"><a href="#Compare-And-Set" class="headerlink" title="Compare And Set"></a>Compare And Set</h3><p>CAS是java并发中最底层的一种技术支持，对内存中的共享数据的读写保证其原子操作。过程如下：首先CPU将内存中的将要被修改的数据与预期的值进行比较，如果这两个值相等，CPU则会将内存中数值替换为新值，否则不做操作。最后，CPU会将旧值返回。CAS的工作方式更多的是与硬件层面的CPU进行交互，而不在语言层面，所以很多资料都是点到为止：一种底层的原子性操作。</p>
-<p>我们可以在AtomicBoolean.class中找到代码</p>
-<p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fm9fu944hej30m903zgm9.jpg" alt=""></p>
-<p>可以看到这里有<strong>CAS</strong>操作，再进入到unsafe.class中，可以发现CAS操作都是native型的，即调用了JNI的方法。</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1fm9fxr2hc7j30m0043dgm.jpg" alt=""></p>
-<p>所以当我们需要对一个数据进行原子操作的时候，java给我们提供了13个原子操作类:</p>
-<ul>
-<li>AtomicBoolean</li>
-<li>AtomicIngeger</li>
-<li>AtomicLong</li>
-<li>AtomicIntegerArray</li>
-<li>AtomicLongArray</li>
-<li>AtomicReferenceArray</li>
-<li>….</li>
-</ul>
-<h3 id="CAS存在的问题"><a href="#CAS存在的问题" class="headerlink" title="CAS存在的问题"></a>CAS存在的问题</h3><ol>
-<li>ABA问题</li>
-<li>循环开销大</li>
-<li>无法保证对多个共享变量的原子操作</li>
-</ol>
-<h2 id="为什么是volatile和cas作底层"><a href="#为什么是volatile和cas作底层" class="headerlink" title="为什么是volatile和cas作底层"></a>为什么是volatile和cas作底层</h2><p>由于java的CAS同时具有volatile读和volatile写的内存语义，因此java之间线程通信目前有以下几种形式。</p>
-<ol>
-<li>A线程写volatile变量，B线程读这个volatile变量</li>
-<li>A线程写volatile变量，B线程以cas更新volatile变量</li>
-<li>A线程cas更新一个volatile变量，B线程cas更新这个volatile变量</li>
-<li>A线程cas更新一个volatile变量，B线程读这个volatile变量</li>
-</ol>
-<p>JAVA的CAS会使用现代处理器上提供的高效机器级别的原子指令，这些指令以原子的形式对内存执行读写操作。同时volatile和CAS一起使用可以实现线程之间的通信，因此构成了JUC的基石。</p>
-
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-java并发从入门到崩溃-常用篇" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2017/12/03/java并发从入门到崩溃-常用篇/" class="article-date">
-      <time datetime="2017-12-03T03:11:17.000Z" itemprop="datePublished">2017-12-03</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/03/java并发从入门到崩溃-常用篇/">JUC--常用篇(1)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="关于并发的一些思考"><a href="#关于并发的一些思考" class="headerlink" title="关于并发的一些思考"></a>关于并发的一些思考</h3><p>最近看完了《java多线程编程核心技术》、《java并发编程艺术》两本书。第一本更偏向于线程基础技术，看完之后给人一种眼前明亮之感。啊，原来并发编程就是这些操作。当我看完第二本之后，就已经一脸茫然，忘记了第一本的内容 - -!。因为第二本的内容太丰富，涉及到并发的底层原理和框架。于是我又拿出来《java编程思想》找到了并发的一章来看，发现看完已经满脑浆糊了，所以还是要坚持写一下博文，理一下思路也好。</p>
-<p>多线程，任何一个程序员都知道，但是实际工作中，大部分程序员面对的都是业务的CRUD和BUG定位，貌似没有太多机会接触并发。大家都知道程序运行的时候，最关键的是内存和CPU，而CPU运算的时候，是要从内存取值，当然现在很多时候是在L1/L2等Cache中取值，然后放入寄存器，参与运算，得到结果，先放入寄存器，再放入内存。程序执行的指令也放在寄存器，它记录当前程序执行的地址。</p>
-<p>上面说到了，一个数值，进入CPU运算，经过了内存、cache、寄存器。看过jvm我们就知道，当多线程运算同一个值的时候，是每个线程拷贝了一份值的副本到自己的线程工作内存（这里还涉及到java的内存模型），当一个线程计算完毕（计算结果写入寄存器），还没有刷到主存，另一个线程从主存中取到的值还是旧值。所以一个很直观的问题就是如何保证每个线程拿到的数据是最新的，这就是同步机制。最常见的volatile和synchronized就是为了解决这个问题。</p>
-<p>最简单的解决方案就是：共享变量同一时刻只允许有一个线程操作。这就保证了线程要么拿不到值，要么拿到最新的值。于是有了synchronized告诉jvm：这个地方是临界区，只有一把锁。那道锁的那个家伙才能开门进去，否则只能在门口等着。java中的锁，可以是this，方法，对象，类。锁的范围可以是代码块，方法甚至类。jvm会在锁和方法区之间建立联系。jvm生成一个对象会产生很多额外的信息，起码要有对象的内存地址或一个间接的指针，所以要标识一个对象被哪个线程占有并不困难。</p>
-<p>上面的方法虽然可以解决问题，但是很简单粗暴，我们想要一种更灵活的方式。很多时候我们并不关心谁在操作对象，我们只关心这个值到底是多少。于是就有了volatile：保证可见性，不保证原子性。其实意思就是说被volatile修饰的这个对象是一个尊贵的java会员，你要找他必须到他的家（内存）去接它出来，你请它聊天吃饭之后还要把它送回家(内存)。所以这里略过了计算机的高速缓存，读写内存。所以可见性就是说这个值谁都可以看到。至于不保证原子性，就是说这个值谁都可以取来运算。至于说到volatile的效率嘛，肯定也是大打折扣的，因为操作内存很定要比缓存慢的多。就如同数据库，其实我们也是写入了缓存，后台线程刷到磁盘而已。其实从硬件到软件，设计的思想大都是相通的。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2017/12/03/java并发从入门到崩溃-常用篇/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
