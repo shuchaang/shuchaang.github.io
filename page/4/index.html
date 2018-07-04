@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 15.71px;">ElasticSearch</a> <a href="/tags/JAVA/" style="font-size: 11.43px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.86px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 14.29px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 11.43px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 17.14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15.71px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.43px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/spring/" style="font-size: 12.86px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.57px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 15.71px;">ElasticSearch</a> <a href="/tags/JAVA/" style="font-size: 12.86px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.86px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 14.29px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 12.86px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 17.14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15.71px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.43px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/spring/" style="font-size: 12.86px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.57px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,87 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-springboot-Data-JPA之对象映射" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/12/31/springboot-Data-JPA之对象映射/" class="article-date">
+      <time datetime="2017-12-31T05:47:04.000Z" itemprop="datePublished">2017-12-31</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/31/springboot-Data-JPA之对象映射/">SpringBoot-Data JPA之对象映射(1)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>由于公司使用的是mybatis框架，所以自己学了学Hibernate。用的最多的应该就是SpringBoot-Data-Jpa，记录一下学习笔记。</p>
+<h3 id="基本属性"><a href="#基本属性" class="headerlink" title="基本属性"></a>基本属性</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">@Entity</div><div class="line">@Data</div><div class="line">@Table(name=&quot;sc_category&quot;)</div><div class="line">public class Category &#123;</div><div class="line">    @Id</div><div class="line">    @GeneratedValue</div><div class="line">    private int id;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>@Table 指定表的名称</p>
+<p>@Entity注解表示该对象可以映射成数据库的一张表</p>
+<p>@Id表示该字段为主键</p>
+<p>@GeneratedValue表示主键策略,它包含两个属性，strategy和generator。其中strategy默认为AUTO，generator默认为“”。generator用于自定义主键生成策略，需要额外添加一个@GenericGenerator注解。<br>strategy四个属性为：</p>
+<ul>
+<li>TABLE:根据特定表格生成主键</li>
+<li>SEQUENCE:按照序列生成主键，需要数据库支持</li>
+<li>IDENTITY:主键列自增长</li>
+<li>AUTO: 根据数据库自动选择策略。mysql会选择IDENTITY</li>
+</ul>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/SpringBoot/">SpringBoot</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JPA/">JPA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringBoot/">SpringBoot</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/12/31/springboot-Data-JPA之对象映射/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-redis分布式原理及操作" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -893,86 +974,6 @@
       
         <p class="article-more-link">
           <a  href="/2017/12/13/java并发从入门到崩溃-Lock/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-JAVA并发从入门到崩溃-AQS" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2017/12/09/JAVA并发从入门到崩溃-AQS/" class="article-date">
-      <time datetime="2017-12-09T00:45:12.000Z" itemprop="datePublished">2017-12-09</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JUC-AQS(3)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="什么是AQS"><a href="#什么是AQS" class="headerlink" title="什么是AQS"></a>什么是AQS</h3><p>AQS是AbstractQueuedSynchronizer的缩写，是用来实现一个锁的底层框架。<br><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1fma8k3ufacj30kf0e7n00.jpg" alt=""></p>
-<p>为什么要了解AQS(队列同步器)呢？因为我们在并发编程的时候很可能用到锁，而AQS与锁的实现密切相关。可是在图中我们并没有看到AQS与Lock产生直接关联，这是因为在每个锁内部都封装了一个抽象类Sync，而sync继承自AQS，如ReentranLock：<br><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fma97wfi6tj30y10810w3.jpg" alt=""></p>
-<p>AQS是JUC中Lock的实现关键，是实现锁或者自定义一个同步组件的基本框架，它使用了一个volatile int state作为同步状态，通过内置的FIFO队列(CLH)完成线程排队工作。AQS同事支持独占式获取同步状态，也支持共享式获取同步状态，以实现不同组件。Lock通过AQS框架，隐藏了具体的实现细节而与用户的交互使用接口，大大简化了锁的实现方式。它封装了线程、挂起唤醒的内部运作，我们只需要通过设置AQS的state值来控制他的线程挂起和唤醒的运作路径，就可以实现我们的同步器类了。</p>
-<p>AQS提供的方法可分为三类:</p>
-<ol>
-<li>独占式获取/释放状态</li>
-<li>共享式获取/释放状态</li>
-<li>查询同步队列情况</li>
-</ol>
-<p>通过以下代码我们就可以简单实现一个互斥锁。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">public class mutex &#123;</div><div class="line">    Sync sync = new Sync();</div><div class="line">    public void lock()&#123;</div><div class="line">        sync.tryAcquire(1);</div><div class="line">    &#125;</div><div class="line">    public void unlock()&#123;</div><div class="line">        sync.tryRelease(0);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    private static class Sync extends AbstractQueuedSynchronizer&#123;</div><div class="line">        @Override</div><div class="line">        protected boolean isHeldExclusively() &#123;</div><div class="line">            return getState() == 1;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        protected boolean tryAcquire(int arg) &#123;</div><div class="line">            if(compareAndSetState(0,1))&#123;</div><div class="line">                setExclusiveOwnerThread(Thread.currentThread());</div><div class="line">                return true;</div><div class="line">            &#125;</div><div class="line">            return false;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        protected boolean tryRelease(int arg) &#123;</div><div class="line">            if(getState()==0)&#123;</div><div class="line">                throw  new IllegalMonitorStateException(&quot;状态不符合预期&quot;);</div><div class="line">            &#125;</div><div class="line">            setExclusiveOwnerThread(null);</div><div class="line">            setState(0);</div><div class="line">            return true;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2017/12/09/JAVA并发从入门到崩溃-AQS/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>

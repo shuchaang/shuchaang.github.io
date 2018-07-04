@@ -3,22 +3,22 @@
 <head>
   <meta charset="utf-8">
   
-  <title>JUC--常用篇(1) | Shuchang&#39;s Blog</title>
+  <title>Netty(3) 新连接接入 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="关于并发的一些思考最近看完了《java多线程编程核心技术》、《java并发编程艺术》两本书。第一本更偏向于线程基础技术，看完之后给人一种眼前明亮之感。啊，原来并发编程就是这些操作。当我看完第二本之后，就已经一脸茫然，忘记了第一本的内容 - -!。因为第二本的内容太丰富，涉及到并发的底层原理和框架。于是我又拿出来《java编程思想》找到了并发的一章来看，发现看完已经满脑浆糊了，所以还是要坚持写一下博">
-<meta name="keywords" content="java,并发">
+  <meta name="description" content="提出两个问题   Netty在哪里检测到新连接的接入  新连接怎样注册到NioEventLoop线程   我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤  检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件  创建Channel:基于JDK的nioChannel创建出Netty NioS">
+<meta name="keywords" content="Netty,JAVA">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JUC--常用篇(1)">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/12/03/java并发从入门到崩溃-常用篇/index.html">
+<meta property="og:title" content="Netty(3) 新连接接入">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/07/03/Netty-新连接接入-3/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="关于并发的一些思考最近看完了《java多线程编程核心技术》、《java并发编程艺术》两本书。第一本更偏向于线程基础技术，看完之后给人一种眼前明亮之感。啊，原来并发编程就是这些操作。当我看完第二本之后，就已经一脸茫然，忘记了第一本的内容 - -!。因为第二本的内容太丰富，涉及到并发的底层原理和框架。于是我又拿出来《java编程思想》找到了并发的一章来看，发现看完已经满脑浆糊了，所以还是要坚持写一下博">
-<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1flwmbc1dy9j30kw0onwhp.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fm3i98scrkj30gx0ch3zu.jpg">
-<meta property="og:updated_time" content="2018-01-01T08:04:16.000Z">
+<meta property="og:description" content="提出两个问题   Netty在哪里检测到新连接的接入  新连接怎样注册到NioEventLoop线程   我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤  检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件  创建Channel:基于JDK的nioChannel创建出Netty NioS">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180704153067048025149.png">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fsxmlg099gj30zc0j6ach.jpg">
+<meta property="og:updated_time" content="2018-07-04T10:35:59.195Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JUC--常用篇(1)">
-<meta name="twitter:description" content="关于并发的一些思考最近看完了《java多线程编程核心技术》、《java并发编程艺术》两本书。第一本更偏向于线程基础技术，看完之后给人一种眼前明亮之感。啊，原来并发编程就是这些操作。当我看完第二本之后，就已经一脸茫然，忘记了第一本的内容 - -!。因为第二本的内容太丰富，涉及到并发的底层原理和框架。于是我又拿出来《java编程思想》找到了并发的一章来看，发现看完已经满脑浆糊了，所以还是要坚持写一下博">
-<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1flwmbc1dy9j30kw0onwhp.jpg">
+<meta name="twitter:title" content="Netty(3) 新连接接入">
+<meta name="twitter:description" content="提出两个问题   Netty在哪里检测到新连接的接入  新连接怎样注册到NioEventLoop线程   我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤  检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件  创建Channel:基于JDK的nioChannel创建出Netty NioS">
+<meta name="twitter:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180704153067048025149.png">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -232,11 +232,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-java并发从入门到崩溃-常用篇" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Netty-新连接接入-3" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/12/03/java并发从入门到崩溃-常用篇/" class="article-date">
-      <time datetime="2017-12-03T03:11:17.000Z" itemprop="datePublished">2017-12-03</time>
+      <a href="/2018/07/03/Netty-新连接接入-3/" class="article-date">
+      <time datetime="2018-07-03T01:31:54.000Z" itemprop="datePublished">2018-07-03</time>
 </a>
     </div>
   
@@ -249,7 +249,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      JUC--常用篇(1)
+      Netty(3) 新连接接入
     </h1>
   
 
@@ -258,13 +258,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
+    <a class="article-category-link" href="/categories/Netty/">Netty</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -274,46 +274,56 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h3 id="关于并发的一些思考"><a href="#关于并发的一些思考" class="headerlink" title="关于并发的一些思考"></a>关于并发的一些思考</h3><p>最近看完了《java多线程编程核心技术》、《java并发编程艺术》两本书。第一本更偏向于线程基础技术，看完之后给人一种眼前明亮之感。啊，原来并发编程就是这些操作。当我看完第二本之后，就已经一脸茫然，忘记了第一本的内容 - -!。因为第二本的内容太丰富，涉及到并发的底层原理和框架。于是我又拿出来《java编程思想》找到了并发的一章来看，发现看完已经满脑浆糊了，所以还是要坚持写一下博文，理一下思路也好。</p>
-<p>多线程，任何一个程序员都知道，但是实际工作中，大部分程序员面对的都是业务的CRUD和BUG定位，貌似没有太多机会接触并发。大家都知道程序运行的时候，最关键的是内存和CPU，而CPU运算的时候，是要从内存取值，当然现在很多时候是在L1/L2等Cache中取值，然后放入寄存器，参与运算，得到结果，先放入寄存器，再放入内存。程序执行的指令也放在寄存器，它记录当前程序执行的地址。</p>
-<p>上面说到了，一个数值，进入CPU运算，经过了内存、cache、寄存器。看过jvm我们就知道，当多线程运算同一个值的时候，是每个线程拷贝了一份值的副本到自己的线程工作内存（这里还涉及到java的内存模型），当一个线程计算完毕（计算结果写入寄存器），还没有刷到主存，另一个线程从主存中取到的值还是旧值。所以一个很直观的问题就是如何保证每个线程拿到的数据是最新的，这就是同步机制。最常见的volatile和synchronized就是为了解决这个问题。</p>
-<p>最简单的解决方案就是：共享变量同一时刻只允许有一个线程操作。这就保证了线程要么拿不到值，要么拿到最新的值。于是有了synchronized告诉jvm：这个地方是临界区，只有一把锁。那道锁的那个家伙才能开门进去，否则只能在门口等着。java中的锁，可以是this，方法，对象，类。锁的范围可以是代码块，方法甚至类。jvm会在锁和方法区之间建立联系。jvm生成一个对象会产生很多额外的信息，起码要有对象的内存地址或一个间接的指针，所以要标识一个对象被哪个线程占有并不困难。</p>
-<p>上面的方法虽然可以解决问题，但是很简单粗暴，我们想要一种更灵活的方式。很多时候我们并不关心谁在操作对象，我们只关心这个值到底是多少。于是就有了volatile：保证可见性，不保证原子性。其实意思就是说被volatile修饰的这个对象是一个尊贵的java会员，你要找他必须到他的家（内存）去接它出来，你请它聊天吃饭之后还要把它送回家(内存)。所以这里略过了计算机的高速缓存，读写内存。所以可见性就是说这个值谁都可以看到。至于不保证原子性，就是说这个值谁都可以取来运算。至于说到volatile的效率嘛，肯定也是大打折扣的，因为操作内存很定要比缓存慢的多。就如同数据库，其实我们也是写入了缓存，后台线程刷到磁盘而已。其实从硬件到软件，设计的思想大都是相通的。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+        <blockquote>
+<p>提出两个问题</p>
+</blockquote>
 <ul>
-<li><a id="more"></a>
+<li><p>Netty在哪里检测到新连接的接入</p>
+</li>
+<li><p>新连接怎样注册到NioEventLoop线程</p>
+</li>
+</ul>
+<p>我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤</p>
+<ol>
+<li><p>检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件</p>
+</li>
+<li><p>创建Channel:基于JDK的nioChannel创建出Netty NioSocketChannel</p>
+</li>
+<li><p>Netty给客户端channel分配NioEventLoop,并将channel绑定</p>
+</li>
+<li><p>向selector注册读事件</p>
+</li>
+</ol>
+<p><excerpt in="" index="" |="" 首页摘要=""><br><a id="more"></a></excerpt></p>
 <the rest="" of="" contents="" |="" 余下全文="">
 
-</the></li>
-</ul>
-<h3 id="再说sychronized"><a href="#再说sychronized" class="headerlink" title="再说sychronized"></a>再说sychronized</h3><p>举个栗子，多人上厕所。多线程和锁，一个是线程，一个是对象。一个在私有的线程栈中，一个在共享堆中。如何标识某个对象被某个线程锁定？线程开启一片栈帧，在其中存储对象锁记录，堆中对象有对象头（元数据、Runtime State、gc分代等等），可以标识被哪个线程锁定，实际上锁线程就是利用了对象头和monitor来实现锁机制。</p>
-<p>所以在上厕所的例子中，人就是线程，厕所就是共享对象，锁就是对象头，monitor就是钥匙。</p>
-<p>sychronized锁的是一个对象，或者是一个类的实例，或者是类本身。sychronized内部原理是通过对象内部一个叫监视器的东西来实现的。本质又是依赖于操作系统的mutex::Lock(一种互斥锁)来实现的。而操作系统实现线程切换需要从用户态转向核心态，这个成本非常高。这也是<br>我们为什么说sychronized效率低的原因。其实我们常用的HashMap内部就有很多的sychronized方法，这也就是我们说HashMap效率低的问题（关于HashMap可以衍生出很多问题，包括一些算法和红黑树，以后会慢慢写），如下给出了HashMap的put方法。</p>
-<p><code>public synchronized V put(K key, V value) {}</code></p>
-<p>在JDK5之后的版本一直在对sychronized进行优化，都是为了减少这种重量级锁的使用。如JDK6中引入的自旋锁，适应性自旋锁，锁消除，锁粗化，偏向锁等技术减少锁的消耗。以上内容等我想明白再细说吧。</p>
-<p>既然对sychronized有这么多的怨言，当然就会出现可行的替代方案-Lock。简单来说就是把sychronized拆分成获得锁，释放锁的多个步骤。用更灵巧的方式进行同步，使用Lock会更灵活，粒度可以自由控制。当然也会带来更复杂的参数和学习成本。😢</p>
-<p>介绍一种反汇编的指令： javap   xxx.class<br><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1flwmbc1dy9j30kw0onwhp.jpg" alt=""></p>
-<p>通过javap可以更清晰的看到底层实现的细节,上图就展示了sychronized的底层代码。</p>
-<h3 id="再说volatile"><a href="#再说volatile" class="headerlink" title="再说volatile"></a>再说volatile</h3><p>如果对声明了volatile变量进行写操作时，JVM会向处理器发送一条<strong><em><em>Lock</em></em></strong>前缀的指令，将这个变量所在缓存行的数据写会到系统内存。 这一步确保了如果有其他线程对声明了volatile变量进行修改，则立即更新主内存中数据。</p>
-<p>但这时候其他处理器的缓存还是旧的，所以在多处理器环境下，为了保证各个处理器缓存一致，每个处理会通过嗅探在总线上传播的数据来检查 自己的缓存是否过期，当处理器发现自己缓存行对应的内存地址被修改了，就会将当前处理器的缓存行设置成无效状态，当处理器要对这个数据进行修改操作时，会强制重新从系统内存把数据读到处理器缓存里。 这一步确保了其他线程获得的声明了volatile变量都是从主内存中获取最新的。</p>
-<p>volatile关键字的另一种用途是保证long和double的原子性操作。其实是利用了某些cpu的高速缓存是64字节宽度，并且不支持填充缓存行的机制。这种应用场景应用相对较少且并不具有普适性，就不在过多介绍。</p>
-<h3 id="创建多线程的方式"><a href="#创建多线程的方式" class="headerlink" title="创建多线程的方式"></a>创建多线程的方式</h3><ol>
-<li>继承Thread类</li>
-<li>实现Runnable接口</li>
-<li>匿名内部类</li>
-<li>带返回值的线程(Callable/Future)</li>
-<li>定时器</li>
-<li>线程池</li>
-<li>Lambda表达式</li>
-</ol>
-<p>其中第七种是从java8才开始的，其它六种应该很常见，记录一下第七种。<br><code>new Thread(() -&gt; {
-            Sysout.out.println(&quot;I am a new Thread&quot;);
-        }).start();</code></p>
-<p>最近也在学习lambda表达式的写法，真的是一种让人学会了就一直想秀的语法。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>写了一些比较基础的东西，发现再深入一点可能就讲不清楚了。需要在花上半个月再好好看一遍，贴一张书中的图，看完整本书再看这个图就觉得清晰了很多。计划从下往上总结吧。</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fm3i98scrkj30gx0ch3zu.jpg" alt=""></p>
-<p>回头看了一下才发现，大多数内容是加锁。但其实有一点我们要清楚，使用多线程的目的是完成业务而不是为了和锁纠缠不清，加锁只是不得已而为之。</p>
 
+
+<h2 id="检测新连接"><a href="#检测新连接" class="headerlink" title="检测新连接"></a>检测新连接</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">processSelectedKey(key,channel) [入口]</div><div class="line">    NioMessageUnsafe.read()</div><div class="line">        doReadMessage()  [while 循环]</div><div class="line">            javaChannel().accept()</div></pre></td></tr></table></figure>
+<h2 id="创建NioSocketChannel"><a href="#创建NioSocketChannel" class="headerlink" title="创建NioSocketChannel"></a>创建NioSocketChannel</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">new NioSocketChannel(parent,ch)  [入口]</div><div class="line">    AbstractNioByteChannel(p,ch,opread)</div><div class="line">        configBlocking(false) &amp; interest_op [注册事件]</div><div class="line">        create id,unsafe,pipeline</div><div class="line">    new NioSocketChannelConfig()  [创建绑定配置]</div><div class="line">        setTcpNoDelay(true)       [禁止Nagle算法,小数据包尽量快发送]</div></pre></td></tr></table></figure>
+<p>跟进到NioServerSocketChannel.doReadMessages(buf):</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">protected int doReadMessages(List&lt;Object&gt; buf) throws Exception &#123;</div><div class="line">    SocketChannel ch = SocketUtils.accept(javaChannel());</div><div class="line">    try &#123;</div><div class="line">        if (ch != null) &#123;</div><div class="line">            buf.add(new NioSocketChannel(this, ch));</div><div class="line">            return 1;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>首先创建一个jdk的channel,然后将jdk的channel与当前类this,共同构造一个Netty的NioSocketChannel</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public NioSocketChannel(Channel parent, SocketChannel socket) &#123;</div><div class="line">    super(parent, socket);</div><div class="line">    config = new NioSocketChannelConfig(this, socket.socket());</div><div class="line">&#125;</div><div class="line"></div><div class="line">protected AbstractNioByteChannel(Channel parent, SelectableChannel ch) &#123;</div><div class="line">        super(parent, ch, SelectionKey.OP_READ);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在这里跟进到父类,发现Netty默认传递了一个OP_READ事件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">protected AbstractNioChannel(Channel parent, SelectableChannel ch, int readInterestOp) &#123;</div><div class="line">    super(parent);</div><div class="line">    this.ch = ch;</div><div class="line">    this.readInterestOp = readInterestOp;</div><div class="line">    try &#123;</div><div class="line">        ch.configureBlocking(false);</div><div class="line">    &#125;</div><div class="line">    ....</div></pre></td></tr></table></figure>
+<p>在这里,将read事件注册到了channel,并且设置为非阻塞模式,继续向上跟进父类,就会创建id,unsafe,pipeline组件。NioSocketChannelConfig主要作用就是设置setTcpNoDelay(true)。如果是false,则会将小的数据包尽量集合成大的数据包然后发送出去,而Netty默认是关闭的,如果运行在Android系统上,则默认开启。</p>
+<h2 id="Netty中Channel的分类"><a href="#Netty中Channel的分类" class="headerlink" title="Netty中Channel的分类"></a>Netty中Channel的分类</h2><h3 id="Channel层级关系"><a href="#Channel层级关系" class="headerlink" title="Channel层级关系"></a>Channel层级关系</h3><p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180704153067048025149.png" alt="20180704153067048025149.png"></p>
+<p>顶层接口channel主要定义了网络IO的读写,绑定,是一个最顶级的抽象。AbstractChannel是一个抽象的实现,并且定义了重要的成员变量。</p>
+<p>接着是AbstractNioChannel,他有两个子类channel,这两个子类差别主要是向AbstractNioChannel注册的io事件不同,可以看一下构造函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public NioServerSocketChannel(ServerSocketChannel channel) &#123;</div><div class="line">        super(null, channel, SelectionKey.OP_ACCEPT);</div><div class="line">        config = new NioServerSocketChannelConfig(this, javaChannel().socket());</div><div class="line">&#125;</div><div class="line"></div><div class="line">protected AbstractNioByteChannel(Channel parent, SelectableChannel ch) &#123;</div><div class="line">    super(parent, ch, SelectionKey.OP_READ);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到服务端channel感兴趣的是accept事件,而客户端channel感兴趣的是read事件。除此之外可以发现,服务端channel和客户端channel对应的unsafe不同,对于服务端NioMessageUnsafe处理的是连接的读取,而客户端NioByteUnsafe是字节读取。</p>
+<p>客户端和服务端都有相应的config进行配置</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fsxmlg099gj30zc0j6ach.jpg" alt=""></p>
+<h2 id="新连接NioEventLoop分配和selector注册"><a href="#新连接NioEventLoop分配和selector注册" class="headerlink" title="新连接NioEventLoop分配和selector注册"></a>新连接NioEventLoop分配和selector注册</h2><p>方法的入口为MultithreadEventLoopGroup</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public ChannelFuture register(Channel channel) &#123;</div><div class="line">    return next().register(channel);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里会next()返回一个NioEventLoop,然后chooser选择一个NioEventLoop,调用register方法,过程中利用了串行无锁化技术,调用底层jdk channel,注册一个accept事件</p>
+<h2 id="NioSocketChannel读事件注册"><a href="#NioSocketChannel读事件注册" class="headerlink" title="NioSocketChannel读事件注册"></a>NioSocketChannel读事件注册</h2><p>入口方法位于AbstractChannel的register0()</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">if (isActive()) &#123;</div><div class="line">    if (firstRegistration) &#123;</div><div class="line">        pipeline.fireChannelActive();</div><div class="line">    &#125; else if (config().isAutoRead()) &#123;</div><div class="line">        beginRead();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里因为新连接已经介入,所以isActive()返回true,并且firstRegistration也为true。调用  pipeline.fireChannelActive();后续会调用readIfIsAutoRead(),默认情况下是自动读的,AbstractNioChannel.beginRead()。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">protected void doBeginRead() throws Exception &#123;</div><div class="line">    // Channel.read() or ChannelHandlerContext.read() was called</div><div class="line">    final SelectionKey selectionKey = this.selectionKey;</div><div class="line">    if (!selectionKey.isValid()) &#123;</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    readPending = true;</div><div class="line"></div><div class="line">    final int interestOps = selectionKey.interestOps();</div><div class="line">    if ((interestOps &amp; readInterestOp) == 0) &#123;</div><div class="line">        selectionKey.interestOps(interestOps | readInterestOp);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里由于初始化设置interestOps为0,所以会再添加一个readInterestOp,也就可以监听OP_READ事件了。 </p>
+</the>
       
       
         <div class="page-reward">
@@ -368,13 +378,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/12/03/java并发从入门到崩溃-常用篇/">JUC--常用篇(1)</a></p>
+        <p><span>本文标题:</span><a href="/2018/07/03/Netty-新连接接入-3/">Netty(3) 新连接接入</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2017年12月03日 - 11时11分</p>
-        <p><span>最后更新:</span>2018年01月01日 - 16时04分</p>
+        <p><span>发布时间:</span>2018年07月03日 - 09时31分</p>
+        <p><span>最后更新:</span>2018年07月04日 - 18时35分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/12/03/java并发从入门到崩溃-常用篇/" title="JUC--常用篇(1)">http://www.shuchang.sc.com/2017/12/03/java并发从入门到崩溃-常用篇/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/12/03/java并发从入门到崩溃-常用篇/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/07/03/Netty-新连接接入-3/" title="Netty(3) 新连接接入">http://www.shuchang.sc.com/2018/07/03/Netty-新连接接入-3/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/07/03/Netty-新连接接入-3/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -387,18 +397,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/12/08/java并发从入门到崩溃-CAS/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          JUC-CAS(2)
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/11/23/表面理解jvm-类加载/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">jvm学习笔记-类加载</div>
+    <a href="/2018/07/02/Netty-NioEventLoop-2/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Netty(2) NioEventLoop</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -409,7 +410,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#关于并发的一些思考"><span class="toc-number">1.</span> <span class="toc-text">关于并发的一些思考</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#再说sychronized"><span class="toc-number">2.</span> <span class="toc-text">再说sychronized</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#再说volatile"><span class="toc-number">3.</span> <span class="toc-text">再说volatile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建多线程的方式"><span class="toc-number">4.</span> <span class="toc-text">创建多线程的方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#检测新连接"><span class="toc-number">1.</span> <span class="toc-text">检测新连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建NioSocketChannel"><span class="toc-number">2.</span> <span class="toc-text">创建NioSocketChannel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Netty中Channel的分类"><span class="toc-number">3.</span> <span class="toc-text">Netty中Channel的分类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Channel层级关系"><span class="toc-number">3.1.</span> <span class="toc-text">Channel层级关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新连接NioEventLoop分配和selector注册"><span class="toc-number">4.</span> <span class="toc-text">新连接NioEventLoop分配和selector注册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NioSocketChannel读事件注册"><span class="toc-number">5.</span> <span class="toc-text">NioSocketChannel读事件注册</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -475,13 +476,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/12/08/java并发从入门到崩溃-CAS/" title="上一篇: JUC-CAS(2)">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/11/23/表面理解jvm-类加载/" title="下一篇: jvm学习笔记-类加载">
+            <a href="/2018/07/02/Netty-NioEventLoop-2/" title="下一篇: Netty(2) NioEventLoop">
                 <i class="fa fa-angle-right"></i>
             </a>
         
