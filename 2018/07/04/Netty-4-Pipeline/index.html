@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>系统学习ElasticSearch-简单聚合分析(4) | Shuchang&#39;s Blog</title>
+  <title>Netty(4) Pipeline | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="环境方面继续使用上一篇的数据环境,根据模拟不同的需求,体验不同的聚合分析语法  简单聚合: 计算每个tag下的商品数量  12345678910GET /ecomic/product/_search&amp;#123;  &amp;quot;aggs&amp;quot;: &amp;#123;    &amp;quot;group_by_tag&amp;quot;: &amp;#123;      &amp;quot;terms&amp;quot;: &amp;#123;">
-<meta name="keywords" content="ElasticSearch">
+  <meta name="description" content="三个问题   Netty如何判断ChannelHandler类型(in  out) ChannelHandler添加应按照什么样的顺序 用户手动触发事件传播,不同的触发方式有什么区别  Pipeline的初始化在之前的代码分析中,不管服务端还是客户端,最后都会进入AbstractChannel,创建PipeLine 123456protected AbstractChannel(Channel">
+<meta name="keywords" content="Netty,JAVA">
 <meta property="og:type" content="article">
-<meta property="og:title" content="系统学习ElasticSearch-简单聚合分析(4)">
-<meta property="og:url" content="http://www.shuchang.sc.com/2018/03/31/系统学习ElasticSearch-聚合分析-4/index.html">
+<meta property="og:title" content="Netty(4) Pipeline">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/07/04/Netty-4-Pipeline/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="环境方面继续使用上一篇的数据环境,根据模拟不同的需求,体验不同的聚合分析语法  简单聚合: 计算每个tag下的商品数量  12345678910GET /ecomic/product/_search&amp;#123;  &amp;quot;aggs&amp;quot;: &amp;#123;    &amp;quot;group_by_tag&amp;quot;: &amp;#123;      &amp;quot;terms&amp;quot;: &amp;#123;">
-<meta property="og:updated_time" content="2018-06-24T03:25:43.515Z">
+<meta property="og:description" content="三个问题   Netty如何判断ChannelHandler类型(in  out) ChannelHandler添加应按照什么样的顺序 用户手动触发事件传播,不同的触发方式有什么区别  Pipeline的初始化在之前的代码分析中,不管服务端还是客户端,最后都会进入AbstractChannel,创建PipeLine 123456protected AbstractChannel(Channel">
+<meta property="og:updated_time" content="2018-07-04T12:35:42.050Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="系统学习ElasticSearch-简单聚合分析(4)">
-<meta name="twitter:description" content="环境方面继续使用上一篇的数据环境,根据模拟不同的需求,体验不同的聚合分析语法  简单聚合: 计算每个tag下的商品数量  12345678910GET /ecomic/product/_search&amp;#123;  &amp;quot;aggs&amp;quot;: &amp;#123;    &amp;quot;group_by_tag&amp;quot;: &amp;#123;      &amp;quot;terms&amp;quot;: &amp;#123;">
+<meta name="twitter:title" content="Netty(4) Pipeline">
+<meta name="twitter:description" content="三个问题   Netty如何判断ChannelHandler类型(in  out) ChannelHandler添加应按照什么样的顺序 用户手动触发事件传播,不同的触发方式有什么区别  Pipeline的初始化在之前的代码分析中,不管服务端还是客户端,最后都会进入AbstractChannel,创建PipeLine 123456protected AbstractChannel(Channel">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -229,11 +229,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-系统学习ElasticSearch-聚合分析-4" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Netty-4-Pipeline" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/" class="article-date">
-      <time datetime="2018-03-31T06:25:43.000Z" itemprop="datePublished">2018-03-31</time>
+      <a href="/2018/07/04/Netty-4-Pipeline/" class="article-date">
+      <time datetime="2018-07-04T10:50:43.000Z" itemprop="datePublished">2018-07-04</time>
 </a>
     </div>
   
@@ -246,7 +246,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      系统学习ElasticSearch-简单聚合分析(4)
+      Netty(4) Pipeline
     </h1>
   
 
@@ -255,13 +255,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
+    <a class="article-category-link" href="/categories/Netty/">Netty</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -271,50 +271,31 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>环境方面继续使用上一篇的数据环境,根据模拟不同的需求,体验不同的聚合分析语法</p>
-<ol>
-<li>简单聚合: 计算每个tag下的商品数量</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">GET /ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_tag&quot;: &#123;</div><div class="line">      &quot;terms&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;tags&quot;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li><a id="more"></a>
-<the rest="" of="" contents="" |="" 余下全文="">
-
-
-</the></li>
-</ul>
-<p>语法如上,但是返回结果可能会出现如下错误:</p>
-<blockquote>
-<p>default. Set fielddata=true on [tags] in order to load fielddata in memory by uninverting the inverted index. Note that this can however use significant memory. Alternatively use a keyword field instead.”</p>
+        <blockquote>
+<p>三个问题</p>
 </blockquote>
-<p>这段错误提示的意思就是需要对索引进行一些额外的配置,fielddata=true,因为我们在使用聚合功能的时候,ES会对索引进行正排,并且把正排数据放入内存中来进行聚合分析操作,具体的fielddata会在以后解释。</p>
-<p>这里我们需要一些操作</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">PUT /ecomic/_mapping/product</div><div class="line">&#123;</div><div class="line">  &quot;properties&quot;:&#123;</div><div class="line">    &quot;tags&quot;:&#123;</div><div class="line">      &quot;type&quot;:&quot;text&quot;,</div><div class="line">      &quot;fielddata&quot;:true</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这样再次使用聚合查询就可以了,并且在返回结果中多了这样一个字段</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">&quot;aggregations&quot;: &#123;</div><div class="line">  &quot;group_by_tags&quot;: &#123;</div><div class="line">    &quot;doc_count_error_upper_bound&quot;: 0,</div><div class="line">    &quot;sum_other_doc_count&quot;: 0,</div><div class="line">    &quot;buckets&quot;: [</div><div class="line">      &#123;</div><div class="line">        &quot;key&quot;: &quot;fangzhu&quot;,</div><div class="line">        &quot;doc_count&quot;: 4</div><div class="line">      &#125;,</div><div class="line">      &#123;</div><div class="line">        &quot;key&quot;: &quot;meibai&quot;,</div><div class="line">        &quot;doc_count&quot;: 4</div><div class="line">      &#125;,</div><div class="line">      &#123;</div><div class="line">        &quot;key&quot;: &quot;sb&quot;,</div><div class="line">        &quot;doc_count&quot;: 3</div><div class="line">      &#125;</div><div class="line">    ]</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
-<p>其中bucket就是对聚合结果进行分组,每个tag就是一个bucket。这样就是一个简单的数据聚合,可以发现,聚合数据还返回了原有的全部数据,如果不想返回这些数据,只需要添加size:0就可以了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">GET ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;size&quot;: 0, </div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_tags&quot;: &#123;</div><div class="line">      &quot;terms&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;tags&quot;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ol>
-<li>聚合+搜索: 对名称中包含gaolujie的商品,计算每个tag的商品数量</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">GET ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;size&quot;: 0, </div><div class="line">  &quot;query&quot;: &#123;</div><div class="line">    &quot;match&quot;: &#123;</div><div class="line">      &quot;name&quot;: &quot;gaolujie&quot;</div><div class="line">    &#125;</div><div class="line">  &#125;, </div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_tags&quot;: &#123;</div><div class="line">      &quot;terms&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;tags&quot;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>很简单,aggs+query就可以做到先搜索再分析</p>
-<ol>
-<li>嵌套聚合:计算每个tag下商品的平均价格</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">GET ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;size&quot;: 0, </div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_tags&quot;: &#123;</div><div class="line">      &quot;terms&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;tags&quot;</div><div class="line">      &#125;,</div><div class="line">      &quot;aggs&quot;: &#123;</div><div class="line">        &quot;avg_price&quot;: &#123;</div><div class="line">          &quot;avg&quot;: &#123;</div><div class="line">            &quot;field&quot;: &quot;price&quot;</div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>可以看到我们先用aggs对tag进行了分组,分组之后再嵌套了一层aggs对价格求avg也就是平均值</p>
-<ol>
-<li>加入排序: 我们使用3的数据,并对聚合价格进行降序排序</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">GET ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;size&quot;: 0, </div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_tags&quot;: &#123;</div><div class="line">      &quot;terms&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;tags&quot;,</div><div class="line">        &quot;order&quot;: &#123;</div><div class="line">          &quot;avg_price&quot;: &quot;desc&quot;</div><div class="line">        &#125;</div><div class="line">      &#125;,</div><div class="line">      &quot;aggs&quot;: &#123;</div><div class="line">        &quot;avg_price&quot;: &#123;</div><div class="line">          &quot;avg&quot;: &#123;</div><div class="line">            &quot;field&quot;: &quot;price&quot;</div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ol>
-<li>按照指定的价格范围区间进行分组.然后在每组内再按照tag进行分组,最后再计算每组的平均价格(这个需求看起来很复杂,单其实就是三层的aggs嵌套)</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">GET ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;size&quot;: 0, </div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_price&quot;: &#123;</div><div class="line">      &quot;range&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;price&quot;,</div><div class="line">        &quot;ranges&quot;: [</div><div class="line">          &#123;</div><div class="line">            &quot;from&quot;: 0,</div><div class="line">            &quot;to&quot;: 30</div><div class="line">          &#125;,&#123;</div><div class="line">            &quot;from&quot;: 30,</div><div class="line">            &quot;to&quot;: 50</div><div class="line">          &#125;,&#123;</div><div class="line">            &quot;from&quot;: 50,</div><div class="line">            &quot;to&quot;: 100</div><div class="line">          &#125;</div><div class="line">        ]</div><div class="line">      &#125;, </div><div class="line">      &quot;aggs&quot;: &#123;</div><div class="line">        &quot;group_by_tags&quot;: &#123;</div><div class="line">          &quot;terms&quot;: &#123;</div><div class="line">            &quot;field&quot;: &quot;tags&quot;</div><div class="line">          &#125;,</div><div class="line">          &quot;aggs&quot;: &#123;</div><div class="line">            &quot;avg_price&quot;: &#123;</div><div class="line">              &quot;avg&quot;: &#123;</div><div class="line">                &quot;field&quot;: &quot;price&quot;</div><div class="line">              &#125;</div><div class="line">            &#125;</div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>如上,相比于需求4,增加了一个range字段,用于进行分组</p>
-
+<ul>
+<li>Netty如何判断ChannelHandler类型(in  out)</li>
+<li>ChannelHandler添加应按照什么样的顺序</li>
+<li>用户手动触发事件传播,不同的触发方式有什么区别</li>
+</ul>
+<h2 id="Pipeline的初始化"><a href="#Pipeline的初始化" class="headerlink" title="Pipeline的初始化"></a>Pipeline的初始化</h2><p>在之前的代码分析中,不管服务端还是客户端,最后都会进入AbstractChannel,创建PipeLine</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">protected AbstractChannel(Channel parent, ChannelId id) &#123;</div><div class="line">    this.parent = parent;</div><div class="line">    this.id = id;</div><div class="line">    unsafe = newUnsafe();</div><div class="line">    pipeline = newChannelPipeline();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="添加或删除ChannelHandler"><a href="#添加或删除ChannelHandler" class="headerlink" title="添加或删除ChannelHandler"></a>添加或删除ChannelHandler</h2><p>在我们自己编写的代码中,大多会写到ch.pipeline().addLast(xxx),此方法就是添加PipeLine的入口。最终跟进到ChannelPipeline.addLast()</p>
+<p>默认情况下回创建头尾两个节点,并连接为双向列表。这两个节点都是ChannelHandlerContext数据结构,所以pipeline中的节点都是ChannelHandlerContext。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">protected DefaultChannelPipeline(Channel channel) &#123;</div><div class="line">    this.channel = ObjectUtil.checkNotNull(channel, &quot;channel&quot;);</div><div class="line">    succeededFuture = new SucceededChannelFuture(channel, null);</div><div class="line">    voidPromise =  new VoidChannelPromise(channel, true);</div><div class="line">    tail = new TailContext(this);</div><div class="line">    head = new HeadContext(this);</div><div class="line">    head.next = tail;</div><div class="line">    tail.prev = head;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>接着看一下头结点</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">HeadContext(DefaultChannelPipeline pipeline) &#123;</div><div class="line">    super(pipeline, null, HEAD_NAME, false, true);</div><div class="line">    unsafe = pipeline.channel().unsafe();</div><div class="line">    setAddComplete();</div><div class="line">&#125;</div><div class="line">TailContext(DefaultChannelPipeline pipeline) &#123;</div><div class="line">    super(pipeline, null, TAIL_NAME, true, false);</div><div class="line">    setAddComplete();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里第三个和第四个参数分别是inbound和outbound。与我们直觉相反,head节点是outbound而tail是inbound。另外一个不同在于,tail节点内部的操作一般都为空,而head节点都会原模原样向后传播。并且读写操作会调用unsafe进行。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">判断是否重复添加</div><div class="line">创建节点并添加到链表</div><div class="line">回调添加完成事件</div></pre></td></tr></table></figure>
+<p>在addLast的具体过程中,可以看到节点实际上是添加到了尾节点的前一个节点<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">private void addLast0(AbstractChannelHandlerContext newCtx) &#123;</div><div class="line">    AbstractChannelHandlerContext prev = tail.prev;</div><div class="line">    newCtx.prev = prev;</div><div class="line">    newCtx.next = tail;</div><div class="line">    prev.next = newCtx;</div><div class="line">    tail.prev = newCtx;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>添加handler是一个非常常见的场景,但是删除一个handler却很少见，删除handler主要用在权限校验的场景上。</p>
+<p>我们可以自己实现一个AuthHandler</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class AuthHandler extends SimpleChannelInboundHandler&lt;ByteBuf&gt; &#123;</div><div class="line">    @Override</div><div class="line">    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception &#123;</div><div class="line">        if(isPass(msg))&#123;</div><div class="line">            ctx.pipeline().remove(this);</div><div class="line">        &#125;else &#123;</div><div class="line">            ctx.close();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    private boolean isPass(ByteBuf pwd)&#123;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在这里如果通过权限校验就删除这个handler,没有通过就关闭连接,以此实现一个高效的权限校验。</p>
+<p>remove的操作也是一个标准的链表删除方式,删除掉之后会进行用户回调,完成删除。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">private static void remove0(AbstractChannelHandlerContext ctx) &#123;</div><div class="line">    AbstractChannelHandlerContext prev = ctx.prev;</div><div class="line">    AbstractChannelHandlerContext next = ctx.next;</div><div class="line">    prev.next = next;</div><div class="line">    next.prev = prev;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="事件或异常如何传播"><a href="#事件或异常如何传播" class="headerlink" title="事件或异常如何传播"></a>事件或异常如何传播</h2>
       
       
         <div class="page-reward">
@@ -369,13 +350,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/">系统学习ElasticSearch-简单聚合分析(4)</a></p>
+        <p><span>本文标题:</span><a href="/2018/07/04/Netty-4-Pipeline/">Netty(4) Pipeline</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2018年03月31日 - 14时25分</p>
-        <p><span>最后更新:</span>2018年06月24日 - 11时25分</p>
+        <p><span>发布时间:</span>2018年07月04日 - 18时50分</p>
+        <p><span>最后更新:</span>2018年07月04日 - 20时35分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/" title="系统学习ElasticSearch-简单聚合分析(4)">http://www.shuchang.sc.com/2018/03/31/系统学习ElasticSearch-聚合分析-4/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/03/31/系统学习ElasticSearch-聚合分析-4/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/07/04/Netty-4-Pipeline/" title="Netty(4) Pipeline">http://www.shuchang.sc.com/2018/07/04/Netty-4-Pipeline/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/07/04/Netty-4-Pipeline/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -388,18 +369,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2018/06/24/Kafka消息可靠性保证/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          Kafka消息可靠性保证
-        
-      </div>
-    </a>
   
-  
-    <a href="/2018/03/30/系统学习ElasticSearch-多种搜索方式-3/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">系统学习ElasticSearch-多种搜索方式(3)</div>
+    <a href="/2018/07/03/Netty-新连接接入-3/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Netty(3) 新连接接入</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -410,7 +382,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Pipeline的初始化"><span class="toc-number">1.</span> <span class="toc-text">Pipeline的初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加或删除ChannelHandler"><span class="toc-number">2.</span> <span class="toc-text">添加或删除ChannelHandler</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#事件或异常如何传播"><span class="toc-number">3.</span> <span class="toc-text">事件或异常如何传播</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -476,13 +448,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2018/06/24/Kafka消息可靠性保证/" title="上一篇: Kafka消息可靠性保证">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2018/03/30/系统学习ElasticSearch-多种搜索方式-3/" title="下一篇: 系统学习ElasticSearch-多种搜索方式(3)">
+            <a href="/2018/07/03/Netty-新连接接入-3/" title="下一篇: Netty(3) 新连接接入">
                 <i class="fa fa-angle-right"></i>
             </a>
         
