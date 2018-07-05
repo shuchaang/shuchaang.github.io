@@ -311,6 +311,18 @@
 <p>可见异常并没有像之前的inbound和outbound与添加顺序相同或相反,而是只与handler的添加顺序有关,并且从当前节点向后传播。</p>
 <p>默认情况下如果不做处理,异常会一直传播,那么异常处理的最佳实践就是在最后添加一个异常处理器,对异常进行处理,否则错误最后会抛出,影响程序运行。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public class ExceptionHandler extends ChannelInboundHandlerAdapter &#123;</div><div class="line">    @Override</div><div class="line">    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception &#123;</div><div class="line">        //业务处理</div><div class="line">        if(cause instanceof RuntimeException)&#123;</div><div class="line">            //deal with exception</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="开头的问题"><a href="#开头的问题" class="headerlink" title="开头的问题"></a>开头的问题</h2><ul>
+<li>Netty如何判断ChannelHandler类型(in  out)</li>
+</ul>
+<p>用户自定义的handler会选择继承自Inbound或者OutBound,Netty会用instance判断</p>
+<ul>
+<li>ChannelHandler添加应按照什么样的顺序</li>
+</ul>
+<p>InbundHandler事件的传播与添加顺序正相关,OutbundHandler事件的传播与添加顺序逆相关</p>
+<ul>
+<li>用户手动触发事件传播,不同的触发方式有什么区别</li>
+</ul>
+<p>通过channel触发事件时,从head或者tail节点开始传播,如果从当前节点触发,那么事件只会从当前节点开始触发。</p>
 
       
       

@@ -14,7 +14,7 @@
 <meta property="og:description" content="三个问题   Netty如何判断ChannelHandler类型(in  out) ChannelHandler添加应按照什么样的顺序 用户手动触发事件传播,不同的触发方式有什么区别  Pipeline的初始化在之前的代码分析中,不管服务端还是客户端,最后都会进入AbstractChannel,创建PipeLine 123456protected AbstractChannel(Channel">
 <meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180705153077643452289.png">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tKfTcgy1fszdgzc385j31dc0eodia.jpg">
-<meta property="og:updated_time" content="2018-07-05T15:03:58.242Z">
+<meta property="og:updated_time" content="2018-07-05T15:15:44.089Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Netty(4) Pipeline">
 <meta name="twitter:description" content="三个问题   Netty如何判断ChannelHandler类型(in  out) ChannelHandler添加应按照什么样的顺序 用户手动触发事件传播,不同的触发方式有什么区别  Pipeline的初始化在之前的代码分析中,不管服务端还是客户端,最后都会进入AbstractChannel,创建PipeLine 123456protected AbstractChannel(Channel">
@@ -326,6 +326,18 @@
 <p>可见异常并没有像之前的inbound和outbound与添加顺序相同或相反,而是只与handler的添加顺序有关,并且从当前节点向后传播。</p>
 <p>默认情况下如果不做处理,异常会一直传播,那么异常处理的最佳实践就是在最后添加一个异常处理器,对异常进行处理,否则错误最后会抛出,影响程序运行。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public class ExceptionHandler extends ChannelInboundHandlerAdapter &#123;</div><div class="line">    @Override</div><div class="line">    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception &#123;</div><div class="line">        //业务处理</div><div class="line">        if(cause instanceof RuntimeException)&#123;</div><div class="line">            //deal with exception</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="开头的问题"><a href="#开头的问题" class="headerlink" title="开头的问题"></a>开头的问题</h2><ul>
+<li>Netty如何判断ChannelHandler类型(in  out)</li>
+</ul>
+<p>用户自定义的handler会选择继承自Inbound或者OutBound,Netty会用instance判断</p>
+<ul>
+<li>ChannelHandler添加应按照什么样的顺序</li>
+</ul>
+<p>InbundHandler事件的传播与添加顺序正相关,OutbundHandler事件的传播与添加顺序逆相关</p>
+<ul>
+<li>用户手动触发事件传播,不同的触发方式有什么区别</li>
+</ul>
+<p>通过channel触发事件时,从head或者tail节点开始传播,如果从当前节点触发,那么事件只会从当前节点开始触发。</p>
 
       
       
@@ -384,7 +396,7 @@
         <p><span>本文标题:</span><a href="/2018/07/04/Netty-4-Pipeline/">Netty(4) Pipeline</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
         <p><span>发布时间:</span>2018年07月04日 - 18时50分</p>
-        <p><span>最后更新:</span>2018年07月05日 - 23时03分</p>
+        <p><span>最后更新:</span>2018年07月05日 - 23时15分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/07/04/Netty-4-Pipeline/" title="Netty(4) Pipeline">http://www.shuchang.sc.com/2018/07/04/Netty-4-Pipeline/</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/07/04/Netty-4-Pipeline/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -413,7 +425,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Pipeline的初始化"><span class="toc-number">1.</span> <span class="toc-text">Pipeline的初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加或删除ChannelHandler"><span class="toc-number">2.</span> <span class="toc-text">添加或删除ChannelHandler</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InBound事件传播"><span class="toc-number">3.</span> <span class="toc-text">InBound事件传播</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#outBound事件传播"><span class="toc-number">4.</span> <span class="toc-text">outBound事件传播</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#异常传播"><span class="toc-number">5.</span> <span class="toc-text">异常传播</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Pipeline的初始化"><span class="toc-number">1.</span> <span class="toc-text">Pipeline的初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加或删除ChannelHandler"><span class="toc-number">2.</span> <span class="toc-text">添加或删除ChannelHandler</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InBound事件传播"><span class="toc-number">3.</span> <span class="toc-text">InBound事件传播</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#outBound事件传播"><span class="toc-number">4.</span> <span class="toc-text">outBound事件传播</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#异常传播"><span class="toc-number">5.</span> <span class="toc-text">异常传播</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开头的问题"><span class="toc-number">6.</span> <span class="toc-text">开头的问题</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
