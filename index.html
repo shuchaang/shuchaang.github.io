@@ -348,12 +348,10 @@
               <blockquote>
 <p>提出两个问题</p>
 </blockquote>
-<ul>
-<li><p>Netty在哪里检测到新连接的接入</p>
-</li>
-<li><p>新连接怎样注册到NioEventLoop线程</p>
-</li>
-</ul>
+<ol>
+<li>Netty在哪里检测到新连接的接入</li>
+<li>新连接怎样注册到NioEventLoop线程</li>
+</ol>
 <p>我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤</p>
 <ol>
 <li><p>检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件</p>
