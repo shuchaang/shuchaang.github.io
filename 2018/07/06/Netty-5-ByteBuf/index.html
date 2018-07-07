@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Netty(5) ByteBuf | Shuchang&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="三个问题   内存的类别有哪些 如何减少多线程内存分配的竞争 不同大小的内存是如何进行分配的  内存与内存管理器的抽象12345678* &amp;lt;pre&amp;gt;*      +-------------------+------------------+------------------+*      | discardable bytes |  readable bytes  |  writ">
+<meta name="keywords" content="Netty,JAVA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty(5) ByteBuf">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/07/06/Netty-5-ByteBuf/index.html">
+<meta property="og:site_name" content="Shuchang&#39;s Blog">
+<meta property="og:description" content="三个问题   内存的类别有哪些 如何减少多线程内存分配的竞争 不同大小的内存是如何进行分配的  内存与内存管理器的抽象12345678* &amp;lt;pre&amp;gt;*      +-------------------+------------------+------------------+*      | discardable bytes |  readable bytes  |  writ">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180706153084075739585.png">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1ft0c83ojmdj318o0b8mz5.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1ft0cfcdn0xj31be0o2q6j.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1ft0da3sdg2j31b60noaep.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1ft1eqe9s69j30ti0omac4.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1ft1evz7mk0j31cq0r0q90.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1ft1f66pr7uj31e00omgou.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1ft1fmwjhqlj31bw0pwn17.jpg">
+<meta property="og:updated_time" content="2018-07-07T09:54:55.114Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Netty(5) ByteBuf">
+<meta name="twitter:description" content="三个问题   内存的类别有哪些 如何减少多线程内存分配的竞争 不同大小的内存是如何进行分配的  内存与内存管理器的抽象12345678* &amp;lt;pre&amp;gt;*      +-------------------+------------------+------------------+*      | discardable bytes |  readable bytes  |  writ">
+<meta name="twitter:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180706153084075739585.png">
+  
+    <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Shuchang</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">剑来!</p>
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                            <li><a href="/archives">所有文章</a></li>
+                        
+                            <li><a href="/about">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                            
+                                <a class="fl github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                            
+                                <a class="fl zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                            
+                                <a class="fl weibo" target="_blank" href="#" title="weibo">weibo</a>
+                            
+                                <a class="fl google" target="_blank" href="#" title="google">google</a>
+                            
+                                <a class="fl twitter" target="_blank" href="#" title="twitter">twitter</a>
+                            
+                                <a class="fl linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/ElasticSearch/" style="font-size: 15.71px;">ElasticSearch</a> <a href="/tags/JAVA/" style="font-size: 15.71px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.86px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 14.29px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 15.71px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 17.14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15.71px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.43px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/spring/" style="font-size: 12.86px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.57px;">并发</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="https://gitee.com/swiftsc/">gitee</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">因为不满足于现状，面对未知，我们努力探索，其实越贴近，越震撼</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Shuchang</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Shuchang</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">剑来!</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                    <li><a href="/archives">所有文章</a></li>
+                
+                    <li><a href="/about">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                    
+                        <a class="github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                    
+                        <a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                    
+                        <a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+                    
+                        <a class="google" target="_blank" href="#" title="google">google</a>
+                    
+                        <a class="twitter" target="_blank" href="#" title="twitter">twitter</a>
+                    
+                        <a class="linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-Netty-5-ByteBuf" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/07/06/Netty-5-ByteBuf/" class="article-date">
+      <time datetime="2018-07-06T00:56:35.000Z" itemprop="datePublished">2018-07-06</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Netty(5) ByteBuf
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Netty/">Netty</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>三个问题</p>
+</blockquote>
+<ol>
+<li>内存的类别有哪些</li>
+<li>如何减少多线程内存分配的竞争</li>
+<li>不同大小的内存是如何进行分配的</li>
+</ol>
+<h2 id="内存与内存管理器的抽象"><a href="#内存与内存管理器的抽象" class="headerlink" title="内存与内存管理器的抽象"></a>内存与内存管理器的抽象</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">* &lt;pre&gt;</div><div class="line">*      +-------------------+------------------+------------------+</div><div class="line">*      | discardable bytes |  readable bytes  |  writable bytes  |</div><div class="line">*      |                   |     (CONTENT)    |                  |</div><div class="line">*      +-------------------+------------------+------------------+</div><div class="line">*      |                   |                  |                  |</div><div class="line">*      0      &lt;=      readerIndex   &lt;=   writerIndex    &lt;=    capacity</div><div class="line">* &lt;/pre&gt;</div></pre></td></tr></table></figure>
+<p>byteBuf有三个非常重要的指针,readerIndex/writerIndex/capacity。0到readerIndex是已经读完,可以丢弃的数据,readerIndex和writerIndex之间是可读区域,writerIndex到capacity是可写区域。</p>
+<h2 id="不同大小和不同类型的内存分配策略"><a href="#不同大小和不同类型的内存分配策略" class="headerlink" title="不同大小和不同类型的内存分配策略"></a>不同大小和不同类型的内存分配策略</h2><p>Netty中对ByteBuf进行分配的基类是ByteBufAllocator,提供了一些内存分配的抽象方法。在注释中可以看到关于直接内存和堆内存的不同分配。</p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180706153084075739585.png" alt="20180706153084075739585.png"></p>
+<p>可以看到ByteBufAllocator是一个最顶层的抽象,AbstractByteBufAllocator实现了接口的大部分功能,然后最终暴露出两个方法(new DirectByteBuf和new HeapByteBuf)。这两个方法就交给子类pool和unpool,创建堆内和堆外内存的实现。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br><a id="more"></a></excerpt></p>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+
+<h3 id="UnpooledByteBufAllocator"><a href="#UnpooledByteBufAllocator" class="headerlink" title="UnpooledByteBufAllocator"></a>UnpooledByteBufAllocator</h3><blockquote>
+<p>堆内分配</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">protected ByteBuf newHeapBuffer(int initialCapacity, int maxCapacity) &#123;</div><div class="line">    return PlatformDependent.hasUnsafe() ? new UnpooledUnsafeHeapByteBuf(this, initialCapacity, maxCapacity)</div><div class="line">            : new UnpooledHeapByteBuf(this, initialCapacity, maxCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先看堆内存的分配,判断JDK是否有unsafe对象,这是由JDK平台决定的。如果有则new一个unpool/unsafe/heap三维度的bytebuf,否则创建一个unpool/safe/heap的bytebuff。这两个类的初始化都是调用了相同的函数,那么这个safe是如何体现的。</p>
+<p>当使用UnpooledUnsafeHeapByteBuf时,调用getByte方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">static byte getByte(byte[] data, int index) &#123;</div><div class="line">    return UNSAFE.getByte(data, BYTE_ARRAY_BASE_OFFSET + index);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>UnpooledHeapByteBuf的getByte方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">static byte getByte(byte[] memory, int index) &#123;</div><div class="line">    return memory[index];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到两者的区别在于获取字节时unsafe调用的是jdk底层的api,通过指针获取数据。而safe则是通过数组以及下表获取数据。理论上来说,unsafe的方式会更快。</p>
+<blockquote>
+<p>堆外分配</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">protected ByteBuf newDirectBuffer(int initialCapacity, int maxCapacity) &#123;</div><div class="line">    ByteBuf buf = PlatformDependent.hasUnsafe() ?</div><div class="line">            UnsafeByteBufUtil.newUnsafeDirectByteBuf(this, initialCapacity, maxCapacity) :</div><div class="line">            new UnpooledDirectByteBuf(this, initialCapacity, maxCapacity);</div><div class="line"></div><div class="line">    return disableLeakDetector ? buf : toLeakAwareBuffer(buf);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>同样是根据JDK的api来区分safe or  unsafe。</p>
+<p>首先来看UnpooledDirectByteBuf,源码中传入了一个参数</p>
+<p>setByteBuffer(ByteBuffer.allocateDirect(initialCapacity));</p>
+<p>这里就是调用了JDK底层的ByteBuffer并分配堆外内存。下面看UnpooledUnsafeDirectByteBuf,跟进到底层后发现有这样的一段代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">final void setByteBuffer(ByteBuffer buffer, boolean tryFree) &#123;</div><div class="line">    ...</div><div class="line">    memoryAddress = PlatformDependent.directBufferAddress(buffer);</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里通过unsafe,计算出byteBuf在内存中的地址然后保存。这样做的目的就是调用getByte()时可以直接使用这个地址加上一个偏移量,获取数据。而通过safe的方式getByte,就是传递一个index参数,从字节数组获取数据。</p>
+<p>总结来说safe和unsafe的区别在于一个直接操作内存地址,一个操作数组。</p>
+<h3 id="PooledByteBufAllocator"><a href="#PooledByteBufAllocator" class="headerlink" title="PooledByteBufAllocator"></a>PooledByteBufAllocator</h3><p>进入PooledByteBufAllocator.newHeapBuffer和newDirectBuffer,一个很明显的特征就是出现了cache,两个方法很相似,所以就拿 newDirectBuffer做一个简单的分析</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">protected ByteBuf newDirectBuffer(int initialCapacity, int maxCapacity) &#123;</div><div class="line">    PoolThreadCache cache = threadCache.get();</div><div class="line">    PoolArena&lt;ByteBuffer&gt; directArena = cache.directArena;</div><div class="line"></div><div class="line">    ByteBuf buf;</div><div class="line">    if (directArena != null) &#123;</div><div class="line">        buf = directArena.allocate(cache, initialCapacity, maxCapacity);</div><div class="line">    &#125; else &#123;</div><div class="line">        if (PlatformDependent.hasUnsafe()) &#123;</div><div class="line">            buf = UnsafeByteBufUtil.newUnsafeDirectByteBuf(this, initialCapacity, maxCapacity);</div><div class="line">        &#125; else &#123;</div><div class="line">            buf = new UnpooledDirectByteBuf(this, initialCapacity, maxCapacity);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    return toLeakAwareBuffer(buf);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>大概梳理一下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">拿到线程局部缓存 PoolThreadCache</div><div class="line">在线程局部的Area上分配内存</div></pre></td></tr></table></figure>
+<p>在初始化PoolThreadCache,可以看到内部初始化了两个PoolArena,一个用于分配堆内存,一个用于分配堆外内存,并保存为成员变量。<br>heapArena和directArena都是在PooledByteBufAllocator初始化的时候进行的初始化,两个区域都是Arena类型的数组,默认情况下回初始化cpu核数<em>2的大小。这里其实是因为NioEventLoop初始化的时候默认是cpu核数</em>2,这样做就可以默认情况下每个线程有一个Arena数组,不会产生竞争。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">protected synchronized PoolThreadCache initialValue() &#123;</div><div class="line">    final PoolArena&lt;byte[]&gt; heapArena = leastUsedArena(heapArenas);</div><div class="line">    final PoolArena&lt;ByteBuffer&gt; directArena = leastUsedArena(directArenas);</div><div class="line"></div><div class="line">    return new PoolThreadCache(</div><div class="line">            heapArena, directArena, tinyCacheSize, smallCacheSize, normalCacheSize,</div><div class="line">            DEFAULT_MAX_CACHED_BUFFER_CAPACITY, DEFAULT_CACHE_TRIM_INTERVAL);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>除此之外还可以看到 tinyCacheSize, smallCacheSize, normalCacheSize这三个参数。这三个参数可以分别去初始化对应规格的缓存。</p>
+<h4 id="directArena分配direct内存流程"><a href="#directArena分配direct内存流程" class="headerlink" title="directArena分配direct内存流程"></a>directArena分配direct内存流程</h4><ul>
+<li>从对象池拿到PooledByteBuf进行复用</li>
+</ul>
+<p>入口方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">buf = directArena.allocate(cache, initialCapacity, maxCapacity);</div></pre></td></tr></table></figure>
+<p>最终定位到PoolArena.allocate方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">        protected PooledByteBuf&lt;ByteBuffer&gt; newByteBuf(int maxCapacity) &#123;</div><div class="line">            if (HAS_UNSAFE) &#123;</div><div class="line">                return PooledUnsafeDirectByteBuf.newInstance(maxCapacity);</div><div class="line">            &#125; else &#123;</div><div class="line">                return PooledDirectByteBuf.newInstance(maxCapacity);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line"></div><div class="line">static PooledUnsafeDirectByteBuf newInstance(int maxCapacity) &#123;</div><div class="line">        PooledUnsafeDirectByteBuf buf = RECYCLER.get();</div><div class="line">        buf.reuse(maxCapacity);</div><div class="line">        return buf;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>首先会newByteBuf,由于默认情况下HAS_UNSAFE为True,然后通过RECYCLER获取,从名字可以看出RECYCLER是一个带有回收性质的对象池。如果有则拿出一个,否则创建。然后调用reuse方法,将buf的状态初始化。至此拿到一个干净的Bytebuf。</p>
+<p>之后会进入一个非常长的allocate方法,也就是主要的内存分配逻辑,首先会尝试从在缓存buf中分配,如果分配失败,则直接到内存上去分配,并且对于不同大小的内存,分配逻辑是不一样的。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1ft0c83ojmdj318o0b8mz5.jpg" alt=""></p>
+<p>可以看到大于16M,就到内存堆上去分配,这是因为系统内存申请是以chunk为单位,后续所有的内存分配都是在chunk里面做操作。比如现在我需要一个1MB的空间,那么我首先到操作系统申请1个chunk也就是16MB,然后取1m分配。8K则是操作系统的一个page,也就是把chunk切分成2048个page。0~8K的空间也有个名字,叫做subpage</p>
+<h4 id="命中缓存的逻辑"><a href="#命中缓存的逻辑" class="headerlink" title="命中缓存的逻辑"></a>命中缓存的逻辑</h4><p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1ft0cfcdn0xj31be0o2q6j.jpg" alt=""></p>
+<p>与缓存命中逻辑相关的数据结构就是MemeoryRegionCache</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">MemoryRegionCache(int size, SizeClass sizeClass) &#123;</div><div class="line">    this.size = MathUtil.safeFindNextPositivePowerOfTwo(size);</div><div class="line">    queue = PlatformDependent.newFixedMpscQueue(this.size);</div><div class="line">    this.sizeClass = sizeClass;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1ft0da3sdg2j31b60noaep.jpg" alt=""></p>
+<p>关于MemoryRegionCache结构其实相当复杂,对于sizeClass{tiny,small,normal}又进行了细分。比如对于tiny一个512B的空间,每8个Byte又分了一个小空间,每个小空间组成一个queue,这样将tiny类型就凑成了一个chunk,当需要分配一个空间时,去拿一个最接近的空间即可。small和normal也是同理。</p>
+<p>以tiny为例可以看源码:tinyCacheSize默认是512B,第二个值默认为512/16=32</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tinySubPageHeapCaches = createSubPageCaches(tinyCacheSize, PoolArena.numTinySubpagePools, SizeClass.Tiny);</div></pre></td></tr></table></figure>
+<p>这里首先创建了一个MemoryRegionCache[32]的数组,然后对于每个数组在进入循环,创建subpage</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">private static &lt;T&gt; MemoryRegionCache&lt;T&gt;[] createSubPageCaches(</div><div class="line">        int cacheSize, int numCaches, SizeClass sizeClass) &#123;</div><div class="line">    if (cacheSize &gt; 0) &#123;</div><div class="line">        MemoryRegionCache&lt;T&gt;[] cache = new MemoryRegionCache[numCaches];</div><div class="line">        for (int i = 0; i &lt; cache.length; i++) &#123;</div><div class="line">            cache[i] = new SubPageMemoryRegionCache&lt;T&gt;(cacheSize, sizeClass);</div><div class="line">        &#125;</div><div class="line">        return cache;</div><div class="line">    &#125; else &#123;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>下面进入allocate代码的逻辑,首先会进行代码规格化。具体做法就是若申请分配的长度属于tiny,则以16为倍数进行自增。small和normal则是2的幂次方。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">final int normCapacity = normalizeCapacity(reqCapacity);</div></pre></td></tr></table></figure>
+<p>接着就会找到对应size的MemoryRegionCache,如果大小是16B则除以16=1,到第一个queue中取,32则到第二个queue,以此类推。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">static int tinyIdx(int normCapacity) &#123;</div><div class="line">    return normCapacity &gt;&gt;&gt; 4;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>接着就会从queue从弹出一个entry给ByteBuf进行初始化,然后将弹出的entry扔到对象池进行复用。如果这里对象不进行复用,后面有个能被gc掉,这也是netty在最大化复用对象,减少对象的创建和销毁。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public final boolean allocate(PooledByteBuf&lt;T&gt; buf, int reqCapacity) &#123;</div><div class="line">            Entry&lt;T&gt; entry = queue.poll();</div><div class="line">            if (entry == null) &#123;</div><div class="line">                return false;</div><div class="line">            &#125;</div><div class="line">            initBuf(entry.chunk, entry.handle, buf, reqCapacity);</div><div class="line">            entry.recycle();</div><div class="line"></div><div class="line">            // allocations is not thread-safe which is fine as this is only called from the same thread all time.</div><div class="line">            ++ allocations;</div><div class="line">            return true;</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
+<h4 id="arena、chunk、page、subpage"><a href="#arena、chunk、page、subpage" class="headerlink" title="arena、chunk、page、subpage"></a>arena、chunk、page、subpage</h4><p>这是Netty内存分配过程中非常重要的几个概念。</p>
+<ul>
+<li>arena</li>
+</ul>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1ft1eqe9s69j30ti0omac4.jpg" alt=""></p>
+<p>在每个线程去分配对应的内存的时候,首先会通过threadLocal的方式,获取到PoolThreadCache。通过PoolThreadCache.allocate方法去分配内存,这个PoolThreadCache分为两部分:一部分是不同规格大小的cache(MemoryRegionCache),另一部分就是arena(PoolArena),区别在于缓存是直接缓存了一块内存，Arena是直接开辟了一块内存。</p>
+<ul>
+<li>chunk</li>
+</ul>
+<p>arena的数据结构如图所示</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1ft1evz7mk0j31cq0r0q90.jpg" alt=""></p>
+<p>内部是多个chunklist,每个chunklist以双向链表的方式进行连接。chunklist的节点是chunk,也就是向操作系统申请的最小内存空间–16M。这里的链表结构是因为Netty会实时进行每个chunk的使用情况,按照内存使用率分别组成chunklist,方便以后进行分配能够快速找到一个合适的内存块。这里初始化的时候可以看到,第一个参数就是list的名字,第二个参数是最小使用率,第三个参数是最大使用率 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">private final PoolChunkList&lt;T&gt; q050;</div><div class="line">private final PoolChunkList&lt;T&gt; q025;</div><div class="line">private final PoolChunkList&lt;T&gt; q000;</div><div class="line">private final PoolChunkList&lt;T&gt; qInit;</div><div class="line">private final PoolChunkList&lt;T&gt; q075;</div><div class="line">private final PoolChunkList&lt;T&gt; q100;</div><div class="line"></div><div class="line">q100 = new PoolChunkList&lt;T&gt;(null, 100, Integer.MAX_VALUE, chunkSize);</div><div class="line">q075 = new PoolChunkList&lt;T&gt;(q100, 75, 100, chunkSize);</div><div class="line">q050 = new PoolChunkList&lt;T&gt;(q075, 50, 100, chunkSize);</div><div class="line">q025 = new PoolChunkList&lt;T&gt;(q050, 25, 75, chunkSize);</div><div class="line">q000 = new PoolChunkList&lt;T&gt;(q025, 1, 50, chunkSize);</div><div class="line">qInit = new PoolChunkList&lt;T&gt;(q000, Integer.MIN_VALUE, 25, chunkSize);</div></pre></td></tr></table></figure>
+<ul>
+<li>page</li>
+</ul>
+<p>由于内存申请时很少有需要16M内存的时候,那么把16M进行切分,分为一个一个8K的页,则能更好的利用空间。Netty认为8K还是太大,于是继续细分了page,分为4个2K的subpage</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1ft1f66pr7uj31e00omgou.jpg" alt=""></p>
+<p>这里就可以知道Netty的内存分配策略,如果申请的空间大于8K,则按照page进行分配,如果申请的空间小于8K,则找到一个page,切分为多个subpage,使用subpage进行分配。</p>
+<h4 id="page级别的内存分配-allocateNormal"><a href="#page级别的内存分配-allocateNormal" class="headerlink" title="page级别的内存分配 allocateNormal"></a>page级别的内存分配 allocateNormal</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">private synchronized void allocateNormal(PooledByteBuf&lt;T&gt; buf, int reqCapacity, int normCapacity) &#123;</div><div class="line">    if (q050.allocate(buf, reqCapacity, normCapacity) || q025.allocate(buf, reqCapacity, normCapacity) ||</div><div class="line">        q000.allocate(buf, reqCapacity, normCapacity) || qInit.allocate(buf, reqCapacity, normCapacity) ||</div><div class="line">        q075.allocate(buf, reqCapacity, normCapacity)) &#123;</div><div class="line">        ++allocationsNormal;</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">    // Add a new chunk.</div><div class="line">    PoolChunk&lt;T&gt; c = newChunk(pageSize, maxOrder, pageShifts, chunkSize);</div><div class="line">    long handle = c.allocate(normCapacity);</div><div class="line">    ++allocationsNormal;</div><div class="line">    assert handle &gt; 0;</div><div class="line">    c.initBuf(buf, handle, reqCapacity);</div><div class="line">    qInit.add(c);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这部分代码大致有两层。首先尝试在现有的chunk上进行分配,也就是if代码块的内容,首次进入的话都没有初始化。所以进入下面新建chunk的逻辑。新建chunk之后进行分配内存,返回一个handle指向chunk中的一块连续内存区域。最后初始化ByteBuf</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1ft1fmwjhqlj31bw0pwn17.jpg" alt=""></p>
+<p>这里Netty快速定位一个page使用了一种完全二叉树的结构,可以将查找一个page的时间复杂度稳定在logn。</p>
+<h4 id="subpage级别的内存分配-allocateTiny"><a href="#subpage级别的内存分配-allocateTiny" class="headerlink" title="subpage级别的内存分配 allocateTiny"></a>subpage级别的内存分配 allocateTiny</h4><ul>
+<li>定位一个page对象</li>
+<li>创建一个subpage</li>
+<li>初始化bytebuf</li>
+</ul>
+<p>这里subpage的大小不一定是2K,这与需要分配的空间大小有关。例如在初始化时,若申请1K的空间,则会将page的8K分为8份1K的空间。</p>
+<h2 id="内存的释放"><a href="#内存的释放" class="headerlink" title="内存的释放"></a>内存的释放</h2><p>通过调用bytebuf.realease()方法可以将内存释放</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">protected final void deallocate() &#123;</div><div class="line">    if (handle &gt;= 0) &#123;</div><div class="line">        final long handle = this.handle;</div><div class="line">        this.handle = -1;</div><div class="line">        memory = null;</div><div class="line">        chunk.arena.free(chunk, handle, maxLength, cache);</div><div class="line">        recycle();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里首先将这块内存的handle标记为-1,表示无法索引到这块区域,将memeory置为null。接着free()和recycle()做了以下几件事</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">连续的内存区段加到缓存</div><div class="line">标记内存区段为未使用</div><div class="line">ByteBuf加入对象池</div></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>ByteBuf的分类可以按照三个维度来分,堆内堆外、safe和unsafe、pool和unpool</p>
+<p>direct和heap的区别在于,堆内是基于字节数组进行分配,堆外是基于JDK的API进行分配。Unsafe是基于JDK的unsafe对象对物理内存地址进行读写,非unsafe是通过jdk的api进行读写。unpool每次直接申请物理内存,而pool则是预先分配好内存,需要使用的时候根据算法取出一块连续空间。</p>
+</the>
+      
+      
+        <div class="page-reward">
+          <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang">赏</a></p>
+          <div class="hide_box"></div>
+          <div class="shang_box">
+            <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+            <div class="shang_tit">
+              <p>纯属好玩</p>
+            </div>
+            <div class="shang_payimg">
+              <img src="/img/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+            </div>
+              <div class="pay_explain">扫码打赏，你说多少就多少</div>
+            <div class="shang_payselect">
+              
+                <div class="pay_item checked" data-id="alipay">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/alipay.png" alt="支付宝" /></span>
+                </div>
+              
+              
+                <div class="pay_item" data-id="wechat">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/weixin.png" alt="微信" /></span>
+                </div>
+              
+            </div>
+            <div class="shang_info">
+              <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script type="text/javascript">
+          $(".pay_item").click(function(){
+            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+            var dataid=$(this).attr('data-id');
+            $(".shang_payimg img").attr("src","/img/"+dataid+"img.jpg");
+            $("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+          });
+          function dashangToggle(){
+            
+            $(".hide_box").fadeToggle();
+            $(".shang_box").fadeToggle();
+          }
+        </script>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/07/06/Netty-5-ByteBuf/">Netty(5) ByteBuf</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
+        <p><span>发布时间:</span>2018年07月06日 - 08时56分</p>
+        <p><span>最后更新:</span>2018年07月07日 - 17时54分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/07/06/Netty-5-ByteBuf/" title="Netty(5) ByteBuf">http://www.shuchang.sc.com/2018/07/06/Netty-5-ByteBuf/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/07/06/Netty-5-ByteBuf/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2018/07/04/Netty-4-Pipeline/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Netty(4) Pipeline</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#内存与内存管理器的抽象"><span class="toc-number">1.</span> <span class="toc-text">内存与内存管理器的抽象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不同大小和不同类型的内存分配策略"><span class="toc-number">2.</span> <span class="toc-text">不同大小和不同类型的内存分配策略</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#UnpooledByteBufAllocator"><span class="toc-number">2.1.</span> <span class="toc-text">UnpooledByteBufAllocator</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PooledByteBufAllocator"><span class="toc-number">2.2.</span> <span class="toc-text">PooledByteBufAllocator</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#directArena分配direct内存流程"><span class="toc-number">2.2.1.</span> <span class="toc-text">directArena分配direct内存流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#命中缓存的逻辑"><span class="toc-number">2.2.2.</span> <span class="toc-text">命中缓存的逻辑</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#arena、chunk、page、subpage"><span class="toc-number">2.2.3.</span> <span class="toc-text">arena、chunk、page、subpage</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#page级别的内存分配-allocateNormal"><span class="toc-number">2.2.4.</span> <span class="toc-text">page级别的内存分配 allocateNormal</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#subpage级别的内存分配-allocateTiny"><span class="toc-number">2.2.5.</span> <span class="toc-text">subpage级别的内存分配 allocateTiny</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内存的释放"><span class="toc-number">3.</span> <span class="toc-text">内存的释放</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'shuchaang',
+      repo: 'shuchaang.github.io',
+      oauth: {
+        client_id: 'c5aa96bb5e5656512174',
+        client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2018/07/04/Netty-4-Pipeline/" title="下一篇: Netty(4) Pipeline">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/07/06/Netty-5-ByteBuf/">Netty(5) ByteBuf</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/04/Netty-4-Pipeline/">Netty(4) Pipeline</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/03/Netty-新连接接入-3/">Netty(3) 新连接接入</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/02/Netty-NioEventLoop-2/">Netty(2) NioEventLoop</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/02/Netty服务端启动-1/">Netty源码(1)-服务端启动</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/24/Kafka-核心概念/">Kafka架构与核心概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/24/Kafka-Streaming-分支/">Kafka Streaming 分支</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/24/Kafka-Streaming-入门/">Kafka Streaming 入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/24/Kafka消息可靠性保证/">Kafka消息可靠性保证</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/">系统学习ElasticSearch-简单聚合分析(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/30/系统学习ElasticSearch-多种搜索方式-3/">系统学习ElasticSearch-多种搜索方式(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/29/系统学习ElasticSearch-CRUD-2/">系统学习ElasticSearch-CRUD(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/27/系统学习ElasticSearch-概念-1/">系统学习ElasticSearch-概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/20/死磕netty-1/">死磕netty(1)-简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/02/JUC-跳表-12/">JUC-自己动手写跳表(13)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/27/ElasticSearch优化总结/">ElasticSearch优化总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/16/JUC-CompletableFuture使用-12/">JUC-CompletableFuture使用(12)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/13/JUC-阻塞队列-11/">JUC-阻塞队列(11)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/11/JUC-Executor框架-10/">JUC-Executor框架(10)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/02/JUC-等等我-一起走-9/">JUC-等等我,一起走(9)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/01/RabbitMq入门-MessageConverter-6/">RabbitMq入门-MessageConverter(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/31/RabbitMq入门-消息发送与接收-5/">RabbitMq入门-消息发送与接收(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/30/JAVA继承机制与多态/">JAVA继承机制与多态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/30/JUC-StampedLock-8/">JUC-StampedLock(8)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/">RabbitMq入门-AmqpTemplate(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-连接和资源管理-3/">RabbitMq入门-连接和资源管理(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/22/JUC-Unsafe/">JUC-Unsafe(7)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/16/SpringBoot-Security认证流程/">SpringBoot-Security认证流程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/15/SpringBoot-异步REST服务/">SpringBoot-异步REST服务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/08/web容器对比/">web容器对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/">SpringBoot-Data-Jpa之高级话题(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/">SpringBoot-Data JPA之Repository(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/springboot-Data-JPA之对象映射/">SpringBoot-Data JPA之对象映射(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/22/RabbitMq入门-基本概念/">RabbitMq入门-基本概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/">spring4.3.x源码阅读笔记-AOP(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">JUC-ConcurrentHashMap(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-JMM/">JUC-JMM(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">JUC-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JUC-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">JUC-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">JUC--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2018 Shuchang
+            </div>
+
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>
