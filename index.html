@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 15.71px;">ElasticSearch</a> <a href="/tags/JAVA/" style="font-size: 15.71px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.86px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 14.29px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 15.71px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 17.14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15.71px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.43px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/spring/" style="font-size: 12.86px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.57px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 15.71px;">ElasticSearch</a> <a href="/tags/JAVA/" style="font-size: 17.14px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.86px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 14.29px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.14px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 17.14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15.71px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.43px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/spring/" style="font-size: 12.86px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.57px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,114 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-Netty-6-解码" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/07/07/Netty-6-解码/" class="article-date">
+      <time datetime="2018-07-07T12:32:32.000Z" itemprop="datePublished">2018-07-07</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/07/Netty-6-解码/">Netty(6) 解码</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>所谓解码,就是讲二进制数据流解析为指定协议的数据包,之后交给业务逻辑进行处理。</p>
+<blockquote>
+<p>两个问题</p>
+</blockquote>
+<p>解码器抽象的解码过程</p>
+<p>Netty有哪些开箱即用的解码器</p>
+<h2 id="基类ByteToMessageDecoder"><a href="#基类ByteToMessageDecoder" class="headerlink" title="基类ByteToMessageDecoder"></a>基类ByteToMessageDecoder</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">累加字节流</div><div class="line">调用子类的decode方法进行解析</div><div class="line">将解析的ByteBuf向下传播</div></pre></td></tr></table></figure>
+<p>进入channelRead方法,这里将传入的数据包装为bytebuf然后交给cumulator,将数据进行累加。然后调用callDecode方法,利用不同的子类实现进行解析,将解析后的结果放在List<object> out中</object></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cumulation = cumulator.cumulate(ctx.alloc(), cumulation, data);</div><div class="line"></div><div class="line">callDecode(ctx, cumulation, out);</div></pre></td></tr></table></figure>
+<h2 id="基于固定长度解码器"><a href="#基于固定长度解码器" class="headerlink" title="基于固定长度解码器"></a>基于固定长度解码器</h2><p>FixedLengthFrameDecoder是Netty中最为简单的一个解码器,他只有一个成员变量frameLength,这个解码器只能根据指定的长度来对数据进行解码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">protected final void decode(ChannelHandlerContext ctx, ByteBuf in, List&lt;Object&gt; out) throws Exception &#123;</div><div class="line">    Object decoded = decode(ctx, in);</div><div class="line">    if (decoded != null) &#123;</div><div class="line">        out.add(decoded);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">dprotected Object decode(</div><div class="line">    ChannelHandlerContext ctx, ByteBuf in) throws Exception &#123;</div><div class="line">    if (in.readableBytes() &lt; frameLength) &#123;</div><div class="line">        return null;</div><div class="line">    &#125; else &#123;</div><div class="line">        return in.readRetainedSlice(frameLength);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里的in就是父类中的累加器,这里的decode方法判断如果累加器传入的数据长度小于frameLength,则不进行处理,否则调用readRetainedSlice将数据切分,解析之后将对象添加到list中。</p>
+<h2 id="行解码器"><a href="#行解码器" class="headerlink" title="行解码器"></a>行解码器</h2><p>LineBasedFrameDecoder是指以\r\n或者\n结尾的数据为结束符进行数据解析。</p>
+<p>首先从bytebuf中找到标志换行的字符标记为eol</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">final int eol = findEndOfLine(buffer);</div></pre></td></tr></table></figure>
+<p>接下来判断是否是discarding的状态,因为LineBasedFrameDecoder内部有最大长度的限制,所以如果超过了最大长度,就会丢弃消息,discarding为True,这里默认为False。</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1ft1nfn71iej318y0e6gn4.jpg" alt=""></p>
+<p>这里会进行一次判断,如果当前读取到一行的数据超过了最大长度,那么readIndex会指向分隔符的下一个字符,也就是说,当超过了最大长度,Netty会将这部分数据完全抛弃。当没有找到换行符,就把当前取到的数据丢弃到。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">if (length &gt; maxLength) &#123;</div><div class="line">    buffer.readerIndex(eol + delimLength);</div><div class="line">    fail(ctx, length);</div><div class="line">    return null;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>接着看看丢弃模式处理逻辑,如果截取到了换行符,那么直接将这一段丢弃,然后将丢弃模式设置为false,那么下一次处理的时候就会进入上面的处理逻辑。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">if (eol &gt;= 0) &#123;</div><div class="line">    final int length = discardedBytes + eol - buffer.readerIndex();</div><div class="line">    final int delimLength = buffer.getByte(eol) == &apos;\r&apos;? 2 : 1;</div><div class="line">    buffer.readerIndex(eol + delimLength);</div><div class="line">    discardedBytes = 0;</div><div class="line">    discarding = false;</div><div class="line">    if (!failFast) &#123;</div><div class="line">        fail(ctx, length);</div><div class="line">    &#125;</div><div class="line">&#125; else &#123;</div><div class="line">    discardedBytes += buffer.readableBytes();</div><div class="line">    buffer.readerIndex(buffer.writerIndex());</div><div class="line">    &#125;</div><div class="line">return null;</div></pre></td></tr></table></figure>
+<h2 id="分隔符解码器-DelimiterBasedFrameDecoder"><a href="#分隔符解码器-DelimiterBasedFrameDecoder" class="headerlink" title="分隔符解码器 DelimiterBasedFrameDecoder"></a>分隔符解码器 DelimiterBasedFrameDecoder</h2><p>分隔符处理器会要求传递两个参数,第一个是最大处理的数据长度,第二就是分隔符</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">if (lineBasedDecoder != null) &#123;</div><div class="line">    return lineBasedDecoder.decode(ctx, buffer);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先会判断分割符是否是行分隔符,如果是则交给lineBasedDecoder去处理。</p>
+<p>由于netty支持传递多个分割符进行分割,所以接下来Netty遍历分隔符集合,然后找出数据量最少的那个</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">for (ByteBuf delim: delimiters) &#123;</div><div class="line">    int frameLength = indexOf(buffer, delim);</div><div class="line">    if (frameLength &gt;= 0 &amp;&amp; frameLength &lt; minFrameLength) &#123;</div><div class="line">        minFrameLength = frameLength;</div><div class="line">        minDelim = delim;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>也就是先找到readIndex到A的数据</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1ft1r40zgemj316y0eo0tz.jpg" alt=""></p>
+<p>接下来进行解码,首先还是会对数据长度和maxLength以及丢弃策略进行判断,丢弃不合法的数据包,逻辑上与行分隔符很像,代码也比较清晰,所以就不一个一个分析了。</p>
+<h2 id="基于长度域解码器-LengthFieldBasedFrameDecoder"><a href="#基于长度域解码器-LengthFieldBasedFrameDecoder" class="headerlink" title="基于长度域解码器 LengthFieldBasedFrameDecoder"></a>基于长度域解码器 LengthFieldBasedFrameDecoder</h2><p>LengthFieldBasedFrameDecoder有两个最重要的参数,lengthFieldOffset表示数据的长度数据从第几个字节开始,lengthFieldLength表示长度数据占了几个字节</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1ft1rce0xojj318q0i4tb2.jpg" alt=""></p>
+<p>除此之外,长度解码器还有两个重要的参数lengthAdjustment和initialBytesToStrip,下面的例子展示了他们组合起来的作用</p>
+<blockquote>
+<p>1  这是一种最简单的情况,Length字段从0开始占用了2个字节</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">lengthFieldOffset  = 0</div><div class="line">lengthFieldLength  = 2</div><div class="line">lengthAdjustment    = 0</div><div class="line">initialBytesToStrip = 0</div><div class="line"></div><div class="line"> * BEFORE DECODE (14 bytes)         AFTER DECODE (14 bytes)</div><div class="line"> * +--------+----------------+      +--------+----------------+</div><div class="line"> * | Length | Actual Content |-----&gt;| Length | Actual Content |</div><div class="line"> * | 0x000C | &quot;HELLO, WORLD&quot; |      | 0x000C | &quot;HELLO, WORLD&quot; |</div><div class="line"> * +--------+----------------+      +--------+----------------+</div></pre></td></tr></table></figure>
+<blockquote>
+<p>2  这个例子显示了initialBytesToStrip的作用,就是跳过从头开始的N个字节,这里我们一般可以设置一个数值,将长度字段过滤掉,将数据包交给业务逻辑处理即可。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">lengthFieldOffset  = 0</div><div class="line">lengthFieldLength  = 2</div><div class="line">lengthAdjustment    = 0</div><div class="line">initialBytesToStrip = 2</div><div class="line"></div><div class="line"> * BEFORE DECODE (14 bytes)         AFTER DECODE (12 bytes)</div><div class="line"> * +--------+----------------+      +----------------+</div><div class="line"> * | Length | Actual Content |-----&gt;| Actual Content |</div><div class="line"> * | 0x000C | &quot;HELLO, WORLD&quot; |      | &quot;HELLO, WORLD&quot; |</div><div class="line"> * +--------+----------------+      +----------------+</div></pre></td></tr></table></figure>
+<blockquote>
+<p>3   在大多数情况下,Length字段的含义是数据段的长度,但是有的协议长度字段是Length字段的长度+数据段的长度,那么这时我们可以调整lengthAdjustment为正数或者负数,表示增加或减少N个长度,用来减去Length字段所占用的长度。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">lengthFieldOffset  = 0</div><div class="line">lengthFieldLength  = 2</div><div class="line">lengthAdjustment    = -2</div><div class="line">initialBytesToStrip = 0</div><div class="line"></div><div class="line"> * BEFORE DECODE (14 bytes)         AFTER DECODE (14 bytes)</div><div class="line"> * +--------+----------------+      +--------+----------------+</div><div class="line"> * | Length | Actual Content |-----&gt;| Length | Actual Content |</div><div class="line"> * | 0x000E | &quot;HELLO, WORLD&quot; |      | 0x000E | &quot;HELLO, WORLD&quot; |</div><div class="line"> * +--------+----------------+      +--------+----------------+</div></pre></td></tr></table></figure>
+<p>源码中的decode方法比较复杂,大概可分为三个步骤</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">计算需要抽取的数据包长度</div><div class="line">跳过字节处理逻辑</div><div class="line">丢弃模式下的处理</div></pre></td></tr></table></figure>
+
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Netty/">Netty</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-Netty-5-ByteBuf" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -339,7 +447,7 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <blockquote>
+              <blockquote>
 <p>三个问题</p>
 </blockquote>
 <ul>
@@ -349,61 +457,8 @@
 </ul>
 <h2 id="Pipeline的初始化"><a href="#Pipeline的初始化" class="headerlink" title="Pipeline的初始化"></a>Pipeline的初始化</h2><p>在之前的代码分析中,不管服务端还是客户端,最后都会进入AbstractChannel,创建PipeLine</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">protected AbstractChannel(Channel parent, ChannelId id) &#123;</div><div class="line">    this.parent = parent;</div><div class="line">    this.id = id;</div><div class="line">    unsafe = newUnsafe();</div><div class="line">    pipeline = newChannelPipeline();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="添加或删除ChannelHandler"><a href="#添加或删除ChannelHandler" class="headerlink" title="添加或删除ChannelHandler"></a>添加或删除ChannelHandler</h2><p>在我们自己编写的代码中,大多会写到ch.pipeline().addLast(xxx),此方法就是添加PipeLine的入口。最终跟进到ChannelPipeline.addLast()</p>
-<p>默认情况下回创建头尾两个节点,并连接为双向列表。这两个节点都是ChannelHandlerContext数据结构,所以pipeline中的节点都是ChannelHandlerContext。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">protected DefaultChannelPipeline(Channel channel) &#123;</div><div class="line">    this.channel = ObjectUtil.checkNotNull(channel, &quot;channel&quot;);</div><div class="line">    succeededFuture = new SucceededChannelFuture(channel, null);</div><div class="line">    voidPromise =  new VoidChannelPromise(channel, true);</div><div class="line">    tail = new TailContext(this);</div><div class="line">    head = new HeadContext(this);</div><div class="line">    head.next = tail;</div><div class="line">    tail.prev = head;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>接着看一下头结点</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">HeadContext(DefaultChannelPipeline pipeline) &#123;</div><div class="line">    super(pipeline, null, HEAD_NAME, false, true);</div><div class="line">    unsafe = pipeline.channel().unsafe();</div><div class="line">    setAddComplete();</div><div class="line">&#125;</div><div class="line">TailContext(DefaultChannelPipeline pipeline) &#123;</div><div class="line">    super(pipeline, null, TAIL_NAME, true, false);</div><div class="line">    setAddComplete();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这里第三个和第四个参数分别是inbound和outbound。与我们直觉相反,head节点是outbound而tail是inbound。另外一个不同在于,tail节点内部的操作一般都为空,而head节点都会原模原样向后传播。并且读写操作会调用unsafe进行。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">判断是否重复添加</div><div class="line">创建节点并添加到链表</div><div class="line">回调添加完成事件</div></pre></td></tr></table></figure>
-<p>在addLast的具体过程中,可以看到节点实际上是添加到了尾节点的前一个节点<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">private void addLast0(AbstractChannelHandlerContext newCtx) &#123;</div><div class="line">    AbstractChannelHandlerContext prev = tail.prev;</div><div class="line">    newCtx.prev = prev;</div><div class="line">    newCtx.next = tail;</div><div class="line">    prev.next = newCtx;</div><div class="line">    tail.prev = newCtx;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>添加handler是一个非常常见的场景,但是删除一个handler却很少见，删除handler主要用在权限校验的场景上。</p>
-<p>我们可以自己实现一个AuthHandler</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class AuthHandler extends SimpleChannelInboundHandler&lt;ByteBuf&gt; &#123;</div><div class="line">    @Override</div><div class="line">    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception &#123;</div><div class="line">        if(isPass(msg))&#123;</div><div class="line">            ctx.pipeline().remove(this);</div><div class="line">        &#125;else &#123;</div><div class="line">            ctx.close();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    private boolean isPass(ByteBuf pwd)&#123;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>在这里如果通过权限校验就删除这个handler,没有通过就关闭连接,以此实现一个高效的权限校验。</p>
-<p>remove的操作也是一个标准的链表删除方式,删除掉之后会进行用户回调,完成删除。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">private static void remove0(AbstractChannelHandlerContext ctx) &#123;</div><div class="line">    AbstractChannelHandlerContext prev = ctx.prev;</div><div class="line">    AbstractChannelHandlerContext next = ctx.next;</div><div class="line">    prev.next = next;</div><div class="line">    next.prev = prev;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="InBound事件传播"><a href="#InBound事件传播" class="headerlink" title="InBound事件传播"></a>InBound事件传播</h2><p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180705153077643452289.png" alt="20180705153077643452289.png"></p>
-<p>首先看一下顶级的接口ChannelHanlder有哪些功能,包括channel添加,删除,抛出异常方法以及一个Sharable注解,表示这个handler可以被多个channel共享。</p>
-<p>ChannelInboundHandler继承自ChannelHanlder,并添加了一些register,active,read这样一些事件,其中主要的是channelRead方法。</p>
-<p>添加三个自定义的handler</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">socketChannel.pipeline().addLast(new HandlerA());</div><div class="line">socketChannel.pipeline().addLast(new HandlerB());</div><div class="line">socketChannel.pipeline().addLast(new HandlerC());</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">public class HandlerA extends ChannelInboundHandlerAdapter&#123;</div><div class="line">    @Override</div><div class="line">    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception &#123;</div><div class="line">        System.out.println(&quot;A &quot;+msg);</div><div class="line">        ctx.fireChannelRead(msg);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class HandlerB extends ChannelInboundHandlerAdapter &#123;</div><div class="line">    @Override</div><div class="line">    public void channelActive(ChannelHandlerContext ctx) throws Exception &#123;</div><div class="line">        ctx.channel().pipeline().fireChannelRead(&quot;hello &quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception &#123;</div><div class="line">        System.out.println(&quot;B &quot; + msg);</div><div class="line">        ctx.fireChannelRead(msg);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class HandlerC extends ChannelInboundHandlerAdapter &#123;</div><div class="line">    @Override</div><div class="line">    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception &#123;</div><div class="line">        System.out.println(&quot;c &quot;+msg);</div><div class="line">        ctx.fireChannelRead(msg);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>输出<br>A hello<br>B hello<br>c hello </p>
-</blockquote>
-<p>可以看到inbound的read顺序和添加顺序相关,按顺序进行读取,并且可以在中间开始传播。其中还隐藏了不少细节,其实inbound事件都是从head节点开始传播,但是head节点什么都不做,只是fire这条消息,所以没有感觉,如果消息是bytebuff类型,在tail节点会调用realse方法进行释放。所以如果一个节点接收到消息不需要向后传播时,应该手动进行realse,否则会占用空间导致内存泄漏。考虑到这一点,Netty提供了SimpleChannelInboundHandler类,可以继承这个类,Netty会帮我们释放不用的bytebuffer。</p>
-<h2 id="outBound事件传播"><a href="#outBound事件传播" class="headerlink" title="outBound事件传播"></a>outBound事件传播</h2><p>outBound的传播主要体现在write方法</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">socketChannel.pipeline().addLast(new OutA());</div><div class="line">socketChannel.pipeline().addLast(new OutB());</div><div class="line">socketChannel.pipeline().addLast(new OutC());</div><div class="line"></div><div class="line"></div><div class="line">public class OutA extends ChannelOutboundHandlerAdapter &#123;</div><div class="line">    @Override</div><div class="line">    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception &#123;</div><div class="line">        System.out.println(&quot;A &quot;+msg);</div><div class="line">        ctx.write(msg,promise);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class OutB extends ChannelOutboundHandlerAdapter &#123;</div><div class="line">    @Override</div><div class="line">    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception &#123;</div><div class="line">        System.out.println(&quot;B &quot;+msg);</div><div class="line">        ctx.write(msg,promise);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void handlerAdded(final ChannelHandlerContext ctx) throws Exception &#123;</div><div class="line">        ctx.executor().schedule(()-&gt;&#123;</div><div class="line">            ctx.channel().write(&quot;hello&quot;);</div><div class="line">        &#125;,3, TimeUnit.SECONDS);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class OutC extends ChannelOutboundHandlerAdapter &#123;</div><div class="line">    @Override</div><div class="line">    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception &#123;</div><div class="line">        System.out.println(&quot;C &quot;+msg);</div><div class="line">        ctx.write(msg,promise);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>输出<br>C hello<br>B hello<br>A hello</p>
-</blockquote>
-<p>可以看到,outBound的添加顺序与执行顺序相反,后添加的先执行。这里我们看到了两种write的写法,那么有什么区别呢:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ctx.write(msg);</div><div class="line">ctx.channel().write(&quot;hello&quot;);</div></pre></td></tr></table></figure>
-<p>首先看ctx.channel().write(“hello”),可以看到首先调用了内部的pipeline,然后进入尾节点,也就是从tail节点向前写。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public ChannelFuture write(Object msg) &#123;</div><div class="line">    return pipeline.write(msg);</div><div class="line">&#125;</div><div class="line">@Override</div><div class="line">public final ChannelFuture write(Object msg) &#123;</div><div class="line">    return tail.write(msg);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>而ctx.write(msg)的作用则是从当前节点开始传播,不会从尾节点开始</p>
-<h2 id="异常传播"><a href="#异常传播" class="headerlink" title="异常传播"></a>异常传播</h2><blockquote>
-<p>假设我们已经添加了 A B C三个handler,各有一个inbound处理器和一个outbound处理器,目前的pipeline状况为head&lt;-&gt;A&lt;-&gt;B&lt;-&gt;C&lt;-&gt;tail</p>
-</blockquote>
-<p>现在手动在A抛出一个异常,则打印错误为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">Inboud B Exception</div><div class="line">Inboud C Exception</div><div class="line">Onboud A Exception</div><div class="line">Onboud B Exception</div><div class="line">Onboud C Exception</div><div class="line"></div><div class="line">A的错误日志。。。。</div></pre></td></tr></table></figure>
-<p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1fszdgzc385j31dc0eodia.jpg" alt=""></p>
-<p>可见异常并没有像之前的inbound和outbound与添加顺序相同或相反,而是只与handler的添加顺序有关,并且从当前节点向后传播。</p>
-<p>默认情况下如果不做处理,异常会一直传播,那么异常处理的最佳实践就是在最后添加一个异常处理器,对异常进行处理,否则错误最后会抛出,影响程序运行。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public class ExceptionHandler extends ChannelInboundHandlerAdapter &#123;</div><div class="line">    @Override</div><div class="line">    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception &#123;</div><div class="line">        //业务处理</div><div class="line">        if(cause instanceof RuntimeException)&#123;</div><div class="line">            //deal with exception</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="开头的问题"><a href="#开头的问题" class="headerlink" title="开头的问题"></a>开头的问题</h2><ul>
-<li>Netty如何判断ChannelHandler类型(in  out)</li>
-</ul>
-<p>用户自定义的handler会选择继承自Inbound或者OutBound,Netty会用instance判断</p>
-<ul>
-<li>ChannelHandler添加应按照什么样的顺序</li>
-</ul>
-<p>InbundHandler事件的传播与添加顺序正相关,OutbundHandler事件的传播与添加顺序逆相关</p>
-<ul>
-<li>用户手动触发事件传播,不同的触发方式有什么区别</li>
-</ul>
-<p>通过channel触发事件时,从head或者tail节点开始传播,如果从当前节点触发,那么事件只会从当前节点开始触发。</p>
-
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          
       
       
     </div>
@@ -421,6 +476,10 @@
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
     </div>
 
+      
+        <p class="article-more-link">
+          <a  href="/2018/07/04/Netty-4-Pipeline/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
@@ -955,80 +1014,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/06/24/Kafka消息可靠性保证/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-系统学习ElasticSearch-聚合分析-4" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/" class="article-date">
-      <time datetime="2018-03-31T06:25:43.000Z" itemprop="datePublished">2018-03-31</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/">系统学习ElasticSearch-简单聚合分析(4)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>环境方面继续使用上一篇的数据环境,根据模拟不同的需求,体验不同的聚合分析语法</p>
-<ol>
-<li>简单聚合: 计算每个tag下的商品数量</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">GET /ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_tag&quot;: &#123;</div><div class="line">      &quot;terms&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;tags&quot;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>

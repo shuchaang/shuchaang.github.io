@@ -3,22 +3,23 @@
 <head>
   <meta charset="utf-8">
   
-  <title>表面理解jvm-内存 | Shuchang&#39;s Blog</title>
+  <title>Netty(6) 解码 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="最近看完了《深入理解java虚拟机》这本书，记录一下所学所思，留作以后复习。 宏观先来说说虚拟机，我们都知道Java程序运行在虚拟机上，虚拟机负责和操作系统打交道，最终通过二进制指令操作电子电路运行，完成数据的读取，运算，输出。虚拟机在加载.class文件的时候会在内存开辟一块区域”方法区”,专门用来存储累的基本信息，同时在”堆”区生成这个类的Class对象，作为类的一个镜像，为反射机制提供一种可">
-<meta name="keywords" content="java,jvm">
+  <meta name="description" content="所谓解码,就是讲二进制数据流解析为指定协议的数据包,之后交给业务逻辑进行处理。  两个问题  解码器抽象的解码过程 Netty有哪些开箱即用的解码器 基类ByteToMessageDecoder123累加字节流调用子类的decode方法进行解析将解析的ByteBuf向下传播 进入channelRead方法,这里将传入的数据包装为bytebuf然后交给cumulator,将数据进行累加。然后调用c">
+<meta name="keywords" content="Netty,JAVA">
 <meta property="og:type" content="article">
-<meta property="og:title" content="表面理解jvm-内存">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/11/22/表面理解jvm-内存/index.html">
+<meta property="og:title" content="Netty(6) 解码">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/07/07/Netty-6-解码/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="最近看完了《深入理解java虚拟机》这本书，记录一下所学所思，留作以后复习。 宏观先来说说虚拟机，我们都知道Java程序运行在虚拟机上，虚拟机负责和操作系统打交道，最终通过二进制指令操作电子电路运行，完成数据的读取，运算，输出。虚拟机在加载.class文件的时候会在内存开辟一块区域”方法区”,专门用来存储累的基本信息，同时在”堆”区生成这个类的Class对象，作为类的一个镜像，为反射机制提供一种可">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1flqy10c5vtj30ub0lwn0f.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1flr40x4murj30xw0oegqi.jpg">
-<meta property="og:updated_time" content="2017-12-18T08:48:44.000Z">
+<meta property="og:description" content="所谓解码,就是讲二进制数据流解析为指定协议的数据包,之后交给业务逻辑进行处理。  两个问题  解码器抽象的解码过程 Netty有哪些开箱即用的解码器 基类ByteToMessageDecoder123累加字节流调用子类的decode方法进行解析将解析的ByteBuf向下传播 进入channelRead方法,这里将传入的数据包装为bytebuf然后交给cumulator,将数据进行累加。然后调用c">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tKfTcgy1ft1nfn71iej318y0e6gn4.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tKfTcgy1ft1r40zgemj316y0eo0tz.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1ft1rce0xojj318q0i4tb2.jpg">
+<meta property="og:updated_time" content="2018-07-07T17:01:24.337Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="表面理解jvm-内存">
-<meta name="twitter:description" content="最近看完了《深入理解java虚拟机》这本书，记录一下所学所思，留作以后复习。 宏观先来说说虚拟机，我们都知道Java程序运行在虚拟机上，虚拟机负责和操作系统打交道，最终通过二进制指令操作电子电路运行，完成数据的读取，运算，输出。虚拟机在加载.class文件的时候会在内存开辟一块区域”方法区”,专门用来存储累的基本信息，同时在”堆”区生成这个类的Class对象，作为类的一个镜像，为反射机制提供一种可">
-<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1flqy10c5vtj30ub0lwn0f.jpg">
+<meta name="twitter:title" content="Netty(6) 解码">
+<meta name="twitter:description" content="所谓解码,就是讲二进制数据流解析为指定协议的数据包,之后交给业务逻辑进行处理。  两个问题  解码器抽象的解码过程 Netty有哪些开箱即用的解码器 基类ByteToMessageDecoder123累加字节流调用子类的decode方法进行解析将解析的ByteBuf向下传播 进入channelRead方法,这里将传入的数据包装为bytebuf然后交给cumulator,将数据进行累加。然后调用c">
+<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tKfTcgy1ft1nfn71iej318y0e6gn4.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -232,11 +233,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-表面理解jvm-内存" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Netty-6-解码" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/11/22/表面理解jvm-内存/" class="article-date">
-      <time datetime="2017-11-22T07:24:27.000Z" itemprop="datePublished">2017-11-22</time>
+      <a href="/2018/07/07/Netty-6-解码/" class="article-date">
+      <time datetime="2018-07-07T12:32:32.000Z" itemprop="datePublished">2018-07-07</time>
 </a>
     </div>
   
@@ -249,7 +250,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      表面理解jvm-内存
+      Netty(6) 解码
     </h1>
   
 
@@ -258,13 +259,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/jvm/">jvm</a>
+    <a class="article-category-link" href="/categories/Netty/">Netty</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -274,60 +275,52 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>最近看完了《深入理解java虚拟机》这本书，记录一下所学所思，留作以后复习。</p>
-<h3 id="宏观"><a href="#宏观" class="headerlink" title="宏观"></a>宏观</h3><p>先来说说虚拟机，我们都知道Java程序运行在虚拟机上，虚拟机负责和操作系统打交道，最终通过二进制指令操作电子电路运行，完成数据的读取，运算，输出。<br>虚拟机在加载.class文件的时候会在内存开辟一块区域”方法区”,专门用来存储累的基本信息，同时在”堆”区生成这个类的Class对象，作为类的一个镜像，为反射机制提供一种可能。Java是一门面向对象的语言，程序运行过程中伴随着对象的生成与死亡，有的是临时对象短暂存活，有的是壮年而亡，而有的长命百岁。所以虚拟机就不停地申请内存，回收内存。对象的生成方法很多，对象的回收方法也很多，例如GC、标记清除/整理等。</p>
-<p>垃圾回收首先要确定的是什么是垃圾，什么时候回收，在哪里回收，怎么回收。不同的对象可能需要不同的回收策略。一个很容易想到的方法就是在后台启动一个线程，每隔一段时间扫描一次内存，清除垃圾，如此往复。</p>
-<p>实际情况往往非常复杂，效率、安全性、对当前程序的影响都要考虑进去。于是人们发现，对象的生命周期不同，使用一种GC方法效率很差。于是就有了Hotspot的方案，堆区根据不同的生命周期，分为eden、to survivor、from survivor以及非堆的元数据区(java8之前的永久区)。<br> 每个区采用了不同的清理算法。于是便出现了最初的<code>串行收集器</code>。</p>
-<p>同时，为了最大程度的利用CPU的多核资源，出现了<code>并行收集器</code>，即多个线程一起收集垃圾。</p>
-<p>为了降低垃圾收集对原有程序的影响,如STW,一种全局暂停的现象，<code>并发收集器</code>应运而生。</p>
-<p>到此为止，便可以引出jvm优化中最重要的两部分，jvm内存怎么划分，选择哪一种垃圾收集器，就是我们常说的jvm调优。这就考验一个开发人员对业务系统的理解和眼光，确定优化方向并调整参数。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li><a id="more"></a>
-<the rest="" of="" contents="" |="" 余下全文="">
-
-</the></li>
-</ul>
-<h3 id="jvm内存模型"><a href="#jvm内存模型" class="headerlink" title="jvm内存模型"></a>jvm内存模型</h3><p>首先要分清楚的一点是jvm内存模型 != java内存模型(JMM)</p>
-<p>自己画了一张思路的整理图：</p>
-<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1flqy10c5vtj30ub0lwn0f.jpg" alt="自己画的思路图"></p>
-<p>整理一些零碎的东西：</p>
-<ol>
-<li>程序计数器是此内存区唯一一个没有OOM情况的区域。</li>
-<li>方法区有个别名叫做非堆，用于存储加载的类的信息，在hotspot虚拟上更多的叫做“永久代”,在java8中已经改名为元数据区(MetaSpace)，该区域也可以选择不进行垃圾回收。</li>
-<li>新生对象优先被分配到Eden区</li>
-<li>大对象直接被分到老年代，常见的如长字符串以及数组</li>
-<li>长期存活的对象直接进入老年代。一次Minor GC年龄增长一岁，默认15岁进入老年代。可以调节-XX：MaxTenuringThreshold参数来改变</li>
-<li><p>在survivor空间中年龄相同的所有对象的大小总和大于survivor空间的一半，年龄大于或等于该年龄的对象可以直接进入老年代(这一条读了很多遍才明白)</p>
-<h3 id="对象创建"><a href="#对象创建" class="headerlink" title="对象创建"></a>对象创建</h3><p>当我们使用new创建一个对象时，大概发生了这样一些事情。首先类加载器检查这个类有没有被加载过，如果没有则需要加载-&gt;解析-&gt;初始化。之后虚拟机为它分配内存，就是将一块确定大小的内存划分出来。这时会遇到两个问题：</p>
-</li>
-<li><p>内存是否规整<br>内存是否规整取决于所使用的gc器，如Serial，ParNew等带有整理功能的收集器，就是规整的，在分配内存时只要将标志占用或空闲的指针移动就可以了。<br>如果使用CMS这种基于mark-sweep的算法gc器，则不是规整的，需要利用一张”空闲列表“查找空闲的区块来分配内存。</p>
-</li>
-<li>频繁创建对象<br>对象的频繁创建可能造成前一个对象的指针没有来得及修改，后一个对象便占用了前一个对象的位置。解决方法有两种：一是CAS(compare and sweep一种乐观锁)+失败重试保证更新的原子性，也是虚拟机实际采用的一种方法。二是TLAB（本地线程分配缓冲）,哪个线程需要分配内存就在哪个线程的TLAB上进行分配，可以使用<code>-XX：+UseTLAB</code>开启，个人认为这个参数可以在高并发场景下开启，适合在eden区使用。</li>
-</ol>
-<h3 id="HotSpot的实现方式"><a href="#HotSpot的实现方式" class="headerlink" title="HotSpot的实现方式"></a>HotSpot的实现方式</h3><p>当判断一个对象是否应该被回收时，java采用了一种可达性分析的方法来判断。要做到这点就需要得到所有的GC Roots节点，从GC Root来遍历。如果我们对栈全部扫描一遍这是相当浪费时间和资源的事情，于是我们可以在某个位置把栈上的引用位置记录下来，这样在gc时便不用全盘扫描。在Hotspot中这种结构就叫<code>OopMap</code>,记录了在该类型的对象内什么偏移量上是什么类型的数据。但是我们并不能在任何时候都生成OopMap，只会在称之为<code>安全点</code>的地方生成：</p>
-<ol>
-<li>循环的末尾</li>
-<li>方法返回前</li>
-<li>可能抛出异常的地方</li>
-</ol>
-<p>另一个需要考虑的问题是如何在GC发生时如何保证所有线程走到最近的安全点再停下来，目前最广泛的做法就是<code>主动式中断</code>，设置一个标志，让各个线程主动轮询这个标志，如果标志位true就中断。<br>这时又会有问题，如果程序不能继续执行呢，例如碰到了sleep情况，jvm不会等到线程被重新分配CPU时间，这时就需要<code>安全区来</code>解决。在安全区的任意地点GC都是安全的，当线程进入安全区，首先会标识自己，如果这段时间jvm发起了GC，则不管标记安全区的线程。当线程离开安全区，它要自己检查是否完成了根节点枚举，如果完成了就可以继续执行，否则就要等待。</p>
-<h3 id="垃圾收集器"><a href="#垃圾收集器" class="headerlink" title="垃圾收集器"></a>垃圾收集器</h3><ol>
-<li>串行收集器</li>
-</ol>
-<p>serial收集器 -XX:+UseSerialGC</p>
-<ol>
-<li>并行收集器</li>
-</ol>
-<p>ParNew收集器 -XX:+UseParNewGC<br>-XX:ParallelGCThreads 限制线程数量</p>
-<p>Parallel收集器 -XX:+UseParallelGC</p>
-<ol>
-<li>并发收集器</li>
-</ol>
-<p>CMS收集器 -XX:+UseConcMarkSweepGC<br>-XX:+ UseCMSCompactAtFullCollection Full GC后，进行一次碎片整理；整理过程是独占的，会引起停顿时间变长。</p>
-<p>-XX:+CMSFullGCsBeforeCompaction  设置进行几次Full GC后，进行一次碎片整理<br>-XX:ParallelCMSThreads  设定CMS的线程数量</p>
-<p>G1收集器：据说会在java9上设置为默认的垃圾收集器，但是最近java9已经更新了，并没有相关的消息。G1的优点就是调优简单，只需要调节最大堆内存和最大暂停时间，另外就是取消了年轻代和老年代的物理划分。</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1flr40x4murj30xw0oegqi.jpg" alt="整理一张来自网络的图"></p>
+        <p>所谓解码,就是讲二进制数据流解析为指定协议的数据包,之后交给业务逻辑进行处理。</p>
+<blockquote>
+<p>两个问题</p>
+</blockquote>
+<p>解码器抽象的解码过程</p>
+<p>Netty有哪些开箱即用的解码器</p>
+<h2 id="基类ByteToMessageDecoder"><a href="#基类ByteToMessageDecoder" class="headerlink" title="基类ByteToMessageDecoder"></a>基类ByteToMessageDecoder</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">累加字节流</div><div class="line">调用子类的decode方法进行解析</div><div class="line">将解析的ByteBuf向下传播</div></pre></td></tr></table></figure>
+<p>进入channelRead方法,这里将传入的数据包装为bytebuf然后交给cumulator,将数据进行累加。然后调用callDecode方法,利用不同的子类实现进行解析,将解析后的结果放在List<object> out中</object></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cumulation = cumulator.cumulate(ctx.alloc(), cumulation, data);</div><div class="line"></div><div class="line">callDecode(ctx, cumulation, out);</div></pre></td></tr></table></figure>
+<h2 id="基于固定长度解码器"><a href="#基于固定长度解码器" class="headerlink" title="基于固定长度解码器"></a>基于固定长度解码器</h2><p>FixedLengthFrameDecoder是Netty中最为简单的一个解码器,他只有一个成员变量frameLength,这个解码器只能根据指定的长度来对数据进行解码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">protected final void decode(ChannelHandlerContext ctx, ByteBuf in, List&lt;Object&gt; out) throws Exception &#123;</div><div class="line">    Object decoded = decode(ctx, in);</div><div class="line">    if (decoded != null) &#123;</div><div class="line">        out.add(decoded);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">dprotected Object decode(</div><div class="line">    ChannelHandlerContext ctx, ByteBuf in) throws Exception &#123;</div><div class="line">    if (in.readableBytes() &lt; frameLength) &#123;</div><div class="line">        return null;</div><div class="line">    &#125; else &#123;</div><div class="line">        return in.readRetainedSlice(frameLength);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里的in就是父类中的累加器,这里的decode方法判断如果累加器传入的数据长度小于frameLength,则不进行处理,否则调用readRetainedSlice将数据切分,解析之后将对象添加到list中。</p>
+<h2 id="行解码器"><a href="#行解码器" class="headerlink" title="行解码器"></a>行解码器</h2><p>LineBasedFrameDecoder是指以\r\n或者\n结尾的数据为结束符进行数据解析。</p>
+<p>首先从bytebuf中找到标志换行的字符标记为eol</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">final int eol = findEndOfLine(buffer);</div></pre></td></tr></table></figure>
+<p>接下来判断是否是discarding的状态,因为LineBasedFrameDecoder内部有最大长度的限制,所以如果超过了最大长度,就会丢弃消息,discarding为True,这里默认为False。</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1ft1nfn71iej318y0e6gn4.jpg" alt=""></p>
+<p>这里会进行一次判断,如果当前读取到一行的数据超过了最大长度,那么readIndex会指向分隔符的下一个字符,也就是说,当超过了最大长度,Netty会将这部分数据完全抛弃。当没有找到换行符,就把当前取到的数据丢弃到。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">if (length &gt; maxLength) &#123;</div><div class="line">    buffer.readerIndex(eol + delimLength);</div><div class="line">    fail(ctx, length);</div><div class="line">    return null;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>接着看看丢弃模式处理逻辑,如果截取到了换行符,那么直接将这一段丢弃,然后将丢弃模式设置为false,那么下一次处理的时候就会进入上面的处理逻辑。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">if (eol &gt;= 0) &#123;</div><div class="line">    final int length = discardedBytes + eol - buffer.readerIndex();</div><div class="line">    final int delimLength = buffer.getByte(eol) == &apos;\r&apos;? 2 : 1;</div><div class="line">    buffer.readerIndex(eol + delimLength);</div><div class="line">    discardedBytes = 0;</div><div class="line">    discarding = false;</div><div class="line">    if (!failFast) &#123;</div><div class="line">        fail(ctx, length);</div><div class="line">    &#125;</div><div class="line">&#125; else &#123;</div><div class="line">    discardedBytes += buffer.readableBytes();</div><div class="line">    buffer.readerIndex(buffer.writerIndex());</div><div class="line">    &#125;</div><div class="line">return null;</div></pre></td></tr></table></figure>
+<h2 id="分隔符解码器-DelimiterBasedFrameDecoder"><a href="#分隔符解码器-DelimiterBasedFrameDecoder" class="headerlink" title="分隔符解码器 DelimiterBasedFrameDecoder"></a>分隔符解码器 DelimiterBasedFrameDecoder</h2><p>分隔符处理器会要求传递两个参数,第一个是最大处理的数据长度,第二就是分隔符</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">if (lineBasedDecoder != null) &#123;</div><div class="line">    return lineBasedDecoder.decode(ctx, buffer);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先会判断分割符是否是行分隔符,如果是则交给lineBasedDecoder去处理。</p>
+<p>由于netty支持传递多个分割符进行分割,所以接下来Netty遍历分隔符集合,然后找出数据量最少的那个</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">for (ByteBuf delim: delimiters) &#123;</div><div class="line">    int frameLength = indexOf(buffer, delim);</div><div class="line">    if (frameLength &gt;= 0 &amp;&amp; frameLength &lt; minFrameLength) &#123;</div><div class="line">        minFrameLength = frameLength;</div><div class="line">        minDelim = delim;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>也就是先找到readIndex到A的数据</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1ft1r40zgemj316y0eo0tz.jpg" alt=""></p>
+<p>接下来进行解码,首先还是会对数据长度和maxLength以及丢弃策略进行判断,丢弃不合法的数据包,逻辑上与行分隔符很像,代码也比较清晰,所以就不一个一个分析了。</p>
+<h2 id="基于长度域解码器-LengthFieldBasedFrameDecoder"><a href="#基于长度域解码器-LengthFieldBasedFrameDecoder" class="headerlink" title="基于长度域解码器 LengthFieldBasedFrameDecoder"></a>基于长度域解码器 LengthFieldBasedFrameDecoder</h2><p>LengthFieldBasedFrameDecoder有两个最重要的参数,lengthFieldOffset表示数据的长度数据从第几个字节开始,lengthFieldLength表示长度数据占了几个字节</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1ft1rce0xojj318q0i4tb2.jpg" alt=""></p>
+<p>除此之外,长度解码器还有两个重要的参数lengthAdjustment和initialBytesToStrip,下面的例子展示了他们组合起来的作用</p>
+<blockquote>
+<p>1  这是一种最简单的情况,Length字段从0开始占用了2个字节</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">lengthFieldOffset  = 0</div><div class="line">lengthFieldLength  = 2</div><div class="line">lengthAdjustment    = 0</div><div class="line">initialBytesToStrip = 0</div><div class="line"></div><div class="line"> * BEFORE DECODE (14 bytes)         AFTER DECODE (14 bytes)</div><div class="line"> * +--------+----------------+      +--------+----------------+</div><div class="line"> * | Length | Actual Content |-----&gt;| Length | Actual Content |</div><div class="line"> * | 0x000C | &quot;HELLO, WORLD&quot; |      | 0x000C | &quot;HELLO, WORLD&quot; |</div><div class="line"> * +--------+----------------+      +--------+----------------+</div></pre></td></tr></table></figure>
+<blockquote>
+<p>2  这个例子显示了initialBytesToStrip的作用,就是跳过从头开始的N个字节,这里我们一般可以设置一个数值,将长度字段过滤掉,将数据包交给业务逻辑处理即可。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">lengthFieldOffset  = 0</div><div class="line">lengthFieldLength  = 2</div><div class="line">lengthAdjustment    = 0</div><div class="line">initialBytesToStrip = 2</div><div class="line"></div><div class="line"> * BEFORE DECODE (14 bytes)         AFTER DECODE (12 bytes)</div><div class="line"> * +--------+----------------+      +----------------+</div><div class="line"> * | Length | Actual Content |-----&gt;| Actual Content |</div><div class="line"> * | 0x000C | &quot;HELLO, WORLD&quot; |      | &quot;HELLO, WORLD&quot; |</div><div class="line"> * +--------+----------------+      +----------------+</div></pre></td></tr></table></figure>
+<blockquote>
+<p>3   在大多数情况下,Length字段的含义是数据段的长度,但是有的协议长度字段是Length字段的长度+数据段的长度,那么这时我们可以调整lengthAdjustment为正数或者负数,表示增加或减少N个长度,用来减去Length字段所占用的长度。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">lengthFieldOffset  = 0</div><div class="line">lengthFieldLength  = 2</div><div class="line">lengthAdjustment    = -2</div><div class="line">initialBytesToStrip = 0</div><div class="line"></div><div class="line"> * BEFORE DECODE (14 bytes)         AFTER DECODE (14 bytes)</div><div class="line"> * +--------+----------------+      +--------+----------------+</div><div class="line"> * | Length | Actual Content |-----&gt;| Length | Actual Content |</div><div class="line"> * | 0x000E | &quot;HELLO, WORLD&quot; |      | 0x000E | &quot;HELLO, WORLD&quot; |</div><div class="line"> * +--------+----------------+      +--------+----------------+</div></pre></td></tr></table></figure>
+<p>源码中的decode方法比较复杂,大概可分为三个步骤</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">计算需要抽取的数据包长度</div><div class="line">跳过字节处理逻辑</div><div class="line">丢弃模式下的处理</div></pre></td></tr></table></figure>
 
       
       
@@ -383,13 +376,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></p>
+        <p><span>本文标题:</span><a href="/2018/07/07/Netty-6-解码/">Netty(6) 解码</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2017年11月22日 - 15时24分</p>
-        <p><span>最后更新:</span>2017年12月18日 - 16时48分</p>
+        <p><span>发布时间:</span>2018年07月07日 - 20时32分</p>
+        <p><span>最后更新:</span>2018年07月08日 - 01时01分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/11/22/表面理解jvm-内存/" title="表面理解jvm-内存">http://www.shuchang.sc.com/2017/11/22/表面理解jvm-内存/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/11/22/表面理解jvm-内存/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/07/07/Netty-6-解码/" title="Netty(6) 解码">http://www.shuchang.sc.com/2018/07/07/Netty-6-解码/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/07/07/Netty-6-解码/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -402,18 +395,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/11/23/表面理解jvm-类加载/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          jvm学习笔记-类加载
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/11/11/SpringMvc浅谈/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">SpringMvc浅谈</div>
+    <a href="/2018/07/06/Netty-5-ByteBuf/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Netty(5) ByteBuf</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -424,7 +408,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#宏观"><span class="toc-number">1.</span> <span class="toc-text">宏观</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jvm内存模型"><span class="toc-number">2.</span> <span class="toc-text">jvm内存模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对象创建"><span class="toc-number">3.</span> <span class="toc-text">对象创建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HotSpot的实现方式"><span class="toc-number">4.</span> <span class="toc-text">HotSpot的实现方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#垃圾收集器"><span class="toc-number">5.</span> <span class="toc-text">垃圾收集器</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基类ByteToMessageDecoder"><span class="toc-number">1.</span> <span class="toc-text">基类ByteToMessageDecoder</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于固定长度解码器"><span class="toc-number">2.</span> <span class="toc-text">基于固定长度解码器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#行解码器"><span class="toc-number">3.</span> <span class="toc-text">行解码器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分隔符解码器-DelimiterBasedFrameDecoder"><span class="toc-number">4.</span> <span class="toc-text">分隔符解码器 DelimiterBasedFrameDecoder</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于长度域解码器-LengthFieldBasedFrameDecoder"><span class="toc-number">5.</span> <span class="toc-text">基于长度域解码器 LengthFieldBasedFrameDecoder</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -490,13 +474,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/11/23/表面理解jvm-类加载/" title="上一篇: jvm学习笔记-类加载">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/11/11/SpringMvc浅谈/" title="下一篇: SpringMvc浅谈">
+            <a href="/2018/07/06/Netty-5-ByteBuf/" title="下一篇: Netty(5) ByteBuf">
                 <i class="fa fa-angle-right"></i>
             </a>
         
