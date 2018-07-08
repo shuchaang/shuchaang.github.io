@@ -3,19 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>RabbitMq入门-MessageConverter(6) | Shuchang&#39;s Blog</title>
+  <title>Netty(7) 编码 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="简介AmqpTemplate还定义了几种发送和接收消息的方法，这些方法将委托给一个MessageConverter。 MessageConverter本身非常简单。它为每个方向提供一个方法：一个用于将消息转换为Message实体，另一个用于将Message转换为Object。 12345678public interface MessageConverter &amp;#123;    Message t">
-<meta name="keywords" content="java,RabbitMq">
+  <meta name="description" content="一个问题  Netty如何将对象编码成字节流,写到socket底层 这里我们在 服务端添加两个handler 123456789101112131415161718192021new Encoder();new BizHandler();public class BizHandler extends ChannelInboundHandlerAdapter &amp;#123;    @Overrid">
+<meta name="keywords" content="Netty,JAVA">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RabbitMq入门-MessageConverter(6)">
-<meta property="og:url" content="http://www.shuchang.sc.com/2018/02/01/RabbitMq入门-MessageConverter-6/index.html">
+<meta property="og:title" content="Netty(7) 编码">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/07/08/Netty-7-编码/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="简介AmqpTemplate还定义了几种发送和接收消息的方法，这些方法将委托给一个MessageConverter。 MessageConverter本身非常简单。它为每个方向提供一个方法：一个用于将消息转换为Message实体，另一个用于将Message转换为Object。 12345678public interface MessageConverter &amp;#123;    Message t">
-<meta property="og:updated_time" content="2018-02-01T05:35:22.000Z">
+<meta property="og:description" content="一个问题  Netty如何将对象编码成字节流,写到socket底层 这里我们在 服务端添加两个handler 123456789101112131415161718192021new Encoder();new BizHandler();public class BizHandler extends ChannelInboundHandlerAdapter &amp;#123;    @Overrid">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1ft2t54z5qpj310a0i240a.jpg">
+<meta property="og:updated_time" content="2018-07-08T14:49:43.448Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="RabbitMq入门-MessageConverter(6)">
-<meta name="twitter:description" content="简介AmqpTemplate还定义了几种发送和接收消息的方法，这些方法将委托给一个MessageConverter。 MessageConverter本身非常简单。它为每个方向提供一个方法：一个用于将消息转换为Message实体，另一个用于将Message转换为Object。 12345678public interface MessageConverter &amp;#123;    Message t">
+<meta name="twitter:title" content="Netty(7) 编码">
+<meta name="twitter:description" content="一个问题  Netty如何将对象编码成字节流,写到socket底层 这里我们在 服务端添加两个handler 123456789101112131415161718192021new Encoder();new BizHandler();public class BizHandler extends ChannelInboundHandlerAdapter &amp;#123;    @Overrid">
+<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1ft2t54z5qpj310a0i240a.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -229,11 +231,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-RabbitMq入门-MessageConverter-6" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Netty-7-编码" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/02/01/RabbitMq入门-MessageConverter-6/" class="article-date">
-      <time datetime="2018-02-01T05:34:37.000Z" itemprop="datePublished">2018-02-01</time>
+      <a href="/2018/07/08/Netty-7-编码/" class="article-date">
+      <time datetime="2018-07-08T03:46:40.000Z" itemprop="datePublished">2018-07-08</time>
 </a>
     </div>
   
@@ -246,7 +248,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      RabbitMq入门-MessageConverter(6)
+      Netty(7) 编码
     </h1>
   
 
@@ -255,13 +257,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
+    <a class="article-category-link" href="/categories/Netty/">Netty</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -271,42 +273,46 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><p>AmqpTemplate还定义了几种发送和接收消息的方法，这些方法将委托给一个MessageConverter。 MessageConverter本身非常简单。它为每个方向提供一个方法：一个用于将消息转换为Message实体，另一个用于将Message转换为Object。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public interface MessageConverter &#123;</div><div class="line"></div><div class="line">    Message toMessage(Object object, MessageProperties messageProperties)</div><div class="line">            throws MessageConversionException;</div><div class="line"></div><div class="line">    Object fromMessage(Message message) throws MessageConversionException;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li><a id="more"></a>
+        <blockquote>
+<p>一个问题</p>
+</blockquote>
+<p>Netty如何将对象编码成字节流,写到socket底层</p>
+<p>这里我们在 服务端添加两个handler</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">new Encoder();</div><div class="line">new BizHandler();</div><div class="line"></div><div class="line"></div><div class="line">public class BizHandler extends ChannelInboundHandlerAdapter &#123;</div><div class="line">    @Override</div><div class="line">    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception &#123;</div><div class="line">        User u = new User(&quot;sc&quot;,12);</div><div class="line">        ctx.channel().writeAndFlush(u);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Encoder extends MessageToByteEncoder&lt;User&gt; &#123;</div><div class="line">    @Override</div><div class="line">    protected void encode(ChannelHandlerContext ctx, User user, ByteBuf out) throws Exception &#123;</div><div class="line">        byte[] bytes = user.getName().getBytes();</div><div class="line">        out.writeInt(4+bytes.length);</div><div class="line">        out.writeInt(user.getAge());</div><div class="line">        out.writeBytes(bytes);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里的Encode方法使用了如下的编码方式:第一个字段为正整数长度,在java平台上统一为4字节,第二个Age正整数,为4个字节,Name是可变长度的string类型。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> *  -------------------------</div><div class="line"> * | Length |   Age |    Name|</div><div class="line"> * ---------------------------</div><div class="line"> * |    4   |   4   |    ??   |</div><div class="line"> * --------------------------</div><div class="line"> */</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""><br><a id="more"></a></excerpt></p>
 <the rest="" of="" contents="" |="" 余下全文="">
 
-</the></li>
-</ul>
-<p>下面列出了AmqpTemplate上的相关消息发送方法。它们比我们先前讨论的方法简单，因为它们不需要Message实例。相反，MessageConverter可以将要发送的消息转换为字节数组。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">void convertAndSend(Object message) throws AmqpException;</div><div class="line"></div><div class="line">void convertAndSend(String routingKey, Object message) throws AmqpException;</div><div class="line"></div><div class="line">void convertAndSend(String exchange, String routingKey, Object message)</div><div class="line">    throws AmqpException;</div><div class="line"></div><div class="line">void convertAndSend(Object message, MessagePostProcessor messagePostProcessor)</div><div class="line">    throws AmqpException;</div><div class="line"></div><div class="line">void convertAndSend(String routingKey, Object message,</div><div class="line">    MessagePostProcessor messagePostProcessor) throws AmqpException;</div><div class="line"></div><div class="line">void convertAndSend(String exchange, String routingKey, Object message,</div><div class="line">    MessagePostProcessor messagePostProcessor) throws AmqpException;</div></pre></td></tr></table></figure>
-<p>在接收端只有两个方法</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Object receiveAndConvert() throws AmqpException;</div><div class="line"></div><div class="line">Object receiveAndConvert(String queueName) throws AmqpException;</div></pre></td></tr></table></figure>
-<h4 id="SimpleMessageConverter"><a href="#SimpleMessageConverter" class="headerlink" title="SimpleMessageConverter"></a>SimpleMessageConverter</h4><p>MessageConverter的默认实现为SimpleMessageConverter。如果你没有明确地配置MessageConverter，这个转换器将被RabbitTemplate的使用。它处理基于文本的内容，序列化的Java对象和简单的字节数组。</p>
-<h5 id="Message转换为对象"><a href="#Message转换为对象" class="headerlink" title="Message转换为对象"></a>Message转换为对象</h5><p>如果输入消息的内容类型以“text”开始(例如“text/plain”),MessageConverter还会检查content-encoding属性，用来确定将Message的body转换为java的String类型所需要的字符集。如果没有设置这个属性，默认是UTF-8.如果需要设置，可以配置SimpleMessageConverter，设置defaultCharset属性，然后注入到RabbitTemplate中。</p>
-<p>如果content-type设置为application/x-java-serialized-object，SimpleMessageConverter将尝试将字节数组反序列化为java对象。但是并不建议这么做，因为这样做会导致消费者和生产者产生紧耦合。</p>
-<p>对于所有其他内容类型，SimpleMessageConverter将直接以字节数组形式返回消息正文内容。</p>
-<h5 id="转换为Message"><a href="#转换为Message" class="headerlink" title="转换为Message"></a>转换为Message</h5><p>当任意的java对象转换为Message时，SimpleMessageConverter会将对象转换为字节数组，并且设置相应的content-type属性。</p>
-<h4 id="Jackson2JsonMessageConverter"><a href="#Jackson2JsonMessageConverter" class="headerlink" title="Jackson2JsonMessageConverter"></a>Jackson2JsonMessageConverter</h4><p>#####转换为Message</p>
-<p>通常我们不提倡直接使用序列化或反序列化的消息转换器，所以Json就是一个比较好的替代方案，它在不同平台上更加灵活也有更好的可移植性。Jackson2JsonMessageConverter可以在任何RabbitTemplate实例上配置，以覆盖其对SimpleMessageConverter默认值的使用。 Jackson2JsonMessageConverter使用com.fasterxml.jackson 2.x库。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;bean class=&quot;org.springframework.amqp.rabbit.core.RabbitTemplate&quot;&gt;</div><div class="line">    &lt;property name=&quot;connectionFactory&quot; ref=&quot;rabbitConnectionFactory&quot;/&gt;</div><div class="line">    &lt;property name=&quot;messageConverter&quot;&gt;</div><div class="line">        &lt;bean class=&quot;org.springframework.amqp.support.converter.Jackson2JsonMessageConverter&quot;&gt;</div><div class="line">            &lt;!-- if necessary, override the DefaultClassMapper --&gt;</div><div class="line">            &lt;property name=&quot;classMapper&quot; ref=&quot;customClassMapper&quot;/&gt;</div><div class="line">        &lt;/bean&gt;</div><div class="line">    &lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
-<p>可以根据自己的需要，添加MessageConverter的映射</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;jsonConverterWithDefaultType&quot;</div><div class="line">      class=&quot;o.s.amqp.support.converter.Jackson2JsonMessageConverter&quot;&gt;</div><div class="line">    &lt;property name=&quot;classMapper&quot;&gt;</div><div class="line">        &lt;bean class=&quot;org.springframework.amqp.support.converter.DefaultClassMapper&quot;&gt;</div><div class="line">            &lt;property name=&quot;defaultType&quot; value=&quot;foo.PurchaseOrder&quot;/&gt;</div><div class="line">        &lt;/bean&gt;</div><div class="line">    &lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
-<p>对于springboot可以这样配置:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">@Bean</div><div class="line">public Jackson2JsonMessageConverter jsonMessageConverter() &#123;</div><div class="line">    Jackson2JsonMessageConverter jsonConverter = new Jackson2JsonMessageConverter();</div><div class="line">    jsonConverter.setClassMapper(classMapper());</div><div class="line">    return jsonConverter;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@Bean</div><div class="line">public DefaultClassMapper classMapper() &#123;</div><div class="line">    DefaultClassMapper classMapper = new DefaultClassMapper();</div><div class="line">    Map&lt;String, Class&lt;?&gt;&gt; idClassMapping = new HashMap&lt;&gt;();</div><div class="line">    idClassMapping.put(&quot;foo&quot;, Foo.class);</div><div class="line">    idClassMapping.put(&quot;bar&quot;, Bar.class);</div><div class="line">    classMapper.setIdClassMapping(idClassMapping);</div><div class="line">    return classMapper;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h5 id="Message转换为对象-1"><a href="#Message转换为对象-1" class="headerlink" title="Message转换为对象"></a>Message转换为对象</h5><p>根据发送方加在消息头中的类型信息，可以将message转换为对象。在1.6之前的版本中，如果类型信息不存在，转换将失败。从版本1.6开始，如果缺少类型信息，转换器将使用Jackson默认值（通常是map）转换JSON。在1.6之后的版本，如果使用@Rabbitlistener注解，可以配置MessageProperties加入类型信息。</p>
-<p>在默认情况下，推断的类型信息会覆盖发送方发送消息的<strong>TypeId</strong>和头信息。消息的接收方可以自动将其转换为不同的域对象。但这种配置只适用于参数类型是实体类或者来自java.util包下的情况。抽象类和接口则不适用。假设有一个<br>RabbitListener，它接受一个Foo参数，但是这个消息包含一个Bar，它是Foo的子类。这时类型推断将产生错误，无法解析。要处理这种情况，请将Jackson2JsonMessageConverter上的TypePrecedence属性设置为TYPE_ID而不是默认的INFERRED。该属性实际上是在转换器的DefaultJackson2JavaTypeMapper中，但是为了方便，在转换器上提供了一个setter。如果注入自定义类型映射器，则应该在映射器上设置该属性。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">@RabbitListener</div><div class="line">public void foo(Foo foo) &#123;...&#125;</div><div class="line"></div><div class="line">@RabbitListener</div><div class="line">public void foo(@Payload Foo foo, @Header(&quot;amqp_consumerQueue&quot;) String queue) &#123;...&#125;</div><div class="line"></div><div class="line">@RabbitListener</div><div class="line">public void foo(Foo foo, o.s.amqp.core.Message message) &#123;...&#125;</div><div class="line"></div><div class="line">@RabbitListener</div><div class="line">public void foo(Foo foo, o.s.messaging.Message&lt;Foo&gt; message) &#123;...&#125;</div><div class="line"></div><div class="line">@RabbitListener</div><div class="line">public void foo(Foo foo, String bar) &#123;...&#125;</div><div class="line"></div><div class="line">@RabbitListener</div><div class="line">public void foo(Foo foo, o.s.messaging.Message&lt;?&gt; message) &#123;...&#125;</div></pre></td></tr></table></figure>
-<p>在上面的四个例子中，转换器将尝试转换为Foo类型。第五个例子是无效的，因为我们不能确定哪个参数应该接收消息payload。在第六个示例中，由于泛型类型，所以Jackson会使用默认配置。</p>
-<p>然而，可以创建自定义转换器并使用targetMethod消息属性来决定将JSON转换为哪种类型。</p>
-<p>只有在方法级别声明<br>RabbitListener注释时才能实现此类型推断。使用类级别<br>RabbitListener时，转换后的类型用于选择要调用哪个<br>RabbitHandler方法。为此，基础结构提供了targetObject消息属性，可以由自定义转换器使用它来确定类型。</p>
-<h4 id="RabbitTemplate消息转换"><a href="#RabbitTemplate消息转换" class="headerlink" title="RabbitTemplate消息转换"></a>RabbitTemplate消息转换</h4><p>正如上面提到的，类型信息在消息头中传送，帮助转换器转换消息。这在大多数条件下有用，但是当使用泛型时，它只能转换简单的对象和部分容器对象(list,array,map)。从2.0版本开始，Jackson2JsonMessageConverter实现了SmartMessageConverter接口，允许rabbitTemplate使用ParameterizedTypeReference，这个对象可以用来包装复杂的参数</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Foo&lt;Bar&lt;Baz, Qux&gt;&gt; foo =</div><div class="line">    rabbitTemplate.receiveAndConvert(new ParameterizedTypeReference&lt;Foo&lt;Bar&lt;Baz, Qux&gt;&gt;&gt;() &#123; &#125;);</div></pre></td></tr></table></figure>
-<h5 id="ContentTypeDelegatingMessageConverter"><a href="#ContentTypeDelegatingMessageConverter" class="headerlink" title="ContentTypeDelegatingMessageConverter"></a>ContentTypeDelegatingMessageConverter</h5><p>该类在1.4.2版本中引入，并允许根据MessageProperties中的内容类型属性委派特定的MessageConverter。默认情况下，如果没有contentType属性或者不匹配配置转换器的值，它将委托给SimpleMessageConverter。看起来这个MessageConverter是比较好用的。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;contentTypeConverter&quot; class=&quot;ContentTypeDelegatingMessageConverter&quot;&gt;</div><div class="line">    &lt;property name=&quot;delegates&quot;&gt;</div><div class="line">        &lt;map&gt;</div><div class="line">            &lt;entry key=&quot;application/json&quot; value-ref=&quot;jsonMessageConverter&quot; /&gt;</div><div class="line">            &lt;entry key=&quot;application/xml&quot; value-ref=&quot;xmlMessageConverter&quot; /&gt;</div><div class="line">        &lt;/map&gt;</div><div class="line">    &lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
-
+<h2 id="writeAndFlush抽象步骤"><a href="#writeAndFlush抽象步骤" class="headerlink" title="writeAndFlush抽象步骤"></a>writeAndFlush抽象步骤</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">从tail节点向前传播</div><div class="line">逐个调用channelHandler的wirite方法 </div><div class="line">逐个调用channelHandler的flush方法</div></pre></td></tr></table></figure>
+<p>首先进入writeAndFlush方法,定位到</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tail.writeAndFlush(msg);</div></pre></td></tr></table></figure>
+<p>可见这个方法是从pipeLine的tail节点开始传播,接着调用write方法,判断该线程是否是eventLoop里面的线程,如果是则执行,否则封装成task扔进队列中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">executor.inEventLoop()</div></pre></td></tr></table></figure>
+<p>接着会调用,也就是说如果我们自定义的handler实现了write方法,则会进行调用,但是我们在encoder类中实现的是一个encode方法。这时因为Encoder继承自MessageToByteEncoder,而父类的write方法调用了encode方法,所以我们只需要重写encode方法即可。最终会传播到头结点的write方法:unsafe.write(msg, promise);</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">((ChannelOutboundHandler) handler()).write(this, msg, promise);</div></pre></td></tr></table></figure>
+<p>接着会进行flush操作,因为一般我们自定义的handler很少会去复写handler方法,所以大部分情况下它会一直传播到头结点。并最终调用unsafe.flush();</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">((ChannelOutboundHandler) handler()).flush(this);</div></pre></td></tr></table></figure>
+<h2 id="HeadContext-write"><a href="#HeadContext-write" class="headerlink" title="HeadContext.write()"></a>HeadContext.write()</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">direct化byteBuf</div><div class="line">插入写队列</div><div class="line">设置写状态</div></pre></td></tr></table></figure>
+<p>首先对于传入的msg调用此方法,这个方法首先会判断是否是ByteBuf,如果是directBuffer则直接返回,如果是heapBuff则包装成DirectBuf</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">msg = filterOutboundMessage(msg);</div><div class="line"></div><div class="line">if (msg instanceof ByteBuf) &#123;</div><div class="line">            ByteBuf buf = (ByteBuf) msg;</div><div class="line">            if (buf.isDirect()) &#123;</div><div class="line">                return msg;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            return newDirectBuffer(buf);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>接着将buf加入到写队列中,这里可以看到是三个Entry:tailEntry/flushedEntry/unflushedEntry,可以理解为三个指针。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">outboundBuffer.addMessage(msg, size, promise);</div><div class="line"></div><div class="line"></div><div class="line">public void addMessage(Object msg, int size, ChannelPromise promise) &#123;</div><div class="line">        Entry entry = Entry.newInstance(msg, size, total(msg), promise);</div><div class="line">        if (tailEntry == null) &#123;</div><div class="line">            flushedEntry = null;</div><div class="line">            tailEntry = entry;</div><div class="line">        &#125; else &#123;</div><div class="line">            Entry tail = tailEntry;</div><div class="line">            tail.next = entry;</div><div class="line">            tailEntry = entry;</div><div class="line">        &#125;</div><div class="line">        if (unflushedEntry == null) &#123;</div><div class="line">            unflushedEntry = entry;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        incrementPendingOutboundBytes(size, false);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>三个指针的排列状况如下:把队列分为了两个部分,前面一个部分表示已经flush过得数据,后面一部分表示没有flush过得数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Entry(flushedEntry) --&gt; ... Entry(unflushedEntry) --&gt; ... Entry(tailEntry)</div></pre></td></tr></table></figure>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1ft2t54z5qpj310a0i240a.jpg" alt=""></p>
+<p>最后是设置写状态,每次添加数据之后,Netty都要统计一个有多少数据需要写出。这里会比较一个buffer水位值getWriteBufferHighWaterMark(),默认是64K。如果超过这个值,就会在pipeline中传播一个无法写入的状态。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">private void incrementPendingOutboundBytes(long size, boolean invokeLater) &#123;</div><div class="line">    if (size == 0) &#123;</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    long newWriteBufferSize = TOTAL_PENDING_SIZE_UPDATER.addAndGet(this, size);</div><div class="line">    if (newWriteBufferSize &gt; channel.config().getWriteBufferHighWaterMark()) &#123;</div><div class="line">        setUnwritable(invokeLater);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="HeadContext-flush"><a href="#HeadContext-flush" class="headerlink" title="HeadContext.flush()"></a>HeadContext.flush()</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">添加刷新标志并设置写状态</div><div class="line">遍历buffer队列,过滤ByteBuf</div><div class="line">调用jdk的api写入</div></pre></td></tr></table></figure>
+<p>进入到addFlush方法,首先将当前指向为flushedEntry标记为已刷新。接着decrementPendingOutboundBytes会减去flush的数据的大小,直到空间小于默认的32K时,pipeline会传播一个可写的状态。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">Entry entry = unflushedEntry;</div><div class="line">        if (entry != null) &#123;</div><div class="line">            if (flushedEntry == null) &#123;</div><div class="line">                flushedEntry = entry;</div><div class="line">            &#125;</div><div class="line">            do &#123;</div><div class="line">                flushed++;</div><div class="line">                if (!entry.promise.setUncancellable()) &#123;</div><div class="line">                    int pending = entry.cancel();</div><div class="line">                    decrementPendingOutboundBytes(pending, false, true);</div><div class="line">                &#125;</div><div class="line">                entry = entry.next;</div><div class="line">            &#125; while (entry != null);</div><div class="line">            unflushedEntry = null;</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
+<p>接着进入flsuh0的doWrite方法,通过一个for循环,通过in.current()每次拿到一个flushedEntry</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Object msg = in.current();</div></pre></td></tr></table></figure>
+<p>这里Netty获取一个自旋锁,默认为16.通过自旋锁提高内存的使用率并提高吞吐量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">writeSpinCount = config().getWriteSpinCount();</div></pre></td></tr></table></figure>
+<p>接着将Netty的ByteBuf塞进jdk的ByteBuffer里面,调用JDK的write方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">ByteBuffer tmpBuf;</div><div class="line">        if (internal) &#123;</div><div class="line">            tmpBuf = internalNioBuffer();</div><div class="line">        &#125; else &#123;</div><div class="line">            tmpBuf = memory.duplicate();</div><div class="line">        &#125;</div><div class="line">        index = idx(index);</div><div class="line">        tmpBuf.clear().position(index).limit(index + length);</div><div class="line">        return out.write(tmpBuf);</div></pre></td></tr></table></figure>
+</the>
       
       
         <div class="page-reward">
@@ -361,13 +367,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/02/01/RabbitMq入门-MessageConverter-6/">RabbitMq入门-MessageConverter(6)</a></p>
+        <p><span>本文标题:</span><a href="/2018/07/08/Netty-7-编码/">Netty(7) 编码</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2018年02月01日 - 13时34分</p>
-        <p><span>最后更新:</span>2018年02月01日 - 13时35分</p>
+        <p><span>发布时间:</span>2018年07月08日 - 11时46分</p>
+        <p><span>最后更新:</span>2018年07月08日 - 22时49分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/02/01/RabbitMq入门-MessageConverter-6/" title="RabbitMq入门-MessageConverter(6)">http://www.shuchang.sc.com/2018/02/01/RabbitMq入门-MessageConverter-6/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/02/01/RabbitMq入门-MessageConverter-6/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/07/08/Netty-7-编码/" title="Netty(7) 编码">http://www.shuchang.sc.com/2018/07/08/Netty-7-编码/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/07/08/Netty-7-编码/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -380,18 +386,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2018/02/02/JUC-等等我-一起走-9/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          JUC-等等我,一起走(9)
-        
-      </div>
-    </a>
   
-  
-    <a href="/2018/01/31/RabbitMq入门-消息发送与接收-5/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">RabbitMq入门-消息发送与接收(5)</div>
+    <a href="/2018/07/07/Netty-6-解码/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Netty(6) 解码</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -402,7 +399,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SimpleMessageConverter"><span class="toc-number">2.</span> <span class="toc-text">SimpleMessageConverter</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Message转换为对象"><span class="toc-number">2.1.</span> <span class="toc-text">Message转换为对象</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#转换为Message"><span class="toc-number">2.2.</span> <span class="toc-text">转换为Message</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Jackson2JsonMessageConverter"><span class="toc-number">3.</span> <span class="toc-text">Jackson2JsonMessageConverter</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Message转换为对象-1"><span class="toc-number">3.1.</span> <span class="toc-text">Message转换为对象</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RabbitTemplate消息转换"><span class="toc-number">4.</span> <span class="toc-text">RabbitTemplate消息转换</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#ContentTypeDelegatingMessageConverter"><span class="toc-number">4.1.</span> <span class="toc-text">ContentTypeDelegatingMessageConverter</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#writeAndFlush抽象步骤"><span class="toc-number">1.</span> <span class="toc-text">writeAndFlush抽象步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HeadContext-write"><span class="toc-number">2.</span> <span class="toc-text">HeadContext.write()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HeadContext-flush"><span class="toc-number">3.</span> <span class="toc-text">HeadContext.flush()</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -468,13 +465,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2018/02/02/JUC-等等我-一起走-9/" title="上一篇: JUC-等等我,一起走(9)">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2018/01/31/RabbitMq入门-消息发送与接收-5/" title="下一篇: RabbitMq入门-消息发送与接收(5)">
+            <a href="/2018/07/07/Netty-6-解码/" title="下一篇: Netty(6) 解码">
                 <i class="fa fa-angle-right"></i>
             </a>
         

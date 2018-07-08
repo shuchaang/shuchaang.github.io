@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 15.71px;">ElasticSearch</a> <a href="/tags/JAVA/" style="font-size: 17.14px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.86px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 14.29px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.14px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 17.14px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15.71px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.43px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.86px;">redis</a> <a href="/tags/spring/" style="font-size: 12.86px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.57px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 15px;">ElasticSearch</a> <a href="/tags/JAVA/" style="font-size: 17.5px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.5px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 13.75px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.5px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.25px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.25px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/spring/" style="font-size: 12.5px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.75px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,76 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-Kafka消息可靠性保证" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/24/Kafka消息可靠性保证/" class="article-date">
+      <time datetime="2018-06-24T03:16:38.000Z" itemprop="datePublished">2018-06-24</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/24/Kafka消息可靠性保证/">Kafka消息可靠性保证</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1fs9xddv57oj30gm0933z8.jpg" alt=""></p>
+<h2 id="Reliability-Guarantees"><a href="#Reliability-Guarantees" class="headerlink" title="Reliability Guarantees"></a>Reliability Guarantees</h2><p>kafka会把每个topic分为若干个partition。可以把topic理解为一个表,partition就是它的多个分区,一个partition会存放到单独的一个磁盘。每个partition都有多个副本(replica),其中一个会被选举为leader,所有的读写操作都是由leader来执行，其他的副本仅仅是用来维持一个In-Sync的状态,也就是说follower会不断地向leader发起一些fetch request，获取数据。</p>
+<p>一个副本被认为是处于In-Sync(可参与leader选举)的状态必须满足几个条件:</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Kafka/">Kafka</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/">Kafka</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/06/24/Kafka消息可靠性保证/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-系统学习ElasticSearch-聚合分析-4" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -907,76 +977,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/02/13/JUC-阻塞队列-11/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-JUC-Executor框架-10" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/02/11/JUC-Executor框架-10/" class="article-date">
-      <time datetime="2018-02-11T06:54:57.000Z" itemprop="datePublished">2018-02-11</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/11/JUC-Executor框架-10/">JUC-Executor框架(10)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>我们日常工作中使用Executor框架最常见的就是创建一个线程池，然后将任务交给线程池去执行，实现提交与执行任务之间解耦</p>
-<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>这里主要研究一下Executor框架的主干部分，对于ScheduledService工作中应该主要使用的是quartz框架，对于CompletionService，个人觉得java8中的CompletableFuture使用效果更好，所以在这里就不研究了。</p>
-<p><img src="https://ws3.sinaimg.cn/large/006tKfTcly1focjozc5g1j30j40ah756.jpg" alt=""></p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/02/11/JUC-Executor框架-10/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
