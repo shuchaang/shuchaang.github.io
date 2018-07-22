@@ -232,6 +232,116 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-Netty-8-性能优化工具类" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/07/09/Netty-8-性能优化工具类/" class="article-date">
+      <time datetime="2018-07-09T10:37:46.000Z" itemprop="datePublished">2018-07-09</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/09/Netty-8-性能优化工具类/">Netty(8) 性能优化工具类</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>Netty中有两个比较常见的优化工具类</p>
+<ul>
+<li>FastThreadLocal</li>
+<li>Recycler对象池</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">public class FastThreadLocalTest &#123;</div><div class="line">    private static FastThreadLocal&lt;Object&gt; threadLocal = new FastThreadLocal&lt;Object&gt;()&#123;</div><div class="line">        @Override</div><div class="line">        protected Object initialValue() throws Exception &#123;</div><div class="line">            return new Object();</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        new Thread(()-&gt;&#123;</div><div class="line">            Object o = threadLocal.get();</div><div class="line">            System.out.println(o);</div><div class="line">        &#125;).start();</div><div class="line">        new Thread(()-&gt;&#123;</div><div class="line">            Object o = threadLocal.get();</div><div class="line">            System.out.println(o);</div><div class="line">        &#125;).start();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过这个简单的test,多次打印object的内存地址,就会发现一个object被多次复用。</p>
+<h2 id="FastThreadLocal机制"><a href="#FastThreadLocal机制" class="headerlink" title="FastThreadLocal机制"></a>FastThreadLocal机制</h2><h3 id="FastThreadLocal创建"><a href="#FastThreadLocal创建" class="headerlink" title="FastThreadLocal创建"></a>FastThreadLocal创建</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public FastThreadLocal() &#123;</div><div class="line">    index = InternalThreadLocalMap.nextVariableIndex();</div><div class="line">&#125;</div><div class="line">private final int index;</div><div class="line"></div><div class="line">int index = nextIndex.getAndIncrement();</div></pre></td></tr></table></figure>
+<p>FastThreadLocal的初始化只有一行代码,设定了一个final的index值,并且这个值是通过一个原子类进行赋值的。当第一个次初始化时index=0,第二次index=1…通过index便可以唯一标识一个FastThreadLocal。</p>
+<h3 id="FastThreadLocal-get"><a href="#FastThreadLocal-get" class="headerlink" title="FastThreadLocal get()"></a>FastThreadLocal get()</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">获取ThreadLocalMap</div><div class="line">直接通过索引取出对象</div><div class="line">初始化</div></pre></td></tr></table></figure>
+<p>首先判断当前线程是否是FastThreadLocalThread,如果是则执行fastGet,通常情况下我们初始化一个线程都是使用的普通线程,所以先进入slowGet,slowGet方法就是通过JDK的ThreadLocal获取变量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public static InternalThreadLocalMap get() &#123;</div><div class="line">    Thread thread = Thread.currentThread();</div><div class="line">    if (thread instanceof FastThreadLocalThread) &#123;</div><div class="line">        return fastGet((FastThreadLocalThread) thread);</div><div class="line">    &#125; else &#123;</div><div class="line">        return slowGet();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果是Netty创建的FastThreadLocalThread,它的内部维护了一个变量InternalThreadLocalMap,这样每次取数据的时候就是去它自己的成员变量里面去取,这也是fast和slow的区别</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">private static InternalThreadLocalMap fastGet(FastThreadLocalThread thread) &#123;</div><div class="line">    InternalThreadLocalMap threadLocalMap = thread.threadLocalMap();</div><div class="line">    if (threadLocalMap == null) &#123;</div><div class="line">        thread.setThreadLocalMap(threadLocalMap = new InternalThreadLocalMap());</div><div class="line">    &#125;</div><div class="line">    return threadLocalMap;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>紧接着,由于每个FastThread都有一个index唯一标识,那么通过这个标识,可以直接拿到当前线程对应的ThreadLocalMap。ThreadLocalMap是一个一维数组,index就是这个一位数组的一个下标,通过这个下表可以拿到这个线程的对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Object v = threadLocalMap.indexedVariable(index);</div></pre></td></tr></table></figure>
+<h3 id="FastThreadLocal-set"><a href="#FastThreadLocal-set" class="headerlink" title="FastThreadLocal set()"></a>FastThreadLocal set()</h3><p>set的方法比较简单,核心就是下面一句。将index对应的数组下表的值设置为value</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public final void set(InternalThreadLocalMap threadLocalMap, V value) &#123;</div><div class="line">    if (value != InternalThreadLocalMap.UNSET) &#123;</div><div class="line">        if (threadLocalMap.setIndexedVariable(index, value)) &#123;</div><div class="line">            addToVariablesToRemove(threadLocalMap, this);</div><div class="line">        &#125;</div><div class="line">    &#125; else &#123;</div><div class="line">        remove(threadLocalMap);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="轻量级对象池Recycler"><a href="#轻量级对象池Recycler" class="headerlink" title="轻量级对象池Recycler"></a>轻量级对象池Recycler</h2><p>一个简单的demo看一下Recycler的使用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">public class RecyclerTest &#123;</div><div class="line">    private static final Recycler&lt;Users&gt; RECYCLER = new Recycler&lt;Users&gt;() &#123;</div><div class="line">        @Override</div><div class="line">        protected Users newObject(Handle&lt;Users&gt; handle) &#123;</div><div class="line">            return new Users(handle);</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line">    private static class Users&#123;</div><div class="line">        private final Recycler.Handle&lt;Users&gt; handle;</div><div class="line"></div><div class="line">        public Users(Recycler.Handle&lt;Users&gt; handle) &#123;</div><div class="line">            this.handle = handle;</div><div class="line">        &#125;</div><div class="line">        public void recycle()&#123;</div><div class="line">            handle.recycle(this);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Users u = RECYCLER.get();</div><div class="line">        u.recycle();</div><div class="line">        Users u2 =RECYCLER.get();</div><div class="line">        System.out.println(u==u2);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><p>Recycler的作用是每次创建对象的时候不需要每次都new出来,如果Recycler有这个对象,那么就从Recycler里面取出来重用,不需要这个对象的时候,就放回Recycler。</p>
+<p>可以看到每个Recycler都维护了一个Stack对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">private final FastThreadLocal&lt;Stack&lt;T&gt;&gt; threadLocal = new FastThreadLocal&lt;Stack&lt;T&gt;&gt;();</div><div class="line"></div><div class="line">    private final FastThreadLocal&lt;Stack&lt;T&gt;&gt; threadLocal = new FastThreadLocal&lt;Stack&lt;T&gt;&gt;() &#123;</div><div class="line">        @Override</div><div class="line">        protected Stack&lt;T&gt; initialValue() &#123;</div><div class="line">            return new Stack&lt;T&gt;(Recycler.this, Thread.currentThread(), maxCapacityPerThread, maxSharedCapacityFactor,</div><div class="line">                    ratioMask, maxDelayedQueuesPerThread);</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line"></div><div class="line">        Stack(Recycler&lt;T&gt; parent, Thread thread, int maxCapacity, int maxSharedCapacityFactor,</div><div class="line">            int ratioMask, int maxDelayedQueues) &#123;</div><div class="line">            this.parent = parent;</div><div class="line">            this.thread = thread;</div><div class="line">            this.maxCapacity = maxCapacity;</div><div class="line">            availableSharedCapacity = new AtomicInteger(max(maxCapacity / maxSharedCapacityFactor, LINK_CAPACITY));</div><div class="line">            elements = new DefaultHandle[min(INITIAL_CAPACITY, maxCapacity)];</div><div class="line">            this.ratioMask = ratioMask;</div><div class="line">            this.maxDelayedQueues = maxDelayedQueues;</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftifxqs1luj30sm0cfq4y.jpg" alt=""></p>
+<p>可以看到stack都与当前线程绑定,每个handle就是我们回收的对象,radioMask控制对象的回收比例,也就是说并不是每个对象都可以回收。maxCapacity表示栈的最大容量。maxDelayedQueues比较特殊,表示有多少个其他线程可以缓存这个对象,当我们在其他线程中需要销毁这个对象时,并不会直接跨线程去销毁,而是把这个对象添加到weakOrderQueue中去做销毁</p>
+<h3 id="获取"><a href="#获取" class="headerlink" title="获取"></a>获取</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public final T get() &#123;</div><div class="line">    if (maxCapacityPerThread == 0) &#123;</div><div class="line">        return newObject((Handle&lt;T&gt;) NOOP_HANDLE);</div><div class="line">    &#125;</div><div class="line">    Stack&lt;T&gt; stack = threadLocal.get();</div><div class="line">    DefaultHandle&lt;T&gt; handle = stack.pop();</div><div class="line">    if (handle == null) &#123;</div><div class="line">        handle = stack.newHandle();</div><div class="line">        handle.value = newObject(handle);</div><div class="line">    &#125;</div><div class="line">    return (T) handle.value;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先判断当前线程maxCapacityPerThread,如果为0,则表示当前线程不能回收对象,所以直接创建返回。</p>
+<p>下面从当前线程中获取stack,接着pop拿出一个对象。如果这个对象为null,表示当前stack为空,new一个对象,然后将对象关联到这个hanlde,返回handle。</p>
+<p>我们可以进入pop()方法,大部分代码都是常规的stack的pop操作,有一个方法scavenge(),这个方法功能是:如果当前栈为空,那么这个对象可能在其他线程中正在等待删除,那么就去这些线程中看一下是否有这种情况,如果有则取消它的销毁状态,将对象拿回来。</p>
+<h3 id="回收"><a href="#回收" class="headerlink" title="回收"></a>回收</h3><p>对象的回收要考虑两种情况</p>
+<ol>
+<li>同线程的对象回收</li>
+<li>异线程的对象回收</li>
+</ol>
+<p>对象的回收最终会调用到stack.push(obj)方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">void push(DefaultHandle&lt;?&gt; item) &#123;</div><div class="line">    Thread currentThread = Thread.currentThread();</div><div class="line">        if (thread == currentThread) &#123;</div><div class="line">        // The current Thread is the thread that belongs to the Stack, we can try to push the object now.</div><div class="line">        pushNow(item);</div><div class="line">        &#125; else &#123;</div><div class="line">        // The current Thread is not the one that belongs to the Stack, we need to signal that the push</div><div class="line">        // happens later.</div><div class="line">        pushLater(item, currentThread);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先会去判断当前线程是否是创建这个stack的线程,如果是则执行pushNow</p>
+<blockquote>
+<p>同线程回收</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">private void pushNow(DefaultHandle&lt;?&gt; item) &#123;</div><div class="line">    if ((item.recycleId | item.lastRecycledId) != 0) &#123;</div><div class="line">        throw new IllegalStateException(&quot;recycled already&quot;);</div><div class="line">    &#125;</div><div class="line">    item.recycleId = item.lastRecycledId = OWN_THREAD_ID;</div><div class="line">    int size = this.size;</div><div class="line">    if (size &gt;= maxCapacity || dropHandle(item)) &#123;</div><div class="line">        // Hit the maximum capacity or should drop - drop the possibly youngest object.</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">    if (size == elements.length) &#123;</div><div class="line">        elements = Arrays.copyOf(elements, min(size &lt;&lt; 1, maxCapacity));</div><div class="line">    &#125;</div><div class="line">    elements[size] = item;</div><div class="line">    this.size = size + 1;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里将回收的对象设定了一个OWN_THREAD_ID,表示在整个Recycler中是唯一的。接着判断stack是否已经满了,满了则丢弃,由于Recycler并不会一开始就创建maxSize这么大的数组,如果判断当前size不足,则扩容为原来的两倍,将对象放进去。</p>
+<blockquote>
+<p>异线程回收</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">private void pushLater(DefaultHandle&lt;?&gt; item, Thread thread) &#123;</div><div class="line">    Map&lt;Stack&lt;?&gt;, WeakOrderQueue&gt; delayedRecycled = DELAYED_RECYCLED.get();</div><div class="line">    WeakOrderQueue queue = delayedRecycled.get(this);</div><div class="line">    if (queue == null) &#123;</div><div class="line">        if (delayedRecycled.size() &gt;= maxDelayedQueues) &#123;</div><div class="line">            // Add a dummy queue so we know we should drop the object</div><div class="line">            delayedRecycled.put(this, WeakOrderQueue.DUMMY);</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        // Check if we already reached the maximum number of delayed queues and if we can allocate at all.</div><div class="line">        if ((queue = WeakOrderQueue.allocate(this, thread)) == null) &#123;</div><div class="line">            // drop object</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        delayedRecycled.put(this, queue);</div><div class="line">    &#125; else if (queue == WeakOrderQueue.DUMMY) &#123;</div><div class="line">        // drop object</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    queue.add(item);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先获取WeakOrderQueue,这个数据结构就存储了需要释放的在其他线程中存储的对象。如果要回收的对象的线程之前没有绑定过,则创建一个weakOrderQ与之绑定,否则直接将对象插入队列</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>FastThreadLocal主要解决变量的线程隔离 问题。Recycler则是解决频繁创建大对象的问题,减少YoungGC,但是如果对象很小,创建频率不高可能得不偿失</p>
+
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Netty/">Netty</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-Netty-7-编码" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -911,82 +1021,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/06/24/Kafka-Streaming-分支/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Kafka-Streaming-入门" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/06/24/Kafka-Streaming-入门/" class="article-date">
-      <time datetime="2018-06-24T03:19:33.000Z" itemprop="datePublished">2018-06-24</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/24/Kafka-Streaming-入门/">Kafka Streaming 入门</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fsl9w3d2iqj30fp05edgr.jpg" alt=""></p>
-<h2 id="什么是流式计算"><a href="#什么是流式计算" class="headerlink" title="什么是流式计算"></a>什么是流式计算</h2><p>流的本质特征是one pass和sequence。可以想象一条管道,数据经过管道,在管道内经过一系列计算。数据以流的形式,不可逆的向前流动。大多数将响应异步的返回,然后增量地更新。一句话概括就是持续输入,持续输出,各个输入输出之间没有明显的边界。</p>
-<h2 id="Kafka-Stream-优势在哪"><a href="#Kafka-Stream-优势在哪" class="headerlink" title="Kafka Stream 优势在哪"></a>Kafka Stream 优势在哪</h2><ol>
-<li>目前流式计算已经有了很多成熟的框架,如spark streaming,strom以及flink。这些框架对于kafka的劣势就在于过于笨重,非常依赖于框架本身的调度,需要将流式的作业提交到计算平台,通过平台来计算。而Kafka流式计算则是提供一个库,通过调用Api即可实现流式计算,但是这些Api的数据来源都必须是一个Topic。所以相比于其他流式计算框架,Kafka streaming 更加轻量,仅依赖kafka本身。 </li>
-</ol>
-<p>但是Kafka streaming并不可能去替代spark streaming这样一种流计算框架,可以把它视作spark streaming的local model</p>
-<ol>
-<li>由于kafka本身提供了诸如partition,replica,reblance,数据持久化等机制,所以Kafka streaming可以在线动态调整并行度,实现重新消费或者数据回滚等操作</li>
-</ol>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Kafka/">Kafka</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/">Kafka</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/06/24/Kafka-Streaming-入门/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>

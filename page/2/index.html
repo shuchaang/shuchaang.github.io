@@ -232,6 +232,82 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-Kafka-Streaming-入门" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/24/Kafka-Streaming-入门/" class="article-date">
+      <time datetime="2018-06-24T03:19:33.000Z" itemprop="datePublished">2018-06-24</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/24/Kafka-Streaming-入门/">Kafka Streaming 入门</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fsl9w3d2iqj30fp05edgr.jpg" alt=""></p>
+<h2 id="什么是流式计算"><a href="#什么是流式计算" class="headerlink" title="什么是流式计算"></a>什么是流式计算</h2><p>流的本质特征是one pass和sequence。可以想象一条管道,数据经过管道,在管道内经过一系列计算。数据以流的形式,不可逆的向前流动。大多数将响应异步的返回,然后增量地更新。一句话概括就是持续输入,持续输出,各个输入输出之间没有明显的边界。</p>
+<h2 id="Kafka-Stream-优势在哪"><a href="#Kafka-Stream-优势在哪" class="headerlink" title="Kafka Stream 优势在哪"></a>Kafka Stream 优势在哪</h2><ol>
+<li>目前流式计算已经有了很多成熟的框架,如spark streaming,strom以及flink。这些框架对于kafka的劣势就在于过于笨重,非常依赖于框架本身的调度,需要将流式的作业提交到计算平台,通过平台来计算。而Kafka流式计算则是提供一个库,通过调用Api即可实现流式计算,但是这些Api的数据来源都必须是一个Topic。所以相比于其他流式计算框架,Kafka streaming 更加轻量,仅依赖kafka本身。 </li>
+</ol>
+<p>但是Kafka streaming并不可能去替代spark streaming这样一种流计算框架,可以把它视作spark streaming的local model</p>
+<ol>
+<li>由于kafka本身提供了诸如partition,replica,reblance,数据持久化等机制,所以Kafka streaming可以在线动态调整并行度,实现重新消费或者数据回滚等操作</li>
+</ol>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Kafka/">Kafka</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/">Kafka</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/06/24/Kafka-Streaming-入门/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-Kafka消息可靠性保证" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -908,75 +984,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/02/16/JUC-CompletableFuture使用-12/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-JUC-阻塞队列-11" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/02/13/JUC-阻塞队列-11/" class="article-date">
-      <time datetime="2018-02-13T04:09:01.000Z" itemprop="datePublished">2018-02-13</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/13/JUC-阻塞队列-11/">JUC-阻塞队列(11)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>在第十节Executor框架中，看到了阻塞队列这种结构。之前没有仔细看过，今天看看源码，大概都有哪些实现方式。</p>
-<p>BlockingQueue的出现，简化了生产者-消费者场景的复杂性。BlockingQueue的特性就是当队列中不存在元素的时候，取出元素方法陷入阻塞。当队列满的时候，插入元素方法陷入阻塞。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/02/13/JUC-阻塞队列-11/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
