@@ -3,24 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>jvm学习笔记-类加载 | Shuchang&#39;s Blog</title>
+  <title>Netty(10) Netty中的性能调优 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="宏观 当我们写好.java程序点击运行的时候发生了什么   当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:   以魔数Magic Number:0xCafeBabe开头 ConstantPool:符号表 FieldInfo:类成员变量表 方法描述 附加节点 …   有了.class文件我们就可以执行java命令">
-<meta name="keywords" content="java,jvm">
+  <meta name="description" content="单机百万调优 如何模拟百万连接  如何突破局部文件句柄的限制  如何突破全局文件句柄的限制   首先第一个问题,当我们启动一个服务端,我们会绑定一个端口。当客户端去连接,默认连接数是有限制的,是65535,并且1024以下只能被root使用,所以单机只有6W左右的连接可以介入。所以可以采取的办法就是服务端开启8000-8100共100个端口,客户端使用1025~65535去连接服务端。100*6w">
+<meta name="keywords" content="Netty,JAVA">
 <meta property="og:type" content="article">
-<meta property="og:title" content="jvm学习笔记-类加载">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/11/23/表面理解jvm-类加载/index.html">
+<meta property="og:title" content="Netty(10) Netty中的性能调优">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/07/22/Netty-10-Netty中的性能调优/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="宏观 当我们写好.java程序点击运行的时候发生了什么   当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:   以魔数Magic Number:0xCafeBabe开头 ConstantPool:符号表 FieldInfo:类成员变量表 方法描述 附加节点 …   有了.class文件我们就可以执行java命令">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1flrre3ma6nj30km0970t3.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1flrsg7pnfhj30k20dmmzx.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1flrta4ovpij309v085dh2.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1flrtfhpw0aj30m8019jre.jpg">
-<meta property="og:updated_time" content="2017-12-18T08:48:44.000Z">
+<meta property="og:description" content="单机百万调优 如何模拟百万连接  如何突破局部文件句柄的限制  如何突破全局文件句柄的限制   首先第一个问题,当我们启动一个服务端,我们会绑定一个端口。当客户端去连接,默认连接数是有限制的,是65535,并且1024以下只能被root使用,所以单机只有6W左右的连接可以介入。所以可以采取的办法就是服务端开启8000-8100共100个端口,客户端使用1025~65535去连接服务端。100*6w">
+<meta property="og:updated_time" content="2018-07-22T11:38:04.282Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="jvm学习笔记-类加载">
-<meta name="twitter:description" content="宏观 当我们写好.java程序点击运行的时候发生了什么   当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:   以魔数Magic Number:0xCafeBabe开头 ConstantPool:符号表 FieldInfo:类成员变量表 方法描述 附加节点 …   有了.class文件我们就可以执行java命令">
-<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1flrre3ma6nj30km0970t3.jpg">
+<meta name="twitter:title" content="Netty(10) Netty中的性能调优">
+<meta name="twitter:description" content="单机百万调优 如何模拟百万连接  如何突破局部文件句柄的限制  如何突破全局文件句柄的限制   首先第一个问题,当我们启动一个服务端,我们会绑定一个端口。当客户端去连接,默认连接数是有限制的,是65535,并且1024以下只能被root使用,所以单机只有6W左右的连接可以介入。所以可以采取的办法就是服务端开启8000-8100共100个端口,客户端使用1025~65535去连接服务端。100*6w">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -234,11 +229,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-表面理解jvm-类加载" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Netty-10-Netty中的性能调优" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/11/23/表面理解jvm-类加载/" class="article-date">
-      <time datetime="2017-11-23T00:07:39.000Z" itemprop="datePublished">2017-11-23</time>
+      <a href="/2018/07/22/Netty-10-Netty中的性能调优/" class="article-date">
+      <time datetime="2018-07-22T07:37:44.000Z" itemprop="datePublished">2018-07-22</time>
 </a>
     </div>
   
@@ -251,7 +246,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      jvm学习笔记-类加载
+      Netty(10) Netty中的性能调优
     </h1>
   
 
@@ -260,13 +255,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/jvm/">jvm</a>
+    <a class="article-category-link" href="/categories/Netty/">Netty</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -276,68 +271,61 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h3 id="宏观"><a href="#宏观" class="headerlink" title="宏观"></a>宏观</h3><blockquote>
-<p>当我们写好.java程序点击运行的时候发生了什么</p>
-</blockquote>
-<ol>
-<li>当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:</li>
-</ol>
-<ul>
-<li>以魔数Magic Number:0xCafeBabe开头</li>
-<li>ConstantPool:符号表</li>
-<li>FieldInfo:类成员变量表</li>
-<li>方法描述</li>
-<li>附加节点</li>
-<li>…</li>
+        <h2 id="单机百万调优"><a href="#单机百万调优" class="headerlink" title="单机百万调优"></a>单机百万调优</h2><ul>
+<li><p>如何模拟百万连接</p>
+</li>
+<li><p>如何突破局部文件句柄的限制</p>
+</li>
+<li><p>如何突破全局文件句柄的限制</p>
+</li>
 </ul>
-<ol>
-<li>有了.class文件我们就可以执行java命令运行java程序</li>
-<li>首先JVM装载.class，也就是类加载器加载字节码。但是类加载器本身也是一个java类，所以它也需要被加载，幸运的是有一个类加载器是用c++编写的，叫做<code>Bootstrap类加载器</code>，属于虚拟机内核，用特定于操作系统的本地代码实现。Bootstrap类加载器负责加载javajava核心包中的类(rt.jar)，这些类的Class.getClassLoader()方法返回值会null，表示需要Bootstrap加载器来加载。JAVA核心包中还有两个类加载器:<code>ExtClassLoader</code>和<code>ApplicationClassLoader</code>。他们都用java语言编写，其中ExtClassLoader负责加载<java_home>/jre/lib/ext目录下的jar，ApplicationClassLoader负责加载应用程序的启动执行类，即当使用java命令去启动执行一个类时，JAVA虚拟机使用AppClassLoader加载这个类。所以这里有个小track就是把一些自己常用但是非java自带的jar放到ext目录下，这样就可以少写几个maven dependency。</java_home></li>
-</ol>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li><a id="more"></a>
+<p>首先第一个问题,当我们启动一个服务端,我们会绑定一个端口。当客户端去连接,默认连接数是有限制的,是65535,并且1024以下只能被root使用,所以单机只有6W左右的连接可以介入。所以可以采取的办法就是服务端开启8000-8100共100个端口,客户端使用1025~65535去连接服务端。100*6w大约600W连接。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br><a id="more"></a></excerpt></p>
 <the rest="" of="" contents="" |="" 余下全文="">
 
-</the></li>
-</ul>
-<h3 id="为什么要类加载器"><a href="#为什么要类加载器" class="headerlink" title="为什么要类加载器"></a>为什么要类加载器</h3><ol>
-<li>java类加载都是在程序的运行期完成的</li>
-<li>增加java程序的灵活性，例如：</li>
-</ol>
-<ul>
-<li>面向接口的编程，在程序运行时才指定其具体的实现   类。</li>
-<li>用户自定义类加载器,支持程序从网络或者其他地方加载一个类。</li>
-</ul>
-<h3 id="类的生命周期"><a href="#类的生命周期" class="headerlink" title="类的生命周期"></a>类的生命周期</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1flrre3ma6nj30km0970t3.jpg" alt=""></p>
-<ul>
-<li>①的可控性最强，因为可以自定义类加载器</li>
-<li>①②③⑤的顺序一定。但注意是开始顺序一定，并不保证按顺序完成。</li>
-<li>④过程可能在⑤之后进行，为了支持java的运行时绑定</li>
-</ul>
-<h4 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h4><ol>
-<li>通过一个类的全限定名获取定义此类的二进制字节流</li>
-<li>将字节流转化为方法区的数据结构</li>
-<li>在堆中生成这个类的对象，作为访问此类的入口<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1flrsg7pnfhj30k20dmmzx.jpg" alt="来源网络"><h4 id="连接"><a href="#连接" class="headerlink" title="连接"></a>连接</h4></li>
-<li>验证：确保符合jvm规范，没有安全问题</li>
-<li>准备：在方法区正式为类变量分配内存并设置初始值</li>
-<li>将常量池内的引用符号替换为直接引用（可以理解为将原来的多级指针指向的最终地址替换指针）</li>
-</ol>
-<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p>jvm并没有强制规定什么时候要进行加载，但是规定了五种有且只有的情况立即初始化类，当然在初始化之前要完成前面的几个步骤。</p>
-<ol>
-<li>new一个类的对象</li>
-<li>调用类的静态成员（除了final常量）和静态方法</li>
-<li>使用java.lang.reflect包的方法对类进行反射调用</li>
-<li>当虚拟机启动,加载main方法所在的类</li>
-<li>当初始化一个类，如果其父类没有被初始化，则先初始化它父类</li>
-</ol>
-<h3 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h3><p>如果两个类相等，那么不光要class是相同的，而且需要类加载器相同。</p>
-<blockquote>
-<p>关于双亲委派模型的疑问？？？</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><blockquote>
+<p>服务端</p>
 </blockquote>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1flrta4ovpij309v085dh2.jpg" alt=""></p>
-<p>这个图相信大家都见到过，也就是双亲委派模型(Parents-Delegation-Model)的示意图。详细内容就不作介绍。一点疑问就是当我第一次学这个内容的时候我在考虑双亲的双体现在哪里呢？它只是向上面一级也就是父加载器传递，这个Parents体现的应该是垂直方向，也就是父亲，爷爷这种关系，而不是水平方向上的双亲关系。所以我认为这个模型不应该叫双亲委派模型，英文也应该是(Parent-Delegation-Model),我认为双亲这种说法很容易误导初学者。<br>在《Thinking in jvm》英文原本中印证了我的想法,如图。个人认为这种说法更准确。<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1flrtfhpw0aj30m8019jre.jpg" alt=""></p>
-
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">public class MillionServer &#123;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private  static void start(int start,int n)&#123;</div><div class="line">        System.out.println(&quot;opening&quot;);</div><div class="line">        EventLoopGroup boss = new NioEventLoopGroup();</div><div class="line">        EventLoopGroup worker = new NioEventLoopGroup();</div><div class="line"></div><div class="line">        ServerBootstrap bootstrap = new ServerBootstrap();</div><div class="line">        bootstrap.group(boss,worker);</div><div class="line">        bootstrap.channel(NioServerSocketChannel.class);</div><div class="line">        bootstrap.childOption(ChannelOption.SO_REUSEADDR,true);</div><div class="line">        bootstrap.childHandler(new ConnectionCountHandler());</div><div class="line"></div><div class="line">        for(int i=0;i&lt;n;i++)&#123;</div><div class="line">            int port = start+i;</div><div class="line">            bootstrap.bind(port).addListener((ChannelFutureListener)future -&gt; &#123;</div><div class="line">                System.out.println(&quot;connection &quot;+port);</div><div class="line">            &#125;);</div><div class="line">        &#125;</div><div class="line">        System.out.println(&quot;start&quot;);</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">public class ConnectionCountHandler extends ChannelInboundHandlerAdapter &#123;</div><div class="line">    private AtomicInteger conn = new AtomicInteger();</div><div class="line"></div><div class="line">    public ConnectionCountHandler()&#123;</div><div class="line">        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(()-&gt;&#123;</div><div class="line">            System.out.println(&quot;count&quot;+conn.get());</div><div class="line">        &#125;,0,2, TimeUnit.SECONDS);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void channelActive(ChannelHandlerContext ctx) throws Exception &#123;</div><div class="line">        conn.getAndIncrement();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void channelInactive(ChannelHandlerContext ctx) throws Exception &#123;</div><div class="line">        conn.getAndDecrement();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>客户端</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">public class Client &#123;</div><div class="line"></div><div class="line">    public static void main(String[] args) throws ExecutionException, InterruptedException &#123;</div><div class="line">        EventLoopGroup worker = new NioEventLoopGroup();</div><div class="line">        final Bootstrap bootstrap = new Bootstrap();</div><div class="line"></div><div class="line">        bootstrap.group(worker);</div><div class="line">        bootstrap.channel(NioSocketChannel.class);</div><div class="line">        bootstrap.option(ChannelOption.SO_REUSEADDR,true);</div><div class="line">        bootstrap.handler(new ChannelInitializer&lt;SocketChannel&gt;() &#123;</div><div class="line">            @Override</div><div class="line">            protected void initChannel(SocketChannel ch) throws Exception &#123;</div><div class="line"></div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">        int index = 0;</div><div class="line"></div><div class="line">        int port;</div><div class="line"></div><div class="line">        while (!Thread.interrupted())&#123;</div><div class="line">            port = 8000+index;</div><div class="line">            ChannelFuture future = bootstrap.connect(&quot;localhost&quot;, port);</div><div class="line">            future.addListener((ChannelFutureListener)future1 -&gt;&#123;</div><div class="line">                if(!future1.isSuccess())&#123;</div><div class="line">                    System.out.println(&quot;bye&quot;);</div><div class="line">                    System.exit(0);</div><div class="line">                &#125;</div><div class="line">            &#125; );</div><div class="line">            future.get();</div><div class="line">            if(++index==100)&#123;</div><div class="line">                index=0;</div><div class="line"></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>将代码打包后成jar放在两台服务器上运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-Xms6.5G -Xmx6.5G  -xx newSize5.5G -xx:MaxDirectMemorySize=1g</div></pre></td></tr></table></figure>
+<p>将项目启动后,可以发现连接数到800左右就已经停止服务</p>
+<h2 id="突破连接数限制"><a href="#突破连接数限制" class="headerlink" title="突破连接数限制"></a>突破连接数限制</h2><p>在linux下执行</p>
+<blockquote>
+<p>ulimit -n 可以查看系统支持单个进程打开的最大文件句柄数</p>
+</blockquote>
+<p>要突破这个限制修改配置文件</p>
+<blockquote>
+<p>vim /etc/security/limits.conf</p>
+</blockquote>
+<p>末尾添加</p>
+<blockquote>
+<ul>
+<li>hard nofile 1000000</li>
+</ul>
+<ul>
+<li>soft nofile 1000000</li>
+</ul>
+</blockquote>
+<p>接着我们重新启动服务,发现连接数可以增加到9000左右,比之前的几百高了十倍。</p>
+<h2 id="突破全局文件句柄限制"><a href="#突破全局文件句柄限制" class="headerlink" title="突破全局文件句柄限制"></a>突破全局文件句柄限制</h2><blockquote>
+<p>cat /proc/sys/fs/file-max</p>
+<p>vim /etc/sysctl.conf</p>
+<p>在文件末尾添加 fs.file-max = 1000000</p>
+<p>sysctl -p</p>
+</blockquote>
+<p>经过这样一番折腾,应该能达到90W左右,可能会受限于本机的配置。</p>
+<h2 id="应用性能调优"><a href="#应用性能调优" class="headerlink" title="应用性能调优"></a>应用性能调优</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public class BuzHandler extends SimpleChannelInboundHandler&lt;ByteBuf&gt;&#123;</div><div class="line">    @Override</div><div class="line">    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception &#123;</div><div class="line">        ByteBuf data = Unpooled.directBuffer();</div><div class="line">        data.writeBytes(msg);</div><div class="line">        //耗时业务处理</div><div class="line">        Object res = data;</div><div class="line">        ctx.pipeline().writeAndFlush(res);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="1"><a href="#1" class="headerlink" title="1"></a>1</h3><p>假设有这样一个业务handler,我们定位到耗时的业务处理代码,这时我们可以使用线程池来提高性能</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">public class BuzHandler extends SimpleChannelInboundHandler&lt;ByteBuf&gt;&#123;</div><div class="line"></div><div class="line">    private static  ExecutorService  threadPool = Executors.newFixedThreadPool(1000);</div><div class="line">    </div><div class="line">    @Override</div><div class="line">    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception &#123;</div><div class="line">        ByteBuf data = Unpooled.directBuffer();</div><div class="line">        data.writeBytes(msg);</div><div class="line">        //耗时业务处理</div><div class="line">        threadPool.submit(()-&gt;&#123;</div><div class="line">            Object res = data;</div><div class="line">            ctx.pipeline().writeAndFlush(res);</div><div class="line">        &#125;);</div><div class="line">        </div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="2"><a href="#2" class="headerlink" title="2"></a>2</h3><p>如果不想手动创建线程池,Netty同样支持将业务代码放入NioEventLoop中执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NioEventLoopGroup buz = new NioEventLoopGroup(1000);</div><div class="line">socketChannel.pipeline().addLast(buz,new BizHandler());</div></pre></td></tr></table></figure>
+<p>虽然这样做看起来代码更简洁,但是业务逻辑中如果有分配buffer的代码,这样做就会造成将buffer分配到业务线程中,所以在性能要求高的地方还是推荐第一个种。</p>
+</the>
       
       
         <div class="page-reward">
@@ -392,13 +380,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></p>
+        <p><span>本文标题:</span><a href="/2018/07/22/Netty-10-Netty中的性能调优/">Netty(10) Netty中的性能调优</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2017年11月23日 - 08时07分</p>
-        <p><span>最后更新:</span>2017年12月18日 - 16时48分</p>
+        <p><span>发布时间:</span>2018年07月22日 - 15时37分</p>
+        <p><span>最后更新:</span>2018年07月22日 - 19时38分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/11/23/表面理解jvm-类加载/" title="jvm学习笔记-类加载">http://www.shuchang.sc.com/2017/11/23/表面理解jvm-类加载/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/11/23/表面理解jvm-类加载/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/07/22/Netty-10-Netty中的性能调优/" title="Netty(10) Netty中的性能调优">http://www.shuchang.sc.com/2018/07/22/Netty-10-Netty中的性能调优/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/07/22/Netty-10-Netty中的性能调优/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -411,18 +399,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/12/03/java并发从入门到崩溃-常用篇/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          JUC--常用篇(1)
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/11/22/表面理解jvm-内存/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">表面理解jvm-内存</div>
+    <a href="/2018/07/22/Netty-9-Netty中的设计模式/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Netty(9) Netty中的设计模式</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -433,7 +412,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#宏观"><span class="toc-number">1.</span> <span class="toc-text">宏观</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么要类加载器"><span class="toc-number">2.</span> <span class="toc-text">为什么要类加载器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类的生命周期"><span class="toc-number">3.</span> <span class="toc-text">类的生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#加载"><span class="toc-number">3.1.</span> <span class="toc-text">加载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#连接"><span class="toc-number">3.2.</span> <span class="toc-text">连接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#初始化"><span class="toc-number">3.3.</span> <span class="toc-text">初始化</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类加载器"><span class="toc-number">4.</span> <span class="toc-text">类加载器</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#单机百万调优"><span class="toc-number">1.</span> <span class="toc-text">单机百万调优</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码"><span class="toc-number">2.</span> <span class="toc-text">代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#突破连接数限制"><span class="toc-number">3.</span> <span class="toc-text">突破连接数限制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#突破全局文件句柄限制"><span class="toc-number">4.</span> <span class="toc-text">突破全局文件句柄限制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用性能调优"><span class="toc-number">5.</span> <span class="toc-text">应用性能调优</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1"><span class="toc-number">5.1.</span> <span class="toc-text">1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2"><span class="toc-number">5.2.</span> <span class="toc-text">2</span></a></li></ol></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -499,13 +478,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/12/03/java并发从入门到崩溃-常用篇/" title="上一篇: JUC--常用篇(1)">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/11/22/表面理解jvm-内存/" title="下一篇: 表面理解jvm-内存">
+            <a href="/2018/07/22/Netty-9-Netty中的设计模式/" title="下一篇: Netty(9) Netty中的设计模式">
                 <i class="fa fa-angle-right"></i>
             </a>
         
