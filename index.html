@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 15px;">ElasticSearch</a> <a href="/tags/JAVA/" style="font-size: 17.5px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.5px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 13.75px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.5px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.25px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.25px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/spring/" style="font-size: 12.5px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.75px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 15px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 10px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.5px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.5px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 13.75px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.5px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.25px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.25px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/spring/" style="font-size: 12.5px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.75px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,148 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-Hbase基础" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/09/07/Hbase基础/" class="article-date">
+      <time datetime="2018-09-07T15:45:57.000Z" itemprop="datePublished">2018-09-07</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/09/07/Hbase基础/">Hbase基础</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Hbase是一个分布式的、面向列的开源数据库</p>
+<p>Hbase在Hadoop之上提供了类似于Bigtable(源自google,建立在GFS之上)的能力</p>
+<p>Hbase适合存储非结构化数据</p>
+<h3 id="列是数据库是什么"><a href="#列是数据库是什么" class="headerlink" title="列是数据库是什么"></a>列是数据库是什么</h3><p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1ftqyydrkx1j30p30con1i.jpg" alt=""></p>
+<p>可以看到,列式数据库和传统的关系型数据库相比,旋转了90度,将关系型数据库的一列保存为一行。列式存储的主要优点之一就是可以大幅降低系统的I/O，尤其是在海量数据查询时,因为对一列的查询时一个连续的物理空间。行式更适合OLTP，比如传统的基于增删改查操作的应用。列式更适合OLAP，非常适合于在数据仓库领域发挥作用，比如数据分析、海量存储和商业智能；涉及不经常更新的数据。</p>
+<h3 id="Hbase和HDFS"><a href="#Hbase和HDFS" class="headerlink" title="Hbase和HDFS"></a>Hbase和HDFS</h3><p>Hbase建立在Hadoop文件系统之上,利用了Hadoop系统的容错能力</p>
+<p>Hbase提供对数据随机实时读写访问</p>
+<p>Hbase内部使用哈希表,并存储索引,可将在HDFS文件中的数据进行快速查找</p>
+<p>###Hbase使用场景</p>
+<p>瞬间写入量很大,使用关系型数据库成本很高</p>
+<p>数据需要长久保存,并且持续增长</p>
+<p>不涉及join,多级索引或复杂表操作</p>
+<h2 id="Hbase基本概念"><a href="#Hbase基本概念" class="headerlink" title="Hbase基本概念"></a>Hbase基本概念</h2><ul>
+<li><p>NameSpace: 可以理解为RDBMS的数据库</p>
+</li>
+<li><p>Table: 表,表名必须是一个文件路径中的合法名字</p>
+</li>
+<li><p>Row: 在表中,每一行代表一个数据对象,每一个行有唯一行键(Row Key)来进行唯一标示,以二级制字节来存储,不可变。</p>
+</li>
+<li><p>Column: Hbase的列由Column Family和Column qualifier组成,由冒号:进行间隔。Column Family是列的集合,Column Family一经定义便不可变,但其中包含的column可以动态添加或删除。Column qualifier可以理解为列名。</p>
+</li>
+</ul>
+<h2 id="基础架构"><a href="#基础架构" class="headerlink" title="基础架构"></a>基础架构</h2><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftr1g4gynxj305g03x3yr.jpg" alt=""></p>
+<p>简单搭建一个伪分布式的Hbase,其中Hmaster、HRegionServer和HQuorumPeer(zookeeper)属于hbase系统,依次看一下作用</p>
+<h3 id="HMaster"><a href="#HMaster" class="headerlink" title="HMaster"></a>HMaster</h3><p>HMaster是hbase主从集群架构中的中央节点,用于将region分配给RegionServer,协调regionServer负载并维护集群的状态。region就是Hbase中存储的最小单元.Hmaster还负责维护表和region的元数据,不参与数据的输入输出过程</p>
+<h3 id="RegionServer"><a href="#RegionServer" class="headerlink" title="RegionServer"></a>RegionServer</h3><p>维护HMaster分配的region,处理这些region的io请求,并且对运行过程中增大的region进行切分</p>
+<h3 id="Zookeeper"><a href="#Zookeeper" class="headerlink" title="Zookeeper"></a>Zookeeper</h3><p>Hbase集群的协调器,保存Hbase的一个mate信息,维护hbase regionserver的状态信息</p>
+<h2 id="HBase存储设计"><a href="#HBase存储设计" class="headerlink" title="HBase存储设计"></a>HBase存储设计</h2><h3 id="Log-Structured-Merge-Trees-（LSM）"><a href="#Log-Structured-Merge-Trees-（LSM）" class="headerlink" title="Log Structured Merge Trees （LSM）"></a>Log Structured Merge Trees （LSM）</h3><p>LSM是日志结构合并树,它是由两个或两个以上存储数据的结构组成。每个数据结构各自对应一种存储介质。简易LSM由两个树状结构组成。分别为C0、C1。</p>
+<p><img src="https://ws4.sinaimg.cn/large/0069RVTdgy1fv1c7b76kyj30dy04hjrg.jpg" alt=""></p>
+<p>C0比较小,并全部存储于内存之中,而C1存储于磁盘上。当有数据时,先插入到C0中,如果这一次C0的插入超过了阈值,C0中的数据片段会刷写到C1上。一般来说,第一层是以快速读写为目标,第二层提供持久化,可以继续扩展第三层,作用是对第二层的持久化文件进行合并拆分。</p>
+<h3 id="LSM在Hbase中的体现"><a href="#LSM在Hbase中的体现" class="headerlink" title="LSM在Hbase中的体现"></a>LSM在Hbase中的体现</h3><ol>
+<li>当数据到达regionServer,数据并不会直接写到硬盘之中,为了加速随机读写。而是写到log和memstore中,写日志是因为内存中的数据易丢失不稳定。</li>
+<li>当memsotre的数据超过阈值,后台线程会将这部分数据flush到磁盘,生成storefile</li>
+<li>系统不断刷写会产生很多小文件,这样不利于查询和读写。在某一时刻,hbase会将这些小文件合并为一个大文件，也就是一个多路归并算法。</li>
+</ol>
+<h3 id="Hbase各级组织模块"><a href="#Hbase各级组织模块" class="headerlink" title="Hbase各级组织模块"></a>Hbase各级组织模块</h3><p><img src="https://ws3.sinaimg.cn/large/0069RVTdgy1fv1cwh9hoqj30dp07yabp.jpg" alt=""></p>
+<p>RegionServer包含多个Hregion,Hregion是我们可见的存储数据的最小单元。每个region包含的数据都是互斥的。</p>
+<p>每个Region包含多个store,Store对应Hbase表的列族。每个store都包含一个memstore,它是一个内存式的数据结构。Memstore满了之后写到storefile中,最后会将storefile刷写成hdfs上的hfile文件。</p>
+<p>每个regionServer都有一个Hlog实例,用于实现WAL。HLog+Memstore构成了Hbase LSM的第一层结构。storefile+hfile构成了第二次结构,实现了不可靠数据的持久化。</p>
+<h3 id="Hbase-Region解析"><a href="#Hbase-Region解析" class="headerlink" title="Hbase Region解析"></a>Hbase Region解析</h3><p><img src="https://ws4.sinaimg.cn/large/0069RVTdgy1fv1d4w73e6j30e008wdh4.jpg" alt=""></p>
+<p>每个Region都存在于一个确定的RegionServer上,Hbase表在行键的方向上分割为多个Region,是Hbase分布式存储的最小单元。并且Hbase保证了一行数据只可能在一个region上。当列族的大小到达一定的阈值,一个region会被分为两个region,region在regionServer运行过程中会出现移动,当一个regionServer挂掉,Hmaster会将这些region分配到其它regionServer上去。每个region都有三个参数标识:表名、startRowKey、createTime(最早的数据插入时间)。总结如下:</p>
+<ul>
+<li>region 是Hbase负载均衡和分布式存储的最小单元，并不是存储的最小单元</li>
+<li>region 的数量太多性能就会下降,太少就会降低并行能力(region数量不要低于hbase节点数量) </li>
+<li>region 的分割操作是不可见的,做法是先将这个region下线,然后将子region加入到meta信息中, 然后加入原有的region,最后同步到master</li>
+</ul>
+<h3 id="HFile解析"><a href="#HFile解析" class="headerlink" title="HFile解析"></a>HFile解析</h3><p>HFile是Hbase存储数据的最基本组织形式,底层是Hadoop的二进制格式文件。</p>
+<p><img src="https://ws3.sinaimg.cn/large/0069RVTdgy1fv1duk2mowj30bb08b764.jpg" alt=""></p>
+<p>Hfile可以分为四个部分:</p>
+<ol>
+<li>scanned block: 用户数据存储区域</li>
+<li>Nonscanned block: 元数据区</li>
+<li>Load on open: regionServer启动时加载到内存,主要是Hfile的元数据</li>
+<li>trailer: 记录了Hfile的基本信息,各部分的偏移量,寻址信息,也可以理解为元数据的一部分</li>
+</ol>
+<p>用户的数据真正存储于scanned block区域中的data block中,Data block是一种key-value的结构</p>
+<p><img src="https://ws3.sinaimg.cn/large/0069RVTdgy1fv1dzycx57j30ku070goe.jpg" alt=""></p>
+<p>可以看出key的结构非常复杂,通过rowkey+cf+cq+timestamp+keyType才能唯一确定一个value值</p>
+<h3 id="WAL"><a href="#WAL" class="headerlink" title="WAL"></a>WAL</h3><p>数据写入时首先会在Hlog中记录一条日志,然后在写入memstore内存中</p>
+<p>WAL即预写日志,最重要的功能就是灾难恢复。用于恢复那些写入memstore但没有来得及flush到磁盘就丢失的数据。 </p>
+<h3 id="compaction"><a href="#compaction" class="headerlink" title="compaction"></a>compaction</h3><p>compaction即从一个hregion的store中选取一些storefile文件进行合并。先从待合并的文件中读取key-value数据,在按照rowkey从小到大排序写到一个新的文件,新的文件就会替代合并的文件向外提供服务。</p>
+<p>为什么会有compaction这样的机制呢,因为文件过多会降低查询的效率并且不易维护。</p>
+<blockquote>
+<p>compaction分为两类: minor compaction和major compaction。</p>
+</blockquote>
+<p>minor compaction是指合并一些临近的较小的storefile为一个较大的storefile</p>
+<p><img src="https://ws3.sinaimg.cn/large/0069RVTdgy1fv1eg80gjxj30be083gn0.jpg" alt=""></p>
+<p>major compaction是指将所有的storefile合并为一个大的storefile,在这个过程中还会执行一些清理操作</p>
+<ol>
+<li>将那些标记为删除的数据进行物理删除</li>
+<li>删除ttl过期的数据</li>
+<li>版本号超过最大版本的数据</li>
+</ol>
+<blockquote>
+<p>compaction触发时机</p>
+</blockquote>
+<ol>
+<li>memstore flush数据到storefile,文件数量到达阈值会触发</li>
+<li>后台线程(compaction checker)周期性检查，首先会判断文件数量是否达到阈值,之后会检查是否达到一个设定的合并时间范围,默认为[7-7*0.2,7+7*0.2]，也就是周期性的进行大合并。</li>
+</ol>
+
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Hbase/">Hbase</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hbase/">Hbase</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-Netty-10-Netty中的性能调优" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -918,76 +1060,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/07/02/Netty-NioEventLoop-2/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Netty服务端启动-1" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/07/02/Netty服务端启动-1/" class="article-date">
-      <time datetime="2018-07-02T01:01:46.000Z" itemprop="datePublished">2018-07-02</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/02/Netty服务端启动-1/">Netty源码(1)-服务端启动</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fsv8rbjw9gj30u30l3my4.jpg" alt=""></p>
-<h2 id="服务端代码"><a href="#服务端代码" class="headerlink" title="服务端代码"></a>服务端代码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">public static void main(String[] args) &#123;</div><div class="line">        ServerBootstrap serverBootstrap = new ServerBootstrap();</div><div class="line">        EventLoopGroup boss = new NioEventLoopGroup(1);</div><div class="line">        EventLoopGroup worker = new NioEventLoopGroup();</div><div class="line">        try &#123;</div><div class="line">            serverBootstrap.group(boss, worker)</div><div class="line">                    .channel(NioServerSocketChannel.class)</div><div class="line">                    .option(ChannelOption.SO_BACKLOG, 128)</div><div class="line">                    .childOption(ChannelOption.SO_KEEPALIVE, false)</div><div class="line">                    .childHandler(new ChannelInitializer&lt;SocketChannel&gt;() &#123;</div><div class="line">                        @Override</div><div class="line">                        public void initChannel(SocketChannel socketChannel) throws Exception &#123;</div><div class="line">                            ocketChannel.pipeline().addLast(new MyHandler());</div><div class="line"></div><div class="line">                        &#125;</div><div class="line">                    &#125;);</div><div class="line">            ChannelFuture channelFuture = serverBootstrap.bind(8080).sync();</div><div class="line">            channelFuture.channel().closeFuture().sync();</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125; finally &#123;</div><div class="line">            boss.shutdownGracefully();</div><div class="line">            worker.shutdownGracefully();</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<p>以上是一段Netty官网提供的一个最简单的server端代码,通过这段代码来分析Netty服务端的启动过程</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Netty/">Netty</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/07/02/Netty服务端启动-1/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
