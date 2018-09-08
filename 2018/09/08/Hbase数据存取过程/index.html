@@ -3,22 +3,26 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Netty(3) 新连接接入 | Shuchang&#39;s Blog</title>
+  <title>Hbase数据存取过程 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="提出两个问题   Netty在哪里检测到新连接的接入 新连接怎样注册到NioEventLoop线程  我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤  检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件  创建Channel:基于JDK的nioChannel创建出Netty NioSoc">
-<meta name="keywords" content="Netty,JAVA">
+  <meta name="description" content="Hbase数据存储客户端在提交之前,Hbase client回去请求zk,从mate表中确定要存取regionServer的位置。根据rowKey找到对应的regionServer。拿到地址之后,默认情况下像put、delete这类操作是默认提交的,会直接提交到对应的regionServer上,也可以设置autoflush为false,当到达默认的2M的缓存阈值后才会异步批量提交到服务端。  至此">
+<meta name="keywords" content="Hbase">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Netty(3) 新连接接入">
-<meta property="og:url" content="http://www.shuchang.sc.com/2018/07/03/Netty-新连接接入-3/index.html">
+<meta property="og:title" content="Hbase数据存取过程">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/09/08/Hbase数据存取过程/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="提出两个问题   Netty在哪里检测到新连接的接入 新连接怎样注册到NioEventLoop线程  我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤  检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件  创建Channel:基于JDK的nioChannel创建出Netty NioSoc">
-<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180704153067048025149.png">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fsxmlg099gj30zc0j6ach.jpg">
-<meta property="og:updated_time" content="2018-07-05T06:15:41.033Z">
+<meta property="og:description" content="Hbase数据存储客户端在提交之前,Hbase client回去请求zk,从mate表中确定要存取regionServer的位置。根据rowKey找到对应的regionServer。拿到地址之后,默认情况下像put、delete这类操作是默认提交的,会直接提交到对应的regionServer上,也可以设置autoflush为false,当到达默认的2M的缓存阈值后才会异步批量提交到服务端。  至此">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/0069RVTdgy1fv21klmsihj30bv07dmxt.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/0069RVTdgy1fv21os2178j308n04emxd.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/0069RVTdgy1fv21vo38jlj30jd076tap.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/0069RVTdgy1fv224qbn8ej30km094q56.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1ftwtgjdbeyj30tx0djdq4.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1ftwtlfd98ej30tx0fvwpf.jpg">
+<meta property="og:updated_time" content="2018-09-08T05:21:44.925Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Netty(3) 新连接接入">
-<meta name="twitter:description" content="提出两个问题   Netty在哪里检测到新连接的接入 新连接怎样注册到NioEventLoop线程  我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤  检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件  创建Channel:基于JDK的nioChannel创建出Netty NioSoc">
-<meta name="twitter:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180704153067048025149.png">
+<meta name="twitter:title" content="Hbase数据存取过程">
+<meta name="twitter:description" content="Hbase数据存储客户端在提交之前,Hbase client回去请求zk,从mate表中确定要存取regionServer的位置。根据rowKey找到对应的regionServer。拿到地址之后,默认情况下像put、delete这类操作是默认提交的,会直接提交到对应的regionServer上,也可以设置autoflush为false,当到达默认的2M的缓存阈值后才会异步批量提交到服务端。  至此">
+<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/0069RVTdgy1fv21klmsihj30bv07dmxt.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -232,11 +236,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-Netty-新连接接入-3" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Hbase数据存取过程" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/07/03/Netty-新连接接入-3/" class="article-date">
-      <time datetime="2018-07-03T01:31:54.000Z" itemprop="datePublished">2018-07-03</time>
+      <a href="/2018/09/08/Hbase数据存取过程/" class="article-date">
+      <time datetime="2018-09-08T05:20:57.000Z" itemprop="datePublished">2018-09-08</time>
 </a>
     </div>
   
@@ -249,7 +253,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Netty(3) 新连接接入
+      Hbase数据存取过程
     </h1>
   
 
@@ -258,13 +262,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Netty/">Netty</a>
+    <a class="article-category-link" href="/categories/Hbase/">Hbase</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hbase/">Hbase</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -274,54 +278,63 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <blockquote>
-<p>提出两个问题</p>
-</blockquote>
-<ol>
-<li>Netty在哪里检测到新连接的接入</li>
-<li>新连接怎样注册到NioEventLoop线程</li>
-</ol>
-<p>我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤</p>
-<ol>
-<li><p>检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件</p>
-</li>
-<li><p>创建Channel:基于JDK的nioChannel创建出Netty NioSocketChannel</p>
-</li>
-<li><p>Netty给客户端channel分配NioEventLoop,并将channel绑定</p>
-</li>
-<li><p>向selector注册读事件</p>
-</li>
-</ol>
-<p><excerpt in="" index="" |="" 首页摘要=""><br><a id="more"></a></excerpt></p>
+        <h2 id="Hbase数据存储"><a href="#Hbase数据存储" class="headerlink" title="Hbase数据存储"></a>Hbase数据存储</h2><h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><p>在提交之前,Hbase client回去请求zk,从mate表中确定要存取regionServer的位置。根据rowKey找到对应的regionServer。拿到地址之后,默认情况下像put、delete这类操作是默认提交的,会直接提交到对应的regionServer上,也可以设置autoflush为false,当到达默认的2M的缓存阈值后才会异步批量提交到服务端。</p>
+<p><img src="https://ws3.sinaimg.cn/large/0069RVTdgy1fv21klmsihj30bv07dmxt.jpg" alt=""></p>
+<p>至此,客户端的操作就完成了</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li><a id="more"></a>
 <the rest="" of="" contents="" |="" 余下全文="">
 
 
+</the></li>
+</ul>
+<h3 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h3><p>到达服务器之后,首先获取到行锁(RowLock),保证同一行数据操作的互斥。接着把数据写入Hlog(WAL机制),保证数据的可靠性。接着将数据写入memstore。完成这一系列操作之后,释放行锁和共享锁。</p>
+<p><img src="https://ws4.sinaimg.cn/large/0069RVTdgy1fv21os2178j308n04emxd.jpg" alt=""> </p>
+<p>接着,HlogSyncer线程会异步将Hlog写到Hdfs,memsotre如果大于阈值会异步刷写为storefile,默认为64M。直到storefile的数量大于阈值,会进行compaction操作,将多个storefile合并为一个大的storefile,同时进行版本合并和数据删除。但是storefile可能会无限的增长,当大于某一个阈值之后,会触发split操作。将当前的region split为两个region,并通知Master,HMaster会分配新生成的两个region的位置,有可能会分配到其它regionServer上,保证负载均衡。</p>
+<p>至此,服务端的操作也就完成了。</p>
+<p><img src="https://ws2.sinaimg.cn/large/0069RVTdgy1fv21vo38jlj30jd076tap.jpg" alt=""></p>
+<h2 id="HBase数据获取"><a href="#HBase数据获取" class="headerlink" title="HBase数据获取"></a>HBase数据获取</h2><h3 id="客户端-1"><a href="#客户端-1" class="headerlink" title="客户端"></a>客户端</h3><p>同上</p>
+<h3 id="服务端-1"><a href="#服务端-1" class="headerlink" title="服务端"></a>服务端</h3><p>regionServer接到客户端的Get或者Scan请求会做两件事情。首先构建scanner体系:首先在确定的region上构建一个regionScanner,准备检索。region会根据列族构建storeScanner,再去根据Hfile的数量构建StoreFileScanner去文件上执行检索。同时会对memstore构建一个memstoreScanner。通过这样的检索,就找到了KV结构的数据,接着封装为ResultSet返回客户端。</p>
+<p><img src="https://ws4.sinaimg.cn/large/0069RVTdgy1fv224qbn8ej30km094q56.jpg" alt=""></p>
+<h2 id="Hbase优化策略"><a href="#Hbase优化策略" class="headerlink" title="Hbase优化策略"></a>Hbase优化策略</h2><h3 id="服务端优化"><a href="#服务端优化" class="headerlink" title="服务端优化"></a>服务端优化</h3><ul>
+<li>jvm与gc配置</li>
+<li>hbase-site.xml配置</li>
+</ul>
+<p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1ftwtgjdbeyj30tx0djdq4.jpg" alt=""></p>
+<p>hbase.hregion.majorcompaction建议设置为0,因为在生产环境中这个周期会持续几个小时,可以手动写脚本在业务低峰的时候执行。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1ftwtlfd98ej30tx0fvwpf.jpg" alt=""></p>
+<h3 id="Hbase常用优化"><a href="#Hbase常用优化" class="headerlink" title="Hbase常用优化"></a>Hbase常用优化</h3><ul>
+<li>预先分区</li>
+<li>Column优化</li>
+<li>rowkey优化</li>
+<li>schema优化</li>
+</ul>
+<h4 id="预先分区"><a href="#预先分区" class="headerlink" title="预先分区"></a>预先分区</h4><p>创建Hbase表的时候会自动创建一个region分区,而region的split操作是十分耗时的而且会阻塞其他动作,造成无法访问。我们可以在创建Hbase表的时候预先创建一些空的region,指定不同的rowkey分配到不同的region。除此之外,预先分区还可以解决数据倾斜的问题,将访问量大的数据放到一个region,访问量少的放在一个region</p>
+<h4 id="Rowkey优化"><a href="#Rowkey优化" class="headerlink" title="Rowkey优化"></a>Rowkey优化</h4><ul>
+<li>利用HBase默认排序的特点,将一起访问的数据放到一起。</li>
+<li>防止热点问题,避免使用时序或者单调增减</li>
+<li>尽可能短</li>
+</ul>
+<h4 id="Column优化"><a href="#Column优化" class="headerlink" title="Column优化"></a>Column优化</h4><ul>
+<li>列族的名称和列的描述尽量短</li>
+<li>同一张表中的CF尽量不要超过3个</li>
+</ul>
+<h4 id="schema优化"><a href="#schema优化" class="headerlink" title="schema优化"></a>schema优化</h4><ul>
+<li>宽表: 列多行少的设计</li>
+<li>高表: 列少行多的设计</li>
+</ul>
+<p>对于查询来说,高表的性能更好,高表的元数据开销比较大。由于Hbase的事务是建立在行上,所以宽表的事务性更好。</p>
+<h3 id="Hbase写优化策略"><a href="#Hbase写优化策略" class="headerlink" title="Hbase写优化策略"></a>Hbase写优化策略</h3><p>Hbase写数据的流程为:数据先写入memstore,再写入Hlog。当memstore里面的数据达到一定的阈值之后会将memstore里面的数据flush到hdfs上的hfile中。当我们使用开发的程序执行写入操作的时候,我们需要考虑:</p>
+<ul>
+<li>同步批量提交or异步批量提交</li>
+<li>WAL优化(默认开启,表示写入memstore的同时也要写入hfile),也就是说我们的业务能否忍受当发生异常的时候,部分数据丢失。如果我们需要更高的吞吐量,则可以将WAL关闭。   </li>
+</ul>
+<h3 id="Hbase读优化策略"><a href="#Hbase读优化策略" class="headerlink" title="Hbase读优化策略"></a>Hbase读优化策略</h3><ul>
+<li>客户端: scan缓存设置,批量获取数据</li>
+<li>服务端: BlockCache配置是否合理,Hfile是否过多</li>
+</ul>
 
-<h2 id="检测新连接"><a href="#检测新连接" class="headerlink" title="检测新连接"></a>检测新连接</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">processSelectedKey(key,channel) [入口]</div><div class="line">    NioMessageUnsafe.read()</div><div class="line">        doReadMessage()  [while 循环]</div><div class="line">            javaChannel().accept()</div></pre></td></tr></table></figure>
-<h2 id="创建NioSocketChannel"><a href="#创建NioSocketChannel" class="headerlink" title="创建NioSocketChannel"></a>创建NioSocketChannel</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">new NioSocketChannel(parent,ch)  [入口]</div><div class="line">    AbstractNioByteChannel(p,ch,opread)</div><div class="line">        configBlocking(false) &amp; interest_op [注册事件]</div><div class="line">        create id,unsafe,pipeline</div><div class="line">    new NioSocketChannelConfig()  [创建绑定配置]</div><div class="line">        setTcpNoDelay(true)       [禁止Nagle算法,小数据包尽量快发送]</div></pre></td></tr></table></figure>
-<p>跟进到NioServerSocketChannel.doReadMessages(buf):</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">protected int doReadMessages(List&lt;Object&gt; buf) throws Exception &#123;</div><div class="line">    SocketChannel ch = SocketUtils.accept(javaChannel());</div><div class="line">    try &#123;</div><div class="line">        if (ch != null) &#123;</div><div class="line">            buf.add(new NioSocketChannel(this, ch));</div><div class="line">            return 1;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<p>首先创建一个jdk的channel,然后将jdk的channel与当前类this,共同构造一个Netty的NioSocketChannel</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public NioSocketChannel(Channel parent, SocketChannel socket) &#123;</div><div class="line">    super(parent, socket);</div><div class="line">    config = new NioSocketChannelConfig(this, socket.socket());</div><div class="line">&#125;</div><div class="line"></div><div class="line">protected AbstractNioByteChannel(Channel parent, SelectableChannel ch) &#123;</div><div class="line">        super(parent, ch, SelectionKey.OP_READ);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>在这里跟进到父类,发现Netty默认传递了一个OP_READ事件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">protected AbstractNioChannel(Channel parent, SelectableChannel ch, int readInterestOp) &#123;</div><div class="line">    super(parent);</div><div class="line">    this.ch = ch;</div><div class="line">    this.readInterestOp = readInterestOp;</div><div class="line">    try &#123;</div><div class="line">        ch.configureBlocking(false);</div><div class="line">    &#125;</div><div class="line">    ....</div></pre></td></tr></table></figure>
-<p>在这里,将read事件注册到了channel,并且设置为非阻塞模式,继续向上跟进父类,就会创建id,unsafe,pipeline组件。NioSocketChannelConfig主要作用就是设置setTcpNoDelay(true)。如果是false,则会将小的数据包尽量集合成大的数据包然后发送出去,而Netty默认是关闭的,如果运行在Android系统上,则默认开启。</p>
-<h2 id="Netty中Channel的分类"><a href="#Netty中Channel的分类" class="headerlink" title="Netty中Channel的分类"></a>Netty中Channel的分类</h2><h3 id="Channel层级关系"><a href="#Channel层级关系" class="headerlink" title="Channel层级关系"></a>Channel层级关系</h3><p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180704153067048025149.png" alt="20180704153067048025149.png"></p>
-<p>顶层接口channel主要定义了网络IO的读写,绑定,是一个最顶级的抽象。AbstractChannel是一个抽象的实现,并且定义了重要的成员变量。</p>
-<p>接着是AbstractNioChannel,他有两个子类channel,这两个子类差别主要是向AbstractNioChannel注册的io事件不同,可以看一下构造函数</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public NioServerSocketChannel(ServerSocketChannel channel) &#123;</div><div class="line">        super(null, channel, SelectionKey.OP_ACCEPT);</div><div class="line">        config = new NioServerSocketChannelConfig(this, javaChannel().socket());</div><div class="line">&#125;</div><div class="line"></div><div class="line">protected AbstractNioByteChannel(Channel parent, SelectableChannel ch) &#123;</div><div class="line">    super(parent, ch, SelectionKey.OP_READ);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>可以看到服务端channel感兴趣的是accept事件,而客户端channel感兴趣的是read事件。除此之外可以发现,服务端channel和客户端channel对应的unsafe不同,对于服务端NioMessageUnsafe处理的是连接的读取,而客户端NioByteUnsafe是字节读取。</p>
-<p>客户端和服务端都有相应的config进行配置</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fsxmlg099gj30zc0j6ach.jpg" alt=""></p>
-<h2 id="新连接NioEventLoop分配和selector注册"><a href="#新连接NioEventLoop分配和selector注册" class="headerlink" title="新连接NioEventLoop分配和selector注册"></a>新连接NioEventLoop分配和selector注册</h2><p>方法的入口为MultithreadEventLoopGroup</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public ChannelFuture register(Channel channel) &#123;</div><div class="line">    return next().register(channel);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这里会next()返回一个NioEventLoop,然后chooser选择一个NioEventLoop,调用register方法,过程中利用了串行无锁化技术,调用底层jdk channel,注册一个accept事件</p>
-<h2 id="NioSocketChannel读事件注册"><a href="#NioSocketChannel读事件注册" class="headerlink" title="NioSocketChannel读事件注册"></a>NioSocketChannel读事件注册</h2><p>入口方法位于AbstractChannel的register0()</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">if (isActive()) &#123;</div><div class="line">    if (firstRegistration) &#123;</div><div class="line">        pipeline.fireChannelActive();</div><div class="line">    &#125; else if (config().isAutoRead()) &#123;</div><div class="line">        beginRead();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这里因为新连接已经介入,所以isActive()返回true,并且firstRegistration也为true。调用  pipeline.fireChannelActive();后续会调用readIfIsAutoRead(),默认情况下是自动读的,AbstractNioChannel.beginRead()。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">protected void doBeginRead() throws Exception &#123;</div><div class="line">    // Channel.read() or ChannelHandlerContext.read() was called</div><div class="line">    final SelectionKey selectionKey = this.selectionKey;</div><div class="line">    if (!selectionKey.isValid()) &#123;</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    readPending = true;</div><div class="line"></div><div class="line">    final int interestOps = selectionKey.interestOps();</div><div class="line">    if ((interestOps &amp; readInterestOp) == 0) &#123;</div><div class="line">        selectionKey.interestOps(interestOps | readInterestOp);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这里由于初始化设置interestOps为0,所以会再添加一个readInterestOp,也就可以监听OP_READ事件了。</p>
-</the>
       
       
         <div class="page-reward">
@@ -376,13 +389,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/07/03/Netty-新连接接入-3/">Netty(3) 新连接接入</a></p>
+        <p><span>本文标题:</span><a href="/2018/09/08/Hbase数据存取过程/">Hbase数据存取过程</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2018年07月03日 - 09时31分</p>
-        <p><span>最后更新:</span>2018年07月05日 - 14时15分</p>
+        <p><span>发布时间:</span>2018年09月08日 - 13时20分</p>
+        <p><span>最后更新:</span>2018年09月08日 - 13时21分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/07/03/Netty-新连接接入-3/" title="Netty(3) 新连接接入">http://www.shuchang.sc.com/2018/07/03/Netty-新连接接入-3/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/07/03/Netty-新连接接入-3/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/09/08/Hbase数据存取过程/" title="Hbase数据存取过程">http://www.shuchang.sc.com/2018/09/08/Hbase数据存取过程/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/09/08/Hbase数据存取过程/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -395,18 +408,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2018/07/04/Netty-4-Pipeline/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          Netty(4) Pipeline
-        
-      </div>
-    </a>
   
-  
-    <a href="/2018/07/02/Netty-NioEventLoop-2/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Netty(2) NioEventLoop</div>
+    <a href="/2018/09/07/Hbase基础/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Hbase基础</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -417,7 +421,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#检测新连接"><span class="toc-number">1.</span> <span class="toc-text">检测新连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建NioSocketChannel"><span class="toc-number">2.</span> <span class="toc-text">创建NioSocketChannel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Netty中Channel的分类"><span class="toc-number">3.</span> <span class="toc-text">Netty中Channel的分类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Channel层级关系"><span class="toc-number">3.1.</span> <span class="toc-text">Channel层级关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新连接NioEventLoop分配和selector注册"><span class="toc-number">4.</span> <span class="toc-text">新连接NioEventLoop分配和selector注册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NioSocketChannel读事件注册"><span class="toc-number">5.</span> <span class="toc-text">NioSocketChannel读事件注册</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Hbase数据存储"><span class="toc-number">1.</span> <span class="toc-text">Hbase数据存储</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#客户端"><span class="toc-number">1.1.</span> <span class="toc-text">客户端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#服务端"><span class="toc-number">1.2.</span> <span class="toc-text">服务端</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HBase数据获取"><span class="toc-number">2.</span> <span class="toc-text">HBase数据获取</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#客户端-1"><span class="toc-number">2.1.</span> <span class="toc-text">客户端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#服务端-1"><span class="toc-number">2.2.</span> <span class="toc-text">服务端</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hbase优化策略"><span class="toc-number">3.</span> <span class="toc-text">Hbase优化策略</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#服务端优化"><span class="toc-number">3.1.</span> <span class="toc-text">服务端优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hbase常用优化"><span class="toc-number">3.2.</span> <span class="toc-text">Hbase常用优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#预先分区"><span class="toc-number">3.2.1.</span> <span class="toc-text">预先分区</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Rowkey优化"><span class="toc-number">3.2.2.</span> <span class="toc-text">Rowkey优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Column优化"><span class="toc-number">3.2.3.</span> <span class="toc-text">Column优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#schema优化"><span class="toc-number">3.2.4.</span> <span class="toc-text">schema优化</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hbase写优化策略"><span class="toc-number">3.3.</span> <span class="toc-text">Hbase写优化策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hbase读优化策略"><span class="toc-number">3.4.</span> <span class="toc-text">Hbase读优化策略</span></a></li></ol></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -483,13 +487,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2018/07/04/Netty-4-Pipeline/" title="上一篇: Netty(4) Pipeline">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2018/07/02/Netty-NioEventLoop-2/" title="下一篇: Netty(2) NioEventLoop">
+            <a href="/2018/09/07/Hbase基础/" title="下一篇: Hbase基础">
                 <i class="fa fa-angle-right"></i>
             </a>
         

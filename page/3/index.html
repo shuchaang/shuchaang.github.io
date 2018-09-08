@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 15px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 10px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.5px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.5px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 13.75px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.5px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.25px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.25px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/spring/" style="font-size: 12.5px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.75px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 15px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.25px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.5px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.5px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 13.75px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.5px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.25px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.25px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/spring/" style="font-size: 12.5px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.75px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,90 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-死磕netty-1" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/03/20/死磕netty-1/" class="article-date">
+      <time datetime="2018-03-20T06:37:03.000Z" itemprop="datePublished">2018-03-20</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/20/死磕netty-1/">死磕netty(1)-简介</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h2 id="JAVA-IO-通信"><a href="#JAVA-IO-通信" class="headerlink" title="JAVA IO 通信"></a>JAVA IO 通信</h2><h3 id="BIO通信"><a href="#BIO通信" class="headerlink" title="BIO通信"></a>BIO通信</h3><p>BIO通信通常会有一个专门的线程Acceptor负责接收客户端的请求，并对每一个请求创建一个线程为其服务。服务完成后通过应答流返回给客户端，最后线程销毁。这就是典型的一应答一请求。由于线程是服务器非常宝贵的一种资源，所以这种模型在大并发的情况先引起线程数量膨胀最终会导致整个服务不可用或者Stack Overflow的错误，所以BIO模型缺乏弹性伸缩的能力。</p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/2018032015215281991618.png" alt="2018032015215281991618.png"></p>
+<h3 id="伪异步通信"><a href="#伪异步通信" class="headerlink" title="伪异步通信"></a>伪异步通信</h3><p>伪异步通信当接收到用户请求时，不需要创建新线程，而是把它封装成一个Task,交给线程池来做服务。这样我们就可以通过配置线程池来控制线程创建的数量，线程池问题具体可以看看JDK的Executor框架。但是这种模型不足之处在于，当请求数量庞大，线程池可能会出现阻塞。</p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180320152152850232450.png" alt="20180320152152850232450.png"></p>
+<h3 id="NIO通信"><a href="#NIO通信" class="headerlink" title="NIO通信"></a>NIO通信</h3><p>先要了解几个关键概念:</p>
+<ul>
+<li>缓冲区  Buffer   在NIO模型中，所有数据都是用缓冲区来处理。也就是读取数据从缓冲区读，写入数据是写入缓冲区。</li>
+<li>通道   Channel  网络数据都是通过Channel来读取和写入。Channel和Stream的区别在于，Stream只能单向，而Channel是双向的。</li>
+<li>多路复用器 Selector  它是java Nio的基础，它提供了选择就绪任务的能力。也就是说selector会不断轮询绑定在其上的channel，如果某个channel上发生了读或写事件，它就会被轮训出来。然后通过selectionKey获取就绪任务的集合进行后续的io操作，由于JDK使用了epoll代替了传统的select实现，所以并没有最大链接数的限制。</li>
+</ul>
+<h3 id="AIO通信"><a href="#AIO通信" class="headerlink" title="AIO通信"></a>AIO通信</h3><p>AIO是一种异步的通信方式，上面的几种都属于同步模式。当有用户请求进入，AIO会注册它的读写时间和返回函数，当IO操作完成后主动通知用户请求讲数据取走。对应于Unix网络编程中的事件驱动IO</p>
+<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><ul>
+<li>线程数量: BIO(m:m)&gt;伪异步(m:n)&gt;NIO(m:1)&gt;AIO(m:0)</li>
+<li>IO类型 : BIO(同步阻塞) 伪异步(同步阻塞) NIO（同步非阻塞) AIO(异步)</li>
+</ul>
+<h2 id="为什么用netty"><a href="#为什么用netty" class="headerlink" title="为什么用netty"></a>为什么用netty</h2><ol>
+<li>原生NIO有缺陷，类库繁杂不易操作</li>
+<li>JDK NIO bug (epoll bug)</li>
+<li>netty api简单 并且修复了jdk bug</li>
+<li>netty 性能高</li>
+<li>netty成熟的使用，如dubbo,springcloud,reddison等大量框架底层都使用netty </li>
+</ol>
+
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/netty/">netty</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/netty/">netty</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-JUC-跳表-12" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -852,81 +936,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/01/30/JAVA继承机制与多态/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-JUC-StampedLock-8" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/01/30/JUC-StampedLock-8/" class="article-date">
-      <time datetime="2018-01-30T00:32:26.000Z" itemprop="datePublished">2018-01-30</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/30/JUC-StampedLock-8/">JUC-StampedLock(8)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="StampedLock"><a href="#StampedLock" class="headerlink" title="StampedLock"></a>StampedLock</h3><p>StampedLock字面上理解就是带有时间戳的lock，这个锁是在java8中加入的。为什么要加入这样一个锁呢，原因就要从ReentrantLock和ReadWriteLock给我们带来的便利和问题说起。</p>
-<h4 id="ReentrantLock-vs-synchronized"><a href="#ReentrantLock-vs-synchronized" class="headerlink" title="ReentrantLock vs synchronized"></a>ReentrantLock vs synchronized</h4><ol>
-<li>lock的api更加灵活，显式的释放获取锁</li>
-<li>lock可以进行扩展，synchronized不可以</li>
-<li>lock的效率目前略高于synchronized，以为在java每个版本升级中，都会对synchronized关    键字进行优化</li>
-</ol>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/01/30/JUC-StampedLock-8/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
