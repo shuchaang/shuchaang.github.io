@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>rabbitmq高级特性 | Shuchang&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="消息可靠投递 什么是生产端的可靠性投递   保证消息发出 保证MQ接收到消息 发送端收到MQ的应答 消息补偿机制  方案一:消息落库并设置状态 通过上面的图示很容易理解这种方案的做法。首先要保证在第一步两个入库操作都要成功,这里必定涉及到事务,要做到同时成功,失败则要fail-fast。如果涉及到不同的库或者数据源还可能涉及分布式事务。所以这个设计最大的性能阻塞点就在这里,添加事务就无法应对高并发">
+<meta name="keywords" content="RabbitMq">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rabbitmq高级特性">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/09/18/rabbitmq高级特性/index.html">
+<meta property="og:site_name" content="Shuchang&#39;s Blog">
+<meta property="og:description" content="消息可靠投递 什么是生产端的可靠性投递   保证消息发出 保证MQ接收到消息 发送端收到MQ的应答 消息补偿机制  方案一:消息落库并设置状态 通过上面的图示很容易理解这种方案的做法。首先要保证在第一步两个入库操作都要成功,这里必定涉及到事务,要做到同时成功,失败则要fail-fast。如果涉及到不同的库或者数据源还可能涉及分布式事务。所以这个设计最大的性能阻塞点就在这里,添加事务就无法应对高并发">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNbRwgy1fvbrjpf4okj30tl0dgdir.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNbRwgy1fvbrk01lblj30ke09p75o.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNbRwgy1fvbtaxozjuj30op0bs0v8.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNbRwgy1fvcrj5rlt8j30hl06rwf3.jpg">
+<meta property="og:updated_time" content="2018-09-18T02:17:11.105Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="rabbitmq高级特性">
+<meta name="twitter:description" content="消息可靠投递 什么是生产端的可靠性投递   保证消息发出 保证MQ接收到消息 发送端收到MQ的应答 消息补偿机制  方案一:消息落库并设置状态 通过上面的图示很容易理解这种方案的做法。首先要保证在第一步两个入库操作都要成功,这里必定涉及到事务,要做到同时成功,失败则要fail-fast。如果涉及到不同的库或者数据源还可能涉及分布式事务。所以这个设计最大的性能阻塞点就在这里,添加事务就无法应对高并发">
+<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tNbRwgy1fvbrjpf4okj30tl0dgdir.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Shuchang</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">剑来!</p>
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                            <li><a href="/archives">所有文章</a></li>
+                        
+                            <li><a href="/about">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                            
+                                <a class="fl github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                            
+                                <a class="fl zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                            
+                                <a class="fl weibo" target="_blank" href="#" title="weibo">weibo</a>
+                            
+                                <a class="fl google" target="_blank" href="#" title="google">google</a>
+                            
+                                <a class="fl twitter" target="_blank" href="#" title="twitter">twitter</a>
+                            
+                                <a class="fl linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.22px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="https://gitee.com/swiftsc/">gitee</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">因为不满足于现状，面对未知，我们努力探索，其实越贴近，越震撼</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Shuchang</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Shuchang</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">剑来!</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                    <li><a href="/archives">所有文章</a></li>
+                
+                    <li><a href="/about">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                    
+                        <a class="github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                    
+                        <a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                    
+                        <a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+                    
+                        <a class="google" target="_blank" href="#" title="google">google</a>
+                    
+                        <a class="twitter" target="_blank" href="#" title="twitter">twitter</a>
+                    
+                        <a class="linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-rabbitmq高级特性" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/09/18/rabbitmq高级特性/" class="article-date">
+      <time datetime="2018-09-18T02:16:09.000Z" itemprop="datePublished">2018-09-18</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      rabbitmq高级特性
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h2 id="消息可靠投递"><a href="#消息可靠投递" class="headerlink" title="消息可靠投递"></a>消息可靠投递</h2><blockquote>
+<p>什么是生产端的可靠性投递</p>
+</blockquote>
+<ul>
+<li>保证消息发出</li>
+<li>保证MQ接收到消息</li>
+<li>发送端收到MQ的应答</li>
+<li>消息补偿机制</li>
+</ul>
+<h3 id="方案一-消息落库并设置状态"><a href="#方案一-消息落库并设置状态" class="headerlink" title="方案一:消息落库并设置状态"></a>方案一:消息落库并设置状态</h3><p><img src="https://ws4.sinaimg.cn/large/006tNbRwgy1fvbrjpf4okj30tl0dgdir.jpg" alt=""></p>
+<p>通过上面的图示很容易理解这种方案的做法。首先要保证在第一步两个入库操作都要成功,这里必定涉及到事务,要做到同时成功,失败则要fail-fast。如果涉及到不同的库或者数据源还可能涉及分布式事务。所以这个设计最大的性能阻塞点就在这里,添加事务就无法应对高并发的场景。</p>
+<p>分布式定时任务用来做消息补偿,重跑一些异常状态的消息。这里有一个可能存在一个问题,当一个消息刚发送出去,定时任务就启动了,导致消息重复发送的情况。所以定时任务出了要判断消息状态,还应该对间隔时间做一个限制。例如查询状态=1并且距离更新时间大于一分钟的消息进行补偿重试。</p>
+<h3 id="方案二-消息延迟投递-做二次确认-回调检查"><a href="#方案二-消息延迟投递-做二次确认-回调检查" class="headerlink" title="方案二:消息延迟投递,做二次确认,回调检查"></a>方案二:消息延迟投递,做二次确认,回调检查</h3><p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fvbrk01lblj30ke09p75o.jpg" alt=""></p>
+<p>上面说了方案一并不适合在高并发的场景下使用,那么方案二就是应对高并发场景下的常用设计。</p>
+<ol>
+<li>首先上游业务模块将数据入库并发送到broker的业务队列,同时生成一条deley check消息发送到另一个队列,设置延迟发送时间几秒或几分钟之后</li>
+<li>下游业务收到消息并消费后发送confirm消息到broker的一个队列</li>
+<li>callback服务收到确认消息,做消息持久化。</li>
+<li>当延迟确认消息到来之后,如果数据库中有,则成功,否则要callback服务需要进行rpc调用上游服务再次发送一遍消息</li>
+</ol>
+<p><excerpt in="" index="" |="" 首页摘要=""><br><a id="more"></a></excerpt></p>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+<h2 id="消息幂等性"><a href="#消息幂等性" class="headerlink" title="消息幂等性"></a>消息幂等性</h2><h3 id="方案一"><a href="#方案一" class="headerlink" title="方案一"></a>方案一</h3><p>利用唯一ID+指纹码机制,利用数据库主键去重</p>
+<p>select count(1) from db where id = 唯一ID+指纹码</p>
+<p>好处  实现简单</p>
+<p>坏处 存在数据库写入瓶颈</p>
+<p>解决方案: 根据id分库分表进行路由</p>
+<h3 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h3><p>利用redis的原子特性,使用exist 获取这set指令</p>
+<p>优点: 性能高</p>
+<p>缺点: 考虑是否需要落库,如果落库如何做到数据库和redis的一致。如果不落库,定时同步策略怎样做。而且缓存不可靠</p>
+<h2 id="消息投递-confirm-return"><a href="#消息投递-confirm-return" class="headerlink" title="消息投递: confirm/return"></a>消息投递: confirm/return</h2><h3 id="confirm机制"><a href="#confirm机制" class="headerlink" title="confirm机制"></a>confirm机制</h3><p><img src="https://ws4.sinaimg.cn/large/006tNbRwgy1fvbtaxozjuj30op0bs0v8.jpg" alt=""></p>
+<blockquote>
+<p>如何开启</p>
+</blockquote>
+<ol>
+<li>channel 上确认开启channel.confirmSelect()</li>
+<li>在channel上添加addConfirmListener,监听结果</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">public class Producer &#123;</div><div class="line">    public static void main(String[] args) throws IOException, TimeoutException, InterruptedException &#123;</div><div class="line">        ConnectionFactory cf = new ConnectionFactory();</div><div class="line">        cf.setVirtualHost(&quot;/&quot;);</div><div class="line">        cf.setHost(&quot;localhost&quot;);</div><div class="line">        cf.setPort(5672);</div><div class="line">        cf.setNetworkRecoveryInterval(3000);</div><div class="line">        cf.setAutomaticRecoveryEnabled(true);</div><div class="line"></div><div class="line">        Connection connection = cf.newConnection();</div><div class="line">        Channel channel = connection.createChannel();</div><div class="line">        channel.confirmSelect();</div><div class="line">        channel.addConfirmListener(new ConfirmListener() &#123;</div><div class="line">            @Override</div><div class="line">            public void handleAck(long deliveryTag, boolean multiple) throws IOException &#123;</div><div class="line">                System.out.println(&quot;yes &quot;+deliveryTag);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            @Override</div><div class="line">            public void handleNack(long deliveryTag, boolean multiple) throws IOException &#123;</div><div class="line">                System.out.println(&quot;no &quot;+deliveryTag);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line"></div><div class="line">        String exchange = &quot;test_confirm&quot;;</div><div class="line">        String routingKey = &quot;confrim.save&quot;;</div><div class="line"></div><div class="line">        channel.basicPublish(exchange,routingKey,null,&quot;confirm&quot;.getBytes());</div><div class="line"></div><div class="line">        Thread.sleep(10000000);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">public class Consumer &#123;</div><div class="line">    public static void main(String[] args) throws IOException, TimeoutException, InterruptedException &#123;</div><div class="line">        ConnectionFactory cf = new ConnectionFactory();</div><div class="line">        cf.setVirtualHost(&quot;/&quot;);</div><div class="line">        cf.setHost(&quot;localhost&quot;);</div><div class="line">        cf.setPort(5672);</div><div class="line">        cf.setNetworkRecoveryInterval(3000);</div><div class="line">        cf.setAutomaticRecoveryEnabled(true);</div><div class="line"></div><div class="line">        Connection connection = cf.newConnection();</div><div class="line">        Channel channel = connection.createChannel();</div><div class="line">        channel.confirmSelect();</div><div class="line">        channel.addConfirmListener(new MyConfirmListener());</div><div class="line"></div><div class="line">        String exchange = &quot;test_confirm&quot;;</div><div class="line">        String routingKey = &quot;confrim.save&quot;;</div><div class="line">        String queue_name = &quot;confirm_queue&quot;;</div><div class="line"></div><div class="line">        channel.exchangeDeclare(exchange,&quot;topic&quot;,true);</div><div class="line">        channel.queueDeclare(queue_name,false,false,false,null);</div><div class="line">        channel.queueBind(queue_name,exchange,routingKey);</div><div class="line"></div><div class="line">        QueueingConsumer qc = new QueueingConsumer(channel);</div><div class="line"></div><div class="line">        channel.basicConsume(queue_name,true,qc);</div><div class="line"></div><div class="line"></div><div class="line">        while (true)&#123;</div><div class="line">            QueueingConsumer.Delivery delivery = qc.nextDelivery();</div><div class="line">            System.out.println(delivery.getBody());</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="return-消息机制"><a href="#return-消息机制" class="headerlink" title="return 消息机制"></a>return 消息机制</h3><p>Return Listener用于处理一些不可路由的消息</p>
+<p>生产者通过exchange和routingkey将消息送到某个队列中去,消费者监听队列即可。</p>
+<p>在某些情况下,如果exchange不存在或者routingkey不存在,如果我们需要监听这种不可达的消息,那么就需要return机制</p>
+<blockquote>
+<p>关键配置: Mandatory:如果为true则监听不可达消息。如果为false,则会自动删除消息。默认为false</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">public class Producer &#123;</div><div class="line">    public static void main(String[] args) throws IOException, TimeoutException, InterruptedException &#123;</div><div class="line">        ConnectionFactory cf = new ConnectionFactory();</div><div class="line">        cf.setVirtualHost(&quot;/&quot;);</div><div class="line">        cf.setHost(&quot;localhost&quot;);</div><div class="line">        cf.setPort(5672);</div><div class="line">        cf.setNetworkRecoveryInterval(3000);</div><div class="line">        cf.setAutomaticRecoveryEnabled(true);</div><div class="line"></div><div class="line">        Connection connection = cf.newConnection();</div><div class="line">        Channel channel = connection.createChannel();</div><div class="line">        channel.confirmSelect();</div><div class="line">        channel.addReturnListener(new ReturnListener() &#123;</div><div class="line">            @Override</div><div class="line">            public void handleReturn(int replyCode, String replyText, String exchange, String routingKey, AMQP.BasicProperties properties, byte[] body) throws IOException &#123;</div><div class="line">                System.out.println(&quot;reply code&quot;+replyCode);</div><div class="line">                System.out.println(&quot;reply text&quot;+replyText);</div><div class="line">                System.out.println(&quot;exchange&quot;+exchange);</div><div class="line">                System.out.println(&quot;routingKey&quot;+routingKey);</div><div class="line">                System.out.println(&quot;properties&quot;+properties);</div><div class="line">                System.out.println(&quot;body&quot;+new String(body));</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line"></div><div class="line">        String exchange = &quot;test_return&quot;;</div><div class="line">        String routingKey = &quot;return.a&quot;;</div><div class="line"></div><div class="line">        channel.basicPublish(exchange,routingKey,true,null,&quot;confirm&quot;.getBytes());</div><div class="line"></div><div class="line">        Thread.sleep(10000000);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">public class Consumer &#123;</div><div class="line">    public static void main(String[] args) throws IOException, TimeoutException, InterruptedException &#123;</div><div class="line">        ConnectionFactory cf = new ConnectionFactory();</div><div class="line">        cf.setVirtualHost(&quot;/&quot;);</div><div class="line">        cf.setHost(&quot;localhost&quot;);</div><div class="line">        cf.setPort(5672);</div><div class="line">        cf.setNetworkRecoveryInterval(3000);</div><div class="line">        cf.setAutomaticRecoveryEnabled(true);</div><div class="line"></div><div class="line">        Connection connection = cf.newConnection();</div><div class="line">        Channel channel = connection.createChannel();</div><div class="line"></div><div class="line">        String exchange = &quot;test_return&quot;;</div><div class="line">        String routingKey = &quot;return.b&quot;;</div><div class="line">        String queueName = &quot;return&quot;;</div><div class="line"></div><div class="line">        channel.exchangeDeclare(exchange,&quot;topic&quot;,true);</div><div class="line">        channel.queueDeclare(queueName,false,false,false,null);</div><div class="line">        channel.queueBind(queueName,exchange,routingKey);</div><div class="line"></div><div class="line">        QueueingConsumer qc = new QueueingConsumer(channel);</div><div class="line"></div><div class="line">        channel.basicConsume(queueName,true,qc);</div><div class="line"></div><div class="line"></div><div class="line">        while (true)&#123;</div><div class="line">            QueueingConsumer.Delivery delivery = qc.nextDelivery();</div><div class="line">            System.out.println(delivery.getBody());</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="自定义消费者"><a href="#自定义消费者" class="headerlink" title="自定义消费者"></a>自定义消费者</h2><p>自定义消费者可以实现更好的解耦,也是更常见的一种编码方式。之前使用的都是mq提供的QueueingConsumer耦合在代码中,现在我们自定义消费者,只要重写handleDelivery方法即可,如果有特殊的需要,可以重写其他方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">channel.basicConsume(&quot;test01&quot;, false, new MyConsumer(channel));</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public class MyConsumer extends DefaultConsumer &#123;</div><div class="line">    /**</div><div class="line">     * Constructs a new instance and records its association to the passed-in channel.</div><div class="line">     *</div><div class="line">     * @param channel the channel to which this consumer is attached</div><div class="line">     */</div><div class="line">    public MyConsumer(Channel channel) &#123;</div><div class="line">        super(channel);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException &#123;</div><div class="line">        System.out.println(consumerTag);</div><div class="line">        System.out.println(envelope.getDeliveryTag());</div><div class="line">        System.out.println(properties);</div><div class="line">        System.out.println(new String(body));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="ACK与重回队列"><a href="#ACK与重回队列" class="headerlink" title="ACK与重回队列"></a>ACK与重回队列</h2><p>对于消息的手动签收可以调用,注意需要将自动签收关闭</p>
+<blockquote>
+<p>basicAck(String deleveryTag,bool mutil)</p>
+<p>basicNack(String devertyTag,bool multi,bool requeue)</p>
+</blockquote>
+<p>第一个表示确认签收,第二个表示不签收。mutil参数表示是否支持批量签收,requeue参数如果设置为true则表示对于签收失败的消息,可以再次添加到队列的尾部,重新消费,也就是重回队列机制。但是实际上一般都会讲重回队列机制关闭</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">channel.basicConsume(queue_name, false, new MyConsumer(channel));</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public class MyConsumer extends DefaultConsumer &#123;</div><div class="line">    private Channel channel;</div><div class="line">    public MyConsumer(Channel channel) &#123;</div><div class="line">        super(channel);</div><div class="line">        this.channel=channel;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException &#123;</div><div class="line">        System.out.println(&quot;收到消息 手动签收&quot;);</div><div class="line"></div><div class="line">        if(true)&#123;</div><div class="line">            channel.basicNack(envelope.getDeliveryTag(),false,false);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        channel.basicAck(envelope.getDeliveryTag(),false);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="消息限流"><a href="#消息限流" class="headerlink" title="消息限流"></a>消息限流</h2><p>假设一个场景,mq中囤积了上万条消息,当我们启动一个消费端时,巨量的消息瞬间推过来,会将服务压垮。所以消费端需要做限流</p>
+<p>rabbitmq提供了qos(服务质量保证)功能,即在非自动确认的消息的前提下,如果有一定数目的消息未被消费,则不能消费新的消息</p>
+<blockquote>
+<p>void basicQos(unit prefetchSize,uShort prefetchCount,bool golable);</p>
+<p>第一个参数为消息的大小,一般设置为0不限制就好。</p>
+<p>第二个是告诉mq每次推送不要超过n个消息,一旦有n个消息没有ack,则直接将consumer block,直到consumer ack。</p>
+<p>第三个参数true/false 表示将限制设置为channle级别还是consumer级别</p>
+<p>一定要注意设置为手动ack,不能做自动ack!</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">channel.basicQos(0,3,false);</div><div class="line"></div><div class="line">channel.basicConsume(&quot;test01&quot;, false, new MyConsumer(channel));</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class MyConsumer extends DefaultConsumer &#123;</div><div class="line">    private Channel channel;</div><div class="line">    public MyConsumer(Channel channel) &#123;</div><div class="line">        super(channel);</div><div class="line">        this.channel=channel;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException &#123;</div><div class="line">        System.out.println(&quot;收到消息 手动签收&quot;);</div><div class="line">        channel.basicAck(envelope.getDeliveryTag(),false);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="TTL消息"><a href="#TTL消息" class="headerlink" title="TTL消息"></a>TTL消息</h2><p>TTL即time to live(生存时间),rabbitmq支持消息过期,在发送时指定限制时间。同时rabbitmq也支持队列级别的过期时间,从消息入队时间算起,一旦超过队列设置的过期时间,都会删除消息。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvcrj5rlt8j30hl06rwf3.jpg" alt=""></p>
+<p>从rabbitmq的控制台中我们可以再创建队列的时候设置参数,点击message TTL就可以自动添加,然后设置时间即可,单位是ms。</p>
+<p>通过这种设置方式,当队列中的消息,10s内没有被消费,则会被自动清除。</p>
+<p>另一种方式是在发送端,通过properties设置,这条消息本身10s内没有被消费则会过期。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">AMQP.BasicProperties properties = new AMQP.BasicProperties().builder().expiration(&quot;10s&quot;).build();</div><div class="line"></div><div class="line">channel.basicPublish(exchange,routingKey,properties,&quot;hello mq ack&quot;.getBytes());</div></pre></td></tr></table></figure>
+<h2 id="死信队列"><a href="#死信队列" class="headerlink" title="死信队列"></a>死信队列</h2><p>DLX即Dead-Letter-Exchange。利用DLX,当一条消息在一个队列中变成死信(dead message)后,会被重新publish到另一个exchange,这个exchange就是DLX。</p>
+<blockquote>
+<p>消息变成dead message的情况</p>
+</blockquote>
+<ol>
+<li>消息被拒绝 （basic.reject/basic.nack） requeue=false</li>
+<li>TTL过期</li>
+<li>队列达到最大长度</li>
+</ol>
+<h3 id="死信队列设置"><a href="#死信队列设置" class="headerlink" title="死信队列设置"></a>死信队列设置</h3><p>Exchange :  dlx.ex<br>Queue : dlx_q<br>routingKey: #</p>
+<p>在队列上添加参数 “x-dead-letter-exchange”:”dlx.ex”,代码如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">//首先声明普通队列作为死信队列</div><div class="line">String exchange = &quot;dlx.ex&quot;;</div><div class="line">String routingKey = &quot;#&quot;;</div><div class="line">String queue_name = &quot;dlx.q&quot;;</div><div class="line">channel.exchangeDeclare(exchange,&quot;topic&quot;,true);</div><div class="line">channel.queueDeclare(queue_name,false,false,false,null);</div><div class="line">channel.queueBind(queue_name,exchange,routingKey);</div><div class="line"></div><div class="line"></div><div class="line">//声明一个普通队列</div><div class="line">String t_exchange = &quot;test_dlx.ex&quot;;</div><div class="line">String t_routingKey = &quot;#&quot;;</div><div class="line">String t_queue_name = &quot;test_dlx.q&quot;;</div><div class="line">channel.exchangeDeclare(exchange,&quot;topic&quot;,true);</div><div class="line">Map&lt;String,Object&gt; arg = new HashMap&lt;&gt;();</div><div class="line">arg.put(&quot;x-dead-letter-exchange&quot;,exchange);</div><div class="line">arg.put(&quot;x-message-ttl&quot;,10000);</div><div class="line">channel.queueDeclare(queue_name,false,false,false,arg);</div><div class="line">channel.queueBind(queue_name,exchange,routingKey);</div></pre></td></tr></table></figure>
+<p>通过监听死信队列，10s后test_dlx.q的数据过期,数据会自动发送过来。</p>
+</the>
+      
+      
+        <div class="page-reward">
+          <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang">赏</a></p>
+          <div class="hide_box"></div>
+          <div class="shang_box">
+            <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+            <div class="shang_tit">
+              <p>纯属好玩</p>
+            </div>
+            <div class="shang_payimg">
+              <img src="/img/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+            </div>
+              <div class="pay_explain">扫码打赏，你说多少就多少</div>
+            <div class="shang_payselect">
+              
+                <div class="pay_item checked" data-id="alipay">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/alipay.png" alt="支付宝" /></span>
+                </div>
+              
+              
+                <div class="pay_item" data-id="wechat">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/weixin.png" alt="微信" /></span>
+                </div>
+              
+            </div>
+            <div class="shang_info">
+              <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script type="text/javascript">
+          $(".pay_item").click(function(){
+            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+            var dataid=$(this).attr('data-id');
+            $(".shang_payimg img").attr("src","/img/"+dataid+"img.jpg");
+            $("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+          });
+          function dashangToggle(){
+            
+            $(".hide_box").fadeToggle();
+            $(".shang_box").fadeToggle();
+          }
+        </script>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/09/18/rabbitmq高级特性/">rabbitmq高级特性</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
+        <p><span>发布时间:</span>2018年09月18日 - 10时16分</p>
+        <p><span>最后更新:</span>2018年09月18日 - 10时17分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/09/18/rabbitmq高级特性/" title="rabbitmq高级特性">http://www.shuchang.sc.com/2018/09/18/rabbitmq高级特性/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/09/18/rabbitmq高级特性/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2018/09/08/ElasticSearch分布式架构-5/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">系统学习ElasticSearch-分布式架构(5)</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#消息可靠投递"><span class="toc-number">1.</span> <span class="toc-text">消息可靠投递</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方案一-消息落库并设置状态"><span class="toc-number">1.1.</span> <span class="toc-text">方案一:消息落库并设置状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方案二-消息延迟投递-做二次确认-回调检查"><span class="toc-number">1.2.</span> <span class="toc-text">方案二:消息延迟投递,做二次确认,回调检查</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消息幂等性"><span class="toc-number">2.</span> <span class="toc-text">消息幂等性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方案一"><span class="toc-number">2.1.</span> <span class="toc-text">方案一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方案二"><span class="toc-number">2.2.</span> <span class="toc-text">方案二</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消息投递-confirm-return"><span class="toc-number">3.</span> <span class="toc-text">消息投递: confirm/return</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#confirm机制"><span class="toc-number">3.1.</span> <span class="toc-text">confirm机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#return-消息机制"><span class="toc-number">3.2.</span> <span class="toc-text">return 消息机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义消费者"><span class="toc-number">4.</span> <span class="toc-text">自定义消费者</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ACK与重回队列"><span class="toc-number">5.</span> <span class="toc-text">ACK与重回队列</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消息限流"><span class="toc-number">6.</span> <span class="toc-text">消息限流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TTL消息"><span class="toc-number">7.</span> <span class="toc-text">TTL消息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#死信队列"><span class="toc-number">8.</span> <span class="toc-text">死信队列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#死信队列设置"><span class="toc-number">8.1.</span> <span class="toc-text">死信队列设置</span></a></li></ol></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'shuchaang',
+      repo: 'shuchaang.github.io',
+      oauth: {
+        client_id: 'c5aa96bb5e5656512174',
+        client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2018/09/08/ElasticSearch分布式架构-5/" title="下一篇: 系统学习ElasticSearch-分布式架构(5)">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/09/18/rabbitmq高级特性/">rabbitmq高级特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/08/ElasticSearch分布式架构-5/">系统学习ElasticSearch-分布式架构(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/08/Hbase数据存取过程/">Hbase数据存取过程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/07/Hbase基础/">Hbase基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/22/Netty-10-Netty中的性能调优/">Netty(10) Netty中的性能调优</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/22/Netty-9-Netty中的设计模式/">Netty(9) Netty中的设计模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/09/Netty-8-性能优化工具类/">Netty(8) 性能优化工具类</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/08/Netty-7-编码/">Netty(7) 编码</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/07/Netty-6-解码/">Netty(6) 解码</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/06/Netty-5-ByteBuf/">Netty(5) ByteBuf</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/04/Netty-4-Pipeline/">Netty(4) Pipeline</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/03/Netty-新连接接入-3/">Netty(3) 新连接接入</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/02/Netty-NioEventLoop-2/">Netty(2) NioEventLoop</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/02/Netty服务端启动-1/">Netty源码(1)-服务端启动</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/24/Kafka-核心概念/">Kafka架构与核心概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/24/Kafka-Streaming-分支/">Kafka Streaming 分支</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/24/Kafka-Streaming-入门/">Kafka Streaming 入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/24/Kafka消息可靠性保证/">Kafka消息可靠性保证</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/">系统学习ElasticSearch-简单聚合分析(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/30/系统学习ElasticSearch-多种搜索方式-3/">系统学习ElasticSearch-多种搜索方式(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/29/系统学习ElasticSearch-CRUD-2/">系统学习ElasticSearch-CRUD(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/27/系统学习ElasticSearch-概念-1/">系统学习ElasticSearch-概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/20/死磕netty-1/">死磕netty(1)-简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/02/JUC-跳表-12/">JUC-自己动手写跳表(13)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/27/ElasticSearch优化总结/">ElasticSearch优化总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/16/JUC-CompletableFuture使用-12/">JUC-CompletableFuture使用(12)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/13/JUC-阻塞队列-11/">JUC-阻塞队列(11)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/11/JUC-Executor框架-10/">JUC-Executor框架(10)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/02/JUC-等等我-一起走-9/">JUC-等等我,一起走(9)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/01/RabbitMq入门-MessageConverter-6/">RabbitMq入门-MessageConverter(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/31/RabbitMq入门-消息发送与接收-5/">RabbitMq入门-消息发送与接收(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/30/JAVA继承机制与多态/">JAVA继承机制与多态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/30/JUC-StampedLock-8/">JUC-StampedLock(8)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/">RabbitMq入门-AmqpTemplate(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-连接和资源管理-3/">RabbitMq入门-连接和资源管理(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/22/JUC-Unsafe/">JUC-Unsafe(7)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/16/SpringBoot-Security认证流程/">SpringBoot-Security认证流程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/15/SpringBoot-异步REST服务/">SpringBoot-异步REST服务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/08/web容器对比/">web容器对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/">SpringBoot-Data-Jpa之高级话题(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/">SpringBoot-Data JPA之Repository(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/springboot-Data-JPA之对象映射/">SpringBoot-Data JPA之对象映射(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/22/RabbitMq入门-基本概念/">RabbitMq入门-基本概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/">spring4.3.x源码阅读笔记-AOP(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">JUC-ConcurrentHashMap(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-JMM/">JUC-JMM(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">JUC-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JUC-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">JUC-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">JUC--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2018 Shuchang
+            </div>
+
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>

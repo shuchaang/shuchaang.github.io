@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 16.25px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.25px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.5px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.5px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 13.75px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.5px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.25px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 15px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.25px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.5px;">redis</a> <a href="/tags/spring/" style="font-size: 12.5px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.75px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.22px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,106 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-系统学习ElasticSearch-CRUD-2" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/03/29/系统学习ElasticSearch-CRUD-2/" class="article-date">
+      <time datetime="2018-03-29T13:23:18.000Z" itemprop="datePublished">2018-03-29</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/29/系统学习ElasticSearch-CRUD-2/">系统学习ElasticSearch-CRUD(2)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><blockquote>
+<p>ES 5.5  kibana 5.5 </p>
+</blockquote>
+<h2 id="电商案例"><a href="#电商案例" class="headerlink" title="电商案例"></a>电商案例</h2><p>假设我们有一个java pojo</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class product&#123;</div><div class="line">    private String name;</div><div class="line">    private String desc;</div><div class="line">    private Integer price;</div><div class="line">    private String producer;</div><div class="line">    private List  tags;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>那么我们首先将pojo对应的一条数据存储到ES中,相信大家都知道将上上面的pojo存储到数据库中应该怎么做,ES是面向文档(document)的搜索分析引擎,文档中存储的数据结构,与面向对象的数据结构是一样的,基于这样的数据结构,ES可以提供复杂的索引,全文检索,分析聚合等功能,ES的document使用json来表达。</p>
+<h3 id="新增"><a href="#新增" class="headerlink" title="新增"></a>新增</h3><p>使用kibana的dev tools,新增的语法为:</p>
+<blockquote>
+<p>PUT /索引名称/类型名称/ID {数据}</p>
+</blockquote>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/2018032915223340444178.png" alt="2018032915223340444178.png"></p>
+<p>如上我们建立了一个索引放入ES中,就像对数据库的表中加入了一条记录</p>
+<h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p>查询的语法相对比较简单,这里的查询是指单单查找这一条记录,而不是根据条件进行搜索。</p>
+<blockquote>
+<p>GET /索引名称/类型名称/ID {数据}</p>
+</blockquote>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180329152233469761469.png" alt="20180329152233469761469.png"></p>
+<p>可以看到索引的一些基本信息,数据信息是在source下的,同时有一个version字段,表示这条索引的修改次数，同时也可以用于并发控制</p>
+<h3 id="修改"><a href="#修改" class="headerlink" title="修改"></a>修改</h3><p>修改索引有两种方式,第一种是替换,另一种是更新</p>
+<p>先来看替换</p>
+<blockquote>
+<p>PUT /索引名称/类型名称/ID {数据}</p>
+</blockquote>
+<p>使用这种方式,对于没有更新的数据也要带上,否则就会认为没有这个字段</p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180329152233513023560.png" alt="20180329152233513023560.png"></p>
+<p>这里我们修改一下name字段,可以看到version自增,reslut和created字段也表明了更新成功。</p>
+<p>更新文档方式</p>
+<blockquote>
+<p>POST /索引名称/类型名称/ID/_update {<br>    “doc”:{“字段名”:数据}<br>}</p>
+</blockquote>
+<p>这种方式对于不需要修改的字段,不需要添加进去</p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180329152233554191011.png" alt="20180329152233554191011.png"></p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180329152233564161234.png" alt="20180329152233564161234.png"></p>
+<p>可以看到通过这种方式,我们就将想修改的字段单独做了修改</p>
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><blockquote>
+<p>delete /索引名称/类型名称/ID</p>
+</blockquote>
+<p>这样在使用get方式就无法查询到这条数据啦</p>
+
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-系统学习ElasticSearch-概念-1" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -868,83 +968,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/02/01/RabbitMq入门-MessageConverter-6/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-RabbitMq入门-消息发送与接收-5" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/01/31/RabbitMq入门-消息发送与接收-5/" class="article-date">
-      <time datetime="2018-01-31T07:53:17.000Z" itemprop="datePublished">2018-01-31</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/31/RabbitMq入门-消息发送与接收-5/">RabbitMq入门-消息发送与接收(5)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <blockquote>
-<p>SpringBoot1.5.9   <a href="https://projects.spring.io/spring-amqp/" target="_blank" rel="external">https://projects.spring.io/spring-amqp/</a></p>
-<pre><code>&lt;dependency&gt;
-     &lt;groupId&gt;org.springframework.amqp&lt;/groupId&gt;
-     &lt;artifactId&gt;spring-rabbit&lt;/artifactId&gt;
-     &lt;version&gt;2.0.2.RELEASE&lt;/version&gt;
- &lt;/dependency&gt;
-</code></pre></blockquote>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/01/31/RabbitMq入门-消息发送与接收-5/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
