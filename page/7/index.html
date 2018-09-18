@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Category: redis | Shuchang&#39;s Blog</title>
+  <title>Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="身怀利器，杀心自起，慎而重之">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Shuchang&#39;s Blog">
-<meta property="og:url" content="http://www.shuchang.sc.com/categories/redis/index.html">
+<meta property="og:url" content="http://www.shuchang.sc.com/page/7/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
 <meta property="og:description" content="身怀利器，杀心自起，慎而重之">
 <meta name="twitter:card" content="summary">
@@ -27,6 +27,9 @@
   <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   
+    
+    
+  
   
       <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
   
@@ -38,11 +41,11 @@
           rootUrl: '/',
           fancybox: true,
           animate: true,
-          isHome: false,
+          isHome: true,
           isPost: false,
           isArchive: false,
           isTag: false,
-          isCategory: true,
+          isCategory: false,
           open_in_new: false
       }
   </script>
@@ -229,171 +232,86 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-redis解决分布式锁" class="article article-type-post" itemscope itemprop="blogPost">
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2018/09/18/redis底层数据结构/" class="archive-article-date">
-      <time datetime="2018-09-18T08:24:43.000Z" itemprop="datePublished">09-18</time>
+    <div class="article-meta">
+      <a href="/2017/11/01/redis解决分布式锁/" class="article-date">
+      <time datetime="2017-11-01T00:35:02.000Z" itemprop="datePublished">2017-11-01</time>
 </a>
-        </div>
-         
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
   
     <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/09/18/redis底层数据结构/">redis底层数据结构</a>
+      <a class="article-title" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a>
     </h1>
   
 
-        <div class="article-info info-on-archive">
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
           
+              <p>废话不多说，首先分享一个业务场景-抢购。一个典型的高并发问题，所需的最关键字段就是库存，在高并发的情况下每次都去数据库查询显然是不合适的，因此把库存信息存入Redis中，利用redis的锁机制来控制并发访问，是一个不错的解决方案。</p>
+<p>首先是一段业务代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">@Transactional</div><div class="line">public void orderProductMockDiffUser(String productId)&#123;</div><div class="line">    //1.查库存</div><div class="line">    int stockNum  = stock.get(productId);</div><div class="line">    if(stocknum == 0)&#123;</div><div class="line">        throw new SellException(ProductStatusEnum.STOCK_EMPTY);</div><div class="line">        //这里抛出的异常要是运行时异常，否则无法进行数据回滚，这也是spring中比较基础的</div><div class="line">    &#125;else&#123;</div><div class="line">        //2.下单</div><div class="line">        orders.put(KeyUtil.genUniqueKey(),productId);//生成随机用户id模拟高并发</div><div class="line">        sotckNum = stockNum-1;</div><div class="line">        try&#123;</div><div class="line">            Thread.sleep(100);</div><div class="line">        &#125; catch (InterruptedExcption e)&#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        stock.put(productId,stockNum);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里有一种比较简单的解决方案，就是<strong><em>synchronized</em></strong>关键字。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public synchronized void orderProductMockDiffUser(String productId)</div></pre></td></tr></table></figure></p>
+<p>这就是java自带的一种锁机制，简单的对函数加锁和释放锁。但问题是这个实在是太慢了，感兴趣的可以可以写个接口用apache ab压测一下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ab -n 500 -c 100 http://localhost:8080/xxxxxxx</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
     <div class="article-category tagcloud">
     <a class="article-category-link" href="/categories/redis/">redis</a>
     </div>
 
 
-          
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
-    </div>
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
       
-        </div></section>
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
+    </div>
+
       
+        <p class="article-more-link">
+          <a  href="/2017/11/01/redis解决分布式锁/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
+      <div class="clearfix"></div>
+    </div>
     
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2017/12/30/redis分布式原理及操作/" class="archive-article-date">
-      <time datetime="2017-12-30T08:43:50.000Z" itemprop="datePublished">12-30</time>
-</a>
-        </div>
-         
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a>
-    </h1>
-  
-
-        <div class="article-info info-on-archive">
-          
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-    </div>
-
-
-          
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
-    </div>
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
   </div>
+  
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2017/11/10/redis持久化/" class="archive-article-date">
-      <time datetime="2017-11-10T03:00:41.000Z" itemprop="datePublished">11-10</time>
-</a>
-        </div>
-         
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/11/10/redis持久化/">redis持久化</a>
-    </h1>
-  
-
-        <div class="article-info info-on-archive">
-          
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-    </div>
 
 
-          
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
-    </div>
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2017/11/01/redis解决分布式锁/" class="archive-article-date">
-      <time datetime="2017-11-01T00:35:02.000Z" itemprop="datePublished">11-01</time>
-</a>
-        </div>
-         
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a>
-    </h1>
-  
-
-        <div class="article-info info-on-archive">
-          
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-    </div>
 
 
-          
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
-    </div>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+
+
+
+
   
   
-    </div></section>
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span>
+    </nav>
   
-
-    
-
 </div>
       <footer id="footer">
     <div class="outer">
@@ -456,17 +374,6 @@
         };
     })
 </script>
-
-    <button class="hide-labels">TAG 开关</button>
-    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js">
-    </script>
-    <script>
-        $(document).ready(function() {
-            $("button").click(function() {
-                $(".article-info").toggle(200);
-            });
-        });
-    </script>
 
 <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
 </script>

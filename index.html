@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 12.22px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a>
+                        <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,90 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-redis底层数据结构" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/09/18/redis底层数据结构/" class="article-date">
+      <time datetime="2018-09-18T08:24:43.000Z" itemprop="datePublished">2018-09-18</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/09/18/redis底层数据结构/">redis底层数据结构</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>redis中常用的数据结构包括String,Hash,List,Set,Sorted Set,每种都有对应的底层C语言结构。如下图所示</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvdtlczh7wj30ra088t90.jpg" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">String      : SDS</div><div class="line">Hash        : zipList/hashtable</div><div class="line">List        : quickList</div><div class="line">Set         : intSet/hashtable</div><div class="line">Sorted Set  : skipList</div></pre></td></tr></table></figure>
+<h2 id="SDS"><a href="#SDS" class="headerlink" title="SDS"></a>SDS</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">struct SDS&lt;T&gt; &#123;</div><div class="line">    T capacity; // 数组容量</div><div class="line">    T len; // 数组长度</div><div class="line">    byte flags; // 特殊标识位</div><div class="line">    byte[] content; // 数组内容</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>SDS全称为simple dynamic string,由于c语言中的字符串,每次进行len()操作的时候,都要进行遍历,复杂度为O(n),对于单线程的redis来说,O(n)复杂度都是不可接受的,所以在C语言的String基础上改造成了SDS类型。</p>
+<p>SDS内部会维护当前content的长度记为len,capacity为容量,&gt;=len。在字符串进行扩展是,redis会分配一部分额外的空间放置频繁的进行扩张</p>
+<h2 id="ZipList"><a href="#ZipList" class="headerlink" title="ZipList"></a>ZipList</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">struct ziplist&lt;T&gt; &#123;</div><div class="line">    int32 zlbytes; // 整个压缩列表占用字节数</div><div class="line">    int32 zltail_offset; // 最后一个元素距离压缩列表起始位置的偏移量，用于快速定位到最后一个节点</div><div class="line">    int16 zllength; // 元素个数</div><div class="line">    T[] entries; // 元素内容列表，挨个挨个紧凑存储</div><div class="line">    int8 zlend; // 标志压缩列表的结束，值恒为 0xFF</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>顾名思义,ZipList是一个紧凑的list,用于Hash结构元素较少的时候使用。压缩列表是一块连续的内存空间，元素之间紧挨着存储，没有任何冗余空隙。各个元素之间是双向的连接,配合zltail_offset可以实现从后向前遍历。</p>
+<p>但是ZipList也存在局限性,导致它并不适合在大量元素的情况下使用。</p>
+<p>由于ZipList是一块连续的内存区域,那么存在一种情况就是添加元素时已经没有地方realloc,那么这时候就需要重新找一块连续的内存进行分配,这时就需要将这块内存全部拷贝到新的地址空间上去。</p>
+<h2 id="QuickList"><a href="#QuickList" class="headerlink" title="QuickList"></a>QuickList</h2><p>List结构早期元素少时用 ziplist，元素多时用linkedlist。但是linkedlist会导致内存碎片化严重,并且linkedlist指针成本很高,所以在zipList和LinkedList的基础上改造成了QuickList。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">struct ziplist_compressed &#123;</div><div class="line">    int32 size;</div><div class="line">    byte[] compressed_data;</div><div class="line">&#125;</div><div class="line">struct quicklistNode &#123;</div><div class="line">    quicklistNode* prev;</div><div class="line">    quicklistNode* next;</div><div class="line">    ziplist* zl; // 指向压缩列表</div><div class="line">    int32 size; // ziplist 的字节总数</div><div class="line">    int16 count; // ziplist 中的元素数量</div><div class="line">    int2 encoding; // 存储形式 2bit，原生字节数组还是 LZF 压缩存储</div><div class="line"></div><div class="line">&#125;</div><div class="line">struct quicklist &#123;</div><div class="line">    quicklistNode* head;</div><div class="line">    quicklistNode* tail;</div><div class="line">    long count; // 元素总数</div><div class="line">    int nodes; // ziplist 节点的个数</div><div class="line">    int compressDepth; // LZF 算法压缩深度</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可见QuickList中的每个节点都是一个ZipList,ZipList之间通过指针双向连接。同时QuickList可以进行数据压缩,默认为0即不压缩。为1则表示QuickList首尾不压缩,2则表示就表示 quicklist 的首尾第一个 ziplist 以及首尾第二个 ziplist 都不压缩。</p>
+<h2 id="DIC"><a href="#DIC" class="headerlink" title="DIC"></a>DIC</h2><p>Dic内部包含了两个hashtable,dict 结构内部包含两个 hashtable，通常情况下只有一个 hashtable 是有值的。但是在 dict 扩容缩容时，需要分配新的 hashtable，然后进行渐进式搬迁，这时候两个 hashtable 存储的分别是旧的 hashtable 和新的 hashtable。待搬迁结束后，旧的 hashtable 被删除，新的 hashtable 取而代之。</p>
+<p>数据量较大的hash以及存储了非整数的set内部都是用了DIC结构,Hashtable和java中的HashTable非常类似。</p>
+<h3 id="渐进式rehash"><a href="#渐进式rehash" class="headerlink" title="渐进式rehash"></a>渐进式rehash</h3><p>与java中的hashTable不同的是,redis中的hashtable使用的是渐进式的rehash,因为redis中的hashtable数据量可能非常大,redis单线程进行复制可能会造成阻塞。一般来说rehash操作会隐藏在一些指令之后,如果没有执行完成,redis会交给后台的定时任务去完成。</p>
+<h3 id="扩容-缩容"><a href="#扩容-缩容" class="headerlink" title="扩容/缩容"></a>扩容/缩容</h3><p>hashtable扩容后会变为原数组的两倍大小。如果Redis 正在做 bgsave，为了减少内存页的过多分离 (Copy On Write)，Redis 尽量不去扩容 (dict_can_resize)，但是如果 hash 表已经非常满了，元素的个数已经达到了第一维数组长度的 5 倍 (dict_force_resize_ratio)，说明 hash 表已经过于拥挤了，这个时候就会强制扩容。</p>
+<p>当元素的个数小于数组大小的10%,就会进行缩容,缩容不需要考虑bgsave。</p>
+<h2 id="SkipList"><a href="#SkipList" class="headerlink" title="SkipList"></a>SkipList</h2><p>redis的sorted list内部使用skipList(跳表)实现。skipList的结构与java中的skipList几乎一致。SkipList首先要求是一个有序的列表,redis 通过set 一个score来实现。拿到这样一个list之后,redis会从list中利用算法均匀的筛选一些元素组成上层list,如此循环,redis中的跳表共有64层。理想情况下,跳表最终会形成如下的形状,也就是一个正态分布图。利用这种结构,redis每次从上到下进行匹配,可已将查询的复杂度从O(n)降低到O(1)</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvduzjv8nyj30eo0a2t8h.jpg" alt=""></p>
+<h2 id="intSet"><a href="#intSet" class="headerlink" title="intSet"></a>intSet</h2><p>inSet是一个整数类型的集合,包括16位整数,32位整数,64位整数类型。个人理解这个结构是某些场景下用来节省空间的。例如set中只有整数类型是,当元素大小可以用16位表示,则这个set的encoding就是int16,当出现有元素必须用32位表示时,那么所有的整数都升级为int32,int64以此类推。但是当你删除了int32的数据,intSet是不会降级为int16的。也就是说只能升级不能降级。当set中出现了非整数类型时,redis使用hashtable代替intSet。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>redis的底层数据结构,几乎都针对redis本身进行了优化。无论在提高性能还是节省空间上,作者都花了很多功夫。</p>
+
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-rabbitmq高级特性" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -346,65 +430,10 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p><img src="https://ws1.sinaimg.cn/large/0069RVTdgy1fv2aitojvfj30xk0e0aa6.jpg" alt=""></p>
+              <p><img src="https://ws1.sinaimg.cn/large/0069RVTdgy1fv2aitojvfj30xk0e0aa6.jpg" alt=""></p>
 <p>ES是一套天生支持分布式的系统,分布式的目的是解决大数据量的问题。但是在我们使用的过程中,并没有对其分布式特性进行特殊配置。这时因为ES对用户隐藏了复杂的分布式机制,包括分片,集群发现,负载均衡,replica,路由,扩容以及reIndex。使得用户通过简单的配置就可以对ES实现开箱即用。但是对于开发人员,我们还是要理解ES隐藏的机制和架构,做到知其然也知其所以然。</p>
-<h2 id="ES集群"><a href="#ES集群" class="headerlink" title="ES集群"></a>ES集群</h2><p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fv35rpjsfuj30vm0f274t.jpg" alt=""></p>
-<p>当ES节点启动后,会通过多播(multi cast)的方式寻找集群中的其他节点,并与之建立联系。在集群中，一个节点被选举成主节点(master node)。这个节点负责管理集群的状态，当群集的拓扑结构改变时把索引分片分派到相应的节点上。</p>
-<p>寻找的依据就是配置文件中的</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cluster.name:</div></pre></td></tr></table></figure>
-<p>默认为elasticsearch。</p>
-<p>ES集群的主节点与其他中间件主节点的区别在于,主节点并不会处于一个特殊的地位。用户不需要知道哪个节点是主节点，因为所有操作都可以分发到任意的节点,任何节点都可以将查询语句分发到其他节点,将结果聚合之后再返回给用户。节点之间通过P2P的方式通信,而并非需要主节点进行中转。</p>
-<h3 id="集群状态"><a href="#集群状态" class="headerlink" title="集群状态"></a>集群状态</h3><p>ES集群状态分为red/yellow/green,红色表示存在shard不可用的情况,黄色表示所有shard可用,但有replica不可用,绿色表示所有shard可用,并且replica也可用。</p>
-<h3 id="节点失效"><a href="#节点失效" class="headerlink" title="节点失效"></a>节点失效</h3><p>Master节点会负责监控集群中的其他节点，若节点出现故障,这时就会启动容灾策略。由于节点不可用,其他节点会接管发送到这个节点的请求,同时新的主分片会从replica中选举出来</p>
-<h3 id="Shard-amp-Replica"><a href="#Shard-amp-Replica" class="headerlink" title="Shard&amp;Replica"></a>Shard&amp;Replica</h3><ul>
-<li>一个index可以有多个shard</li>
-<li>每个shard都是一个最小的工作单元,是一个lucence实例，有完整的建立索引处理请求的能力。</li>
-<li>增减节点，会触发shard的负载均衡</li>
-</ul>
-<h3 id="选举机制"><a href="#选举机制" class="headerlink" title="选举机制"></a>选举机制</h3><p>ES的选举通过zenDiscovery模块进行,通过ping所有节点获取response过滤出有资格进行选举的节点。然后根据nodeId进行排序,选出nodeId排在第一的节点对它进行投票,如果这个节点本身也选择了自己并且票数达到了n(节点数量)/2+1,那么这次投票就是成功的,否则继续进行。</p>
-<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fv39n4qac0j30pc13i763.jpg" alt=""></p>
-<h3 id="如何避免脑裂"><a href="#如何避免脑裂" class="headerlink" title="如何避免脑裂"></a>如何避免脑裂</h3><ul>
-<li><p>当集群数量不小于3，可以通过设置最少投票通过数量（discovery.zen.minimum_master_nodes）超过所有候选节点一半以上来解决脑裂问题；</p>
-</li>
-<li><p>当候选数量为两个时，只能修改为唯一的一个master候选，其他作为data节点，避免脑裂问题。</p>
-</li>
-</ul>
-<h3 id="TransLog"><a href="#TransLog" class="headerlink" title="TransLog"></a>TransLog</h3><p>lucene索引过程中，数据会首先据缓存在内存中直到达到一个阈值才会写入到磁盘。这就会带来一个风险，如果在写入磁盘前系统崩溃，那么这些缓存数据就会丢失。ES的解决方式与HBase一致,通过预写日志来保证数据可恢复。也就是ES的Translog，每次写操作都会写入一个临时文件translog中，这样如果系统需要恢复数据可以从translog中读取</p>
-<h2 id="ES-Search分析"><a href="#ES-Search分析" class="headerlink" title="ES Search分析"></a>ES Search分析</h2><p>首先search应区别于对单个文档的操作,search是指对于某种查询条件,对集群中所有节点来进行数据匹配。若一个index被分为N个shard,则至少有N个节点会参与到search中。</p>
-<p>ES search数据的过程可以成为query then fetch,找到匹配的文档并抓取。</p>
-<h3 id="query"><a href="#query" class="headerlink" title="query"></a>query</h3><p>在初始查询阶段时，查询会广播到索引中每一个分片副本（主分片或者副分片）。 每个分片在本地执行搜索并构建一个匹配文档的 优先队列。优先队列大小为分页参数 from + size。</p>
-<p>QUERY_THEN_FETCH 搜索类型的查询阶段有以下步骤:</p>
-<ol>
-<li>客户端发送 search 请求到 Node 3。</li>
-<li>Node 3 将查询请求转发到索引的每个主分片或副分片中。</li>
-<li>每个分片在本地执行查询，并使用本地的Term/Document Frequency信息进行打分，添加结果到大小为 from + size 的本地有序优先队列中</li>
-</ol>
-<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fv3aho3nmgj312o0g4jrs.jpg" alt=""></p>
-<p>每个分片返回各自优先队列中所有文档的 ID 和排序值给协调节点，它合并这些值到自己的优先队列，产生一个全局排序后的列表。<br>协调节点广播查询请求到所有相关分片时，可以是主分片或副分片，协调节点将在之后的请求中轮询所有的分片副本来分摊负载。</p>
-<h3 id="fetch"><a href="#fetch" class="headerlink" title="fetch"></a>fetch</h3><p>Query 阶段知道了要取哪些数据，但是并没有取具体的数据，这就是 fetch 阶段要做的。</p>
-<p>Fetch 阶段由以下步骤构成：</p>
-<ol>
-<li>协调节点向相关 node 发送 GET 请求</li>
-<li>分片所在节点向协调节点返回数据</li>
-<li>协调节点等待所有文档被取得，然后返回给客户端</li>
-</ol>
-<p>分片所在节点在返回文档数据时，处理有可能的_source 字段以及高亮参数。</p>
-<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fv3aij8dtij312e0fmdg8.jpg" alt=""></p>
-<blockquote>
-<p>参考 <a href="https://www.easyice.cn/archives/257" target="_blank" rel="external">https://www.easyice.cn/archives/257</a></p>
-</blockquote>
-<h2 id="ES-写流程分析"><a href="#ES-写流程分析" class="headerlink" title="ES 写流程分析"></a>ES 写流程分析</h2><blockquote>
-<p>参考 <a href="https://www.easyice.cn/archives/180" target="_blank" rel="external">https://www.easyice.cn/archives/180</a></p>
-</blockquote>
-<ol>
-<li><p>协调节点负责创建索引,将请求转发到主分片节点</p>
-</li>
-<li><p>主分片将数据写到本地,转发写副本分片请求,回复协调节点</p>
-</li>
-<li><p>协调节点将信息返回给客户端</p>
-</li>
-</ol>
-
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          
       
       
     </div>
@@ -422,6 +451,10 @@
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
     </div>
 
+      
+        <p class="article-more-link">
+          <a  href="/2018/09/08/ElasticSearch分布式架构-5/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
@@ -968,89 +1001,9 @@
 
 
   
-    <article id="post-Netty-5-ByteBuf" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/07/06/Netty-5-ByteBuf/" class="article-date">
-      <time datetime="2018-07-06T00:56:35.000Z" itemprop="datePublished">2018-07-06</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/06/Netty-5-ByteBuf/">Netty(5) ByteBuf</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <blockquote>
-<p>三个问题</p>
-</blockquote>
-<ol>
-<li>内存的类别有哪些</li>
-<li>如何减少多线程内存分配的竞争</li>
-<li>不同大小的内存是如何进行分配的</li>
-</ol>
-<h2 id="内存与内存管理器的抽象"><a href="#内存与内存管理器的抽象" class="headerlink" title="内存与内存管理器的抽象"></a>内存与内存管理器的抽象</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">* &lt;pre&gt;</div><div class="line">*      +-------------------+------------------+------------------+</div><div class="line">*      | discardable bytes |  readable bytes  |  writable bytes  |</div><div class="line">*      |                   |     (CONTENT)    |                  |</div><div class="line">*      +-------------------+------------------+------------------+</div><div class="line">*      |                   |                  |                  |</div><div class="line">*      0      &lt;=      readerIndex   &lt;=   writerIndex    &lt;=    capacity</div><div class="line">* &lt;/pre&gt;</div></pre></td></tr></table></figure>
-<p>byteBuf有三个非常重要的指针,readerIndex/writerIndex/capacity。0到readerIndex是已经读完,可以丢弃的数据,readerIndex和writerIndex之间是可读区域,writerIndex到capacity是可写区域。</p>
-<h2 id="不同大小和不同类型的内存分配策略"><a href="#不同大小和不同类型的内存分配策略" class="headerlink" title="不同大小和不同类型的内存分配策略"></a>不同大小和不同类型的内存分配策略</h2><p>Netty中对ByteBuf进行分配的基类是ByteBufAllocator,提供了一些内存分配的抽象方法。在注释中可以看到关于直接内存和堆内存的不同分配。</p>
-<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180706153084075739585.png" alt="20180706153084075739585.png"></p>
-<p>可以看到ByteBufAllocator是一个最顶层的抽象,AbstractByteBufAllocator实现了接口的大部分功能,然后最终暴露出两个方法(new DirectByteBuf和new HeapByteBuf)。这两个方法就交给子类pool和unpool,创建堆内和堆外内存的实现。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Netty/">Netty</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/07/06/Netty-5-ByteBuf/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
     </nav>
   
 </div>
