@@ -232,6 +232,82 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-Netty-6-解码" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/07/07/Netty-6-解码/" class="article-date">
+      <time datetime="2018-07-07T12:32:32.000Z" itemprop="datePublished">2018-07-07</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/07/Netty-6-解码/">Netty(6) 解码</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>所谓解码,就是讲二进制数据流解析为指定协议的数据包,之后交给业务逻辑进行处理。</p>
+<blockquote>
+<p>两个问题</p>
+</blockquote>
+<p>解码器抽象的解码过程</p>
+<p>Netty有哪些开箱即用的解码器</p>
+<h2 id="基类ByteToMessageDecoder"><a href="#基类ByteToMessageDecoder" class="headerlink" title="基类ByteToMessageDecoder"></a>基类ByteToMessageDecoder</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">累加字节流</div><div class="line">调用子类的decode方法进行解析</div><div class="line">将解析的ByteBuf向下传播</div></pre></td></tr></table></figure>
+<p>进入channelRead方法,这里将传入的数据包装为bytebuf然后交给cumulator,将数据进行累加。然后调用callDecode方法,利用不同的子类实现进行解析,将解析后的结果放在List<object> out中</object></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cumulation = cumulator.cumulate(ctx.alloc(), cumulation, data);</div><div class="line"></div><div class="line">callDecode(ctx, cumulation, out);</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Netty/">Netty</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/07/07/Netty-6-解码/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-Netty-5-ByteBuf" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -906,80 +982,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/06/24/Kafka消息可靠性保证/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-系统学习ElasticSearch-聚合分析-4" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/" class="article-date">
-      <time datetime="2018-03-31T06:25:43.000Z" itemprop="datePublished">2018-03-31</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/">系统学习ElasticSearch-简单聚合分析(4)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>环境方面继续使用上一篇的数据环境,根据模拟不同的需求,体验不同的聚合分析语法</p>
-<ol>
-<li>简单聚合: 计算每个tag下的商品数量</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">GET /ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_tag&quot;: &#123;</div><div class="line">      &quot;terms&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;tags&quot;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
