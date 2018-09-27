@@ -3,23 +3,26 @@
 <head>
   <meta charset="utf-8">
   
-  <title>JUC-JMM(5) | Shuchang&#39;s Blog</title>
+  <title>Rabbitmq常用模式 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="JMM在写这篇博客之前参考了大量的博客和书籍，但是个人总感觉理解不来，在这里记录下自己的看法，可能不对。 在并发编程中，我们要解决的关键性问题就是线程通信和同步的问题——那么就有两种结局方案，共享内存和消息传递。共享内存的方式就是各个线程在一个公共的内存区域中共同读写变量，消息传递则是通过显示的方法交换信息。 所以JAVA对内存进行了一种抽象，形成了java内存模型JMM。这种模型可以说就是为了方">
-<meta name="keywords" content="java,并发">
+  <meta name="description" content="RabbitMQ常用模式">
+<meta name="keywords" content="RabbitMq">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JUC-JMM(5)">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/12/17/java并发从入门到崩溃-JMM/index.html">
+<meta property="og:title" content="Rabbitmq常用模式">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/09/27/Rabbitmq常用模式/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="JMM在写这篇博客之前参考了大量的博客和书籍，但是个人总感觉理解不来，在这里记录下自己的看法，可能不对。 在并发编程中，我们要解决的关键性问题就是线程通信和同步的问题——那么就有两种结局方案，共享内存和消息传递。共享内存的方式就是各个线程在一个公共的内存区域中共同读写变量，消息传递则是通过显示的方法交换信息。 所以JAVA对内存进行了一种抽象，形成了java内存模型JMM。这种模型可以说就是为了方">
-<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmjrum6j9lj30ae0be74i.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fmjsbm9tn9j30n704dwfn.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fmjsfmdpkaj30ke05idi4.jpg">
-<meta property="og:updated_time" content="2018-01-01T08:04:16.000Z">
+<meta property="og:description" content="RabbitMQ常用模式">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fvnbel6rimj30uy0gaqeu.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fvncdyzb9ej30nd06zjsq.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fvncfrl93lj30v40f0414.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fvncld6zx2j30w20eo0y9.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fvnd7kixawj30x90f7ah6.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fvndljo98nj30v70emn2q.jpg">
+<meta property="og:updated_time" content="2018-09-27T01:41:16.241Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JUC-JMM(5)">
-<meta name="twitter:description" content="JMM在写这篇博客之前参考了大量的博客和书籍，但是个人总感觉理解不来，在这里记录下自己的看法，可能不对。 在并发编程中，我们要解决的关键性问题就是线程通信和同步的问题——那么就有两种结局方案，共享内存和消息传递。共享内存的方式就是各个线程在一个公共的内存区域中共同读写变量，消息传递则是通过显示的方法交换信息。 所以JAVA对内存进行了一种抽象，形成了java内存模型JMM。这种模型可以说就是为了方">
-<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmjrum6j9lj30ae0be74i.jpg">
+<meta name="twitter:title" content="Rabbitmq常用模式">
+<meta name="twitter:description" content="RabbitMQ常用模式">
+<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fvnbel6rimj30uy0gaqeu.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -233,11 +236,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-java并发从入门到崩溃-JMM" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Rabbitmq常用模式" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/12/17/java并发从入门到崩溃-JMM/" class="article-date">
-      <time datetime="2017-12-17T06:21:21.000Z" itemprop="datePublished">2017-12-17</time>
+      <a href="/2018/09/27/Rabbitmq常用模式/" class="article-date">
+      <time datetime="2018-09-27T01:40:15.000Z" itemprop="datePublished">2018-09-27</time>
 </a>
     </div>
   
@@ -250,7 +253,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      JUC-JMM(5)
+      Rabbitmq常用模式
     </h1>
   
 
@@ -259,13 +262,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
+    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -275,32 +278,58 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h3 id="JMM"><a href="#JMM" class="headerlink" title="JMM"></a>JMM</h3><p>在写这篇博客之前参考了大量的博客和书籍，但是个人总感觉理解不来，在这里记录下自己的看法，可能不对。</p>
-<p>在并发编程中，我们要解决的关键性问题就是线程通信和同步的问题——那么就有两种结局方案，共享内存和消息传递。共享内存的方式就是各个线程在一个公共的内存区域中共同读写变量，消息传递则是通过显示的方法交换信息。</p>
-<p>所以JAVA对内存进行了一种抽象，形成了java内存模型JMM。这种模型可以说就是为了方便多线程编程而设计。JMM的设计说起来其实很简单，各个线程拥有自己的本地内存，线程之间的共享变量存储在<br>主存中，为了提高效率，各自的本地内存中还保留了一份共享变量的拷贝。本地内存是一个抽象的概念，并不存在，它在物理上覆盖了缓存区，寄存器以及各种优化技术。</p>
-<p>因此JAVA中线程之间的通信可以使用以下方式：</p>
-<ol>
-<li>一个线程将数据写入到主存中</li>
-<li>另一个线程去主存获取这个数据</li>
-</ol>
-<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmjrum6j9lj30ae0be74i.jpg" alt=""></p>
-<p>也就是说线程之间依靠在主存之中共享变量实现了线程之间的通信，虽然说起来这个过程很简单，但我们看的还是太过于宏观，屏蔽了太多底层的东西。因为我们对于多线程的编程都停留在java语言这种高级语言的层面，但是java语言底层会和操作系统、内存、寄存器这些硬件打交道。而这些硬件由于读写速率有很大差别，因此会有一些对编程语言的优化策略，并不是每条指令都是顺序执行的。由于存在这种硬件优化策略，所以java语言就要保证它的多线程编程所得出的结果是程序员所希望的结果，也就是对编程人员的可见性。所以为了保证这种对编程人员的可见性，java并发编程就需要抽象一种既能保证执行结果又能让程序设计人员无需关心底层的内存模型，这就是JMM。</p>
+        <h2 id="RabbitMQ常用模式"><a href="#RabbitMQ常用模式" class="headerlink" title="RabbitMQ常用模式"></a>RabbitMQ常用模式</h2><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fvnbel6rimj30uy0gaqeu.jpg" alt=""></p>
 <p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
 <ul>
 <li><a id="more"></a>
 <the rest="" of="" contents="" |="" 余下全文="">
 
+
 </the></li>
 </ul>
-<h3 id="从PIPELINE看JMM"><a href="#从PIPELINE看JMM" class="headerlink" title="从PIPELINE看JMM"></a>从PIPELINE看JMM</h3><p>学过计算机组成原理或计算机体系结构的同学可能见过这幅图</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmjsbm9tn9j30n704dwfn.jpg" alt=""></p>
-<p>这就是把一条机器指令分为了五个原子的步骤去执行IF表示取指令，WB表示写回内存。下一条指令会在前一条写回内存后才会执行，这么这个看来就是一个线程安全的模型了。只可惜，现实中的计算机指令流水线并不会这样设计，因为这样的效率实在是太低了。</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmjsfmdpkaj30ke05idi4.jpg" alt=""></p>
-<p>实际上的流水线是这样的一种模型，在第一个位置空出来后就可以执行第二条了。这样才能最大限度的利用资源。那么为了提高效率，问题也就随之而来了，这样的一种模型就会造成一种数据依赖的情况，有可能第二条指令需要第一条指令的运算结果,出现这种情况最快的优化就是让IF在EX之后执行，通过通道直接获取到EX之后的值，而不必等到写回内存再去内存中调用。其实这种情况分细了来说就是流水线中遇到的WAR,WAW等读写冲突现象。</p>
-<p>说完了计组中pipeline的思想，那么我们把JMM作一下类比，我们可以把JMM当做处理pipeline的容器，java代码在编译成字节码之后，为了解决读写冲突也需要设定一系列的机制。这些机制就包括设定内存屏障，happens-before原则，顺序一致性模型等等。如果你知道pipeline对机器指令读写冲突的解决方案，从字面上你就能理解jmm这些机制的作用。</p>
-<p>所以知道了以上几种jmm的设计原则之后，就有了volatile的内存语义，lock的内存语义等等。它们讲述这些不同的线程之间通信和同步的方式在jmm中是怎样实现的。其实归根结底就是想解决在经历过种种编译优化之后怎样保持各个线程之间的数据依赖问题。</p>
-<p>其实出现这些问题最根本的原因是人们对提升计算机效率的永恒追求，因为追求性能，出现了经典的五层流水线模型。因为追求性能出现了java并发编程。于是在硬件和软件层面都对追求性能而带来的数据冲突问题作出了解决，虽然具体做法不同但思想都是想通的。</p>
-<p>这时我又想起了大学老师对我们说过的话：计算机这个东西在硬件和软件方面是相通的，双方的思想都可以拿来互相借鉴，想通了就很简单。</p>
+<h3 id="迅速消息发送"><a href="#迅速消息发送" class="headerlink" title="迅速消息发送"></a>迅速消息发送</h3><ul>
+<li>迅速消息指消息不进行落库,不做可靠性保障</li>
+<li>用于非核心消息,例如日志、统计分析</li>
+<li>特点是性能高,吞吐量大</li>
+<li>代码层面来看就是直接调用rabbitTemplate.convertAndSend方法,不需要消息落库,也不需要监听return or confirm</li>
+</ul>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fvncdyzb9ej30nd06zjsq.jpg" alt=""></p>
+<h3 id="确认消息发送"><a href="#确认消息发送" class="headerlink" title="确认消息发送"></a>确认消息发送</h3><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fvncfrl93lj30v40f0414.jpg" alt=""></p>
+<p>消息确认模式是一种非常常见的模式,消息需要落库,生产端需要监听broker的confirm响应。对于异常消息需要定时任务进行补偿。</p>
+<h3 id="批量消息发送"><a href="#批量消息发送" class="headerlink" title="批量消息发送"></a>批量消息发送</h3><p>批量消息是指我们把多条消息放到一个集合里,在一个session中进行提交。一种做法是将数据放在threadLocal中,提交时带上size属性,最重要的是对这一批数据进行合并。这种方式的缺点是消费端不保证可靠性,返回结果无法预期。同时幂等性也是一个大问题。需要进行消息补偿。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fvncld6zx2j30w20eo0y9.jpg" alt=""></p>
+<h3 id="延迟消息发送"><a href="#延迟消息发送" class="headerlink" title="延迟消息发送"></a>延迟消息发送</h3><p>消息延迟推送、定时任务,用于业务削峰限流,降级的异步延迟消息机制</p>
+<p>Rabbitmq对延迟队列的支持需要下载插件来完成</p>
+<blockquote>
+<p> 安装插件</p>
+</blockquote>
+<p> <a href="http://www.rabbitmq.com/community-plugins.html" target="_blank" rel="external">http://www.rabbitmq.com/community-plugins.html</a></p>
+<p>下载对应版本的rabbitmq_delayed_message_exchange插件,解压缩得到.ez文件,放到plugins文件夹</p>
+<blockquote>
+<p> rabbitmq-plugins enable rabbitmq_delayed_message_exchange</p>
+</blockquote>
+<p>启用插件之后重启rabbitmq-server就可以了</p>
+<p>延迟队列的使用非常广泛:例如收货后自动评价功能,优惠券过期等</p>
+<h3 id="顺序消息发送"><a href="#顺序消息发送" class="headerlink" title="顺序消息发送"></a>顺序消息发送</h3><ol>
+<li>保证顺序消费,必须保证消息投递到一个队列中,并且消费者只能有一个(exclusive模式)</li>
+<li>统一提交,保证在同一个会话中</li>
+<li>添加消息属性:顺序标记的序号、消息Size属性，进行落库操作</li>
+<li>并行进行发送给自身的延迟消息进行后续消费处理</li>
+<li>消费者延迟消息,根据会话ID、size进行处理</li>
+<li>定时任务进行补偿</li>
+</ol>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fvnd7kixawj30x90f7ah6.jpg" alt=""></p>
+<h3 id="消息幂等性"><a href="#消息幂等性" class="headerlink" title="消息幂等性"></a>消息幂等性</h3><p>消息的幂等性是一个非常重要的特性,是指对于同一个消息,消费者不论消费者接收到多少次这条消息,处理结果都是相同的。</p>
+<blockquote>
+<p>导致非幂等性的原因</p>
+</blockquote>
+<ol>
+<li>可靠性消息投递的机制</li>
+<li>Broker与消费者之间网络波动</li>
+<li>消费端异常</li>
+</ol>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fvndljo98nj30v70emn2q.jpg" alt=""></p>
+<p>这里利用的是一个ID路由组件,如果单个数据库当然就不需要了。生产端生成消息并落库,统一批次的消息一定有一个全局唯一的id去标识。那么消费端利用这个ID去插入数据库,根据是否产生主键冲突来判断幂等性。</p>
 
       
       
@@ -356,13 +385,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/12/17/java并发从入门到崩溃-JMM/">JUC-JMM(5)</a></p>
+        <p><span>本文标题:</span><a href="/2018/09/27/Rabbitmq常用模式/">Rabbitmq常用模式</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2017年12月17日 - 14时21分</p>
-        <p><span>最后更新:</span>2018年01月01日 - 16时04分</p>
+        <p><span>发布时间:</span>2018年09月27日 - 09时40分</p>
+        <p><span>最后更新:</span>2018年09月27日 - 09时41分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/12/17/java并发从入门到崩溃-JMM/" title="JUC-JMM(5)">http://www.shuchang.sc.com/2017/12/17/java并发从入门到崩溃-JMM/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/12/17/java并发从入门到崩溃-JMM/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/09/27/Rabbitmq常用模式/" title="Rabbitmq常用模式">http://www.shuchang.sc.com/2018/09/27/Rabbitmq常用模式/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/09/27/Rabbitmq常用模式/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -375,18 +404,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          JUC-ConcurrentHashMap(6)
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/12/13/java并发从入门到崩溃-Lock/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">JUC-Lock(4)</div>
+    <a href="/2018/09/22/Rabbitmq与Springboot/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Rabbitmq与Springboot</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -397,7 +417,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#JMM"><span class="toc-number">1.</span> <span class="toc-text">JMM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#从PIPELINE看JMM"><span class="toc-number">2.</span> <span class="toc-text">从PIPELINE看JMM</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#RabbitMQ常用模式"><span class="toc-number">1.</span> <span class="toc-text">RabbitMQ常用模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#迅速消息发送"><span class="toc-number">1.1.</span> <span class="toc-text">迅速消息发送</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#确认消息发送"><span class="toc-number">1.2.</span> <span class="toc-text">确认消息发送</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#批量消息发送"><span class="toc-number">1.3.</span> <span class="toc-text">批量消息发送</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#延迟消息发送"><span class="toc-number">1.4.</span> <span class="toc-text">延迟消息发送</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#顺序消息发送"><span class="toc-number">1.5.</span> <span class="toc-text">顺序消息发送</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#消息幂等性"><span class="toc-number">1.6.</span> <span class="toc-text">消息幂等性</span></a></li></ol></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -463,13 +483,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/" title="上一篇: JUC-ConcurrentHashMap(6)">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/12/13/java并发从入门到崩溃-Lock/" title="下一篇: JUC-Lock(4)">
+            <a href="/2018/09/22/Rabbitmq与Springboot/" title="下一篇: Rabbitmq与Springboot">
                 <i class="fa fa-angle-right"></i>
             </a>
         
