@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>k8s学习总结-1 | Shuchang&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="什么是容器容器其实是一种沙盒技术,能够像集装箱一样,把你的应用装起来。应用与应用之间因为有了边界而不至于互相干扰,被装进集装箱的应用,也可以被方便的搬来搬去,这就是paas最理想的状态。 docker是如何修改应用的边界容器的核心技术,就是通过约束和修改进程的动态表现,从而创造出一种边界。对于Docker等大多数容器来说,Cgroups技术是用来制造约束的主要手段,Namespace技术则是用来修">
+<meta name="keywords" content="K8S,Docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k8s学习总结-1">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/11/10/k8s学习总结-1/index.html">
+<meta property="og:site_name" content="Shuchang&#39;s Blog">
+<meta property="og:description" content="什么是容器容器其实是一种沙盒技术,能够像集装箱一样,把你的应用装起来。应用与应用之间因为有了边界而不至于互相干扰,被装进集装箱的应用,也可以被方便的搬来搬去,这就是paas最理想的状态。 docker是如何修改应用的边界容器的核心技术,就是通过约束和修改进程的动态表现,从而创造出一种边界。对于Docker等大多数容器来说,Cgroups技术是用来制造约束的主要手段,Namespace技术则是用来修">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNbRwgy1fx2zd4mrhzj30jf0eiaao.jpg">
+<meta property="og:updated_time" content="2018-11-10T08:02:44.521Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="k8s学习总结-1">
+<meta name="twitter:description" content="什么是容器容器其实是一种沙盒技术,能够像集装箱一样,把你的应用装起来。应用与应用之间因为有了边界而不至于互相干扰,被装进集装箱的应用,也可以被方便的搬来搬去,这就是paas最理想的状态。 docker是如何修改应用的边界容器的核心技术,就是通过约束和修改进程的动态表现,从而创造出一种边界。对于Docker等大多数容器来说,Cgroups技术是用来制造约束的主要手段,Namespace技术则是用来修">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNbRwgy1fx2zd4mrhzj30jf0eiaao.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Shuchang</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">剑来!</p>
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                            <li><a href="/archives">所有文章</a></li>
+                        
+                            <li><a href="/about">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                            
+                                <a class="fl github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                            
+                                <a class="fl zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                            
+                                <a class="fl weibo" target="_blank" href="#" title="weibo">weibo</a>
+                            
+                                <a class="fl google" target="_blank" href="#" title="google">google</a>
+                            
+                                <a class="fl twitter" target="_blank" href="#" title="twitter">twitter</a>
+                            
+                                <a class="fl linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/Docker/" style="font-size: 10px;">Docker</a> <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/K8S/" style="font-size: 10px;">K8S</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="https://gitee.com/swiftsc/">gitee</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">因为不满足于现状，面对未知，我们努力探索，其实越贴近，越震撼</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Shuchang</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Shuchang</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">剑来!</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                    <li><a href="/archives">所有文章</a></li>
+                
+                    <li><a href="/about">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
+                    
+                        <a class="github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
+                    
+                        <a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+                    
+                        <a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+                    
+                        <a class="google" target="_blank" href="#" title="google">google</a>
+                    
+                        <a class="twitter" target="_blank" href="#" title="twitter">twitter</a>
+                    
+                        <a class="linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-k8s学习总结-1" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/11/10/k8s学习总结-1/" class="article-date">
+      <time datetime="2018-11-10T08:01:35.000Z" itemprop="datePublished">2018-11-10</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      k8s学习总结-1
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/K8S/">K8S</a><a class="article-category-link" href="/categories/K8S/Docker/">Docker</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/K8S/">K8S</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h2 id="什么是容器"><a href="#什么是容器" class="headerlink" title="什么是容器"></a>什么是容器</h2><p>容器其实是一种沙盒技术,能够像集装箱一样,把你的应用装起来。应用与应用之间因为有了边界而不至于互相干扰,被装进集装箱的应用,也可以被方便的搬来搬去,这就是paas最理想的状态。</p>
+<h2 id="docker是如何修改应用的边界"><a href="#docker是如何修改应用的边界" class="headerlink" title="docker是如何修改应用的边界"></a>docker是如何修改应用的边界</h2><p>容器的核心技术,就是通过约束和修改进程的动态表现,从而创造出一种边界。对于Docker等大多数容器来说,Cgroups技术是用来制造约束的主要手段,Namespace技术则是用来修改进程视图的主要方式。</p>
+<p>Namespace可以视为一个障眼法,一个namespace里的应用都只能看到当前namespace下被cgroups等技术所限制的资源,文件,设备,而对于宿主机或其他不相关的应用,就完全看不到。这就是linux容器最基本的实现原理。所以容器技术其实就是一个特殊即进程而已。</p>
+<h2 id="容器与文件系统"><a href="#容器与文件系统" class="headerlink" title="容器与文件系统"></a>容器与文件系统</h2><p>容器里的应用进程,理应看到一份完全独立的文件系统,这样,他就可以在自己的容器目录下完成操作,完全不受宿主机和其他容器的影响。Docker在处理这个问题的时候使用了mount namespace技术,改变了容器文件系统的挂载点,简单来说可以理解为执行一下操作:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cd /var/lib/docker/</div><div class="line">以容器ID为名称创建一个文件夹,如123</div><div class="line">cd 123</div><div class="line">创建一系列文件夹如:etc var lib等待以及所需要的文件内容</div><div class="line">mount(&quot;/&quot;,&quot;var/lib/docker/123&quot;)即修改文件系统挂载点</div></pre></td></tr></table></figure>
+<p>这个挂载到容器根目录上,用来为容器进程提供隔离后执行环境的文件系统,就是所谓的容器镜像。他还有个更专业的名字,rootfs(根文件系统)</p>
+<p>一个常见的rootfs,通常会包含一些文件目录,如/bin /etc /proc等。rootfs只是一个操作系统所包含的文件、配置、目录,并不包含操作系统内核,所以容器镜像要比一个虚拟机iso小的多,因为虚拟机iso文件包含了操作系统的内核。</p>
+<p>除此之外,docker公司做出了一个巨大的创新,就是引入了layer概念,用户每修改一次镜像,都会增量追加一个rootfs,这种做法利用了Union File System技术,即将不同的目录联合挂载到一个目录下,最后我们所看到的文件系统实际上是由多个layer视图叠加显示出来的,一个容器的rootfs实际由三部分组成:</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fx2zd4mrhzj30jf0eiaao.jpg" alt=""></p>
+<p>用户所进行的一切操作都是在最上部的rw层进行的,init层是用来存放/etc/hosts、/etc/resolv.conf等信息。因为这些信息属于底层文件系统的一部分,有些场景需要修改这些文件,但是我们对镜像进行提交时又不希望将这些信息一起提交,所以设计了init层。下面的就全部都是只读的镜像层。</p>
+<p>当我们创建一个文件时,我们实际上只是在最上层的镜像添加了一个文件,当我们删除一个文件时,实际上创建了一个.wh.foo的文件,这样这个文件就被遮罩了起来。当修改一个文件时,首先会从上到下查找有没有这个文件，找到，就复制到容器层中修改，修改的结果就会作用到下层的文件，这种方式也被称为copy-on-write。</p>
+
+      
+      
+        <div class="page-reward">
+          <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang">赏</a></p>
+          <div class="hide_box"></div>
+          <div class="shang_box">
+            <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()">×</a>
+            <div class="shang_tit">
+              <p>纯属好玩</p>
+            </div>
+            <div class="shang_payimg">
+              <img src="/img/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+            </div>
+              <div class="pay_explain">扫码打赏，你说多少就多少</div>
+            <div class="shang_payselect">
+              
+                <div class="pay_item checked" data-id="alipay">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/alipay.png" alt="支付宝" /></span>
+                </div>
+              
+              
+                <div class="pay_item" data-id="wechat">
+                  <span class="radiobox"></span>
+                  <span class="pay_logo"><img src="/img/weixin.png" alt="微信" /></span>
+                </div>
+              
+            </div>
+            <div class="shang_info">
+              <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script type="text/javascript">
+          $(".pay_item").click(function(){
+            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+            var dataid=$(this).attr('data-id');
+            $(".shang_payimg img").attr("src","/img/"+dataid+"img.jpg");
+            $("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+          });
+          function dashangToggle(){
+            
+            $(".hide_box").fadeToggle();
+            $(".shang_box").fadeToggle();
+          }
+        </script>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/11/10/k8s学习总结-1/">k8s学习总结-1</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
+        <p><span>发布时间:</span>2018年11月10日 - 16时01分</p>
+        <p><span>最后更新:</span>2018年11月10日 - 16时02分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/11/10/k8s学习总结-1/" title="k8s学习总结-1">http://www.shuchang.sc.com/2018/11/10/k8s学习总结-1/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/11/10/k8s学习总结-1/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2018/09/27/Rabbitmq常用模式/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Rabbitmq常用模式</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是容器"><span class="toc-number">1.</span> <span class="toc-text">什么是容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker是如何修改应用的边界"><span class="toc-number">2.</span> <span class="toc-text">docker是如何修改应用的边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#容器与文件系统"><span class="toc-number">3.</span> <span class="toc-text">容器与文件系统</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'shuchaang',
+      repo: 'shuchaang.github.io',
+      oauth: {
+        client_id: 'c5aa96bb5e5656512174',
+        client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/2018/09/27/Rabbitmq常用模式/" title="下一篇: Rabbitmq常用模式">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/11/10/k8s学习总结-1/">k8s学习总结-1</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/27/Rabbitmq常用模式/">Rabbitmq常用模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/22/Rabbitmq与Springboot/">Rabbitmq与Springboot</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/18/redis底层数据结构/">redis底层数据结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/18/rabbitmq高级特性/">rabbitmq高级特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/08/ElasticSearch分布式架构-5/">系统学习ElasticSearch-分布式架构(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/08/Hbase数据存取过程/">Hbase数据存取过程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/07/Hbase基础/">Hbase基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/22/Netty-10-Netty中的性能调优/">Netty(10) Netty中的性能调优</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/22/Netty-9-Netty中的设计模式/">Netty(9) Netty中的设计模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/09/Netty-8-性能优化工具类/">Netty(8) 性能优化工具类</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/08/Netty-7-编码/">Netty(7) 编码</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/07/Netty-6-解码/">Netty(6) 解码</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/06/Netty-5-ByteBuf/">Netty(5) ByteBuf</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/04/Netty-4-Pipeline/">Netty(4) Pipeline</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/03/Netty-新连接接入-3/">Netty(3) 新连接接入</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/02/Netty-NioEventLoop-2/">Netty(2) NioEventLoop</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/02/Netty服务端启动-1/">Netty源码(1)-服务端启动</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/24/Kafka-核心概念/">Kafka架构与核心概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/24/Kafka-Streaming-分支/">Kafka Streaming 分支</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/24/Kafka-Streaming-入门/">Kafka Streaming 入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/24/Kafka消息可靠性保证/">Kafka消息可靠性保证</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/">系统学习ElasticSearch-简单聚合分析(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/30/系统学习ElasticSearch-多种搜索方式-3/">系统学习ElasticSearch-多种搜索方式(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/29/系统学习ElasticSearch-CRUD-2/">系统学习ElasticSearch-CRUD(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/27/系统学习ElasticSearch-概念-1/">系统学习ElasticSearch-概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/20/死磕netty-1/">死磕netty(1)-简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/02/JUC-跳表-12/">JUC-自己动手写跳表(13)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/27/ElasticSearch优化总结/">ElasticSearch优化总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/16/JUC-CompletableFuture使用-12/">JUC-CompletableFuture使用(12)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/13/JUC-阻塞队列-11/">JUC-阻塞队列(11)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/11/JUC-Executor框架-10/">JUC-Executor框架(10)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/02/JUC-等等我-一起走-9/">JUC-等等我,一起走(9)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/01/RabbitMq入门-MessageConverter-6/">RabbitMq入门-MessageConverter(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/31/RabbitMq入门-消息发送与接收-5/">RabbitMq入门-消息发送与接收(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/30/JAVA继承机制与多态/">JAVA继承机制与多态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/30/JUC-StampedLock-8/">JUC-StampedLock(8)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-AmqpTemplate-4/">RabbitMq入门-AmqpTemplate(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/RabbitMq入门-连接和资源管理-3/">RabbitMq入门-连接和资源管理(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/22/JUC-Unsafe/">JUC-Unsafe(7)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/16/SpringBoot-Security认证流程/">SpringBoot-Security认证流程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/15/SpringBoot-异步REST服务/">SpringBoot-异步REST服务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/08/web容器对比/">web容器对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/01/SpringBoot-Data-Jpa之高级话题/">SpringBoot-Data-Jpa之高级话题(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/SpringBoot-Data-JPA之Repository-2/">SpringBoot-Data JPA之Repository(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/31/springboot-Data-JPA之对象映射/">SpringBoot-Data JPA之对象映射(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/30/redis分布式原理及操作/">redis分布式原理及操作</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/23/RabbitMq入门-实现微博关注demo-2/">RabbitMq入门-实现微博关注demo(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/22/RabbitMq入门-基本概念/">RabbitMq入门-基本概念(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/19/spring4-3-x源码阅读笔记-AOP-3/">spring4.3.x源码阅读笔记-AOP(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-XML配置文件解析-2/">spring4.3.x源码阅读笔记-XML配置文件解析(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/spring4-3-x源码阅读笔记-容器基础/">spring4.3.x源码阅读笔记-从hello world开始(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/">JUC-ConcurrentHashMap(6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/17/java并发从入门到崩溃-JMM/">JUC-JMM(5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/13/java并发从入门到崩溃-Lock/">JUC-Lock(4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/">JUC-AQS(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/08/java并发从入门到崩溃-CAS/">JUC-CAS(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/03/java并发从入门到崩溃-常用篇/">JUC--常用篇(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/23/表面理解jvm-类加载/">jvm学习笔记-类加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/22/表面理解jvm-内存/">表面理解jvm-内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/10/redis持久化/">redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/java对象-引用-传递/">java对象:引用||传递</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/01/redis解决分布式锁/">redis解决分布式锁</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2018 Shuchang
+            </div>
+
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>

@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a>
+                        <a href="/tags/Docker/" style="font-size: 10px;">Docker</a> <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/K8S/" style="font-size: 10px;">K8S</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,75 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-JUC-阻塞队列-11" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/02/13/JUC-阻塞队列-11/" class="article-date">
+      <time datetime="2018-02-13T04:09:01.000Z" itemprop="datePublished">2018-02-13</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/02/13/JUC-阻塞队列-11/">JUC-阻塞队列(11)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>在第十节Executor框架中，看到了阻塞队列这种结构。之前没有仔细看过，今天看看源码，大概都有哪些实现方式。</p>
+<p>BlockingQueue的出现，简化了生产者-消费者场景的复杂性。BlockingQueue的特性就是当队列中不存在元素的时候，取出元素方法陷入阻塞。当队列满的时候，插入元素方法陷入阻塞。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/02/13/JUC-阻塞队列-11/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-JUC-Executor框架-10" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -875,75 +944,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/01/22/JUC-Unsafe/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-SpringBoot-Security认证流程" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/01/16/SpringBoot-Security认证流程/" class="article-date">
-      <time datetime="2018-01-16T09:02:31.000Z" itemprop="datePublished">2018-01-16</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/16/SpringBoot-Security认证流程/">SpringBoot-Security认证流程</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="基本结构"><a href="#基本结构" class="headerlink" title="基本结构"></a>基本结构</h3><p>spring security的核心结构如图所示，实际上就是一套过滤器组成，每个过滤器都实现一种功能，用户也可以自定义过滤器加入到过滤器链中。</p>
-<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180116151608847674631.png" alt="20180116151608847674631.png"></p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/SpringBoot/">SpringBoot</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringBoot/">SpringBoot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/安全/">安全</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/01/16/SpringBoot-Security认证流程/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>

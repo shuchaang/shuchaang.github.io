@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a>
+                        <a href="/tags/Docker/" style="font-size: 10px;">Docker</a> <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/K8S/" style="font-size: 10px;">K8S</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,85 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-SpringMvc浅谈" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/11/11/SpringMvc浅谈/" class="article-date">
+      <time datetime="2017-11-11T07:00:47.000Z" itemprop="datePublished">2017-11-11</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/11/SpringMvc浅谈/">SpringMvc浅谈</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h3 id="springmvc在哪里"><a href="#springmvc在哪里" class="headerlink" title="springmvc在哪里"></a>springmvc在哪里</h3><p>springmvc是spring体系的一部分，位于web部分。<br><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fle36iwgwmj30fq0d7aak.jpg" alt=""></p>
+<h3 id="springmvc的设计模式"><a href="#springmvc的设计模式" class="headerlink" title="springmvc的设计模式"></a>springmvc的设计模式</h3><p>先来看一个简化版:<br><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fle3d2iyonj30g5078wec.jpg" alt=""><br>用户请求到达控制器，控制器并没有处理业务逻辑的能力，于是把请求交给后台的一个model做处理，并将处理的结果返回给控制器。当控制器拿到数据后，就要找到视图并做渲染，并将渲染好的结果返回给用户，这就是一个通用的mvc设计模式。</p>
+<excerpt in="" index="" |="" 首页摘要="">
+
+<p><the rest="" of="" contents="" |="" 余下全文=""></the></p>
+<blockquote>
+<p> spirngmvc架构：</p>
+</blockquote>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fle4abaf20j30q00d2t91.jpg" alt=""><br>可以看到这个架构的入口就是DispatcherServlet，其本质也是一个servlet，同时这也显示出了它与struts2的区别之一，Struts2的入口是一个过滤器。DispatcherServlet也没有处理事务的能力，仅作为一个数据的分发中心，将数据交给后面的过程来处理。DispatcherServlet通过HandlerMapping来查找Handler，HandlerMapping会返回两部分内容，其一是handler对象，也就是后台模型对象，还有一部分是拦截器数组。前端控制器拿到这些返回数据时，其实就应该来执行handler对象，因为执行handler对象就可以处理具体的业务逻辑。但是springmvc并没有这样做，它将数据利用HandlerAdapter适配器进行包装，也就到了图中的Handler部分。Handler处理过后返回一个ModelAndView对象，包括两部分：Model和view，Model就是数据，view就是视图名称，而不是视图对象。<br>这时前端控制器既有数据，又有视图名称，这时通过视图解析器返回真正的视图对象，最后将视图对象进行渲染并返回给用户。</p>
+<blockquote>
+<p>springmvc为什么要设计适配器？没有行不行？</p>
+</blockquote>
+<p>首先要明确的是在springmvc框架中controller的类型有很多种，比较常见的是<strong><em>@controller</em></strong>类型和<strong><em>实现Handler接口</em></strong>的类型，如果没有适配器，前端控制器就需要做一个类型判断，每种类型需要做哪些不同的处理。这时判断逻辑就会写死在代码中，并不符合springmvc的可扩展行的设计，一旦用户需要自己创建一个类型，那么就需要修改spring源码，这显然是不可取的。但有了适配器问题就方便了很多，每种类型只需要定义一种适配器即可。</p>
+<blockquote>
+<p>springmvc为什么要设计视图解析器？没有行不行？</p>
+</blockquote>
+<p>其实答案和上一个问题一样，当然都是可以的，只是这样需要在前端控制器加入逻辑判断，并不优雅也不易扩展。</p>
+</excerpt>
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/springmvc/">springmvc</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/springmvc/">springmvc</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-redis持久化" class="article article-type-post" itemscope itemprop="blogPost">
   
