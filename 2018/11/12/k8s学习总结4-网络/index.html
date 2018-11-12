@@ -3,22 +3,24 @@
 <head>
   <meta charset="utf-8">
   
-  <title>SpringBoot-异步REST服务 | Shuchang&#39;s Blog</title>
+  <title>k8s学习总结4-网络 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="在spring中调用请求时，经常会遇到某些业务需要长时间的计算，如果单线程来做费时费力，很快就会耗尽tomcat的连接数。所以一种思路是当http请求进来，可以另起一个线程处理业务，释放连接，当业务处理完成再将它返回，这样在处理业务的时间中，tomcat可以处理多个低时延的任务。">
-<meta name="keywords" content="并发,SpringBoot">
+  <meta name="description" content="K8S的网络部分确实是一个难点,我在这里卡了很久也看了很多相关的文档。K8S的网络依赖于Docker,Docker的网络离不开linux内核的支持,所以要理解K8S的网络必须要了解linux网络知识。 linux网络基础Docker使用到的linux技术主要包括下面几种:  linux通过命名空间(ns)可以将网络栈进行隔离,不同的ns完全隔离无法进行通信。Docker也正是利用了这种特性实现不同">
+<meta name="keywords" content="K8S,Docker">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SpringBoot-异步REST服务">
-<meta property="og:url" content="http://www.shuchang.sc.com/2018/01/15/SpringBoot-异步REST服务/index.html">
+<meta property="og:title" content="k8s学习总结4-网络">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/11/12/k8s学习总结4-网络/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="在spring中调用请求时，经常会遇到某些业务需要长时间的计算，如果单线程来做费时费力，很快就会耗尽tomcat的连接数。所以一种思路是当http请求进来，可以另起一个线程处理业务，释放连接，当业务处理完成再将它返回，这样在处理业务的时间中，tomcat可以处理多个低时延的任务。">
-<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180115151600677737492.png">
-<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180115151601244565618.png">
-<meta property="og:updated_time" content="2018-01-15T11:17:32.000Z">
+<meta property="og:description" content="K8S的网络部分确实是一个难点,我在这里卡了很久也看了很多相关的文档。K8S的网络依赖于Docker,Docker的网络离不开linux内核的支持,所以要理解K8S的网络必须要了解linux网络知识。 linux网络基础Docker使用到的linux技术主要包括下面几种:  linux通过命名空间(ns)可以将网络栈进行隔离,不同的ns完全隔离无法进行通信。Docker也正是利用了这种特性实现不同">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNbRwgy1fx59jhgk3cj307106xmwz.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNbRwgy1fx5a6gasdnj308y056wea.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNbRwgy1fx5bbxfwxij30dk0dhdft.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNbRwgy1fx5cclqoypj30ku09rt8z.jpg">
+<meta property="og:updated_time" content="2018-11-12T09:25:43.189Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SpringBoot-异步REST服务">
-<meta name="twitter:description" content="在spring中调用请求时，经常会遇到某些业务需要长时间的计算，如果单线程来做费时费力，很快就会耗尽tomcat的连接数。所以一种思路是当http请求进来，可以另起一个线程处理业务，释放连接，当业务处理完成再将它返回，这样在处理业务的时间中，tomcat可以处理多个低时延的任务。">
-<meta name="twitter:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180115151600677737492.png">
+<meta name="twitter:title" content="k8s学习总结4-网络">
+<meta name="twitter:description" content="K8S的网络部分确实是一个难点,我在这里卡了很久也看了很多相关的文档。K8S的网络依赖于Docker,Docker的网络离不开linux内核的支持,所以要理解K8S的网络必须要了解linux网络知识。 linux网络基础Docker使用到的linux技术主要包括下面几种:  linux通过命名空间(ns)可以将网络栈进行隔离,不同的ns完全隔离无法进行通信。Docker也正是利用了这种特性实现不同">
+<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNbRwgy1fx59jhgk3cj307106xmwz.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -232,11 +234,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-SpringBoot-异步REST服务" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-k8s学习总结4-网络" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/01/15/SpringBoot-异步REST服务/" class="article-date">
-      <time datetime="2018-01-15T10:52:42.000Z" itemprop="datePublished">2018-01-15</time>
+      <a href="/2018/11/12/k8s学习总结4-网络/" class="article-date">
+      <time datetime="2018-11-12T05:58:07.000Z" itemprop="datePublished">2018-11-12</time>
 </a>
     </div>
   
@@ -249,7 +251,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      SpringBoot-异步REST服务
+      k8s学习总结4-网络
     </h1>
   
 
@@ -258,13 +260,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/SpringBoot/">SpringBoot</a>
+    <a class="article-category-link" href="/categories/K8S/">K8S</a><a class="article-category-link" href="/categories/K8S/Docker/">Docker</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringBoot/">SpringBoot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/K8S/">K8S</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -274,30 +276,65 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>在spring中调用请求时，经常会遇到某些业务需要长时间的计算，如果单线程来做费时费力，很快就会耗尽tomcat的连接数。所以一种思路是当http请求进来，可以另起一个线程处理业务，释放连接，当业务处理完成再将它返回，这样在处理业务的时间中，tomcat可以处理多个低时延的任务。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br> <a id="more"></a></excerpt></p>
-<the rest="" of="" contents="" |="" 余下全文="">
+        <p>K8S的网络部分确实是一个难点,我在这里卡了很久也看了很多相关的文档。K8S的网络依赖于Docker,Docker的网络离不开linux内核的支持,所以要理解K8S的网络必须要了解linux网络知识。</p>
+<h2 id="linux网络基础"><a href="#linux网络基础" class="headerlink" title="linux网络基础"></a>linux网络基础</h2><p>Docker使用到的linux技术主要包括下面几种:</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fx59jhgk3cj307106xmwz.jpg" alt=""></p>
+<p>linux通过命名空间(ns)可以将网络栈进行隔离,不同的ns完全隔离无法进行通信。Docker也正是利用了这种特性实现不同容器网络环境的隔离。那么如果我有需求需要让不同ns的进程进行通信,该怎么做呢?答案就是veth设备对。</p>
+<p>Veth的重要作用就是打通网络栈之间的壁垒,就像一个通道,两端连着不同的网络栈,所以Veth必须成对出现。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fx5a6gasdnj308y056wea.jpg" alt=""></p>
+<p>Docker 服务启动后默认会创建一个 docker0 网桥（其上有一个 docker0 内部接口），它在内核层连通了其他的物理或虚拟网卡，这就将所有容器和本地主机都放到同一个物理网络。linux网桥的作用就是绑定多个以太网设备,将他们桥接起来。网桥上层只需要将数据交给网桥,网桥负责决定是将数据转发到哪些以太网口。以太网口接收到的网络报文,同样只需要交给网桥,网桥负责判断是丢弃还是继续向上层提交。</p>
+<p>假如用户需要对某些关心的数据进行一些操作,Iptable/Netfilter就提供了这种功能,通过在挂载点挂载钩子函数,可以对一些数据包进行过滤、修改、丢弃操作等。Netfilter提供了五个位置来作控制</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fx5bbxfwxij30dk0dhdft.jpg" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1.PREROUTING (路由前)</div><div class="line">2.INPUT (数据包流入口)</div><div class="line">3.FORWARD (转发管卡)</div><div class="line">4.OUTPUT(数据包出口)</div><div class="line">5.POSTROUTING（路由后）</div></pre></td></tr></table></figure>
+<p>任何一个数据包，只要经过本机，必将经过这五个链中的其中一个链。接着又定义了表的概念用来管理这些链</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">filter:定义允许与不允许</div><div class="line">manage: 修改数据报文</div><div class="line">nat: 网络地址转换</div></pre></td></tr></table></figure>
+<p>对于filter来讲一般只能做在3个链上：INPUT ，FORWARD ，OUTPUT </p>
+<p>对于nat来讲一般也只能做在3个链上：PREROUTING ，OUTPUT ，POSTROUTING </p>
+<p>而mangle则是5个链都可以做：PREROUTING，INPUT，FORWARD，OUTPUT，POSTROUTING</p>
+<p>iptables是工作在用户控件提供管理这些规则的接口的工具,它的背后就是工作在内和空间的Netfilter。</p>
+<h2 id="Docker网络模型"><a href="#Docker网络模型" class="headerlink" title="Docker网络模型"></a>Docker网络模型</h2><p>docker支持四种网络模式:</p>
+<ul>
+<li>host</li>
+<li>container</li>
+<li>none</li>
+<li>bridge</li>
+</ul>
+<p>docker默认启用的是bridge类型,安装docker后会在宿主机上创建一个docker0网桥,当运行一个容器,veth就被会创建,一端连在docker0网桥上,另一端在宿主机内的eth0网桥上。这样就做到了同一主机上不同容器可以相互访问,但如果要通过其他ip访问这台机器的docker容器,就需要将宿主机上分配端口,将docker0的一个端口映射到宿主机端口上。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fx5cclqoypj30ku09rt8z.jpg" alt=""></p>
+<h2 id="Kubernates网络模型"><a href="#Kubernates网络模型" class="headerlink" title="Kubernates网络模型"></a>Kubernates网络模型</h2><p>K8S作为一种容器编排工具,主要解决一下场景中的问题:</p>
+<ol>
+<li>容器与容器之间的通信</li>
+<li>Pod与Pod之间的通信</li>
+<li>Pod与service之间的通信</li>
+<li>集群内外的通信</li>
+</ol>
+<h3 id="容器与容器"><a href="#容器与容器" class="headerlink" title="容器与容器"></a>容器与容器</h3><p>由于Pod中的容器共享网络栈,所以容器之间可以使用localhost进行通信。</p>
+<h3 id="Pod之间通信"><a href="#Pod之间通信" class="headerlink" title="Pod之间通信"></a>Pod之间通信</h3><p>Pod之间的通信可能存在于同一个Node上,也有可能存在于不同Node上。</p>
+<hr>
+<p>同一个Node上的Pod都是通过veth连接到宿主机的docker0网桥,他们的Ip都是从docker0上动态获取并且和docker0 ip属于同一个网段。</p>
+<hr>
+<p>Pod的地址与docker0在同一个网段,docker0与宿主机eth0属于两个不同的网段,Node之间的通信依赖于宿主机的网卡。所以不同Node的Pod想要通信,首先要找到Node对应的宿主机Ip,将数据包发送到宿主机网卡上,然后在转发给docker0,最后再到达目标Pod。</p>
+<p>这部分的实现通常都是依赖一些网络配置工具来完成,例如flannel,后面再详细介绍。</p>
+<h3 id="Pod与Service"><a href="#Pod与Service" class="headerlink" title="Pod与Service"></a>Pod与Service</h3><p>kubernetes创建服务时，会为服务分配一个虚拟的IP地址，即为ClusterIP，客户端通过访问这</p>
+<p>个虚拟IP地址来访问内部组件。实质上具体访问内部的工作都是kube-proxy来完成的。kube-</p>
+<p>proxy担负着透明代理和负载均衡的角色，其实就是将某个访问service的请求，通过一套算法</p>
+<p>和规则转发给后端的pod，这里说的算法就是Round Robin负载均衡算法和session粘连规则。</p>
+<p>我们还可以通过修改service里面的service.spec.sessionAffinity参数的值来实现会话保持特</p>
+<p>的定向转发。</p>
+<p>总之，不管是clusterIP+targetPort，还是节点IP+NodePort，都会被Iptables规则重新定向到</p>
+<p>kube-proxy监听服务的代理端口。</p>
+<h3 id="集群内外通信"><a href="#集群内外通信" class="headerlink" title="集群内外通信"></a>集群内外通信</h3><ol>
+<li>NodeIP+NodePort</li>
+</ol>
+<p>这种方式就是在宿主机上开放一个端口,供外部访问</p>
+<ol>
+<li>Ingress</li>
+</ol>
+<p>Ingress 可以给 service 提供集群外部访问的 URL、负载均衡、SSL 终止、HTTP 路由等。为了配置这些 Ingress 规则，集群管理员需要部署一个 Ingress controller，它监听 Ingress 和 service 的变化，并根据规则配置负载均衡并提供访问入口。典型的就是Nginx Ingress。</p>
+<ol>
+<li>loadbalance</li>
+</ol>
 
-<h3 id="Callable"><a href="#Callable" class="headerlink" title="Callable"></a>Callable</h3><p>第一种方法就是使用Callable，模型如图:</p>
-<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180115151600677737492.png" alt="20180115151600677737492.png"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">@GetMapping(&quot;/order&quot;)</div><div class="line">public DeferredResult&lt;String&gt; order()&#123;</div><div class="line">    log.info(&quot;开始&quot;);</div><div class="line">    Callable&lt;String&gt; result = ()-&gt;&#123;</div><div class="line">        log.info(&quot;副线程开始&quot;);</div><div class="line">        Thread.sleep(10000 );</div><div class="line">        log.info(&quot;副线程结束&quot;);</div><div class="line">        return &quot;success&quot;;</div><div class="line">    &#125;;</div><div class="line">    log.info(&quot;结束&quot;);</div><div class="line">    return result;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="DeferredResult"><a href="#DeferredResult" class="headerlink" title="DeferredResult"></a>DeferredResult</h3><p>模型如图:<br><img src="http://p1vpfd8u5.bkt.clouddn.com/20180115151601244565618.png" alt="20180115151601244565618.png"></p>
-<p>其核心也是模拟了一个消息队列,应用2监听到消息队列的值发生变化，取出数据进行处理并将处理后的结果放回队列，应用1监听到事件完成，将信息取出返回</p>
-<blockquote>
-<p>Controller层</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">@RestController</div><div class="line">@Slf4j</div><div class="line">public class AsyncController &#123;</div><div class="line"></div><div class="line">    @Autowired</div><div class="line">    private MockQueue mockQueue;</div><div class="line">    @Autowired</div><div class="line">    private DeferredResultHolder deferredResultHolder;</div><div class="line"></div><div class="line">        String orderNum = RandomStringUtils.randomNumeric(8);</div><div class="line">        mockQueue.setPlaceOrder(orderNum);</div><div class="line">        DeferredResult deferredResult =new DeferredResult();</div><div class="line">        deferredResultHolder.getMap().put(orderNum,deferredResult);</div><div class="line">        log.info(&quot;结束&quot;);</div><div class="line">        return deferredResult;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>模拟队列</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">@Component</div><div class="line">@Slf4j</div><div class="line">public class MockQueue &#123;</div><div class="line">    private String placeOrder;</div><div class="line">    private String completeOrder;</div><div class="line"></div><div class="line">    public String getCompleteOrder() &#123;</div><div class="line">        return completeOrder;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getPlaceOrder() &#123;</div><div class="line">        return placeOrder;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setCompleteOrder(String completeOrder) &#123;</div><div class="line">        this.completeOrder = completeOrder;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setPlaceOrder(String placeOrder) &#123;</div><div class="line">        new Thread(()-&gt;&#123;</div><div class="line">            log.info(&quot;接到下单请求&quot;+placeOrder);</div><div class="line">            try &#123;</div><div class="line">                Thread.sleep(1000);</div><div class="line">            &#125; catch (InterruptedException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">            this.completeOrder = placeOrder;</div><div class="line">            log.info(&quot;处理完成&quot;+placeOrder);</div><div class="line">        &#125;).start();</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">@Component</div><div class="line">public class DeferredResultHolder &#123;</div><div class="line">    private Map&lt;String,DeferredResult&gt; map = new HashMap&lt;&gt;();</div><div class="line"></div><div class="line">    public Map&lt;String, DeferredResult&gt; getMap() &#123;</div><div class="line">        return map;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setMap(Map&lt;String, DeferredResult&gt; map) &#123;</div><div class="line">        this.map = map;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>监听队列</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">@Component</div><div class="line">@Slf4j</div><div class="line">public class QueueListener implements ApplicationListener&lt;ContextRefreshedEvent&gt;&#123;</div><div class="line">    @Autowired</div><div class="line">    private MockQueue mockQueue;</div><div class="line">    @Autowired</div><div class="line">    private DeferredResultHolder resultHolder;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) &#123;</div><div class="line">        new Thread(()-&gt;&#123;</div><div class="line">            while (true)&#123;</div><div class="line">                if(StringUtils.isNotBlank(mockQueue.getCompleteOrder()))&#123;</div><div class="line">                    String orderNo = mockQueue.getCompleteOrder();</div><div class="line">                    log.info(&quot;返回订单处理结果&quot;+orderNo);</div><div class="line">                    resultHolder.getMap().get(orderNo).setResult(&quot;order success&quot;);</div><div class="line">                    mockQueue.setCompleteOrder(null);</div><div class="line">                &#125;else &#123;</div><div class="line">                    try &#123;</div><div class="line">                        Thread.sleep(100);</div><div class="line">                    &#125; catch (InterruptedException e) &#123;</div><div class="line">                        e.printStackTrace();</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;).start();</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h3><p>同样是订单处理的场景，可以使用的消息队列有很多种，比如rabbitmq或者阿里的rocketmq。rabbitmq的应用非常广泛，rocketmq是阿里开源的专门用来处理电商场景的消息队列。学会了把这两种场景再补上。</p>
-</the>
       
       
         <div class="page-reward">
@@ -352,13 +389,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/01/15/SpringBoot-异步REST服务/">SpringBoot-异步REST服务</a></p>
+        <p><span>本文标题:</span><a href="/2018/11/12/k8s学习总结4-网络/">k8s学习总结4-网络</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2018年01月15日 - 18时52分</p>
-        <p><span>最后更新:</span>2018年01月15日 - 19时17分</p>
+        <p><span>发布时间:</span>2018年11月12日 - 13时58分</p>
+        <p><span>最后更新:</span>2018年11月12日 - 17时25分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/01/15/SpringBoot-异步REST服务/" title="SpringBoot-异步REST服务">http://www.shuchang.sc.com/2018/01/15/SpringBoot-异步REST服务/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/01/15/SpringBoot-异步REST服务/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/11/12/k8s学习总结4-网络/" title="k8s学习总结4-网络">http://www.shuchang.sc.com/2018/11/12/k8s学习总结4-网络/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/11/12/k8s学习总结4-网络/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -371,18 +408,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2018/01/16/SpringBoot-Security认证流程/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          SpringBoot-Security认证流程
-        
-      </div>
-    </a>
   
-  
-    <a href="/2018/01/08/web容器对比/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">web容器对比</div>
+    <a href="/2018/11/12/k8s学习总结3-存储/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">k8s学习总结3-存储</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -393,7 +421,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Callable"><span class="toc-number">1.</span> <span class="toc-text">Callable</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DeferredResult"><span class="toc-number">2.</span> <span class="toc-text">DeferredResult</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#消息队列"><span class="toc-number">3.</span> <span class="toc-text">消息队列</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#linux网络基础"><span class="toc-number">1.</span> <span class="toc-text">linux网络基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker网络模型"><span class="toc-number">2.</span> <span class="toc-text">Docker网络模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kubernates网络模型"><span class="toc-number">3.</span> <span class="toc-text">Kubernates网络模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#容器与容器"><span class="toc-number">3.1.</span> <span class="toc-text">容器与容器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pod之间通信"><span class="toc-number">3.2.</span> <span class="toc-text">Pod之间通信</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pod与Service"><span class="toc-number">3.3.</span> <span class="toc-text">Pod与Service</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#集群内外通信"><span class="toc-number">3.4.</span> <span class="toc-text">集群内外通信</span></a></li></ol></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -459,13 +487,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2018/01/16/SpringBoot-Security认证流程/" title="上一篇: SpringBoot-Security认证流程">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2018/01/08/web容器对比/" title="下一篇: web容器对比">
+            <a href="/2018/11/12/k8s学习总结3-存储/" title="下一篇: k8s学习总结3-存储">
                 <i class="fa fa-angle-right"></i>
             </a>
         

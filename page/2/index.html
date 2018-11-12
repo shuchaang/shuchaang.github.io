@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/Docker/" style="font-size: 12.22px;">Docker</a> <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/K8S/" style="font-size: 12.22px;">K8S</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a>
+                        <a href="/tags/Docker/" style="font-size: 13.33px;">Docker</a> <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/K8S/" style="font-size: 13.33px;">K8S</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,80 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-Hbase基础" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/09/07/Hbase基础/" class="article-date">
+      <time datetime="2018-09-07T15:45:57.000Z" itemprop="datePublished">2018-09-07</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/09/07/Hbase基础/">Hbase基础</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Hbase是一个分布式的、面向列的开源数据库</p>
+<p>Hbase在Hadoop之上提供了类似于Bigtable(源自google,建立在GFS之上)的能力</p>
+<p>Hbase适合存储非结构化数据</p>
+<h3 id="列是数据库是什么"><a href="#列是数据库是什么" class="headerlink" title="列是数据库是什么"></a>列是数据库是什么</h3><p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1ftqyydrkx1j30p30con1i.jpg" alt=""></p>
+<p>可以看到,列式数据库和传统的关系型数据库相比,旋转了90度,将关系型数据库的一列保存为一行。列式存储的主要优点之一就是可以大幅降低系统的I/O，尤其是在海量数据查询时,因为对一列的查询时一个连续的物理空间。行式更适合OLTP，比如传统的基于增删改查操作的应用。列式更适合OLAP，非常适合于在数据仓库领域发挥作用，比如数据分析、海量存储和商业智能；涉及不经常更新的数据。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Hbase/">Hbase</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hbase/">Hbase</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/09/07/Hbase基础/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-Netty-10-Netty中的性能调优" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -918,76 +992,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/07/02/Netty-NioEventLoop-2/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Netty服务端启动-1" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/07/02/Netty服务端启动-1/" class="article-date">
-      <time datetime="2018-07-02T01:01:46.000Z" itemprop="datePublished">2018-07-02</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/02/Netty服务端启动-1/">Netty源码(1)-服务端启动</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fsv8rbjw9gj30u30l3my4.jpg" alt=""></p>
-<h2 id="服务端代码"><a href="#服务端代码" class="headerlink" title="服务端代码"></a>服务端代码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">public static void main(String[] args) &#123;</div><div class="line">        ServerBootstrap serverBootstrap = new ServerBootstrap();</div><div class="line">        EventLoopGroup boss = new NioEventLoopGroup(1);</div><div class="line">        EventLoopGroup worker = new NioEventLoopGroup();</div><div class="line">        try &#123;</div><div class="line">            serverBootstrap.group(boss, worker)</div><div class="line">                    .channel(NioServerSocketChannel.class)</div><div class="line">                    .option(ChannelOption.SO_BACKLOG, 128)</div><div class="line">                    .childOption(ChannelOption.SO_KEEPALIVE, false)</div><div class="line">                    .childHandler(new ChannelInitializer&lt;SocketChannel&gt;() &#123;</div><div class="line">                        @Override</div><div class="line">                        public void initChannel(SocketChannel socketChannel) throws Exception &#123;</div><div class="line">                            ocketChannel.pipeline().addLast(new MyHandler());</div><div class="line"></div><div class="line">                        &#125;</div><div class="line">                    &#125;);</div><div class="line">            ChannelFuture channelFuture = serverBootstrap.bind(8080).sync();</div><div class="line">            channelFuture.channel().closeFuture().sync();</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125; finally &#123;</div><div class="line">            boss.shutdownGracefully();</div><div class="line">            worker.shutdownGracefully();</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<p>以上是一段Netty官网提供的一个最简单的server端代码,通过这段代码来分析Netty服务端的启动过程</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Netty/">Netty</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/07/02/Netty服务端启动-1/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
