@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/Docker/" style="font-size: 10px;">Docker</a> <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/K8S/" style="font-size: 10px;">K8S</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a>
+                        <a href="/tags/Docker/" style="font-size: 12.22px;">Docker</a> <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/K8S/" style="font-size: 12.22px;">K8S</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,164 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-Netty-10-Netty中的性能调优" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/07/22/Netty-10-Netty中的性能调优/" class="article-date">
+      <time datetime="2018-07-22T07:37:44.000Z" itemprop="datePublished">2018-07-22</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/22/Netty-10-Netty中的性能调优/">Netty(10) Netty中的性能调优</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h2 id="单机百万调优"><a href="#单机百万调优" class="headerlink" title="单机百万调优"></a>单机百万调优</h2><ul>
+<li><p>如何模拟百万连接</p>
+</li>
+<li><p>如何突破局部文件句柄的限制</p>
+</li>
+<li><p>如何突破全局文件句柄的限制</p>
+</li>
+</ul>
+<p>首先第一个问题,当我们启动一个服务端,我们会绑定一个端口。当客户端去连接,默认连接数是有限制的,是65535,并且1024以下只能被root使用,所以单机只有6W左右的连接可以介入。所以可以采取的办法就是服务端开启8000-8100共100个端口,客户端使用1025~65535去连接服务端。100*6w大约600W连接。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Netty/">Netty</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/07/22/Netty-10-Netty中的性能调优/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-Netty-9-Netty中的设计模式" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/07/22/Netty-9-Netty中的设计模式/" class="article-date">
+      <time datetime="2018-07-22T04:17:22.000Z" itemprop="datePublished">2018-07-22</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/22/Netty-9-Netty中的设计模式/">Netty(9) Netty中的设计模式</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h2 id="单例"><a href="#单例" class="headerlink" title="单例"></a>单例</h2><ul>
+<li><p>一个类全局只有一个对象</p>
+</li>
+<li><p>延迟加载</p>
+</li>
+<li><p>线程安全</p>
+</li>
+</ul>
+<blockquote>
+<p>ReadTimeOutException</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public final class ReadTimeoutException extends TimeoutException &#123;</div><div class="line"></div><div class="line">    private static final long serialVersionUID = 169287984113283421L;</div><div class="line"></div><div class="line">    public static final ReadTimeoutException INSTANCE = new ReadTimeoutException();</div><div class="line"></div><div class="line">    private ReadTimeoutException() &#123; &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里通过private修饰保证了全局只有一个实例</p>
+<p>当我们没有使用到这个类的时候,static变量保证了它是不会被初始化的,这样就保证了延迟加载</p>
+<p>最后我们注意到这个class 使用final修饰的,这样在初始化的时候jvm会默认加上一个同步代码块,保证线程安全</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Netty/">Netty</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/07/22/Netty-9-Netty中的设计模式/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-Netty-8-性能优化工具类" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -830,161 +988,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/07/02/Netty服务端启动-1/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Kafka-核心概念" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/06/24/Kafka-核心概念/" class="article-date">
-      <time datetime="2018-06-24T04:15:04.000Z" itemprop="datePublished">2018-06-24</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/24/Kafka-核心概念/">Kafka架构与核心概念</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1fsm7slh4efj30hy097jso.jpg" alt=""></p>
-<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p>Kafka是是一个高性能跨语言分布式发布订阅消息队列系统,具有消息持久化,吞吐量高,支持消息分区等特点。Kafka自0.10版本提供对流式计算的支持。</p>
-<ul>
-<li>Producer </li>
-</ul>
-<p>提供消息的系统</p>
-<ul>
-<li>Consumer</li>
-</ul>
-<p>消费消息的系统</p>
-<ul>
-<li>Broker</li>
-</ul>
-<p>一个Kafka实例就是一个Broker,多个Kafka就是多个Broker构成的Kafka集群。Producer向某个Topic发送消息,Broker负责向订阅这个topic的所有consumer传递消息。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Kafka/">Kafka</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/">Kafka</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/06/24/Kafka-核心概念/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Kafka-Streaming-分支" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/06/24/Kafka-Streaming-分支/" class="article-date">
-      <time datetime="2018-06-24T03:20:48.000Z" itemprop="datePublished">2018-06-24</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/24/Kafka-Streaming-分支/">Kafka Streaming 分支</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h2 id="Branch"><a href="#Branch" class="headerlink" title="Branch"></a>Branch</h2><p>首先创建一个输入源 topic s-in,有多个partition</p>
-<ul>
-<li>./kafka-topics.sh –create –topic s-in –partitions 3 –zookeeper localhost:2181 –replication-factor 1 </li>
-<li>./kafka-topics.sh –create –topic s1 –partitions 1 –zookeeper localhost:2181 –replication-factor 1 </li>
-<li>./kafka-topics.sh –create –topic s2 –partitions 1 –zookeeper localhost:2181 –replication-factor 1 </li>
-</ul>
-<p>我们可以通过一定的业务逻辑判断,让stream将不同的消息处理后发送给不同的topic,这里简单的通过判断字符串长度,发送给s1和s2两个不同的topic</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Kafka/">Kafka</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/">Kafka</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/06/24/Kafka-Streaming-分支/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>

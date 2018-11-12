@@ -3,23 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>JUC-JMM(5) | Shuchang&#39;s Blog</title>
+  <title>k8s学习总结-2 | Shuchang&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="JMM在写这篇博客之前参考了大量的博客和书籍，但是个人总感觉理解不来，在这里记录下自己的看法，可能不对。 在并发编程中，我们要解决的关键性问题就是线程通信和同步的问题——那么就有两种结局方案，共享内存和消息传递。共享内存的方式就是各个线程在一个公共的内存区域中共同读写变量，消息传递则是通过显示的方法交换信息。 所以JAVA对内存进行了一种抽象，形成了java内存模型JMM。这种模型可以说就是为了方">
-<meta name="keywords" content="java,并发">
+  <meta name="description" content="为什么我们需要Pod关于docker容器,我们都知道它的技术原理就是Namespace做隔离,cgroups做限制,rootfs做文件系统,那么k8s为什么又提出了Pod这个概念呢。 我们可以这样理解,容器就是一个特殊的进程,而k8s就类似于操作系统,去调度管理这些特殊的进程,那么k8s就可以比做操作系统。我们知道,在真正的操作系统中,进程并不是孤单的运行,它存在于一个进程组之中,被操作系统有规则">
+<meta name="keywords" content="K8S,Docker">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JUC-JMM(5)">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/12/17/java并发从入门到崩溃-JMM/index.html">
+<meta property="og:title" content="k8s学习总结-2">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/11/10/k8s学习总结2-Pod/index.html">
 <meta property="og:site_name" content="Shuchang&#39;s Blog">
-<meta property="og:description" content="JMM在写这篇博客之前参考了大量的博客和书籍，但是个人总感觉理解不来，在这里记录下自己的看法，可能不对。 在并发编程中，我们要解决的关键性问题就是线程通信和同步的问题——那么就有两种结局方案，共享内存和消息传递。共享内存的方式就是各个线程在一个公共的内存区域中共同读写变量，消息传递则是通过显示的方法交换信息。 所以JAVA对内存进行了一种抽象，形成了java内存模型JMM。这种模型可以说就是为了方">
-<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmjrum6j9lj30ae0be74i.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fmjsbm9tn9j30n704dwfn.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fmjsfmdpkaj30ke05idi4.jpg">
-<meta property="og:updated_time" content="2018-01-01T08:04:16.000Z">
+<meta property="og:description" content="为什么我们需要Pod关于docker容器,我们都知道它的技术原理就是Namespace做隔离,cgroups做限制,rootfs做文件系统,那么k8s为什么又提出了Pod这个概念呢。 我们可以这样理解,容器就是一个特殊的进程,而k8s就类似于操作系统,去调度管理这些特殊的进程,那么k8s就可以比做操作系统。我们知道,在真正的操作系统中,进程并不是孤单的运行,它存在于一个进程组之中,被操作系统有规则">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNbRwgy1fx530pb14ij30dh0d474j.jpg">
+<meta property="og:updated_time" content="2018-11-12T03:09:03.785Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JUC-JMM(5)">
-<meta name="twitter:description" content="JMM在写这篇博客之前参考了大量的博客和书籍，但是个人总感觉理解不来，在这里记录下自己的看法，可能不对。 在并发编程中，我们要解决的关键性问题就是线程通信和同步的问题——那么就有两种结局方案，共享内存和消息传递。共享内存的方式就是各个线程在一个公共的内存区域中共同读写变量，消息传递则是通过显示的方法交换信息。 所以JAVA对内存进行了一种抽象，形成了java内存模型JMM。这种模型可以说就是为了方">
-<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmjrum6j9lj30ae0be74i.jpg">
+<meta name="twitter:title" content="k8s学习总结-2">
+<meta name="twitter:description" content="为什么我们需要Pod关于docker容器,我们都知道它的技术原理就是Namespace做隔离,cgroups做限制,rootfs做文件系统,那么k8s为什么又提出了Pod这个概念呢。 我们可以这样理解,容器就是一个特殊的进程,而k8s就类似于操作系统,去调度管理这些特殊的进程,那么k8s就可以比做操作系统。我们知道,在真正的操作系统中,进程并不是孤单的运行,它存在于一个进程组之中,被操作系统有规则">
+<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNbRwgy1fx530pb14ij30dh0d474j.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
   
@@ -233,11 +231,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-java并发从入门到崩溃-JMM" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-k8s学习总结2-Pod" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2017/12/17/java并发从入门到崩溃-JMM/" class="article-date">
-      <time datetime="2017-12-17T06:21:21.000Z" itemprop="datePublished">2017-12-17</time>
+      <a href="/2018/11/10/k8s学习总结2-Pod/" class="article-date">
+      <time datetime="2018-11-10T09:02:51.000Z" itemprop="datePublished">2018-11-10</time>
 </a>
     </div>
   
@@ -250,7 +248,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      JUC-JMM(5)
+      k8s学习总结-2
     </h1>
   
 
@@ -259,13 +257,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
+    <a class="article-category-link" href="/categories/K8S/">K8S</a><a class="article-category-link" href="/categories/K8S/Docker/">Docker</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/K8S/">K8S</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -275,32 +273,23 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h3 id="JMM"><a href="#JMM" class="headerlink" title="JMM"></a>JMM</h3><p>在写这篇博客之前参考了大量的博客和书籍，但是个人总感觉理解不来，在这里记录下自己的看法，可能不对。</p>
-<p>在并发编程中，我们要解决的关键性问题就是线程通信和同步的问题——那么就有两种结局方案，共享内存和消息传递。共享内存的方式就是各个线程在一个公共的内存区域中共同读写变量，消息传递则是通过显示的方法交换信息。</p>
-<p>所以JAVA对内存进行了一种抽象，形成了java内存模型JMM。这种模型可以说就是为了方便多线程编程而设计。JMM的设计说起来其实很简单，各个线程拥有自己的本地内存，线程之间的共享变量存储在<br>主存中，为了提高效率，各自的本地内存中还保留了一份共享变量的拷贝。本地内存是一个抽象的概念，并不存在，它在物理上覆盖了缓存区，寄存器以及各种优化技术。</p>
-<p>因此JAVA中线程之间的通信可以使用以下方式：</p>
-<ol>
-<li>一个线程将数据写入到主存中</li>
-<li>另一个线程去主存获取这个数据</li>
-</ol>
-<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmjrum6j9lj30ae0be74i.jpg" alt=""></p>
-<p>也就是说线程之间依靠在主存之中共享变量实现了线程之间的通信，虽然说起来这个过程很简单，但我们看的还是太过于宏观，屏蔽了太多底层的东西。因为我们对于多线程的编程都停留在java语言这种高级语言的层面，但是java语言底层会和操作系统、内存、寄存器这些硬件打交道。而这些硬件由于读写速率有很大差别，因此会有一些对编程语言的优化策略，并不是每条指令都是顺序执行的。由于存在这种硬件优化策略，所以java语言就要保证它的多线程编程所得出的结果是程序员所希望的结果，也就是对编程人员的可见性。所以为了保证这种对编程人员的可见性，java并发编程就需要抽象一种既能保证执行结果又能让程序设计人员无需关心底层的内存模型，这就是JMM。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+        <h2 id="为什么我们需要Pod"><a href="#为什么我们需要Pod" class="headerlink" title="为什么我们需要Pod"></a>为什么我们需要Pod</h2><p>关于docker容器,我们都知道它的技术原理就是Namespace做隔离,cgroups做限制,rootfs做文件系统,那么k8s为什么又提出了Pod这个概念呢。</p>
+<p>我们可以这样理解,容器就是一个特殊的进程,而k8s就类似于操作系统,去调度管理这些特殊的进程,那么k8s就可以比做操作系统。我们知道,在真正的操作系统中,进程并不是孤单的运行,它存在于一个进程组之中,被操作系统有规则的组织在一起。</p>
+<p>那么我们可以理解Pod其实就是将操作系统中进程组的概念抽象到了K8s中,因为k8s的设计脱身于borg系统,谷歌的开发者们发现,他们部署的应用,往往都存在进程与进程组的关系,这些应用密切协作,必须部署在一台机器上。而如果没有组这个概念,这种组织关系就难以维护,而Pod就是将操作系统中的进程组的概念映射到了容器中。</p>
+<p>关于Pod的一个事实是,Pod只是一个逻辑概念,Pod里的容器共享网络栈并且可以声明共享同一个Volume。</p>
+<p>Pod的设计降低了调度的复杂度,考虑这样一种场景:A/B/C三个容器必须要部署在一起,各需要1G内存。现在node1有3G内存,node2有2.5G内存。若A首先初始化,部署到了node2上,那么轮到C就不满足硬件条件而部署失败。那么就必须要将AB两个容器回滚,重新部署到node1上。</p>
+<p>这就是一个典型的成组调度没有被妥善处理的例子,虽然有很多可供选择的方案,但谈不上完美,要么造成资源的严重浪费,要么技术难度不是常规团队可以驾驭。而加入了Pod这种概念,Pod是K8s调度的原子单位,调度器是按照Pod的需求而不是容器的需求来进行计算的。根据这种调度方式,上述的例子就会选择node1而不会选择node2进行调度。</p>
+<p>Pod除了简化调度模型,还有个更重要的意义就是容器设计模式。</p>
+<p>首先要弄清楚Pod的实现原理,Pod的实现需要一个中间容器,叫做infra容器(k8s.gcr.io/pause)。在Pod中,infra会首先被创建,其他容器都是通过join network namespace的方式与infra容器关联在一起。因此对于一个pod中的A B两个容器来说:</p>
 <ul>
-<li><a id="more"></a>
-<the rest="" of="" contents="" |="" 余下全文="">
-
-</the></li>
+<li>可以使用localhost进行通信</li>
+<li>Pod的生命周期与infra容器一致,与A B无关</li>
 </ul>
-<h3 id="从PIPELINE看JMM"><a href="#从PIPELINE看JMM" class="headerlink" title="从PIPELINE看JMM"></a>从PIPELINE看JMM</h3><p>学过计算机组成原理或计算机体系结构的同学可能见过这幅图</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmjsbm9tn9j30n704dwfn.jpg" alt=""></p>
-<p>这就是把一条机器指令分为了五个原子的步骤去执行IF表示取指令，WB表示写回内存。下一条指令会在前一条写回内存后才会执行，这么这个看来就是一个线程安全的模型了。只可惜，现实中的计算机指令流水线并不会这样设计，因为这样的效率实在是太低了。</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fmjsfmdpkaj30ke05idi4.jpg" alt=""></p>
-<p>实际上的流水线是这样的一种模型，在第一个位置空出来后就可以执行第二条了。这样才能最大限度的利用资源。那么为了提高效率，问题也就随之而来了，这样的一种模型就会造成一种数据依赖的情况，有可能第二条指令需要第一条指令的运算结果,出现这种情况最快的优化就是让IF在EX之后执行，通过通道直接获取到EX之后的值，而不必等到写回内存再去内存中调用。其实这种情况分细了来说就是流水线中遇到的WAR,WAW等读写冲突现象。</p>
-<p>说完了计组中pipeline的思想，那么我们把JMM作一下类比，我们可以把JMM当做处理pipeline的容器，java代码在编译成字节码之后，为了解决读写冲突也需要设定一系列的机制。这些机制就包括设定内存屏障，happens-before原则，顺序一致性模型等等。如果你知道pipeline对机器指令读写冲突的解决方案，从字面上你就能理解jmm这些机制的作用。</p>
-<p>所以知道了以上几种jmm的设计原则之后，就有了volatile的内存语义，lock的内存语义等等。它们讲述这些不同的线程之间通信和同步的方式在jmm中是怎样实现的。其实归根结底就是想解决在经历过种种编译优化之后怎样保持各个线程之间的数据依赖问题。</p>
-<p>其实出现这些问题最根本的原因是人们对提升计算机效率的永恒追求，因为追求性能，出现了经典的五层流水线模型。因为追求性能出现了java并发编程。于是在硬件和软件层面都对追求性能而带来的数据冲突问题作出了解决，虽然具体做法不同但思想都是想通的。</p>
-<p>这时我又想起了大学老师对我们说过的话：计算机这个东西在硬件和软件方面是相通的，双方的思想都可以拿来互相借鉴，想通了就很简单。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fx530pb14ij30dh0d474j.jpg" alt=""></p>
+<p>而对于volume的共享,K8s只需要将所有volume的定义都设计在Pod层就好</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: Pod</div><div class="line">metadata:</div><div class="line">  name: two-containers</div><div class="line">spec:</div><div class="line">  restartPolicy: Never</div><div class="line">  volumes:</div><div class="line">  - name: shared-data</div><div class="line">    hostPath:      </div><div class="line">      path: /data</div><div class="line">  containers:</div><div class="line">  - name: nginx-container</div><div class="line">    image: nginx</div><div class="line">    volumeMounts:</div><div class="line">    - name: shared-data</div><div class="line">      mountPath: /usr/share/nginx/html</div><div class="line">  - name: debian-container</div><div class="line">    image: debian</div><div class="line">    volumeMounts:</div><div class="line">    - name: shared-data</div><div class="line">      mountPath: /pod-data</div><div class="line">    command: [&quot;/bin/sh&quot;]</div><div class="line">    args: [&quot;-c&quot;, &quot;echo Hello from the debian container &gt; /pod-data/index.html&quot;]</div></pre></td></tr></table></figure>
+<p>所以Pod这种”超亲密关系”容器的设计思想,实际上就是希望当用户想在容器里完成多个应用的时候,应该考虑是不是可以描述为一个pod里的多个容器。</p>
+<p>例如应用war包和tomcat容器,可以描述为一个Pod内的多个容器,以组合的方式解决war和tomcat的耦合关系。但是应用与mysql等数据库的关系,不应该描述为一个Pod,我们不能因为应用宕机而造成数据库无法使用,所以应用与数据库要分为两个Pod来部署。</p>
 
       
       
@@ -356,13 +345,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/12/17/java并发从入门到崩溃-JMM/">JUC-JMM(5)</a></p>
+        <p><span>本文标题:</span><a href="/2018/11/10/k8s学习总结2-Pod/">k8s学习总结-2</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Shuchang 的个人博客">Shuchang</a></p>
-        <p><span>发布时间:</span>2017年12月17日 - 14时21分</p>
-        <p><span>最后更新:</span>2018年01月01日 - 16时04分</p>
+        <p><span>发布时间:</span>2018年11月10日 - 17时02分</p>
+        <p><span>最后更新:</span>2018年11月12日 - 11时09分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/12/17/java并发从入门到崩溃-JMM/" title="JUC-JMM(5)">http://www.shuchang.sc.com/2017/12/17/java并发从入门到崩溃-JMM/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2017/12/17/java并发从入门到崩溃-JMM/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/11/10/k8s学习总结2-Pod/" title="k8s学习总结-2">http://www.shuchang.sc.com/2018/11/10/k8s学习总结2-Pod/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.shuchang.sc.com/2018/11/10/k8s学习总结2-Pod/　　作者: Shuchang" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -375,18 +364,18 @@
 
 <nav id="article-nav">
   
-    <a href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/11/12/k8s学习总结3-存储/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption"><</strong>
       <div class="article-nav-title">
         
-          JUC-ConcurrentHashMap(6)
+          k8s学习总结3-存储
         
       </div>
     </a>
   
   
-    <a href="/2017/12/13/java并发从入门到崩溃-Lock/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">JUC-Lock(4)</div>
+    <a href="/2018/11/10/k8s学习总结1-容器/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">k8s学习总结-1</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -397,7 +386,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#JMM"><span class="toc-number">1.</span> <span class="toc-text">JMM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#从PIPELINE看JMM"><span class="toc-number">2.</span> <span class="toc-text">从PIPELINE看JMM</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么我们需要Pod"><span class="toc-number">1.</span> <span class="toc-text">为什么我们需要Pod</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -463,13 +452,13 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/12/17/java并发从入门到崩溃-ConcurrentHashMap-6/" title="上一篇: JUC-ConcurrentHashMap(6)">
+            <a href="/2018/11/12/k8s学习总结3-存储/" title="上一篇: k8s学习总结3-存储">
                 <i class="fa fa-angle-left"></i>
             </a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2017/12/13/java并发从入门到崩溃-Lock/" title="下一篇: JUC-Lock(4)">
+            <a href="/2018/11/10/k8s学习总结1-容器/" title="下一篇: k8s学习总结-1">
                 <i class="fa fa-angle-right"></i>
             </a>
         

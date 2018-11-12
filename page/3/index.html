@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/Docker/" style="font-size: 10px;">Docker</a> <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/K8S/" style="font-size: 10px;">K8S</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a>
+                        <a href="/tags/Docker/" style="font-size: 12.22px;">Docker</a> <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/K8S/" style="font-size: 12.22px;">K8S</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,161 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-Kafka-核心概念" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/24/Kafka-核心概念/" class="article-date">
+      <time datetime="2018-06-24T04:15:04.000Z" itemprop="datePublished">2018-06-24</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/24/Kafka-核心概念/">Kafka架构与核心概念</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1fsm7slh4efj30hy097jso.jpg" alt=""></p>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p>Kafka是是一个高性能跨语言分布式发布订阅消息队列系统,具有消息持久化,吞吐量高,支持消息分区等特点。Kafka自0.10版本提供对流式计算的支持。</p>
+<ul>
+<li>Producer </li>
+</ul>
+<p>提供消息的系统</p>
+<ul>
+<li>Consumer</li>
+</ul>
+<p>消费消息的系统</p>
+<ul>
+<li>Broker</li>
+</ul>
+<p>一个Kafka实例就是一个Broker,多个Kafka就是多个Broker构成的Kafka集群。Producer向某个Topic发送消息,Broker负责向订阅这个topic的所有consumer传递消息。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Kafka/">Kafka</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/">Kafka</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/06/24/Kafka-核心概念/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-Kafka-Streaming-分支" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/24/Kafka-Streaming-分支/" class="article-date">
+      <time datetime="2018-06-24T03:20:48.000Z" itemprop="datePublished">2018-06-24</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/24/Kafka-Streaming-分支/">Kafka Streaming 分支</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h2 id="Branch"><a href="#Branch" class="headerlink" title="Branch"></a>Branch</h2><p>首先创建一个输入源 topic s-in,有多个partition</p>
+<ul>
+<li>./kafka-topics.sh –create –topic s-in –partitions 3 –zookeeper localhost:2181 –replication-factor 1 </li>
+<li>./kafka-topics.sh –create –topic s1 –partitions 1 –zookeeper localhost:2181 –replication-factor 1 </li>
+<li>./kafka-topics.sh –create –topic s2 –partitions 1 –zookeeper localhost:2181 –replication-factor 1 </li>
+</ul>
+<p>我们可以通过一定的业务逻辑判断,让stream将不同的消息处理后发送给不同的topic,这里简单的通过判断字符串长度,发送给s1和s2两个不同的topic</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Kafka/">Kafka</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/">Kafka</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/06/24/Kafka-Streaming-分支/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-Kafka-Streaming-入门" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -847,143 +1002,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/03/02/JUC-跳表-12/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-ElasticSearch优化总结" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/02/27/ElasticSearch优化总结/" class="article-date">
-      <time datetime="2018-02-27T11:14:52.000Z" itemprop="datePublished">2018-02-27</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/27/ElasticSearch优化总结/">ElasticSearch优化总结</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="索引结构优化"><a href="#索引结构优化" class="headerlink" title="索引结构优化"></a>索引结构优化</h3><p>一份没有经过优化的索引结构如下，由于单机版,这里备份数量和分片数量要根据生产中的实际情况来设置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;settings&quot;: &#123;</div><div class="line">    &quot;number_of_replicas&quot;: 0</div><div class="line">  &#125;,</div><div class="line">  &quot;mappings&quot;: &#123;</div><div class="line">    &quot;house&quot;: &#123;</div><div class="line">      &quot;dynamic&quot;: false,</div><div class="line">      &quot;properties&quot;: &#123;</div><div class="line">        &quot;houseId&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;title&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;price&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;area&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;createTime&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;date&quot;,</div><div class="line">          &quot;format&quot;: &quot;strict_date_optional_time||epoch_millis&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;lastUpdateTime&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;date&quot;,</div><div class="line">          &quot;format&quot;: &quot;strict_date_optional_time||epoch_millis&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;cityEnName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;regionEnName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;direction&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;distanceToSubWay&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;subWayLineName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;subWayStationName&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;tags&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;street&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;location&quot;:&#123;</div><div class="line">        	&quot;type&quot;:&quot;geo_point&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;district&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;keyword&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;description&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;layoutDesc&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;traffic&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;roundService&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;text&quot;,</div><div class="line">          &quot;index&quot;: &quot;analyzed&quot;,</div><div class="line">          &quot;analyzer&quot;: &quot;ik_smart&quot;,</div><div class="line">          &quot;search_analyzer&quot;: &quot;ik_smart&quot;</div><div class="line">        &#125;,</div><div class="line">        &quot;rentWay&quot;: &#123;</div><div class="line">          &quot;type&quot;: &quot;integer&quot;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/02/27/ElasticSearch优化总结/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-JUC-CompletableFuture使用-12" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/02/16/JUC-CompletableFuture使用-12/" class="article-date">
-      <time datetime="2018-02-16T07:37:13.000Z" itemprop="datePublished">2018-02-16</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/16/JUC-CompletableFuture使用-12/">JUC-CompletableFuture使用(12)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>CompletableFuture是java8中新加入的一个API，主要的目的是解决future的使用痛点:调用get()方法会陷入阻塞。CompletableFuture的思想就是你不需要来问我任务有没有完成而是当我任务完成了主动返回给你。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/java并发编程/">java并发编程</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/02/16/JUC-CompletableFuture使用-12/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
