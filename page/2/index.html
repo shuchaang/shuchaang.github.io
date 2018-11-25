@@ -150,7 +150,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/Docker/" style="font-size: 13.33px;">Docker</a> <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/K8S/" style="font-size: 13.33px;">K8S</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/netty/" style="font-size: 10px;">netty</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a>
+                        <a href="/tags/Docker/" style="font-size: 13.33px;">Docker</a> <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/K8S/" style="font-size: 13.33px;">K8S</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a> <a href="/tags/算法/" style="font-size: 10px;">算法</a>
                     </div>
                 </section>
                 
@@ -231,6 +231,78 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-Hbase数据存取过程" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/09/08/Hbase数据存取过程/" class="article-date">
+      <time datetime="2018-09-08T05:20:57.000Z" itemprop="datePublished">2018-09-08</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/09/08/Hbase数据存取过程/">Hbase数据存取过程</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h2 id="Hbase数据存储"><a href="#Hbase数据存储" class="headerlink" title="Hbase数据存储"></a>Hbase数据存储</h2><h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><p>在提交之前,Hbase client回去请求zk,从mate表中确定要存取regionServer的位置。根据rowKey找到对应的regionServer。拿到地址之后,默认情况下像put、delete这类操作是默认提交的,会直接提交到对应的regionServer上,也可以设置autoflush为false,当到达默认的2M的缓存阈值后才会异步批量提交到服务端。</p>
+<p><img src="https://ws3.sinaimg.cn/large/0069RVTdgy1fv21klmsihj30bv07dmxt.jpg" alt=""></p>
+<p>至此,客户端的操作就完成了</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Hbase/">Hbase</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hbase/">Hbase</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/2018/09/08/Hbase数据存取过程/#more">嘿嘿嘿、进来看看呗 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-Hbase基础" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -913,85 +985,6 @@
       
         <p class="article-more-link">
           <a  href="/2018/07/03/Netty-新连接接入-3/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Netty-NioEventLoop-2" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/07/02/Netty-NioEventLoop-2/" class="article-date">
-      <time datetime="2018-07-02T02:51:12.000Z" itemprop="datePublished">2018-07-02</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/02/Netty-NioEventLoop-2/">Netty(2) NioEventLoop</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <blockquote>
-<p>相关的三个问题</p>
-</blockquote>
-<ol>
-<li>默认情况下,Netty服务端起多少线程,何时启动</li>
-<li>Netty如何解决JDK空轮训bug</li>
-<li>Netty如何保证异步串行无锁化</li>
-</ol>
-<h2 id="NioEventLoop创建"><a href="#NioEventLoop创建" class="headerlink" title="NioEventLoop创建"></a>NioEventLoop创建</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">new NioEventLoopGroup() [线程组,默认cpu*2]</div><div class="line">    new ThreadPerTaskExecutor() [线程创建器]</div><div class="line">    for()&#123;new Child()&#125; [构造Eventloop]</div><div class="line">    chooserFactory.newChooser()[线程选择器]</div></pre></td></tr></table></figure>
-<p>从用户代码进入</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NioEventLoopGroup boss = new NioEventLoopGroup(1);</div><div class="line">NioEventLoopGroup worker = new NioEventLoopGroup();</div></pre></td></tr></table></figure>
-<p>跟进到这里可以看到,默认不传参数的eventgroup会赋予一个DEFAULT_EVENT_LOOP_THREADS大小的线程,为cpu数量的2倍。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">protected MultithreadEventLoopGroup(int nThreads, Executor executor, Object... args) &#123;</div><div class="line">    super(nThreads == 0 ? DEFAULT_EVENT_LOOP_THREADS : nThreads, executor, args);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Netty/">Netty</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/">Netty</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/07/02/Netty-NioEventLoop-2/#more">嘿嘿嘿、进来看看呗 >></a>
         </p>
       
       <div class="clearfix"></div>
