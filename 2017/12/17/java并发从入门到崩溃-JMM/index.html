@@ -113,7 +113,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="JUC-JMM(5)">
 <meta property="og:url" content="http://www.shuchang.sc.com/2017/12/17/java并发从入门到崩溃-JMM/index.html">
-<meta property="og:site_name" content="Shuchang&#39;s Blog">
+<meta property="og:site_name" content="ShuChang&#39;s Blog">
 <meta property="og:description" content="JMM在写这篇博客之前参考了大量的博客和书籍，但是个人总感觉理解不来，在这里记录下自己的看法，可能不对。 在并发编程中，我们要解决的关键性问题就是线程通信和同步的问题——那么就有两种结局方案，共享内存和消息传递。共享内存的方式就是各个线程在一个公共的内存区域中共同读写变量，消息传递则是通过显示的方法交换信息。 所以JAVA对内存进行了一种抽象，形成了java内存模型JMM。这种模型可以说就是为了方">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fmjrum6j9lj30ae0be74i.jpg">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fmjsbm9tn9j30n704dwfn.jpg">
@@ -139,7 +139,7 @@
   };
 </script>
 
-  <title>JUC-JMM(5) | Shuchang's Blog</title>
+  <title>JUC-JMM(5) | ShuChang's Blog</title>
   
 
 
@@ -199,7 +199,7 @@
     <div class="custom-logo-site-title">
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">Shuchang's Blog</span>
+        <span class="site-title">ShuChang's Blog</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -238,8 +238,67 @@
     
 
     
+      
+    
 
     <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br />Über</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags<span class="badge">19</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br />Kategorien<span class="badge">16</span></a>
 
   </li>
         
@@ -255,8 +314,29 @@
     
 
     
+      
+    
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv<span class="badge">67</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/404/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />Commonweal 404</a>
 
   </li>
 
@@ -313,11 +393,11 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Shuchang">
       <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/123.png">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Shuchang's Blog">
+      <meta itemprop="name" content="ShuChang's Blog">
     </span>
 
     
@@ -553,6 +633,10 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
+              <img class="site-author-image" itemprop="image"
+                src="/images/123.png"
+                alt="Shuchang" />
+            
               <p class="site-author-name" itemprop="name">Shuchang</p>
               <p class="site-description motion-element" itemprop="description">身怀利器，杀心自起，慎而重之</p>
           </div>
@@ -671,6 +755,21 @@
           
 
           
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://gitee.com/swiftsc" title="GitHub &rarr; https://gitee.com/swiftsc" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
 
           
 
@@ -715,7 +814,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">  <a href="http://www.miitbeian.gov.cn" rel="noopener" target="_blank">浙ICP备17049505号 </a>&copy; 2015 – <span itemprop="copyrightYear">2018</span>
   <span class="with-love" id="animate">
     <i class="fa fa-user"></i>
   </span>
@@ -731,11 +830,7 @@
 
 
 
-  <span class="post-meta-divider">|</span>
 
-
-
-  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
 
 
 
