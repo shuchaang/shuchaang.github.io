@@ -1,10 +1,113 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
+
+
+
+
+
+
+
+
+
+
+
+
   
-  <title>Shuchang&#39;s Blog</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<html class="theme-next muse use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
   <meta name="description" content="身怀利器，杀心自起，慎而重之">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Shuchang&#39;s Blog">
@@ -14,252 +117,295 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Shuchang&#39;s Blog">
 <meta name="twitter:description" content="身怀利器，杀心自起，慎而重之">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.shuchang.sc.com/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Shuchang's Blog</title>
   
-    <link rel="alternative" href="/atom.xml" title="Shuchang&#39;s Blog" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/img/favicon.png">
-  
-  
-      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
-  
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  
-    
-    
-  
-  
-      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  
-  <!-- 加载特效 -->
-    <script src="/js/pace.js"></script>
-    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
-  <script>
-      var yiliaConfig = {
-          rootUrl: '/',
-          fancybox: true,
-          animate: true,
-          isHome: true,
-          isPost: false,
-          isArchive: false,
-          isTag: false,
-          isCategory: false,
-          open_in_new: false
-      }
-  </script>
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
 </head>
-<body>
-  <div id="container">
-    <div class="left-col">
-    <div class="overlay"></div>
-<div class="intrude-less">
-    <header id="header" class="inner">
-        <a href="/" class="profilepic">
-            
-            <img lazy-src="/img/head.jpg" class="js-avatar">
-            
-        </a>
 
-        <hgroup>
-          <h1 class="header-author"><a href="/" title="Hi Mate">Shuchang</a></h1>
-        </hgroup>
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
 
-        
-        <p class="header-subtitle">剑来!</p>
-        
-        
-        
-            <div id="switch-btn" class="switch-btn">
-                <div class="icon">
-                    <div class="icon-ctn">
-                        <div class="icon-wrap icon-house" data-idx="0">
-                            <div class="birdhouse"></div>
-                            <div class="birdhouse_holes"></div>
-                        </div>
-                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
-                            <div class="ribbon"></div>
-                        </div>
-                        
-                        <div class="icon-wrap icon-link hide" data-idx="2">
-                            <div class="loopback_l"></div>
-                            <div class="loopback_r"></div>
-                        </div>
-                        
-                        
-                        <div class="icon-wrap icon-me hide" data-idx="3">
-                            <div class="user"></div>
-                            <div class="shoulder"></div>
-                        </div>
-                        
-                    </div>
-                    
-                </div>
-                <div class="tips-box hide">
-                    <div class="tips-arrow"></div>
-                    <ul class="tips-inner">
-                        <li>菜单</li>
-                        <li>标签</li>
-                        
-                        <li>友情链接</li>
-                        
-                        
-                        <li>关于我</li>
-                        
-                    </ul>
-                </div>
-            </div>
-        
+  
+  
+    
+  
 
-        <div id="switch-area" class="switch-area">
-            <div class="switch-wrap">
-                <section class="switch-part switch-part1">
-                    <nav class="header-menu">
-                        <ul>
-                        
-                            <li><a href="/">博客首页</a></li>
-                        
-                            <li><a href="/archives">所有文章</a></li>
-                        
-                            <li><a href="/about">关于我</a></li>
-                        
-                        </ul>
-                    </nav>
-                    <nav class="header-nav">
-                        <ul class="social">
-                            
-                                <a class="fl mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
-                            
-                                <a class="fl github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
-                            
-                                <a class="fl zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
-                            
-                                <a class="fl weibo" target="_blank" href="#" title="weibo">weibo</a>
-                            
-                                <a class="fl google" target="_blank" href="#" title="google">google</a>
-                            
-                                <a class="fl twitter" target="_blank" href="#" title="twitter">twitter</a>
-                            
-                                <a class="fl linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
-                            
-                        </ul>
-                    </nav>
-                </section>
-                
-                
-                <section class="switch-part switch-part2">
-                    <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/Docker/" style="font-size: 13.33px;">Docker</a> <a href="/tags/ElasticSearch/" style="font-size: 15.56px;">ElasticSearch</a> <a href="/tags/Hbase/" style="font-size: 11.11px;">Hbase</a> <a href="/tags/JAVA/" style="font-size: 17.78px;">JAVA</a> <a href="/tags/JPA/" style="font-size: 12.22px;">JPA</a> <a href="/tags/JavaWeb/" style="font-size: 10px;">JavaWeb</a> <a href="/tags/K8S/" style="font-size: 13.33px;">K8S</a> <a href="/tags/Kafka/" style="font-size: 13.33px;">Kafka</a> <a href="/tags/Netty/" style="font-size: 17.78px;">Netty</a> <a href="/tags/RabbitMq/" style="font-size: 16.67px;">RabbitMq</a> <a href="/tags/SpringBoot/" style="font-size: 14.44px;">SpringBoot</a> <a href="/tags/java/" style="font-size: 20px;">java</a> <a href="/tags/jvm/" style="font-size: 11.11px;">jvm</a> <a href="/tags/redis/" style="font-size: 13.33px;">redis</a> <a href="/tags/spring/" style="font-size: 12.22px;">spring</a> <a href="/tags/springmvc/" style="font-size: 10px;">springmvc</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 18.89px;">并发</a> <a href="/tags/算法/" style="font-size: 10px;">算法</a>
-                    </div>
-                </section>
-                
-                
-                
-                <section class="switch-part switch-part3">
-                    <div id="js-friends">
-                    
-                      <a target="_blank" class="main-nav-link switch-friends-link" href="https://gitee.com/swiftsc/">gitee</a>
-                    
-                    </div>
-                </section>
-                
+  <div class="container sidebar-position-left 
+  page-home">
+    <div class="headband"></div>
 
-                
-                
-                <section class="switch-part switch-part4">
-                
-                    <div id="js-aboutme">因为不满足于现状，面对未知，我们努力探索，其实越贴近，越震撼</div>
-                </section>
-                
-            </div>
-        </div>
-    </header>                
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Shuchang's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">剑来!</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
 </div>
-    </div>
-    <div class="mid-col">
-      <nav id="mobile-nav">
-      <div class="overlay">
-          <div class="slider-trigger"></div>
-          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Shuchang</a></h1>
-      </div>
-    <div class="intrude-less">
-        <header id="header" class="inner">
-            <a href="/" class="profilepic">
-                
-                    <img lazy-src="/img/head.jpg" class="js-avatar">
-                
-            </a>
-            <hgroup>
-              <h1 class="header-author"><a href="/" title="Me">Shuchang</a></h1>
-            </hgroup>
-            
-            <p class="header-subtitle">剑来!</p>
-            
-            <nav class="header-menu">
-                <ul>
-                
-                    <li><a href="/">博客首页</a></li>
-                
-                    <li><a href="/archives">所有文章</a></li>
-                
-                    <li><a href="/about">关于我</a></li>
-                
-                <div class="clearfix"></div>
-                </ul>
-            </nav>
-            <nav class="header-nav">
-                <div class="social">
-                    
-                        <a class="mail" target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=&#54;&#55;&#52;&#49;&#51;&#55;&#48;&#57;&#50;&#64;&#113;&#113;&#46;&#99;&#111;&#109;" title="mail">mail</a>
-                    
-                        <a class="github" target="_blank" href="https://gitee.com/swiftsc/" title="github">github</a>
-                    
-                        <a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
-                    
-                        <a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
-                    
-                        <a class="google" target="_blank" href="#" title="google">google</a>
-                    
-                        <a class="twitter" target="_blank" href="#" title="twitter">twitter</a>
-                    
-                        <a class="linkedin" target="_blank" href="#" title="linkedin">linkedin</a>
-                    
-                </div>
-            </nav>
-        </header>                
-    </div>
-</nav>
-      <div class="body-wrap">
+
+
+
+<nav class="site-nav">
   
-    <article id="post-红黑树" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/11/25/红黑树/" class="article-date">
-      <time datetime="2018-11-25T05:30:45.000Z" itemprop="datePublished">2018-11-25</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+    <ul id="menu" class="menu">
+      
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/25/红黑树/">红黑树</a>
-    </h1>
+        
+        
+          
+          <li class="menu-item menu-item-home menu-item-active">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+
+  </li>
+
+      
+      
+    </ul>
   
 
-      </header>
-      
+  
     
-    <div class="article-entry" itemprop="articleBody">
-      
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
           
-              <h2 id="《算法导论》中的红黑树"><a href="#《算法导论》中的红黑树" class="headerlink" title="《算法导论》中的红黑树"></a>《算法导论》中的红黑树</h2><p>红黑树与AVL相似,都是对BST进行了一系列优化,防止退化成链表的现象。算法导论中对红黑树的定义如下</p>
+          <div id="content" class="content">
+            
+  <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/25/红黑树/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shuchang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/11/25/红黑树/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">红黑树</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2018-11-25 13:30:45 / Updated at: 13:31:40" itemprop="dateCreated datePublished" datetime="2018-11-25T13:30:45+08:00">2018-11-25</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/算法/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="《算法导论》中的红黑树"><a href="#《算法导论》中的红黑树" class="headerlink" title="《算法导论》中的红黑树"></a>《算法导论》中的红黑树</h2><p>红黑树与AVL相似,都是对BST进行了一系列优化,防止退化成链表的现象。算法导论中对红黑树的定义如下</p>
 <ol>
 <li>每个节点要么是红色,要么是黑色</li>
 <li>根节点必须黑色</li>
@@ -271,73 +417,180 @@
 <p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
 <ul>
 <li>
+          <!--noindex-->
           
-      
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/11/25/红黑树/#more" rel="contents">
+                Weiterlesen &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
       
     </div>
+
     
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/算法/">算法</a>
-    </div>
 
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/算法/">算法</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/11/25/红黑树/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
     
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
   </div>
   
-</article>
+  
+  
+  </article>
 
 
-
-
-
-
-
-
+    
+      
 
   
-    <article id="post-k8s学习总结4-网络" class="article article-type-post" itemscope itemprop="blogPost">
+
   
-    <div class="article-meta">
-      <a href="/2018/11/12/k8s学习总结4-网络/" class="article-date">
-      <time datetime="2018-11-12T05:58:07.000Z" itemprop="datePublished">2018-11-12</time>
-</a>
-    </div>
   
-  <div class="article-inner">
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/12/k8s学习总结4-网络/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shuchang's Blog">
+    </span>
+
     
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+      <header class="post-header">
+
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/12/k8s学习总结4-网络/">k8s学习总结4-网络</a>
-    </h1>
-  
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/11/12/k8s学习总结4-网络/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">k8s学习总结4-网络</a>
+              
+            
+          </h1>
+        
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2018-11-12 13:58:07 / Updated at: 17:25:43" itemprop="dateCreated datePublished" datetime="2018-11-12T13:58:07+08:00">2018-11-12</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
           
-        <p>K8S的网络部分确实是一个难点,我在这里卡了很久也看了很多相关的文档。K8S的网络依赖于Docker,Docker的网络离不开linux内核的支持,所以要理解K8S的网络必须要了解linux网络知识。</p>
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
+
+                
+                
+                  . 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>K8S的网络部分确实是一个难点,我在这里卡了很久也看了很多相关的文档。K8S的网络依赖于Docker,Docker的网络离不开linux内核的支持,所以要理解K8S的网络必须要了解linux网络知识。</p>
 <h2 id="linux网络基础"><a href="#linux网络基础" class="headerlink" title="linux网络基础"></a>linux网络基础</h2><p>Docker使用到的linux技术主要包括下面几种:</p>
 <p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fx59jhgk3cj307106xmwz.jpg" alt=""></p>
 <p>linux通过命名空间(ns)可以将网络栈进行隔离,不同的ns完全隔离无法进行通信。Docker也正是利用了这种特性实现不同容器网络环境的隔离。那么如果我有需求需要让不同ns的进程进行通信,该怎么做呢?答案就是veth设备对。</p>
@@ -396,68 +649,172 @@
 <li>loadbalance</li>
 </ol>
 
-      
+          
+        
       
     </div>
+
     
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/K8S/">K8S</a><a class="article-category-link" href="/categories/K8S/Docker/">Docker</a>
-    </div>
 
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/K8S/">K8S</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
     
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
   </div>
   
-</article>
+  
+  
+  </article>
 
 
-
-
-
-
-
-
+    
+      
 
   
-    <article id="post-k8s学习总结3-存储" class="article article-type-post" itemscope itemprop="blogPost">
+
   
-    <div class="article-meta">
-      <a href="/2018/11/12/k8s学习总结3-存储/" class="article-date">
-      <time datetime="2018-11-12T02:27:05.000Z" itemprop="datePublished">2018-11-12</time>
-</a>
-    </div>
   
-  <div class="article-inner">
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/12/k8s学习总结3-存储/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shuchang's Blog">
+    </span>
+
     
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+      <header class="post-header">
+
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/12/k8s学习总结3-存储/">k8s学习总结3-存储</a>
-    </h1>
-  
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/11/12/k8s学习总结3-存储/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">k8s学习总结3-存储</a>
+              
+            
+          </h1>
+        
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2018-11-12 10:27:05 / Updated at: 10:27:24" itemprop="dateCreated datePublished" datetime="2018-11-12T10:27:05+08:00">2018-11-12</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
           
-        <h2 id="PV-PVC-StorageClass"><a href="#PV-PVC-StorageClass" class="headerlink" title="PV PVC StorageClass"></a>PV PVC StorageClass</h2><p>容器化一个应用最麻烦的地方,莫过于对其状态的管理,而最常见的状态就是存储状态。K8s提出了PV和PVC这样的概念,来方便开发人员对存储状态进行管理</p>
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
+
+                
+                
+                  . 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="PV-PVC-StorageClass"><a href="#PV-PVC-StorageClass" class="headerlink" title="PV PVC StorageClass"></a>PV PVC StorageClass</h2><p>容器化一个应用最麻烦的地方,莫过于对其状态的管理,而最常见的状态就是存储状态。K8s提出了PV和PVC这样的概念,来方便开发人员对存储状态进行管理</p>
 <h3 id="PV"><a href="#PV" class="headerlink" title="PV"></a>PV</h3><p>PV文件描述的是一个持久化存储卷,例如一个Ceph文件系统,一个云盘等等,主要信息就是声明了访问方式以及存储容量的大小,主要由运维人员来维护,开发人员无需关心存储的具体细节。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: PersistentVolume</div><div class="line">metadata:</div><div class="line">  name: nfs</div><div class="line">spec:</div><div class="line">  storageClassName: manual</div><div class="line">  capacity:</div><div class="line">    storage: 1Gi</div><div class="line">  accessModes:</div><div class="line">    - ReadWriteMany</div><div class="line">  nfs:</div><div class="line">    server: 10.244.1.4</div><div class="line">    path: &quot;/&quot;</div></pre></td></tr></table></figure>
 <h3 id="PVC"><a href="#PVC" class="headerlink" title="PVC"></a>PVC</h3><p>PVC描述的是Pod所希望持久化存储的属性,例如所需磁盘的大小,可读写的权限等</p>
@@ -501,68 +858,184 @@
 <p>volumeBindingMode=WaitForFirstConsumer属性也非常重要,这是一种延迟绑定的机制,这种绑定会在调度的时候才去绑定,否则就会引起Pod调度的失败。</p>
 <p>接着我们就可以编写一个普通的PVC来使用这个local pv了,这就类似于面向对象的设计,我们只需要修改接口的实现类,就可以动态修改类的表现。</p>
 
-      
+          
+        
       
     </div>
+
     
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/K8S/">K8S</a><a class="article-category-link" href="/categories/K8S/Docker/">Docker</a>
-    </div>
 
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/K8S/">K8S</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
     
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
   </div>
   
-</article>
+  
+  
+  </article>
 
 
-
-
-
-
-
-
+    
+      
 
   
-    <article id="post-k8s学习总结2-Pod" class="article article-type-post" itemscope itemprop="blogPost">
+
   
-    <div class="article-meta">
-      <a href="/2018/11/10/k8s学习总结2-Pod/" class="article-date">
-      <time datetime="2018-11-10T09:02:51.000Z" itemprop="datePublished">2018-11-10</time>
-</a>
-    </div>
   
-  <div class="article-inner">
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/10/k8s学习总结2-Pod/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shuchang's Blog">
+    </span>
+
     
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+      <header class="post-header">
+
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/10/k8s学习总结2-Pod/">k8s学习总结-2</a>
-    </h1>
-  
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/11/10/k8s学习总结2-Pod/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">k8s学习总结-2</a>
+              
+            
+          </h1>
+        
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2018-11-10 17:02:51" itemprop="dateCreated datePublished" datetime="2018-11-10T17:02:51+08:00">2018-11-10</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-11-12 11:09:03" itemprop="dateModified" datetime="2018-11-12T11:09:03+08:00">2018-11-12</time>
+              
+            
+          </span>
+
           
-        <h2 id="为什么我们需要Pod"><a href="#为什么我们需要Pod" class="headerlink" title="为什么我们需要Pod"></a>为什么我们需要Pod</h2><p>关于docker容器,我们都知道它的技术原理就是Namespace做隔离,cgroups做限制,rootfs做文件系统,那么k8s为什么又提出了Pod这个概念呢。</p>
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
+
+                
+                
+                  . 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="为什么我们需要Pod"><a href="#为什么我们需要Pod" class="headerlink" title="为什么我们需要Pod"></a>为什么我们需要Pod</h2><p>关于docker容器,我们都知道它的技术原理就是Namespace做隔离,cgroups做限制,rootfs做文件系统,那么k8s为什么又提出了Pod这个概念呢。</p>
 <p>我们可以这样理解,容器就是一个特殊的进程,而k8s就类似于操作系统,去调度管理这些特殊的进程,那么k8s就可以比做操作系统。我们知道,在真正的操作系统中,进程并不是孤单的运行,它存在于一个进程组之中,被操作系统有规则的组织在一起。</p>
 <p>那么我们可以理解Pod其实就是将操作系统中进程组的概念抽象到了K8s中,因为k8s的设计脱身于borg系统,谷歌的开发者们发现,他们部署的应用,往往都存在进程与进程组的关系,这些应用密切协作,必须部署在一台机器上。而如果没有组这个概念,这种组织关系就难以维护,而Pod就是将操作系统中的进程组的概念映射到了容器中。</p>
 <p>关于Pod的一个事实是,Pod只是一个逻辑概念,Pod里的容器共享网络栈并且可以声明共享同一个Volume。</p>
@@ -580,68 +1053,184 @@
 <p>所以Pod这种”超亲密关系”容器的设计思想,实际上就是希望当用户想在容器里完成多个应用的时候,应该考虑是不是可以描述为一个pod里的多个容器。</p>
 <p>例如应用war包和tomcat容器,可以描述为一个Pod内的多个容器,以组合的方式解决war和tomcat的耦合关系。但是应用与mysql等数据库的关系,不应该描述为一个Pod,我们不能因为应用宕机而造成数据库无法使用,所以应用与数据库要分为两个Pod来部署。</p>
 
-      
+          
+        
       
     </div>
+
     
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/K8S/">K8S</a><a class="article-category-link" href="/categories/K8S/Docker/">Docker</a>
-    </div>
 
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/K8S/">K8S</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
     
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
   </div>
   
-</article>
+  
+  
+  </article>
 
 
-
-
-
-
-
-
+    
+      
 
   
-    <article id="post-k8s学习总结1-容器" class="article article-type-post" itemscope itemprop="blogPost">
+
   
-    <div class="article-meta">
-      <a href="/2018/11/10/k8s学习总结1-容器/" class="article-date">
-      <time datetime="2018-11-10T08:01:35.000Z" itemprop="datePublished">2018-11-10</time>
-</a>
-    </div>
   
-  <div class="article-inner">
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/10/k8s学习总结1-容器/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shuchang's Blog">
+    </span>
+
     
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+      <header class="post-header">
+
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/10/k8s学习总结1-容器/">k8s学习总结-1</a>
-    </h1>
-  
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/11/10/k8s学习总结1-容器/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">k8s学习总结-1</a>
+              
+            
+          </h1>
+        
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2018-11-10 16:01:35" itemprop="dateCreated datePublished" datetime="2018-11-10T16:01:35+08:00">2018-11-10</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-11-12 10:26:08" itemprop="dateModified" datetime="2018-11-12T10:26:08+08:00">2018-11-12</time>
+              
+            
+          </span>
+
           
-        <h2 id="什么是容器"><a href="#什么是容器" class="headerlink" title="什么是容器"></a>什么是容器</h2><p>容器其实是一种沙盒技术,能够像集装箱一样,把你的应用装起来。应用与应用之间因为有了边界而不至于互相干扰,被装进集装箱的应用,也可以被方便的搬来搬去,这就是paas最理想的状态。</p>
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
+
+                
+                
+                  . 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="什么是容器"><a href="#什么是容器" class="headerlink" title="什么是容器"></a>什么是容器</h2><p>容器其实是一种沙盒技术,能够像集装箱一样,把你的应用装起来。应用与应用之间因为有了边界而不至于互相干扰,被装进集装箱的应用,也可以被方便的搬来搬去,这就是paas最理想的状态。</p>
 <h2 id="docker是如何修改应用的边界"><a href="#docker是如何修改应用的边界" class="headerlink" title="docker是如何修改应用的边界"></a>docker是如何修改应用的边界</h2><p>容器的核心技术,就是通过约束和修改进程的动态表现,从而创造出一种边界。对于Docker等大多数容器来说,Cgroups技术是用来制造约束的主要手段,Namespace技术则是用来修改进程视图的主要方式。</p>
 <p>Namespace可以视为一个障眼法,一个namespace里的应用都只能看到当前namespace下被cgroups等技术所限制的资源,文件,设备,而对于宿主机或其他不相关的应用,就完全看不到。这就是linux容器最基本的实现原理。所以容器技术其实就是一个特殊即进程而已。</p>
 <h2 id="容器与文件系统"><a href="#容器与文件系统" class="headerlink" title="容器与文件系统"></a>容器与文件系统</h2><p>容器里的应用进程,理应看到一份完全独立的文件系统,这样,他就可以在自己的容器目录下完成操作,完全不受宿主机和其他容器的影响。Docker在处理这个问题的时候使用了mount namespace技术,改变了容器文件系统的挂载点,简单来说可以理解为执行一下操作:</p>
@@ -653,210 +1242,505 @@
 <p>用户所进行的一切操作都是在最上部的rw层进行的,init层是用来存放/etc/hosts、/etc/resolv.conf等信息。因为这些信息属于底层文件系统的一部分,有些场景需要修改这些文件,但是我们对镜像进行提交时又不希望将这些信息一起提交,所以设计了init层。下面的就全部都是只读的镜像层。</p>
 <p>当我们创建一个文件时,我们实际上只是在最上层的镜像添加了一个文件,当我们删除一个文件时,实际上创建了一个.wh.foo的文件,这样这个文件就被遮罩了起来。当修改一个文件时,首先会从上到下查找有没有这个文件，找到，就复制到容器层中修改，修改的结果就会作用到下层的文件，这种方式也被称为copy-on-write。</p>
 
-      
+          
+        
       
     </div>
+
     
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/K8S/">K8S</a><a class="article-category-link" href="/categories/K8S/Docker/">Docker</a>
-    </div>
 
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/K8S/">K8S</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
     
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
   </div>
   
-</article>
+  
+  
+  </article>
 
 
-
-
-
-
-
-
+    
+      
 
   
-    <article id="post-Rabbitmq常用模式" class="article article-type-post" itemscope itemprop="blogPost">
+
   
-    <div class="article-meta">
-      <a href="/2018/09/27/Rabbitmq常用模式/" class="article-date">
-      <time datetime="2018-09-27T01:40:15.000Z" itemprop="datePublished">2018-09-27</time>
-</a>
-    </div>
   
-  <div class="article-inner">
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/27/Rabbitmq常用模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shuchang's Blog">
+    </span>
+
     
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+      <header class="post-header">
+
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/27/Rabbitmq常用模式/">Rabbitmq常用模式</a>
-    </h1>
-  
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/09/27/Rabbitmq常用模式/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">Rabbitmq常用模式</a>
+              
+            
+          </h1>
+        
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2018-09-27 09:40:15 / Updated at: 09:41:16" itemprop="dateCreated datePublished" datetime="2018-09-27T09:40:15+08:00">2018-09-27</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
           
-              <h2 id="RabbitMQ常用模式"><a href="#RabbitMQ常用模式" class="headerlink" title="RabbitMQ常用模式"></a>RabbitMQ常用模式</h2><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fvnbel6rimj30uy0gaqeu.jpg" alt=""></p>
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/RabbitMq/" itemprop="url" rel="index"><span itemprop="name">RabbitMq</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="RabbitMQ常用模式"><a href="#RabbitMQ常用模式" class="headerlink" title="RabbitMQ常用模式"></a>RabbitMQ常用模式</h2><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fvnbel6rimj30uy0gaqeu.jpg" alt=""></p>
 <p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
 <ul>
 <li>
+          <!--noindex-->
           
-      
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/09/27/Rabbitmq常用模式/#more" rel="contents">
+                Weiterlesen &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
       
     </div>
+
     
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
-    </div>
 
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/09/27/Rabbitmq常用模式/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
     
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
   </div>
   
-</article>
+  
+  
+  </article>
 
 
-
-
-
-
-
-
+    
+      
 
   
-    <article id="post-Rabbitmq与Springboot" class="article article-type-post" itemscope itemprop="blogPost">
+
   
-    <div class="article-meta">
-      <a href="/2018/09/22/Rabbitmq与Springboot/" class="article-date">
-      <time datetime="2018-09-22T10:20:01.000Z" itemprop="datePublished">2018-09-22</time>
-</a>
-    </div>
   
-  <div class="article-inner">
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/22/Rabbitmq与Springboot/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shuchang's Blog">
+    </span>
+
     
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+      <header class="post-header">
+
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/22/Rabbitmq与Springboot/">Rabbitmq与Springboot</a>
-    </h1>
-  
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/09/22/Rabbitmq与Springboot/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">Rabbitmq与Springboot</a>
+              
+            
+          </h1>
+        
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2018-09-22 18:20:01 / Updated at: 18:22:41" itemprop="dateCreated datePublished" datetime="2018-09-22T18:20:01+08:00">2018-09-22</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
           
-              <p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvihp66f5rj308v04eq2s.jpg" alt=""></p>
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/RabbitMq/" itemprop="url" rel="index"><span itemprop="name">RabbitMq</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvihp66f5rj308v04eq2s.jpg" alt=""></p>
 <h2 id="SimpleMessageListenerContainer"><a href="#SimpleMessageListenerContainer" class="headerlink" title="SimpleMessageListenerContainer"></a>SimpleMessageListenerContainer</h2><p>SimpleMessageListenerContainer是一个简单消息监听容器,提供了事务特性的设置,包括事务并发量,回滚以及消息确认,重回队列等绝大部分消费者的设置。</p>
 <p>SimpleMessageListenerContainer支持动态修改消费者的配置,可以根据这一特性去自定义rabbitmq管控台。</p>
 <p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
 <ul>
 <li>
+          <!--noindex-->
           
-      
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/09/22/Rabbitmq与Springboot/#more" rel="contents">
+                Weiterlesen &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
       
     </div>
+
     
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
-    </div>
 
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/09/22/Rabbitmq与Springboot/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
     
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
   </div>
   
-</article>
+  
+  
+  </article>
 
 
-
-
-
-
-
-
+    
+      
 
   
-    <article id="post-redis底层数据结构" class="article article-type-post" itemscope itemprop="blogPost">
+
   
-    <div class="article-meta">
-      <a href="/2018/09/18/redis底层数据结构/" class="article-date">
-      <time datetime="2018-09-18T08:24:43.000Z" itemprop="datePublished">2018-09-18</time>
-</a>
-    </div>
   
-  <div class="article-inner">
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/18/redis底层数据结构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shuchang's Blog">
+    </span>
+
     
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+      <header class="post-header">
+
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/18/redis底层数据结构/">redis底层数据结构</a>
-    </h1>
-  
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/09/18/redis底层数据结构/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">redis底层数据结构</a>
+              
+            
+          </h1>
+        
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2018-09-18 16:24:43 / Updated at: 18:24:31" itemprop="dateCreated datePublished" datetime="2018-09-18T16:24:43+08:00">2018-09-18</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
           
-        <p>redis中常用的数据结构包括String,Hash,List,Set,Sorted Set,每种都有对应的底层C语言结构。如下图所示</p>
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>redis中常用的数据结构包括String,Hash,List,Set,Sorted Set,每种都有对应的底层C语言结构。如下图所示</p>
 <p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvdtlczh7wj30ra088t90.jpg" alt=""></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">String      : SDS</div><div class="line">Hash        : zipList/hashtable</div><div class="line">List        : quickList</div><div class="line">Set         : intSet/hashtable</div><div class="line">Sorted Set  : skipList</div></pre></td></tr></table></figure>
 <h2 id="SDS"><a href="#SDS" class="headerlink" title="SDS"></a>SDS</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">struct SDS&lt;T&gt; &#123;</div><div class="line">    T capacity; // 数组容量</div><div class="line">    T len; // 数组长度</div><div class="line">    byte flags; // 特殊标识位</div><div class="line">    byte[] content; // 数组内容</div><div class="line">&#125;</div></pre></td></tr></table></figure>
@@ -879,68 +1763,164 @@
 <h2 id="intSet"><a href="#intSet" class="headerlink" title="intSet"></a>intSet</h2><p>inSet是一个整数类型的集合,包括16位整数,32位整数,64位整数类型。个人理解这个结构是某些场景下用来节省空间的。例如set中只有整数类型是,当元素大小可以用16位表示,则这个set的encoding就是int16,当出现有元素必须用32位表示时,那么所有的整数都升级为int32,int64以此类推。但是当你删除了int32的数据,intSet是不会降级为int16的。也就是说只能升级不能降级。当set中出现了非整数类型时,redis使用hashtable代替intSet。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>redis的底层数据结构,几乎都针对redis本身进行了优化。无论在提高性能还是节省空间上,作者都花了很多功夫。</p>
 
-      
+          
+        
       
     </div>
+
     
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-    </div>
 
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
     
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
   </div>
   
-</article>
+  
+  
+  </article>
 
 
-
-
-
-
-
-
+    
+      
 
   
-    <article id="post-rabbitmq高级特性" class="article article-type-post" itemscope itemprop="blogPost">
+
   
-    <div class="article-meta">
-      <a href="/2018/09/18/rabbitmq高级特性/" class="article-date">
-      <time datetime="2018-09-18T02:16:09.000Z" itemprop="datePublished">2018-09-18</time>
-</a>
-    </div>
   
-  <div class="article-inner">
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/18/rabbitmq高级特性/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shuchang's Blog">
+    </span>
+
     
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+      <header class="post-header">
+
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/18/rabbitmq高级特性/">rabbitmq高级特性</a>
-    </h1>
-  
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/09/18/rabbitmq高级特性/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">rabbitmq高级特性</a>
+              
+            
+          </h1>
+        
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2018-09-18 10:16:09 / Updated at: 10:17:11" itemprop="dateCreated datePublished" datetime="2018-09-18T10:16:09+08:00">2018-09-18</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
           
-              <h2 id="消息可靠投递"><a href="#消息可靠投递" class="headerlink" title="消息可靠投递"></a>消息可靠投递</h2><blockquote>
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/RabbitMq/" itemprop="url" rel="index"><span itemprop="name">RabbitMq</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="消息可靠投递"><a href="#消息可靠投递" class="headerlink" title="消息可靠投递"></a>消息可靠投递</h2><blockquote>
 <p>什么是生产端的可靠性投递</p>
 </blockquote>
 <ul>
@@ -961,212 +1941,583 @@
 <li>当延迟确认消息到来之后,如果数据库中有,则成功,否则要callback服务需要进行rpc调用上游服务再次发送一遍消息</li>
 </ol>
 <p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
           
-      
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/09/18/rabbitmq高级特性/#more" rel="contents">
+                Weiterlesen &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
       
     </div>
+
     
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/RabbitMq/">RabbitMq</a>
-    </div>
 
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMq/">RabbitMq</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/09/18/rabbitmq高级特性/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
     
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
   </div>
   
-</article>
+  
+  
+  </article>
 
 
-
-
-
-
-
-
+    
+      
 
   
-    <article id="post-ElasticSearch分布式架构-5" class="article article-type-post" itemscope itemprop="blogPost">
+
   
-    <div class="article-meta">
-      <a href="/2018/09/08/ElasticSearch分布式架构-5/" class="article-date">
-      <time datetime="2018-09-08T09:57:57.000Z" itemprop="datePublished">2018-09-08</time>
-</a>
-    </div>
   
-  <div class="article-inner">
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/08/ElasticSearch分布式架构-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shuchang's Blog">
+    </span>
+
     
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+      <header class="post-header">
+
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/08/ElasticSearch分布式架构-5/">系统学习ElasticSearch-分布式架构(5)</a>
-    </h1>
-  
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/09/08/ElasticSearch分布式架构-5/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">系统学习ElasticSearch-分布式架构(5)</a>
+              
+            
+          </h1>
+        
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2018-09-08 17:57:57" itemprop="dateCreated datePublished" datetime="2018-09-08T17:57:57+08:00">2018-09-08</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-09-18 18:03:04" itemprop="dateModified" datetime="2018-09-18T18:03:04+08:00">2018-09-18</time>
+              
+            
+          </span>
+
           
-              <p><img src="https://ws1.sinaimg.cn/large/0069RVTdgy1fv2aitojvfj30xk0e0aa6.jpg" alt=""></p>
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><img src="https://ws1.sinaimg.cn/large/0069RVTdgy1fv2aitojvfj30xk0e0aa6.jpg" alt=""></p>
 <p>ES是一套天生支持分布式的系统,分布式的目的是解决大数据量的问题。但是在我们使用的过程中,并没有对其分布式特性进行特殊配置。这时因为ES对用户隐藏了复杂的分布式机制,包括分片,集群发现,负载均衡,replica,路由,扩容以及reIndex。使得用户通过简单的配置就可以对ES实现开箱即用。但是对于开发人员,我们还是要理解ES隐藏的机制和架构,做到知其然也知其所以然。</p>
 <p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
           
-      
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/09/08/ElasticSearch分布式架构-5/#more" rel="contents">
+                Weiterlesen &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
       
     </div>
+
     
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/ElasticSearch/">ElasticSearch</a>
-    </div>
 
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/09/08/ElasticSearch分布式架构-5/#more">嘿嘿嘿、进来看看呗 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
     
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
   </div>
   
-</article>
-
-
-
-
-
-
-
-
-
   
   
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
-    </nav>
+  </article>
+
+
+    
+  </section>
+
   
-</div>
-      <footer id="footer">
-    <div class="outer">
-        <div id="footer-info">
-            <div class="footer-left">
-                &copy; 2018 Shuchang
-            </div>
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+  </nav>
+
+
+
+          </div>
+          
 
         </div>
         
-            <div class="visit">
-                
-                    <span id="busuanzi_container_site_pv" style='display:none'>
-                        <span id="site-visit" >到访数: 
-                            <span id="busuanzi_value_site_uv"></span>
-                        </span>
-                    </span>
-                
-                
-                    <span>, </span>
-                
-                
-                    <span id="busuanzi_container_page_pv" style='display:none'>
-                        <span id="page-visit">本页阅读量: 
-                            <span id="busuanzi_value_page_pv"></span>
-                        </span>
-                    </span>
-                
-            </div>
-        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
     </div>
-</footer>
-
-    </div>
-    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
-<script src="/js/main.js"></script>
-
-    <script>
-        $(document).ready(function() {
-            var backgroundnum = 24;
-            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
-            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
-            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
-        })
-    </script>
-
-
-
-
-
-<div class="scroll" id="scroll">
-    <a href="#"><i class="fa fa-arrow-up"></i></a>
-    <a href="#comments"><i class="fa fa-comments-o"></i></a>
-    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
-</div>
-<script>
-    $(document).ready(function() {
-        if ($("#comments").length < 1) {
-            $("#scroll > a:nth-child(2)").hide();
-        };
-    })
-</script>
-
-<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
-</script>
-
-  <script language="javascript">
-    $(function() {
-        $("a[title]").each(function() {
-            var a = $(this);
-            var title = a.attr('title');
-            if (title == undefined || title == "") return;
-            a.data('title', title).removeAttr('title').hover(
-
-            function() {
-                var offset = a.offset();
-                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
-                    top: offset.top - a.outerHeight() - 15,
-                    left: offset.left + a.outerWidth()/2 + 1
-                }).fadeIn(function() {
-                    var pop = $(this);
-                    setTimeout(function() {
-                        pop.remove();
-                    }, pop.text().length * 800);
-                });
-            }, function() {
-                $("#anchortitlecontainer").remove();
-            });
-        });
-    });
-</script>
-
-
   </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Shuchang</p>
+              <p class="site-description motion-element" itemprop="description">身怀利器，杀心自起，慎而重之</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">67</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shuchang</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Erstellt mit  <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.4.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
 </body>
 </html>
