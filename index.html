@@ -365,6 +365,206 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/27/表面理解jvm-类加载/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/11/27/表面理解jvm-类加载/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">jvm学习笔记-类加载</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-11-27 08:07:39" itemprop="dateCreated datePublished" datetime="2018-11-27T08:07:39+08:00">2018-11-27</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-11-28 16:41:44" itemprop="dateModified" datetime="2018-11-28T16:41:44+08:00">2018-11-28</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/jvm/" itemprop="url" rel="index"><span itemprop="name">jvm</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="宏观"><a href="#宏观" class="headerlink" title="宏观"></a>宏观</h2><blockquote>
+<p>当我们写好.java程序点击运行的时候发生了什么</p>
+</blockquote>
+<ol>
+<li>当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:</li>
+</ol>
+<ul>
+<li>以魔数Magic Number:0xCafeBabe开头</li>
+<li>ConstantPool:符号表</li>
+<li>FieldInfo:类成员变量表</li>
+<li>方法描述</li>
+<li>附加节点</li>
+<li>…</li>
+</ul>
+<ol>
+<li><p>有了.class文件我们就可以执行java命令运行java程序</p>
+</li>
+<li><p>首先JVM装载.class，也就是类加载器加载字节码。但是类加载器本身也是一个java类，所以它也需要被加载，幸运的是有一个类加载器是用c++编写的，叫做<code>Bootstrap类加载器</code>，属于虚拟机内核，用特定于操作系统的本地代码实现。Bootstrap类加载器负责加载javajava核心包中的类(rt.jar)，这些类的Class.getClassLoader()方法返回值会null，表示需要Bootstrap加载器来加载。JAVA核心包中还有两个类加载器:<code>ExtClassLoader</code>和<code>ApplicationClassLoader</code>。他们都用java语言编写，其中ExtClassLoader负责加载<java_home>/jre/lib/ext目录下的jar，ApplicationClassLoader负责加载应用程序的启动执行类，即当使用java命令去启动执行一个类时，JAVA虚拟机使用AppClassLoader加载这个类。所以这里有个小track就是把一些自己常用但是非java自带的jar放到ext目录下，这样就可以少写几个maven dependency。</java_home></p>
+</li>
+</ol>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/11/27/表面理解jvm-类加载/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/25/红黑树/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2007,186 +2207,6 @@
           
             <div class="post-button text-center">
               <a class="btn" href="/2018/09/18/rabbitmq高级特性/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/08/ElasticSearch分布式架构-5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/09/08/ElasticSearch分布式架构-5/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">系统学习ElasticSearch-分布式架构(5)</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-09-08 17:57:57" itemprop="dateCreated datePublished" datetime="2018-09-08T17:57:57+08:00">2018-09-08</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-09-18 18:03:04" itemprop="dateModified" datetime="2018-09-18T18:03:04+08:00">2018-09-18</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><img src="https://ws1.sinaimg.cn/large/0069RVTdgy1fv2aitojvfj30xk0e0aa6.jpg" alt=""></p>
-<p>ES是一套天生支持分布式的系统,分布式的目的是解决大数据量的问题。但是在我们使用的过程中,并没有对其分布式特性进行特殊配置。这时因为ES对用户隐藏了复杂的分布式机制,包括分片,集群发现,负载均衡,replica,路由,扩容以及reIndex。使得用户通过简单的配置就可以对ES实现开箱即用。但是对于开发人员,我们还是要理解ES隐藏的机制和架构,做到知其然也知其所以然。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/09/08/ElasticSearch分布式架构-5/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>

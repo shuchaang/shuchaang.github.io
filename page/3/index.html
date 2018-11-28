@@ -365,6 +365,202 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/03/Netty-新连接接入-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/07/03/Netty-新连接接入-3/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">Netty(3) 新连接接入</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-03 09:31:54" itemprop="dateCreated datePublished" datetime="2018-07-03T09:31:54+08:00">2018-07-03</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-07-05 14:15:41" itemprop="dateModified" datetime="2018-07-05T14:15:41+08:00">2018-07-05</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <blockquote>
+<p>提出两个问题</p>
+</blockquote>
+<ol>
+<li>Netty在哪里检测到新连接的接入</li>
+<li>新连接怎样注册到NioEventLoop线程</li>
+</ol>
+<p>我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤</p>
+<ol>
+<li><p>检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件</p>
+</li>
+<li><p>创建Channel:基于JDK的nioChannel创建出Netty NioSocketChannel</p>
+</li>
+<li><p>Netty给客户端channel分配NioEventLoop,并将channel绑定</p>
+</li>
+<li><p>向selector注册读事件</p>
+</li>
+</ol>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/07/03/Netty-新连接接入-3/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/02/Netty-NioEventLoop-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1933,200 +2129,6 @@
 <p>delete /索引名称/类型名称/ID</p>
 </blockquote>
 <p>这样在使用get方式就无法查询到这条数据啦</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/03/27/系统学习ElasticSearch-概念-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/03/27/系统学习ElasticSearch-概念-1/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">系统学习ElasticSearch-概念(1)</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-03-27 22:23:18" itemprop="dateCreated datePublished" datetime="2018-03-27T22:23:18+08:00">2018-03-27</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-03-28 23:08:45" itemprop="dateModified" datetime="2018-03-28T23:08:45+08:00">2018-03-28</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180328152224709191016.jpg" alt="20180328152224709191016.jpg"></p>
-<h2 id="Lucene和ES"><a href="#Lucene和ES" class="headerlink" title="Lucene和ES"></a>Lucene和ES</h2><p>lucene是最强大最先进的搜索库,但是直接基于lucene开发,api非常复杂,不易扩展,需要深入理解原理(索引结构)。</p>
-<p>ES直接基于lucene，隐藏复杂性，提供便利的rest API接口，强大之处在于</p>
-<ol>
-<li>分布式,便于扩展</li>
-<li>既可以作为搜索引擎,也可以作为数据分析引擎</li>
-<li>支持PB级数据</li>
-<li>开箱即用,优秀的默认设置,完全开源</li>
-</ol>
-<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><ol>
-<li>NRT(近实时):从数据写入到数据可以被搜索，延迟在秒级别。基于ES的搜索和分析耗时也在秒级别。</li>
-<li>Cluster(集群): 包含多个节点,节点属于哪个集群是通过集群名称来进行配置的,(默认elasticsearch)</li>
-<li>Node(节点): 每个节点都有名称(默认随机分配),默认会加入elasticsearch这个集群,如果启动一堆节点,就会自动加入elasticsearch集群。</li>
-<li>Document(文档): es中最小的数据单元,一个document可能是一条客户数据,一条订单数据,通常用json数据表示。每个index下的type，都可以存储多个document,每个document里都有多个field,一个field就是一个字段</li>
-<li>Index(索引): 包含一堆有相似结构的文档数据,比如有一个客户索引,订单索引等,索引都有名称,index可以包含多个document</li>
-<li>Type(类型): 每个索引里都有一个或多个type,type是index中的一个逻辑分类,一个type下的document,都有相同的field。比如一个blog,有用户数据type,博客评论type,评论数据type</li>
-<li>shard: 单台机器无法存储大量的数据,es可以将索引中的数据切分为多个shard,分布在多台机器上存储。有了shard就可以横向扩展，提高吞吐量和性能,每个shard都是一个lucene index</li>
-<li>replica: 任何一个服务器都有可能随时宕机,此时shard就有可能丢失,因此可以给shard创建多个replica副本,用于备份容灾</li>
-</ol>
-<h2 id="对比数据库"><a href="#对比数据库" class="headerlink" title="对比数据库"></a>对比数据库</h2><p>ES                数据库</p>
-<p>Document            行</p>
-<p>Type                表</p>
-<p>Index               库</p>
 
           
         
