@@ -410,7 +410,7 @@
                 
               
 
-              <time title="创建时间：2018-11-29 13:58:59 / 修改时间：19:21:21" itemprop="dateCreated datePublished" datetime="2018-11-29T13:58:59+08:00">2018-11-29</time>
+              <time title="创建时间：2018-11-29 13:58:59 / 修改时间：19:23:16" itemprop="dateCreated datePublished" datetime="2018-11-29T13:58:59+08:00">2018-11-29</time>
             
 
             
@@ -467,8 +467,7 @@
 
       
         
-          
-            <h2 id="重载与重写"><a href="#重载与重写" class="headerlink" title="重载与重写"></a>重载与重写</h2><p>重载与重写是java中相当重要的一组概念,java利用重载和重写实现了多态,看下面一个例子</p>
+          <h2 id="重载与重写"><a href="#重载与重写" class="headerlink" title="重载与重写"></a>重载与重写</h2><p>重载与重写是java中相当重要的一组概念,java利用重载和重写实现了多态,看下面一个例子</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">void invoke(Object obj, Object... args) &#123; ... &#125;</div><div class="line">void invoke(String s, Object obj, Object... args) &#123; ... &#125;</div><div class="line"></div><div class="line">invoke(null, 1);    // 调用第二个 invoke 方法</div><div class="line">invoke(null, 1, 2); // 调用第二个 invoke 方法</div></pre></td></tr></table></figure>
 <p>在java中,如果一个类中存在相同名字的函数,并且参数也相同,那么它是无法通过编译的。那么就需要修改参数类型让他们不同,这种方法之间的关系,就是重载。</p>
 <p>重载的方法在编译阶段就可以识别,有以下几个原则:</p>
@@ -485,29 +484,16 @@
 </ol>
 <p>除了同一个类中的方法,重载也可以作用于父类与子类之间,如果子类定义了与父类方法名称相同而参数类型不同,那么这两个方法也构成了重载。</p>
 <p>那么如果子类定义了与父类非私有方法同名的方法,并且参数类型也相同,那么这时子类重写了父类的方法。方法的重写,正是多态的一种重要体现方式,它允许子类继承父类部分功能的同时,拥有自己独特的行为。</p>
-<h2 id="jvm静态绑定与动态绑定"><a href="#jvm静态绑定与动态绑定" class="headerlink" title="jvm静态绑定与动态绑定"></a>jvm静态绑定与动态绑定</h2><p>jvm标识一个方法的依据是类名+方法名+方法描述符,方法描述符就是参数类型和返回类型构成。<br>对于方法冲突的情况,jvm会在验证阶段报错。</p>
-<p>对于重载方法的区分,在java编译时期就可以区分,因此重载也叫做静态绑定,或者编译时多态。<br>而重写方法是在运行时确定的,所以也叫做动态绑定或者运行时多态。</p>
-<p>当然上面的说法在某些情况下就不太严谨,例如某个类中的重载方法被它的子类重写,那么jvm就会将这个方法编译为动态绑定的类型。</p>
-<p>更准确的说,jvm的静态绑定指的是在解析时能够直接识别目标的情况,而动态绑定则是依据运行时调用者的动态类型来识别目标的情况。</p>
-<h2 id="重写方法-桥接"><a href="#重写方法-桥接" class="headerlink" title="重写方法-桥接"></a>重写方法-桥接</h2><p>对于方法重写,jvm与java的判断条件是不同的。对于java来说,只要方法的名称和参数名称相同,则构成重写。<br>而对于jvm来说,不同的返回值所构成的方法描述符是不同的,所以对于jvm来说并没有构成重写。举个栗子:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">public class Merchant &#123;</div><div class="line">    public Number actionPrice(double price) &#123;</div><div class="line">        return price * 0.8;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class NaiveMerchant extends Merchant &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Double actionPrice(double price) &#123;</div><div class="line">        return 0.9 * price;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Merchant merchant = new NaiveMerchant();</div><div class="line">        // price 必须定义成 Number 类型 </div><div class="line">        Number price = merchant.actionPrice(40);</div><div class="line">        System.out.println(price);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>在上面的代码中,父类与子类的返回类型是不同的,java对其判断为重写方法,那么这时jvm如何处理呢,因为jvm只有当方法的方法描述也相同才判断为重写方法</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">javac Merchant.java NaiveMerchant.java</div><div class="line"></div><div class="line">javap -v NaiveMerchant</div></pre></td></tr></table></figure>
-<p>我们通过反编译查看字节码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"> public java.lang.Double actionPrice(double);</div><div class="line">    descriptor: (D)Ljava/lang/Double;</div><div class="line">    flags: ACC_PUBLIC</div><div class="line">    Code:</div><div class="line">      stack=4, locals=3, args_size=2</div><div class="line">         0: dload_1</div><div class="line">         1: ldc2_w        #2                  // double 0.9d</div><div class="line">         4: dmul</div><div class="line">         5: invokestatic  #4                  // Method java/lang/Double.valueOf:(D)Ljava/lang/Double;</div><div class="line">         8: areturn</div><div class="line">      LineNumberTable:</div><div class="line">        line 13: 0</div><div class="line"></div><div class="line">// 桥接方法         </div><div class="line">public java.lang.Number actionPrice(double);</div><div class="line">    descriptor: (D)Ljava/lang/Number;</div><div class="line">    flags: ACC_PUBLIC, ACC_BRIDGE, ACC_SYNTHETIC</div><div class="line">    Code:</div><div class="line">      stack=3, locals=3, args_size=2</div><div class="line">         0: aload_0</div><div class="line">         1: dload_1</div><div class="line">         2: invokevirtual #12                 // Method actionPrice:(D)Ljava/lang/Double;</div><div class="line">         5: areturn</div><div class="line">      LineNumberTable:</div><div class="line">        line 9: 0</div></pre></td></tr></table></figure>
-<p>可以看到这里生成了两个方法,第二个方法的flags描述为ACC_BRIDGE,为了保持重写的语义，Java 编译器会在 NaiveMerchant 的字节码文件中自动生成一个桥接方法来保证重写语义。<br>当子类在继承父类的一个泛型方法、或子类实现一个接口的泛型方法,编译器也会在子类的 class 文件中自动生成桥接方法。</p>
-<h2 id="调用相关指令"><a href="#调用相关指令" class="headerlink" title="调用相关指令"></a>调用相关指令</h2><p>java字节码中与调用相关的指令共有5种:</p>
-<ul>
-<li>invokestatic      调用静态方法(static)</li>
-<li>invokedynamic     调用动态方法</li>
-<li>invokevirtual     调用非私有实例方法</li>
-<li>invokespecial     调用私有实例方法,构造器,super,实现接口的默认方法</li>
-<li>invokeinterface   调用接口</li>
-</ul>
-<h2 id="常量池"><a href="#常量池" class="headerlink" title="常量池"></a>常量池</h2><p>在编译的过程中,并不知道方法的具体内存地址。因此编译器会暂时使用一个符号引用来表示该方法。符号引用存储在class文件的常量池中,上面字节码中#12 #4就表示符号引用,常量池会显示在class文件的头部</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">Constant pool:</div><div class="line">   #1 = Methodref          #12.#28        // java/lang/Object.&quot;&lt;init&gt;&quot;:()V</div><div class="line">   #2 = Fieldref           #29.#30        // java/lang/System.out:Ljava/io/PrintStream;</div><div class="line">   #3 = String             #31            // action 1</div><div class="line">   #4 = Methodref          #32.#33        // java/io/PrintStream.println:(Ljava/lang/String;)V</div><div class="line">   #5 = InvokeDynamic      #0:#37         // #0:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;</div><div class="line">   #6 = String             #38            // test int</div><div class="line">...</div></pre></td></tr></table></figure>
-
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
           
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/11/29/jvm学习笔记-重载与重写/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
         
       
     </div>

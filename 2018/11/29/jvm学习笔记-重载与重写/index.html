@@ -116,7 +116,7 @@
 <meta property="og:site_name" content="ShuChang&#39;s Blog">
 <meta property="og:description" content="重载与重写重载与重写是java中相当重要的一组概念,java利用重载和重写实现了多态,看下面一个例子 123456void invoke(Object obj, Object... args) &amp;#123; ... &amp;#125;void invoke(String s, Object obj, Object... args) &amp;#123; ... &amp;#125;invoke(null, 1);">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-11-29T11:21:21.853Z">
+<meta property="og:updated_time" content="2018-11-29T11:23:16.256Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="jvm学习笔记-重载与重写">
 <meta name="twitter:description" content="重载与重写重载与重写是java中相当重要的一组概念,java利用重载和重写实现了多态,看下面一个例子 123456void invoke(Object obj, Object... args) &amp;#123; ... &amp;#125;void invoke(String s, Object obj, Object... args) &amp;#123; ... &amp;#125;invoke(null, 1);">
@@ -408,7 +408,7 @@
                 
               
 
-              <time title="创建时间：2018-11-29 13:58:59 / 修改时间：19:21:21" itemprop="dateCreated datePublished" datetime="2018-11-29T13:58:59+08:00">2018-11-29</time>
+              <time title="创建时间：2018-11-29 13:58:59 / 修改时间：19:23:16" itemprop="dateCreated datePublished" datetime="2018-11-29T13:58:59+08:00">2018-11-29</time>
             
 
             
@@ -491,6 +491,10 @@
 </ol>
 <p>除了同一个类中的方法,重载也可以作用于父类与子类之间,如果子类定义了与父类方法名称相同而参数类型不同,那么这两个方法也构成了重载。</p>
 <p>那么如果子类定义了与父类非私有方法同名的方法,并且参数类型也相同,那么这时子类重写了父类的方法。方法的重写,正是多态的一种重要体现方式,它允许子类继承父类部分功能的同时,拥有自己独特的行为。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br><a id="more"></a></excerpt></p>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+
 <h2 id="jvm静态绑定与动态绑定"><a href="#jvm静态绑定与动态绑定" class="headerlink" title="jvm静态绑定与动态绑定"></a>jvm静态绑定与动态绑定</h2><p>jvm标识一个方法的依据是类名+方法名+方法描述符,方法描述符就是参数类型和返回类型构成。<br>对于方法冲突的情况,jvm会在验证阶段报错。</p>
 <p>对于重载方法的区分,在java编译时期就可以区分,因此重载也叫做静态绑定,或者编译时多态。<br>而重写方法是在运行时确定的,所以也叫做动态绑定或者运行时多态。</p>
 <p>当然上面的说法在某些情况下就不太严谨,例如某个类中的重载方法被它的子类重写,那么jvm就会将这个方法编译为动态绑定的类型。</p>
@@ -512,7 +516,7 @@
 </ul>
 <h2 id="常量池"><a href="#常量池" class="headerlink" title="常量池"></a>常量池</h2><p>在编译的过程中,并不知道方法的具体内存地址。因此编译器会暂时使用一个符号引用来表示该方法。符号引用存储在class文件的常量池中,上面字节码中#12 #4就表示符号引用,常量池会显示在class文件的头部</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">Constant pool:</div><div class="line">   #1 = Methodref          #12.#28        // java/lang/Object.&quot;&lt;init&gt;&quot;:()V</div><div class="line">   #2 = Fieldref           #29.#30        // java/lang/System.out:Ljava/io/PrintStream;</div><div class="line">   #3 = String             #31            // action 1</div><div class="line">   #4 = Methodref          #32.#33        // java/io/PrintStream.println:(Ljava/lang/String;)V</div><div class="line">   #5 = InvokeDynamic      #0:#37         // #0:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;</div><div class="line">   #6 = String             #38            // test int</div><div class="line">...</div></pre></td></tr></table></figure>
-
+</the>
       
     </div>
 
