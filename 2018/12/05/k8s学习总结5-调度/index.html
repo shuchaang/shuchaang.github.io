@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="K8S调度器的主要任务就是为Pod寻找一个合适的Node。 默认调度器K8S提供了默认调度器,它的主要流程是:根据Predicate算法检查每个Node。然后再调用Priority算法给Node打分。最终调度结果就是选择分数最高的那个Node。 K8S调度算法的流程如下:  主要是两个循环过程: 第一个循环informer负责监听etcd中Pod、Node、Service等需要调度的组件。一旦发现">
+<meta name="keywords" content="K8S,Docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k8s学习总结5-调度">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/12/05/k8s学习总结5-调度/index.html">
+<meta property="og:site_name" content="ShuChang&#39;s Blog">
+<meta property="og:description" content="K8S调度器的主要任务就是为Pod寻找一个合适的Node。 默认调度器K8S提供了默认调度器,它的主要流程是:根据Predicate算法检查每个Node。然后再调用Priority算法给Node打分。最终调度结果就是选择分数最高的那个Node。 K8S调度算法的流程如下:  主要是两个循环过程: 第一个循环informer负责监听etcd中Pod、Node、Service等需要调度的组件。一旦发现">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNbRwgy1fxvz4mqinzj312u0nowfp.jpg">
+<meta property="og:updated_time" content="2018-12-06T11:37:28.097Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="k8s学习总结5-调度">
+<meta name="twitter:description" content="K8S调度器的主要任务就是为Pod寻找一个合适的Node。 默认调度器K8S提供了默认调度器,它的主要流程是:根据Predicate算法检查每个Node。然后再调用Priority算法给Node打分。最终调度结果就是选择分数最高的那个Node。 K8S调度算法的流程如下:  主要是两个循环过程: 第一个循环informer负责监听etcd中Pod、Node、Service等需要调度的组件。一旦发现">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNbRwgy1fxvz4mqinzj312u0nowfp.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.shuchang.sc.com/2018/12/05/k8s学习总结5-调度/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>k8s学习总结5-调度 | ShuChang's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ShuChang's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">剑来!</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">21</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">18</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">73</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/05/k8s学习总结5-调度/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">k8s学习总结5-调度
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-05 16:05:02" itemprop="dateCreated datePublished" datetime="2018-12-05T16:05:02+08:00">2018-12-05</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-06 19:37:28" itemprop="dateModified" datetime="2018-12-06T19:37:28+08:00">2018-12-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/12/05/k8s学习总结5-调度/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2018/12/05/k8s学习总结5-调度/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>K8S调度器的主要任务就是为Pod寻找一个合适的Node。</p>
+<h2 id="默认调度器"><a href="#默认调度器" class="headerlink" title="默认调度器"></a>默认调度器</h2><p>K8S提供了默认调度器,它的主要流程是:根据Predicate算法检查每个Node。然后再调用Priority算法给Node打分。最终调度结果就是选择分数最高的那个Node。</p>
+<p>K8S调度算法的流程如下:</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fxvz4mqinzj312u0nowfp.jpg" alt=""></p>
+<p>主要是两个循环过程:</p>
+<p>第一个循环informer负责监听etcd中Pod、Node、Service等需要调度的组件。一旦发现informer就将它放入一个优先级队列。</p>
+<p>第二个循环是Scheduling Path,不断从优先队列中取出一个Pod,使用Predicate算法过滤出一组Node,Node的信息从Cache中获取。选出一个合适的Node之后,调度器就会进行绑定操作,将Pod的nodeName填写为筛选出的Node名称。</p>
+<h2 id="Predicates"><a href="#Predicates" class="headerlink" title="Predicates"></a>Predicates</h2><p>K8S中Predicates算法默认提供四种调度策略:</p>
+<h3 id="GeneralPredicates"><a href="#GeneralPredicates" class="headerlink" title="GeneralPredicates"></a>GeneralPredicates</h3><p>这是第一组过滤策略,也是最基础的调度规则。目的就是根据yaml配置文件检查硬件资源是否充足,端口是否冲突。由于调度策略采用了无锁化设计,所以当一个Pod被调度到Node上时,Node会再次执行一遍这个策略。</p>
+<h3 id="Volume相关过滤"><a href="#Volume相关过滤" class="headerlink" title="Volume相关过滤"></a>Volume相关过滤</h3><p>这组规则主要对Volume进行过滤。</p>
+<p>首先是NoDiskconflict,检查Pod声明挂载的volume是否存在冲突。</p>
+<p>接着是MaxPDVolumeCountPredicate,判断节点某种volume类型是否超过上限。</p>
+<p>接着是VolumeBindingPredicate,主要作用是判断节点亲和性。</p>
+<h3 id="宿主机相关过滤规则"><a href="#宿主机相关过滤规则" class="headerlink" title="宿主机相关过滤规则"></a>宿主机相关过滤规则</h3><p>这组规则是判断Pod是否满足Node的某些条件。</p>
+<p>例如配置了PodToleratesNodeTaints字段,只有当Pod的Toleration和Node的taint字段相匹配,才能调度到该节点。</p>
+<h3 id="Pod相关过滤规则"><a href="#Pod相关过滤规则" class="headerlink" title="Pod相关过滤规则"></a>Pod相关过滤规则</h3><p>这组检查和GeneralPredicates有很多重合,比较特殊的一点是PodAffinityPredicate。用来检查Node上Pod之间的亲密和反亲密关系。</p>
+<p>上面这四种类型的 Predicates，就构成了调度器确定一个Node可以运行待调度Pod的基本策略。</p>
+<h2 id="Priorites"><a href="#Priorites" class="headerlink" title="Priorites"></a>Priorites</h2><p>Proorites根据算法对选出的Node打分,最常用的是LeastRequestedPriority</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">score = (cpu((capacity-sum(requested))10/capacity) + memory((capacity-sum(requested))10/capacity))/2</div></pre></td></tr></table></figure>
+<p>其实就是选择内存和CPU最多的主机,除此之外还有NodeAffinityPriority,TaintTolerationPriority以及InterPodAffinityPriority。</p>
+<h2 id="优先级与抢占机制"><a href="#优先级与抢占机制" class="headerlink" title="优先级与抢占机制"></a>优先级与抢占机制</h2><h3 id="优先级"><a href="#优先级" class="headerlink" title="优先级"></a>优先级</h3><p>首先要明确的是,优先级与抢占解决的是Pod调度失败的问题。</p>
+<p>通常情况下,调度失败的Pod会被搁置,直到出现满足条件的Node才能再次调度。但是如果这个Pod是一个优先级非常高的系统,我们希望能通过减少一部分优先度低的Pod,给优先级高的Pod空出位置。</p>
+<p>在K8S 1.10版本提供了优先级与抢占机制,首先要定义一个PriorityClass类型的yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">apiVersion: scheduling.k8s.io/v1beta1</div><div class="line">kind: PriorityClass</div><div class="line">metadata:</div><div class="line">  name: high-priority</div><div class="line">value: 1000000</div><div class="line">globalDefault: false</div><div class="line">description: &quot;This priority class should be used for high priority service pods only.&quot;</div></pre></td></tr></table></figure>
+<p>这里定义了优先级为1000000的配置文件,globalDefault如果设置为true,就会将Pod的默认优先级定义为1000000,而实际默认是0。优先级最大为10亿,超过10亿为K8S内部的Pod。</p>
+<p>定义过后就可以在Pod中使用:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: Pod</div><div class="line">metadata:</div><div class="line">  name: nginx</div><div class="line">  labels:</div><div class="line">    env: test</div><div class="line">spec:</div><div class="line">  containers:</div><div class="line">  - name: nginx</div><div class="line">    image: nginx</div><div class="line">    imagePullPolicy: IfNotPresent</div><div class="line">  priorityClassName: high-priority</div></pre></td></tr></table></figure>
+<p>经过配置之后,调度队列就会将这个Pod就会比优先级低的Pod提前出队。</p>
+<h3 id="抢占"><a href="#抢占" class="headerlink" title="抢占"></a>抢占</h3><p>抢占机制相比优先级要复杂的多。当一个高优先级的Pod调度失败之后,就会触发抢占机制。抢占的大概过程如下:</p>
+<p>k8s选出优先级较低的Pod所在的Node节点,将抢占者的spec.nominatedNodeName填写为该Node,然后将该pod重新入队。如果在下个周期,这个Pod没有抢到node(出现了优先级更高的pod),将spec.nominatedNodeName去掉重新入队,如果抢占成功,则让被抢占节点优雅退出(delete api),将新pod部署。</p>
+<p>接下来讲述一下详细原理,我们将这个Pod称为抢占者,旧的节点称为牺牲者:</p>
+<p>抢占的重要设计就是在调度队列的实现里,实现了两个不同的队列。</p>
+<ol>
+<li><p>activeQ: 存放下个周期需要调度的Pod</p>
+</li>
+<li><p>unschedulableQ: 用于存放调度失败的Pod,当这个队列中的Pod被更新时,k8s将它重新放入activeq。</p>
+</li>
+</ol>
+<p>在这里发生调度失败,也就是节点入队时会去触发寻找牺牲者的流程。</p>
+<p>首先调度器检查这次调度失败的原因,用来确认抢占机制可以实现重新调度。</p>
+<p>如果抢占可以发生,调度器将缓存的所有节点信息复制一份,然后利用副本去模拟一遍抢占过程。</p>
+<p>模拟成功之后会选出一个最佳Node,接着调度器就会开始真正的抢占操作:</p>
+<p>首先检查牺牲者列表,清理Pod的spec.nominatedNodeName字段</p>
+<p>为抢占者设置spec.nominatedNodeName属性</p>
+<p>开启协程,删除旧Pod,完成抢占</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>赏口饭吧</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Shuchang 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="Shuchang 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/K8S/" rel="tag"># K8S</a>
+          
+            <a href="/tags/Docker/" rel="tag"># Docker</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/04/mysql之redo-log和undo-log/" rel="next" title="mysql之日志模块">
+                <i class="fa fa-chevron-left"></i> mysql之日志模块
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/06/jms-消息结构/" rel="prev" title="JMS(1)-消息结构">
+                JMS(1)-消息结构 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/123.png"
+                alt="Shuchang" />
+            
+              <p class="site-author-name" itemprop="name">Shuchang</p>
+              <p class="site-description motion-element" itemprop="description">身怀利器，杀心自起，慎而重之</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">73</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">21</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://gitee.com/swiftsc" title="GitHub &rarr; https://gitee.com/swiftsc" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/shuchang0403@gmail.com" title="E-Mail &rarr; shuchang0403@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#默认调度器"><span class="nav-number">1.</span> <span class="nav-text">默认调度器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Predicates"><span class="nav-number">2.</span> <span class="nav-text">Predicates</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GeneralPredicates"><span class="nav-number">2.1.</span> <span class="nav-text">GeneralPredicates</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Volume相关过滤"><span class="nav-number">2.2.</span> <span class="nav-text">Volume相关过滤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#宿主机相关过滤规则"><span class="nav-number">2.3.</span> <span class="nav-text">宿主机相关过滤规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pod相关过滤规则"><span class="nav-number">2.4.</span> <span class="nav-text">Pod相关过滤规则</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Priorites"><span class="nav-number">3.</span> <span class="nav-text">Priorites</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优先级与抢占机制"><span class="nav-number">4.</span> <span class="nav-text">优先级与抢占机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优先级"><span class="nav-number">4.1.</span> <span class="nav-text">优先级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抢占"><span class="nav-number">4.2.</span> <span class="nav-text">抢占</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">  <a href="http://www.miitbeian.gov.cn" rel="noopener" target="_blank">浙ICP备17049505号 </a>&copy; 2015 – <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shuchang</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+      
+  
+  <script type="text/javascript" color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname,
+            owner: 'shuchaang',
+            repo: 'shuchaang.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+            
+                client_id: 'c5aa96bb5e5656512174'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function (i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap')
+      $(e).after($wrap)
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+        var code = $(this).parent().find('.code').find('.line').map(function (i, e) {
+          return $(e).text()
+        }).toArray().join('\n')
+        var ta = document.createElement('textarea')
+        document.body.appendChild(ta)
+        ta.style.position = 'absolute'
+        ta.style.top = '0px'
+        ta.style.left = '0px'
+        ta.value = code
+        ta.select()
+        ta.focus()
+        var result = document.execCommand('copy')
+        document.body.removeChild(ta)
+        
+          if(result)$(this).text('复制成功')
+          else $(this).text('复制失败')
+        
+        $(this).blur()
+      })).on('mouseleave', function (e) {
+        var $b = $(this).find('.copy-btn')
+        setTimeout(function () {
+          $b.text('复制')
+        }, 300)
+      }).append(e)
+    })
+  </script>
+
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>

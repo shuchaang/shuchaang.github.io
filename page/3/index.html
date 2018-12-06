@@ -256,7 +256,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">20</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">21</span></a>
 
   </li>
         
@@ -275,7 +275,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">17</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">18</span></a>
 
   </li>
         
@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">69</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">73</span></a>
 
   </li>
         
@@ -349,6 +349,733 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/22/Netty-9-Netty中的设计模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/07/22/Netty-9-Netty中的设计模式/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">Netty(9) Netty中的设计模式</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-22 12:17:22 / 修改时间：15:37:28" itemprop="dateCreated datePublished" datetime="2018-07-22T12:17:22+08:00">2018-07-22</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="单例"><a href="#单例" class="headerlink" title="单例"></a>单例</h2><ul>
+<li><p>一个类全局只有一个对象</p>
+</li>
+<li><p>延迟加载</p>
+</li>
+<li><p>线程安全</p>
+</li>
+</ul>
+<blockquote>
+<p>ReadTimeOutException</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public final class ReadTimeoutException extends TimeoutException &#123;</div><div class="line"></div><div class="line">    private static final long serialVersionUID = 169287984113283421L;</div><div class="line"></div><div class="line">    public static final ReadTimeoutException INSTANCE = new ReadTimeoutException();</div><div class="line"></div><div class="line">    private ReadTimeoutException() &#123; &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里通过private修饰保证了全局只有一个实例</p>
+<p>当我们没有使用到这个类的时候,static变量保证了它是不会被初始化的,这样就保证了延迟加载</p>
+<p>最后我们注意到这个class 使用final修饰的,这样在初始化的时候jvm会默认加上一个同步代码块,保证线程安全</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/07/22/Netty-9-Netty中的设计模式/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/09/Netty-8-性能优化工具类/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/07/09/Netty-8-性能优化工具类/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">Netty(8) 性能优化工具类</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-09 18:37:46" itemprop="dateCreated datePublished" datetime="2018-07-09T18:37:46+08:00">2018-07-09</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-07-22 12:17:46" itemprop="dateModified" datetime="2018-07-22T12:17:46+08:00">2018-07-22</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>Netty中有两个比较常见的优化工具类</p>
+<ul>
+<li>FastThreadLocal</li>
+<li>Recycler对象池</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">public class FastThreadLocalTest &#123;</div><div class="line">    private static FastThreadLocal&lt;Object&gt; threadLocal = new FastThreadLocal&lt;Object&gt;()&#123;</div><div class="line">        @Override</div><div class="line">        protected Object initialValue() throws Exception &#123;</div><div class="line">            return new Object();</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        new Thread(()-&gt;&#123;</div><div class="line">            Object o = threadLocal.get();</div><div class="line">            System.out.println(o);</div><div class="line">        &#125;).start();</div><div class="line">        new Thread(()-&gt;&#123;</div><div class="line">            Object o = threadLocal.get();</div><div class="line">            System.out.println(o);</div><div class="line">        &#125;).start();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过这个简单的test,多次打印object的内存地址,就会发现一个object被多次复用。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/07/09/Netty-8-性能优化工具类/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/08/Netty-7-编码/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/07/08/Netty-7-编码/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">Netty(7) 编码</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-08 11:46:40 / 修改时间：22:49:43" itemprop="dateCreated datePublished" datetime="2018-07-08T11:46:40+08:00">2018-07-08</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <blockquote>
+<p>一个问题</p>
+</blockquote>
+<p>Netty如何将对象编码成字节流,写到socket底层</p>
+<p>这里我们在 服务端添加两个handler</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">new Encoder();</div><div class="line">new BizHandler();</div><div class="line"></div><div class="line"></div><div class="line">public class BizHandler extends ChannelInboundHandlerAdapter &#123;</div><div class="line">    @Override</div><div class="line">    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception &#123;</div><div class="line">        User u = new User(&quot;sc&quot;,12);</div><div class="line">        ctx.channel().writeAndFlush(u);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Encoder extends MessageToByteEncoder&lt;User&gt; &#123;</div><div class="line">    @Override</div><div class="line">    protected void encode(ChannelHandlerContext ctx, User user, ByteBuf out) throws Exception &#123;</div><div class="line">        byte[] bytes = user.getName().getBytes();</div><div class="line">        out.writeInt(4+bytes.length);</div><div class="line">        out.writeInt(user.getAge());</div><div class="line">        out.writeBytes(bytes);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里的Encode方法使用了如下的编码方式:第一个字段为正整数长度,在java平台上统一为4字节,第二个Age正整数,为4个字节,Name是可变长度的string类型。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> *  -------------------------</div><div class="line"> * | Length |   Age |    Name|</div><div class="line"> * ---------------------------</div><div class="line"> * |    4   |   4   |    ??   |</div><div class="line"> * --------------------------</div><div class="line"> */</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/07/08/Netty-7-编码/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/07/Netty-6-解码/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/07/07/Netty-6-解码/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">Netty(6) 解码</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-07 20:32:32" itemprop="dateCreated datePublished" datetime="2018-07-07T20:32:32+08:00">2018-07-07</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-07-08 01:04:53" itemprop="dateModified" datetime="2018-07-08T01:04:53+08:00">2018-07-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>所谓解码,就是讲二进制数据流解析为指定协议的数据包,之后交给业务逻辑进行处理。</p>
+<blockquote>
+<p>两个问题</p>
+</blockquote>
+<p>解码器抽象的解码过程</p>
+<p>Netty有哪些开箱即用的解码器</p>
+<h2 id="基类ByteToMessageDecoder"><a href="#基类ByteToMessageDecoder" class="headerlink" title="基类ByteToMessageDecoder"></a>基类ByteToMessageDecoder</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">累加字节流</div><div class="line">调用子类的decode方法进行解析</div><div class="line">将解析的ByteBuf向下传播</div></pre></td></tr></table></figure>
+<p>进入channelRead方法,这里将传入的数据包装为bytebuf然后交给cumulator,将数据进行累加。然后调用callDecode方法,利用不同的子类实现进行解析,将解析后的结果放在List<object> out中</object></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cumulation = cumulator.cumulate(ctx.alloc(), cumulation, data);</div><div class="line"></div><div class="line">callDecode(ctx, cumulation, out);</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/07/07/Netty-6-解码/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -1476,713 +2203,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/06/24/Kafka-Streaming-分支/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/06/24/Kafka-Streaming-分支/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">Kafka Streaming 分支</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-06-24 11:20:48 / 修改时间：11:22:08" itemprop="dateCreated datePublished" datetime="2018-06-24T11:20:48+08:00">2018-06-24</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="Branch"><a href="#Branch" class="headerlink" title="Branch"></a>Branch</h2><p>首先创建一个输入源 topic s-in,有多个partition</p>
-<ul>
-<li>./kafka-topics.sh –create –topic s-in –partitions 3 –zookeeper localhost:2181 –replication-factor 1 </li>
-<li>./kafka-topics.sh –create –topic s1 –partitions 1 –zookeeper localhost:2181 –replication-factor 1 </li>
-<li>./kafka-topics.sh –create –topic s2 –partitions 1 –zookeeper localhost:2181 –replication-factor 1 </li>
-</ul>
-<p>我们可以通过一定的业务逻辑判断,让stream将不同的消息处理后发送给不同的topic,这里简单的通过判断字符串长度,发送给s1和s2两个不同的topic</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/06/24/Kafka-Streaming-分支/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/06/24/Kafka-Streaming-入门/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/06/24/Kafka-Streaming-入门/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">Kafka Streaming 入门</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-06-24 11:19:33 / 修改时间：11:21:55" itemprop="dateCreated datePublished" datetime="2018-06-24T11:19:33+08:00">2018-06-24</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fsl9w3d2iqj30fp05edgr.jpg" alt=""></p>
-<h2 id="什么是流式计算"><a href="#什么是流式计算" class="headerlink" title="什么是流式计算"></a>什么是流式计算</h2><p>流的本质特征是one pass和sequence。可以想象一条管道,数据经过管道,在管道内经过一系列计算。数据以流的形式,不可逆的向前流动。大多数将响应异步的返回,然后增量地更新。一句话概括就是持续输入,持续输出,各个输入输出之间没有明显的边界。</p>
-<h2 id="Kafka-Stream-优势在哪"><a href="#Kafka-Stream-优势在哪" class="headerlink" title="Kafka Stream 优势在哪"></a>Kafka Stream 优势在哪</h2><ol>
-<li>目前流式计算已经有了很多成熟的框架,如spark streaming,strom以及flink。这些框架对于kafka的劣势就在于过于笨重,非常依赖于框架本身的调度,需要将流式的作业提交到计算平台,通过平台来计算。而Kafka流式计算则是提供一个库,通过调用Api即可实现流式计算,但是这些Api的数据来源都必须是一个Topic。所以相比于其他流式计算框架,Kafka streaming 更加轻量,仅依赖kafka本身。 </li>
-</ol>
-<p>但是Kafka streaming并不可能去替代spark streaming这样一种流计算框架,可以把它视作spark streaming的local model</p>
-<ol>
-<li>由于kafka本身提供了诸如partition,replica,reblance,数据持久化等机制,所以Kafka streaming可以在线动态调整并行度,实现重新消费或者数据回滚等操作</li>
-</ol>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/06/24/Kafka-Streaming-入门/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/06/24/Kafka消息可靠性保证/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/06/24/Kafka消息可靠性保证/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">Kafka消息可靠性保证</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-06-24 11:16:38 / 修改时间：11:22:27" itemprop="dateCreated datePublished" datetime="2018-06-24T11:16:38+08:00">2018-06-24</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1fs9xddv57oj30gm0933z8.jpg" alt=""></p>
-<h2 id="Reliability-Guarantees"><a href="#Reliability-Guarantees" class="headerlink" title="Reliability Guarantees"></a>Reliability Guarantees</h2><p>kafka会把每个topic分为若干个partition。可以把topic理解为一个表,partition就是它的多个分区,一个partition会存放到单独的一个磁盘。每个partition都有多个副本(replica),其中一个会被选举为leader,所有的读写操作都是由leader来执行，其他的副本仅仅是用来维持一个In-Sync的状态,也就是说follower会不断地向leader发起一些fetch request，获取数据。</p>
-<p>一个副本被认为是处于In-Sync(可参与leader选举)的状态必须满足几个条件:</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/06/24/Kafka消息可靠性保证/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/03/31/系统学习ElasticSearch-聚合分析-4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">系统学习ElasticSearch-简单聚合分析(4)</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-03-31 14:25:43" itemprop="dateCreated datePublished" datetime="2018-03-31T14:25:43+08:00">2018-03-31</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-06-24 11:25:43" itemprop="dateModified" datetime="2018-06-24T11:25:43+08:00">2018-06-24</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>环境方面继续使用上一篇的数据环境,根据模拟不同的需求,体验不同的聚合分析语法</p>
-<ol>
-<li>简单聚合: 计算每个tag下的商品数量</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">GET /ecomic/product/_search</div><div class="line">&#123;</div><div class="line">  &quot;aggs&quot;: &#123;</div><div class="line">    &quot;group_by_tag&quot;: &#123;</div><div class="line">      &quot;terms&quot;: &#123;</div><div class="line">        &quot;field&quot;: &quot;tags&quot;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/03/31/系统学习ElasticSearch-聚合分析-4/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2229,7 +2254,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">69</span>
+                    <span class="site-state-item-count">73</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2276,7 +2301,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">17</span>
+                      
+                    
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -2329,7 +2356,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">20</span>
+                      
+                    
+                    <span class="site-state-item-count">21</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>

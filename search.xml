@@ -1,6 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[JMS(3)-JMS API结构]]></title>
+    <url>%2F2018%2F12%2F06%2FJMS-3-JMS%E7%BB%93%E6%9E%84%2F</url>
+    <content type="text"><![CDATA[JMS API的结构还是比较简单的。 创建一个JMS的基本步骤是: 创建JMS ConnectionFactory 通过ConnectionFactory创建一个Connection 通过Connection创建jms session 创建destination、producer、consumer 发送消息 关闭资源 JmsTempate在Springboot中一般使用JmsTempate进行操作,所以对照上面的过程,看一下template是如何进行封装的。 引入Pom 123456789&lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-activemq&lt;/artifactId&gt;&lt;/dependency&gt;&lt;dependency&gt; &lt;groupId&gt;org.apache.activemq&lt;/groupId&gt; &lt;artifactId&gt;activemq-pool&lt;/artifactId&gt;&lt;/dependency&gt; code 首先在启动类上添加注解@EnableJms,会启动一些JMS的自动配置,包括JmsTempate。 12345public JmsTemplate(ConnectionFactory connectionFactory) &#123; this(); setConnectionFactory(connectionFactory); afterPropertiesSet(); &#125; JmsTemplate的构造函数中需要一个ConnectionFactory,因此会先实例化一个ConnectionFactory。也就对应了上面过程中的第一步。 当注入JmsTemplate我们就可以调用send方法进行消息发送,非常简单。但正是因为它封装的太好了,我们反而不容易了解它的具体实现细节,所以进入send方法的源码 123456public void send(final Destination destination, final MessageCreator messageCreator) throws JmsException &#123; execute(session -&gt; &#123; doSend(session, destination, messageCreator); return null; &#125;, false); &#125; send方法调用了内部方法execute,而且我们看到一个关键参数名session,这里是一个lambda表达式,在session内封装了消息和destination,然后丢进execute方法。 12345678910111213141516171819202122232425262728public &lt;T&gt; T execute(SessionCallback&lt;T&gt; action, boolean startConnection) throws JmsException &#123; Assert.notNull(action, &quot;Callback object must not be null&quot;); Connection conToClose = null; Session sessionToClose = null; try &#123; Session sessionToUse = ConnectionFactoryUtils.doGetTransactionalSession( obtainConnectionFactory(), this.transactionalResourceFactory, startConnection); if (sessionToUse == null) &#123; conToClose = createConnection(); sessionToClose = createSession(conToClose); if (startConnection) &#123; conToClose.start(); &#125; sessionToUse = sessionToClose; &#125; if (logger.isDebugEnabled()) &#123; logger.debug(&quot;Executing callback on JMS Session: &quot; + sessionToUse); &#125; return action.doInJms(sessionToUse); &#125; catch (JMSException ex) &#123; throw convertJmsAccessException(ex); &#125; finally &#123; JmsUtils.closeSession(sessionToClose); ConnectionFactoryUtils.releaseConnection(conToClose, getConnectionFactory(), startConnection); &#125; &#125; execute方法创建connection,绑定session。调用doInJms方法将message发送到broker,然后释放资源。 这样粗略的看了一下消息的发送原理。]]></content>
+      <categories>
+        <category>JMS</category>
+      </categories>
+      <tags>
+        <tag>JMS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[JMS(2)-可靠性保证与消息模型]]></title>
+    <url>%2F2018%2F12%2F06%2FJMS-2-%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BF%9D%E8%AF%81%2F</url>
+    <content type="text"><![CDATA[消息确认对于一个消息中间件来说,可靠性保证一直是一个重要主题。Jms消息的可靠性保证,通常包含三个阶段: 客户端接收消息/客户端处理消息/客户端ACK 在事务性会话中(jms session),当事务被提交,即发生自动确认。在非事务会话中,消息的确认取决于应答模式:包含三种应答模式: client 客户端手动确认 auto 自动确认 dups_ok 一种延迟确认的模式,个人理解是一种批量签收。可以减少开销,但是可能会造成重复的ack。如果没有仔细研究过原理,不建议使用 消息持久化JMS消息持久化有两种方式: PERSISTENT: 持久化模式,消息不会因为broker宕机而丢失,默认模式 NO_PERSISTENT: broker宕机,消息丢失 消息过期可以设置消息的过期时间,默认是永不过期。 临时目的地jms session可以创建临时的queue或者topic,当创建临时目的地的连接断开,临时目的地也就删除。只有创建临时目的地连接的消费者才可以消费这里的信息。 本地事务在JMS客户端中,可以使用本地事务来组合消息的接收和发送,最后使用commit提交或者使用rollback进行回滚。事务提交表示发送者的消息都已经发送,消费者消息都已确认。事务回滚意味着生产的所有消息被销毁，消费的所有消息被恢复并重新提交。 需要注意的是,如果业务是一个请求/回复模式,发送一个消息,同时希望在事务中等待消息的回复,那么程序会被挂起,因为直到事务提交,发送操作才会真正执行。 消息的生产和消费不能再同一个事务中。 消息模型-PTPPTP就是一种点对点的模型,一个消费者一个生产者,是一种单播模式。 当session关闭时,如果有一些消息已经收到,但还没有签收,那么当客户端再次连接上时,这些消息还会被再次接收。 如果消费端设置了选择器,那么不符合条件的消息会留在队列中,不会被接收。 队列可以持久保存消息知道消费端收到消息,充分体现异步传输的优势 消息模型-pub/sub发布订阅模式,生产者制定一个主题,多个消费端可以订阅这个主题来收到消息,是一种广播模式。 消息订阅分为持久订阅和非持久订阅:非持久订阅当客户端处于非激活状态时,消息将会消失,永远不能接收到。持久模式则是消费端向JMS注册自身,当消费端宕机,broker会保存这个主题的消息,当消费端上线时,可以得到离线时漏掉的消息。 非持久模式下不能重新派送一个未签收的消息,所以需要设置为持久化模式。]]></content>
+      <categories>
+        <category>JMS</category>
+      </categories>
+      <tags>
+        <tag>JMS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[JMS(1)-消息结构]]></title>
+    <url>%2F2018%2F12%2F06%2Fjms-%E6%B6%88%E6%81%AF%E7%BB%93%E6%9E%84%2F</url>
+    <content type="text"><![CDATA[JMS消息结构JMS消息由以下部分组成: 消息头 消息体 属性 消息头包含识别信息和路由信息: JMSDestatination: 路由地址,由sender设置 JMSDeliveryMode: 传送模式。两种: 持久模式和非持久化模式,持久模式消息会被传送”仅仅一次”。也就是说当broker宕机,消息不会丢失,当broker恢复后会再次发送消息。非持久消息保证传输最多一次,当机器宕机,数据将永远消失。 JMSExpiration: 消息过期时间,消息在过期时间内没有被消费,则会删除。 JMSPriority: 消息优先级,从0-9,0-4是普通消息,5-9是加急消息。JMS提供的保障的是加急消息先于普通消息送达,其他尽量保证,默认为4 JMSMessageID: 每个消息的唯一识别,可以手动设置为业务id,否则会自动生成。 JMSCorrelationID: 用来连接到另外一个消息,典型的应用是将回复消息链接到原消息,也就是有应答的场景。 JMSReplyTo: 提供本消息回复消息的目的地址 JMSType: 消息类型识别符 JMSRedelivered: 如果客户端收到一个设置了JMSRedelivered属性的消息,表示客户端之前接受过这个消息,但是没有ack。如果触发了消息重新发送,JMSRedelivered=true,否则false。 JMS消息体提供了5种消息体: TextMessage MapMessage BytesMessage StreamMessage ObjectMessage JMS提供三种消息属性: 应用程序添加的属性: Message.setStringProperty(k,v) JMS定义的属性: connection.getMetaData().getJMSXPropertyNames() 获取jms定义的属性 三方插件提供的特殊属性]]></content>
+      <categories>
+        <category>JMS</category>
+      </categories>
+      <tags>
+        <tag>JMS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[k8s学习总结5-调度]]></title>
+    <url>%2F2018%2F12%2F05%2Fk8s%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%935-%E8%B0%83%E5%BA%A6%2F</url>
+    <content type="text"><![CDATA[K8S调度器的主要任务就是为Pod寻找一个合适的Node。 默认调度器K8S提供了默认调度器,它的主要流程是:根据Predicate算法检查每个Node。然后再调用Priority算法给Node打分。最终调度结果就是选择分数最高的那个Node。 K8S调度算法的流程如下: 主要是两个循环过程: 第一个循环informer负责监听etcd中Pod、Node、Service等需要调度的组件。一旦发现informer就将它放入一个优先级队列。 第二个循环是Scheduling Path,不断从优先队列中取出一个Pod,使用Predicate算法过滤出一组Node,Node的信息从Cache中获取。选出一个合适的Node之后,调度器就会进行绑定操作,将Pod的nodeName填写为筛选出的Node名称。 PredicatesK8S中Predicates算法默认提供四种调度策略: GeneralPredicates这是第一组过滤策略,也是最基础的调度规则。目的就是根据yaml配置文件检查硬件资源是否充足,端口是否冲突。由于调度策略采用了无锁化设计,所以当一个Pod被调度到Node上时,Node会再次执行一遍这个策略。 Volume相关过滤这组规则主要对Volume进行过滤。 首先是NoDiskconflict,检查Pod声明挂载的volume是否存在冲突。 接着是MaxPDVolumeCountPredicate,判断节点某种volume类型是否超过上限。 接着是VolumeBindingPredicate,主要作用是判断节点亲和性。 宿主机相关过滤规则这组规则是判断Pod是否满足Node的某些条件。 例如配置了PodToleratesNodeTaints字段,只有当Pod的Toleration和Node的taint字段相匹配,才能调度到该节点。 Pod相关过滤规则这组检查和GeneralPredicates有很多重合,比较特殊的一点是PodAffinityPredicate。用来检查Node上Pod之间的亲密和反亲密关系。 上面这四种类型的 Predicates，就构成了调度器确定一个Node可以运行待调度Pod的基本策略。 PrioritesProorites根据算法对选出的Node打分,最常用的是LeastRequestedPriority 1score = (cpu((capacity-sum(requested))10/capacity) + memory((capacity-sum(requested))10/capacity))/2 其实就是选择内存和CPU最多的主机,除此之外还有NodeAffinityPriority,TaintTolerationPriority以及InterPodAffinityPriority。 优先级与抢占机制优先级首先要明确的是,优先级与抢占解决的是Pod调度失败的问题。 通常情况下,调度失败的Pod会被搁置,直到出现满足条件的Node才能再次调度。但是如果这个Pod是一个优先级非常高的系统,我们希望能通过减少一部分优先度低的Pod,给优先级高的Pod空出位置。 在K8S 1.10版本提供了优先级与抢占机制,首先要定义一个PriorityClass类型的yaml 1234567apiVersion: scheduling.k8s.io/v1beta1kind: PriorityClassmetadata: name: high-priorityvalue: 1000000globalDefault: falsedescription: &quot;This priority class should be used for high priority service pods only.&quot; 这里定义了优先级为1000000的配置文件,globalDefault如果设置为true,就会将Pod的默认优先级定义为1000000,而实际默认是0。优先级最大为10亿,超过10亿为K8S内部的Pod。 定义过后就可以在Pod中使用: 123456789101112apiVersion: v1kind: Podmetadata: name: nginx labels: env: testspec: containers: - name: nginx image: nginx imagePullPolicy: IfNotPresent priorityClassName: high-priority 经过配置之后,调度队列就会将这个Pod就会比优先级低的Pod提前出队。 抢占抢占机制相比优先级要复杂的多。当一个高优先级的Pod调度失败之后,就会触发抢占机制。抢占的大概过程如下: k8s选出优先级较低的Pod所在的Node节点,将抢占者的spec.nominatedNodeName填写为该Node,然后将该pod重新入队。如果在下个周期,这个Pod没有抢到node(出现了优先级更高的pod),将spec.nominatedNodeName去掉重新入队,如果抢占成功,则让被抢占节点优雅退出(delete api),将新pod部署。 接下来讲述一下详细原理,我们将这个Pod称为抢占者,旧的节点称为牺牲者: 抢占的重要设计就是在调度队列的实现里,实现了两个不同的队列。 activeQ: 存放下个周期需要调度的Pod unschedulableQ: 用于存放调度失败的Pod,当这个队列中的Pod被更新时,k8s将它重新放入activeq。 在这里发生调度失败,也就是节点入队时会去触发寻找牺牲者的流程。 首先调度器检查这次调度失败的原因,用来确认抢占机制可以实现重新调度。 如果抢占可以发生,调度器将缓存的所有节点信息复制一份,然后利用副本去模拟一遍抢占过程。 模拟成功之后会选出一个最佳Node,接着调度器就会开始真正的抢占操作: 首先检查牺牲者列表,清理Pod的spec.nominatedNodeName字段 为抢占者设置spec.nominatedNodeName属性 开启协程,删除旧Pod,完成抢占]]></content>
+      <categories>
+        <category>K8S</category>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>K8S</tag>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[mysql之日志模块]]></title>
     <url>%2F2018%2F12%2F04%2Fmysql%E4%B9%8Bredo-log%E5%92%8Cundo-log%2F</url>
     <content type="text"><![CDATA[平时在看一些mysql的文章时,不可避免看到过undolog,redolog,binlog等xxlog概念,这些概念都属于mysql的日志模块,这里对这些概念做一次总结。 redologredolog也叫重做日志,是innodb特有的一种log,用于保证事务的持久性。在事务提交时,必须将该事务所有事务日志写到磁盘的redologfile 和 undologfile上。 我们知道mysql的数据会持久化到磁盘上,但是如果每次进行更新都写磁盘。磁盘要进行io操作找到这条记录并更改,成本很高。因此mysql就是用了redolog来提升效率。 具体来说,当有一条记录更新时,Innodb将数据循环写到redolog中,更新内存。当数据库空闲时或者redolog满,就会异步刷写到磁盘上。这种基于WAL(预写日志)的存储,都是crash-safe的,因为mysql可以通过redolog在crash之后恢复数据。redo log是在事务开始之后就开始逐步写入磁盘。 关于redolog比较重要的一个参数是innodb_flush_log_at_trx_commit innodb_flush_log_at_trx_commit=1,每次commit都会将日志从redo log buffer(用户空间)写到system buffer(内核空间),并fsync刷新到磁盘文件中。 innodb_flush_log_at_trx_commit=2,每次commit都会将日志从redo log buffer(用户空间)写到system buffer(内核空间),由系统决定什么时候fsync到磁盘。如果这时服务器宕机,则会丢失这部分数据。 innodb_flush_log_at_trx_commit=0,mysql每秒从redo log buffer,把数据写入到系统中去。数据库宕机则丢失一秒内的数据。 binlogbinlog是mysql服务器级别的日志,也叫做归档日志,二进制日志。这是因为innodb并不是mysql原生的引擎,binlog只能用于归档,并没有提供crash-safe能力。 binlog在事务提交的时候产生,将事务中的语句按照一定的格式记录到binlog中。这里binlog的功能与redolog有些类似,但是精度也就是可靠性明显不同,redolog作用于事务层面,而binlog则主要用来做数据库备份,同步。另一个区别在于redolog是循环写的,不提供持久保存,而binlog提供归档的功能。 binlog有两种模式:row和statement:statement记录的是sql语句,row模式记录变更前后的内容,会记录两条。因此row模式更安全,但是会是log变大。 两阶段提交由于redo log和binlog都会记录事务,那么这就对binlog和redolog的提交有要求。如果binlog和redolog的记录不一致,那么就会出现事务不一致的状况,这常常发生在主从复制的环境下。 MySQL通过两阶段提交过程来完成事务的一致性的,也即redo log和binlog的一致性的,先写redo log,处于prepare状态,再写binlog,写成功后进入commit状态。两个日志都提交成功（刷入磁盘），事务才算真正的完成。 undologundolog也叫回滚日志,保存了事务发生之前数据的版本,可以用来回滚,并提供MVCC。 当我们对数据进行更新操作就会产生undolog,可以把undolog可以理解为一个链表,保存了一个字段连续变化的过程。当我们进行修改时,会将数据备份到undolog,并在undlog中进行修改。如果出现了错误或者用户执行了ROLLBACK语句，系统可以利用Undo Log中的备份将数据恢复到事务开始之前的状态。undolog正式凭借此保证事务的原子性。 undolog另一个重要作用就是并发读写时支持mvcc(多版本并发控制)机制。当一行数据被写操作锁定时,读操作可以根据事务号到undolog中找到合适版本的数据,而不会写锁阻塞读操作,这就是一致性视图。]]></content>
