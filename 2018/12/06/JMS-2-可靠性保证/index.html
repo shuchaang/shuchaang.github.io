@@ -116,7 +116,7 @@
 <meta property="og:site_name" content="ShuChang&#39;s Blog">
 <meta property="og:description" content="消息确认对于一个消息中间件来说,可靠性保证一直是一个重要主题。Jms消息的可靠性保证,通常包含三个阶段: 客户端接收消息/客户端处理消息/客户端ACK 在事务性会话中(jms session),当事务被提交,即发生自动确认。在非事务会话中,消息的确认取决于应答模式:包含三种应答模式:  client 客户端手动确认 auto 自动确认 dups_ok 一种延迟确认的模式,个人理解是一种批量签收。可">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-12-06T09:24:56.371Z">
+<meta property="og:updated_time" content="2018-12-07T01:46:53.338Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JMS(2)-可靠性保证与消息模型">
 <meta name="twitter:description" content="消息确认对于一个消息中间件来说,可靠性保证一直是一个重要主题。Jms消息的可靠性保证,通常包含三个阶段: 客户端接收消息/客户端处理消息/客户端ACK 在事务性会话中(jms session),当事务被提交,即发生自动确认。在非事务会话中,消息的确认取决于应答模式:包含三种应答模式:  client 客户端手动确认 auto 自动确认 dups_ok 一种延迟确认的模式,个人理解是一种批量签收。可">
@@ -295,7 +295,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">73</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">74</span></a>
 
   </li>
         
@@ -408,12 +408,24 @@
                 
               
 
-              <time title="创建时间：2018-12-06 14:57:26 / 修改时间：17:24:56" itemprop="dateCreated datePublished" datetime="2018-12-06T14:57:26+08:00">2018-12-06</time>
+              <time title="创建时间：2018-12-06 14:57:26" itemprop="dateCreated datePublished" datetime="2018-12-06T14:57:26+08:00">2018-12-06</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-07 09:46:53" itemprop="dateModified" datetime="2018-12-07T09:46:53+08:00">2018-12-07</time>
               
             
           </span>
@@ -484,6 +496,27 @@
 <h2 id="消息持久化"><a href="#消息持久化" class="headerlink" title="消息持久化"></a>消息持久化</h2><p>JMS消息持久化有两种方式:</p>
 <p>PERSISTENT: 持久化模式,消息不会因为broker宕机而丢失,默认模式</p>
 <p>NO_PERSISTENT: broker宕机,消息丢失</p>
+<p>ActiveMQ内部消息存储默认使用了KahaDB,同时开支持的方式有AMQ,JDBC,Memory。可以在activemq.xml中对KahaDB进行配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;persistenceAdapter&gt;</div><div class="line">    &lt;kahaDB directory=&quot;$&#123;activemq.data&#125;/kahadb&quot;/&gt;</div><div class="line">&lt;/persistenceAdapter&gt;</div></pre></td></tr></table></figure>
+<p>可用属性:</p>
+<ol>
+<li><p>indexWriteBatchSize: 批量写入磁盘索引的数量,默认1000</p>
+</li>
+<li><p>indexCacheSize: 内存中缓存索引的page数量,默认1000</p>
+</li>
+<li><p>enableIndexWriteAsync: 是否异步写出索引,默认false</p>
+</li>
+<li><p>journalMaxFileLength: 设置每个消息datalog大小,默认32MB</p>
+</li>
+<li><p>enableJournalDiskSyncs: 如果没有加事务,是否需要写入磁盘。JMS持久化时需要设置为false</p>
+</li>
+<li><p>cleanUpInterval: 清理过期消息,默认30000</p>
+</li>
+<li><p>archiveDataLogs: 对于需要删除的文件,不做删除,而是进行压缩。默认为false</p>
+</li>
+<li><p>directoryArchive: 压缩文件的存放位置</p>
+</li>
+</ol>
 <h2 id="消息过期"><a href="#消息过期" class="headerlink" title="消息过期"></a>消息过期</h2><p>可以设置消息的过期时间,默认是永不过期。</p>
 <h2 id="临时目的地"><a href="#临时目的地" class="headerlink" title="临时目的地"></a>临时目的地</h2><p>jms session可以创建临时的queue或者topic,当创建临时目的地的连接断开,临时目的地也就删除。只有创建临时目的地连接的消费者才可以消费这里的信息。</p>
 <h2 id="本地事务"><a href="#本地事务" class="headerlink" title="本地事务"></a>本地事务</h2><p>在JMS客户端中,可以使用本地事务来组合消息的接收和发送,最后使用commit提交或者使用rollback进行回滚。事务提交表示发送者的消息都已经发送,消费者消息都已确认。事务回滚意味着生产的所有消息被销毁，消费的所有消息被恢复并重新提交。</p>
@@ -658,7 +691,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">73</span>
+                    <span class="site-state-item-count">74</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>

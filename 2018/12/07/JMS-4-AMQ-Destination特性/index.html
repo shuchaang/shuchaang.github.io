@@ -108,29 +108,25 @@
 
 
 
-  <meta name="description" content="springmvc在哪里springmvc是spring体系的一部分，位于web部分。 springmvc的设计模式先来看一个简化版:用户请求到达控制器，控制器并没有处理业务逻辑的能力，于是把请求交给后台的一个model做处理，并将处理的结果返回给控制器。当控制器拿到数据后，就要找到视图并做渲染，并将渲染好的结果返回给用户，这就是一个通用的mvc设计模式。      spirngmvc架构：  可">
-<meta name="keywords" content="springmvc">
+  <meta name="description" content="wildcardswildcards用来支持名字分层体系,它不属于JMS规范,是AMQ的一个扩展。 AMQ支持三种wildcards:  ‘.’, 路径上名字的分隔符  ‘*’, 常见的通配符,匹配路径上的所有  ‘&amp;gt;’,递归匹配以这个名字开头的dest   例如下面两个dest: PRICE.STOCK.CN.WANDAPRICE.STOCK.AM.ALIBABA  PRICE.&amp;gt;">
+<meta name="keywords" content="JMS">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SpringMvc浅谈">
-<meta property="og:url" content="http://www.shuchang.sc.com/2017/11/11/SpringMvc浅谈/index.html">
+<meta property="og:title" content="JMS(4)-AMQ Destination特性">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/12/07/JMS-4-AMQ-Destination特性/index.html">
 <meta property="og:site_name" content="ShuChang&#39;s Blog">
-<meta property="og:description" content="springmvc在哪里springmvc是spring体系的一部分，位于web部分。 springmvc的设计模式先来看一个简化版:用户请求到达控制器，控制器并没有处理业务逻辑的能力，于是把请求交给后台的一个model做处理，并将处理的结果返回给控制器。当控制器拿到数据后，就要找到视图并做渲染，并将渲染好的结果返回给用户，这就是一个通用的mvc设计模式。      spirngmvc架构：  可">
+<meta property="og:description" content="wildcardswildcards用来支持名字分层体系,它不属于JMS规范,是AMQ的一个扩展。 AMQ支持三种wildcards:  ‘.’, 路径上名字的分隔符  ‘*’, 常见的通配符,匹配路径上的所有  ‘&amp;gt;’,递归匹配以这个名字开头的dest   例如下面两个dest: PRICE.STOCK.CN.WANDAPRICE.STOCK.AM.ALIBABA  PRICE.&amp;gt;">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fle36iwgwmj30fq0d7aak.jpg">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fle3d2iyonj30g5078wec.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fle4abaf20j30q00d2t91.jpg">
-<meta property="og:updated_time" content="2017-11-11T07:05:08.000Z">
+<meta property="og:updated_time" content="2018-12-07T07:07:18.289Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SpringMvc浅谈">
-<meta name="twitter:description" content="springmvc在哪里springmvc是spring体系的一部分，位于web部分。 springmvc的设计模式先来看一个简化版:用户请求到达控制器，控制器并没有处理业务逻辑的能力，于是把请求交给后台的一个model做处理，并将处理的结果返回给控制器。当控制器拿到数据后，就要找到视图并做渲染，并将渲染好的结果返回给用户，这就是一个通用的mvc设计模式。      spirngmvc架构：  可">
-<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fle36iwgwmj30fq0d7aak.jpg">
+<meta name="twitter:title" content="JMS(4)-AMQ Destination特性">
+<meta name="twitter:description" content="wildcardswildcards用来支持名字分层体系,它不属于JMS规范,是AMQ的一个扩展。 AMQ支持三种wildcards:  ‘.’, 路径上名字的分隔符  ‘*’, 常见的通配符,匹配路径上的所有  ‘&amp;gt;’,递归匹配以这个名字开头的dest   例如下面两个dest: PRICE.STOCK.CN.WANDAPRICE.STOCK.AM.ALIBABA  PRICE.&amp;gt;">
 
 
 
 
 
 
-  <link rel="canonical" href="http://www.shuchang.sc.com/2017/11/11/SpringMvc浅谈/"/>
+  <link rel="canonical" href="http://www.shuchang.sc.com/2018/12/07/JMS-4-AMQ-Destination特性/"/>
 
 
 
@@ -140,7 +136,7 @@
   };
 </script>
 
-  <title>SpringMvc浅谈 | ShuChang's Blog</title>
+  <title>JMS(4)-AMQ Destination特性 | ShuChang's Blog</title>
   
 
 
@@ -370,7 +366,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2017/11/11/SpringMvc浅谈/">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/07/JMS-4-AMQ-Destination特性/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Shuchang">
@@ -387,7 +383,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">SpringMvc浅谈
+          <h1 class="post-title" itemprop="name headline">JMS(4)-AMQ Destination特性
               
             
           </h1>
@@ -412,7 +408,7 @@
                 
               
 
-              <time title="创建时间：2017-11-11 15:00:47 / 修改时间：15:05:08" itemprop="dateCreated datePublished" datetime="2017-11-11T15:00:47+08:00">2017-11-11</time>
+              <time title="创建时间：2018-12-07 10:18:25 / 修改时间：15:07:18" itemprop="dateCreated datePublished" datetime="2018-12-07T10:18:25+08:00">2018-12-07</time>
             
 
             
@@ -434,7 +430,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/springmvc/" itemprop="url" rel="index"><span itemprop="name">springmvc</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/JMS/" itemprop="url" rel="index"><span itemprop="name">JMS</span></a></span>
 
                 
                 
@@ -449,8 +445,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017/11/11/SpringMvc浅谈/#comments" itemprop="discussionUrl">
-                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2017/11/11/SpringMvc浅谈/" itemprop="commentsCount"></span>
+                <a href="/2018/12/07/JMS-4-AMQ-Destination特性/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2018/12/07/JMS-4-AMQ-Destination特性/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -478,24 +474,74 @@
       
 
       
-        <h3 id="springmvc在哪里"><a href="#springmvc在哪里" class="headerlink" title="springmvc在哪里"></a>springmvc在哪里</h3><p>springmvc是spring体系的一部分，位于web部分。<br><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fle36iwgwmj30fq0d7aak.jpg" alt=""></p>
-<h3 id="springmvc的设计模式"><a href="#springmvc的设计模式" class="headerlink" title="springmvc的设计模式"></a>springmvc的设计模式</h3><p>先来看一个简化版:<br><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fle3d2iyonj30g5078wec.jpg" alt=""><br>用户请求到达控制器，控制器并没有处理业务逻辑的能力，于是把请求交给后台的一个model做处理，并将处理的结果返回给控制器。当控制器拿到数据后，就要找到视图并做渲染，并将渲染好的结果返回给用户，这就是一个通用的mvc设计模式。</p>
-<excerpt in="" index="" |="" 首页摘要="">
-
-<p><the rest="" of="" contents="" |="" 余下全文=""></the></p>
-<blockquote>
-<p> spirngmvc架构：</p>
-</blockquote>
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fle4abaf20j30q00d2t91.jpg" alt=""><br>可以看到这个架构的入口就是DispatcherServlet，其本质也是一个servlet，同时这也显示出了它与struts2的区别之一，Struts2的入口是一个过滤器。DispatcherServlet也没有处理事务的能力，仅作为一个数据的分发中心，将数据交给后面的过程来处理。DispatcherServlet通过HandlerMapping来查找Handler，HandlerMapping会返回两部分内容，其一是handler对象，也就是后台模型对象，还有一部分是拦截器数组。前端控制器拿到这些返回数据时，其实就应该来执行handler对象，因为执行handler对象就可以处理具体的业务逻辑。但是springmvc并没有这样做，它将数据利用HandlerAdapter适配器进行包装，也就到了图中的Handler部分。Handler处理过后返回一个ModelAndView对象，包括两部分：Model和view，Model就是数据，view就是视图名称，而不是视图对象。<br>这时前端控制器既有数据，又有视图名称，这时通过视图解析器返回真正的视图对象，最后将视图对象进行渲染并返回给用户。</p>
-<blockquote>
-<p>springmvc为什么要设计适配器？没有行不行？</p>
-</blockquote>
-<p>首先要明确的是在springmvc框架中controller的类型有很多种，比较常见的是<strong><em>@controller</em></strong>类型和<strong><em>实现Handler接口</em></strong>的类型，如果没有适配器，前端控制器就需要做一个类型判断，每种类型需要做哪些不同的处理。这时判断逻辑就会写死在代码中，并不符合springmvc的可扩展行的设计，一旦用户需要自己创建一个类型，那么就需要修改spring源码，这显然是不可取的。但有了适配器问题就方便了很多，每种类型只需要定义一种适配器即可。</p>
-<blockquote>
-<p>springmvc为什么要设计视图解析器？没有行不行？</p>
-</blockquote>
-<p>其实答案和上一个问题一样，当然都是可以的，只是这样需要在前端控制器加入逻辑判断，并不优雅也不易扩展。</p>
-</excerpt>
+        <h2 id="wildcards"><a href="#wildcards" class="headerlink" title="wildcards"></a>wildcards</h2><p>wildcards用来支持名字分层体系,它不属于JMS规范,是AMQ的一个扩展。</p>
+<p>AMQ支持三种wildcards:</p>
+<ol>
+<li><p>‘.’, 路径上名字的分隔符</p>
+</li>
+<li><p>‘*’, 常见的通配符,匹配路径上的所有</p>
+</li>
+<li><p>‘&gt;’,递归匹配以这个名字开头的dest</p>
+</li>
+</ol>
+<p>例如下面两个dest:</p>
+<p>PRICE.STOCK.CN.WANDA<br>PRICE.STOCK.AM.ALIBABA</p>
+<ol>
+<li>PRICE.&gt; 匹配所有的价格变动</li>
+<li>PRICE.STOCK.&gt;匹配所有的股价变动</li>
+<li>PRICE.STOCK.CN.* 匹配所有A股变动</li>
+<li>PRICE.STOCK.*.ALIBABA 匹配与阿里相关的股价变动</li>
+</ol>
+<h2 id="组合队列-composite-destination"><a href="#组合队列-composite-destination" class="headerlink" title="组合队列 composite destination"></a>组合队列 composite destination</h2><p>组合队列允许用一个虚拟的dest代表多个dest,这样就可以通过组合队列在一个操作中同时向多个queue发送消息。</p>
+<p>不同队列名用’,’隔开。如果有topic有ptp,则需要写明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line">public Queue queue()&#123;</div><div class="line">    return new ActiveMQQueue(&quot;queue.a,queue.b&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">public Queue queue2()&#123;</div><div class="line">    return new ActiveMQQueue(&quot;queue://queue.a,topic://topic.a&quot;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="delete-inactive-destination"><a href="#delete-inactive-destination" class="headerlink" title="delete inactive destination"></a>delete inactive destination</h2><p>上面的组合队列可以很大程度上方便使用,但是可能会造成创建过多的队列,那么就需要一种功能能够自动删除无用的队列。当然也可以通过控制台或者jms远程删除。</p>
+<p>这种方式需要在配置文件进行配置:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">&lt;broker xmlns=&quot;http://activemq.apache.org/schema/core&quot; schedulePeriodForDestinationPurge=&quot;10000&quot;&gt;</div><div class="line"></div><div class="line">&lt;destinationPolicy&gt;</div><div class="line">    &lt;policyMap&gt;</div><div class="line">        &lt;policyEntries&gt;</div><div class="line">                &lt;policyEntry topic=&quot;&gt;&quot; gcInactiveDestinations=&quot;true&quot; inactiveTimeoutBeforeGC=&quot;30000&quot;&gt;</div><div class="line">                &lt;/policyEntry&gt;</div><div class="line">        &lt;/policyEntries&gt;</div><div class="line">    &lt;/policyMap&gt;</div><div class="line">&lt;/destinationPolicy&gt;</div><div class="line"></div><div class="line">&lt;/destinationPolicy&gt;</div><div class="line">&lt;/broker&gt;</div></pre></td></tr></table></figure>
+<p>schedulePeriodForDestinationPurge 设置检查间隔,单位ms</p>
+<p>inactiveTimeoutBeforeGC 表示空闲多久会被删除,单位ms</p>
+<p>gcInactiveDestinations=true 删除不活动的队列</p>
+<h2 id="Destination-options"><a href="#Destination-options" class="headerlink" title="Destination options"></a>Destination options</h2><p>这个特性是AMQ在JMS规范之外提供的特性,以一种url的方式可以对队列进行一些配置。</p>
+<ol>
+<li><p>consumer.prefechSize: consumer一次可以拉取的最大消息数量</p>
+</li>
+<li><p>consumer.maximumPendingMessageLimit: 当存在慢消费的情况时,非持久化的topic允许丢弃消息的最大值</p>
+</li>
+<li><p>consumer.retroactive: 是否为回溯消费者</p>
+</li>
+<li><p>consumer.dispatchAsync: 是否异步分发,默认为true</p>
+</li>
+<li><p>consumer.exclusive: 是否为独占消费者,默认false</p>
+</li>
+<li><p>consumer.priority: 消费者优先级,默认为0</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public Queue queue3()&#123;</div><div class="line">        return new ActiveMQQueue(&quot;queue.c?consumer.priority=false&amp;consumer.prefechSize=10&quot;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="Visual-Destitation"><a href="#Visual-Destitation" class="headerlink" title="Visual Destitation"></a>Visual Destitation</h2><p>虚拟dest创建的是逻辑dest,客户端和消费端通过它来生产和消费消息,并把它映射到物理dest。AMQ支持两种方式:</p>
+<ol>
+<li><p>visual topic 虚拟主题</p>
+</li>
+<li><p>composite destination 组合</p>
+</li>
+</ol>
+<p>虚拟dest的作用体现在哪里呢?</p>
+<p>在AMQ,topic只有在持久订阅下才是持久化的,它的每个订阅者都会收到所有的消息。但它存在两个问题:</p>
+<ol>
+<li><p>同一个应用只能用一个listener去监听topic,而不能使用多个,通过负载均衡来处理消息(当消费端部署了多个节点,那么每个节点都会消费一遍这个消息,而我们理想的情况是a节点处理n条,b节点处理m条)。虽然PTP模式可以解决这个问题,但明显会创建过多的Queue。所以,又要订阅发布,又要消息分组,JMS本身是不支持的。</p>
+</li>
+<li><p>同一个应用内,消费者failover问题。由于只能有单个持久订阅者,如果这个订阅者离线,那么消息就无法处理,系统健壮性不足。</p>
+</li>
+</ol>
+<p>为了解决这个问题,AMQ提出了visual topic</p>
+<h3 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Bean</div><div class="line">public Topic topic()&#123;</div><div class="line">        return new ActiveMQTopic(&quot;VirtualTopic.Orders&quot;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>对于消费者来说,只需要创建正常的topic,然后以’VirtualTopic’开头。</p>
+<p>对于消费端来说,需要将自己视为一个队列,不同的应用使用不同的队列名,即可表示自己是一个消费端的负载均衡。队列名必须以‘Consume’开头</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Bean</div><div class="line">public Queue queue4()&#123;</div><div class="line">    return new ActiveMQQueue(&quot;Consumer.A.VirtualTopic.Orders&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">@Bean</div><div class="line">public Queue queue5()&#123;</div><div class="line">    return new ActiveMQQueue(&quot;Consumer.B.VirtualTopic.Orders&quot;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="Mirrored-Queues"><a href="#Mirrored-Queues" class="headerlink" title="Mirrored Queues"></a>Mirrored Queues</h2><p>AMQ中每个Queue中的消息只能被一个consumer消费。但有时候你可能希望监视消息流。因此AMQ提供了mirrored queue机制,broker会把发送到某个queue的消息转发到一个名称类似的topic,监视程序只需要监听这个mirrored queue topic。</p>
+<p>首先要对broker进行配置:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;broker xmlns=&quot;http://activemq.apache.org/schema/core&quot; brokerName=&quot;localhost&quot; dataDirectory=&quot;$&#123;activemq.data&#125;  useMirroredQueues=&quot;true&quot;&gt;</div></pre></td></tr></table></figure>
+<p>如果不进行其他配置,默认的mirror topic前缀是 ‘VirtualTopic.Mirror.’,当然也支持自定义格式:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;destinationInterceptors&gt;</div><div class="line">    &lt;mirroredQueue copyMessage=&quot;true&quot; postPrefix=&quot;.mirror&quot; prefix=&quot;mirror.&quot;&gt;</div><div class="line">&lt;/destinationInterceptors&gt;</div></pre></td></tr></table></figure>
       
     </div>
 
@@ -547,7 +593,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/springmvc/" rel="tag"># springmvc</a>
+            <a href="/tags/JMS/" rel="tag"># JMS</a>
           
         </div>
       
@@ -560,8 +606,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/11/10/redis持久化/" rel="next" title="redis持久化">
-                <i class="fa fa-chevron-left"></i> redis持久化
+              <a href="/2018/12/06/JMS-3-JMS结构/" rel="next" title="JMS(3)-JMS API结构">
+                <i class="fa fa-chevron-left"></i> JMS(3)-JMS API结构
               </a>
             
           </div>
@@ -569,10 +615,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/11/22/表面理解jvm-内存/" rel="prev" title="表面理解jvm-内存">
-                表面理解jvm-内存 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -818,7 +860,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#springmvc在哪里"><span class="nav-number">1.</span> <span class="nav-text">springmvc在哪里</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#springmvc的设计模式"><span class="nav-number">2.</span> <span class="nav-text">springmvc的设计模式</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#wildcards"><span class="nav-number">1.</span> <span class="nav-text">wildcards</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#组合队列-composite-destination"><span class="nav-number">2.</span> <span class="nav-text">组合队列 composite destination</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#delete-inactive-destination"><span class="nav-number">3.</span> <span class="nav-text">delete inactive destination</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Destination-options"><span class="nav-number">4.</span> <span class="nav-text">Destination options</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Visual-Destitation"><span class="nav-number">5.</span> <span class="nav-text">Visual Destitation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何使用"><span class="nav-number">5.1.</span> <span class="nav-text">如何使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mirrored-Queues"><span class="nav-number">6.</span> <span class="nav-text">Mirrored Queues</span></a></li></ol></div>
             
 
           </div>
