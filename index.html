@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">74</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">77</span></a>
 
   </li>
         
@@ -349,6 +349,578 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/08/JMS-7-Consumer高级特性/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/08/JMS-7-Consumer高级特性/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">JMS(7) Consumer高级特性</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-08 14:31:51 / 修改时间：16:51:58" itemprop="dateCreated datePublished" datetime="2018-12-08T14:31:51+08:00">2018-12-08</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/JMS/" itemprop="url" rel="index"><span itemprop="name">JMS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="独占消费者"><a href="#独占消费者" class="headerlink" title="独占消费者"></a>独占消费者</h2><p>Queue中的消息是按照顺序分发到consumer。然而当你有多个consumer的时候,这个顺序就无法进行保证。可以通过设置消息独占来保证顺序消费问题,这样broker会在consumer中选择一个进行发送,如果发送期间consumer挂掉,broker会自动切换到其他consumer上进行发送。</p>
+<p>创建独占消费者方式如下,还可以配合优先级进行优化:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Bean</div><div class="line">public Queue queue6()&#123;</div><div class="line">    return new ActiveMQQueue(&quot;ex.q?consumer.exclusive=true&amp;consumer.priority=10&quot;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="Message-Group"><a href="#Message-Group" class="headerlink" title="Message Group"></a>Message Group</h2><p>Message Group可以看成一种并发的exclusive consumer。JMS消息属性JMSXGroupID用来区分message group。Message Group特性保证所有具有相同JMSXGroupID的消息会被分发到相同的consumer。</p>
+<p>除此之外,Message Group也是一种负载均衡机制,在一个消息被分发到consumer之前,会去检查消息JMSXGroupID,如果存在,broker会寻找相同JMSXGroupID的consumer。如果没有,broker会选择一个consumer,并将它关联到这个Message Group。此后这个consumer 都会收到这类Message,知道consumer关闭或者Message Group关闭(发送一个消息,设置JMSXGroupSeq为-1)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">jmsTemplate.send(&quot;queue.a&quot;,new MessageCreator() &#123;</div><div class="line">            @Override</div><div class="line">            public Message createMessage(Session session) throws JMSException &#123;</div><div class="line">                TextMessage message = session.createTextMessage();</div><div class="line">                message.setStringProperty(&quot;JMXGroupID&quot;,&quot;G1&quot;);</div><div class="line">                return message;</div><div class="line">            &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h2 id="消息选择器"><a href="#消息选择器" class="headerlink" title="消息选择器"></a>消息选择器</h2><blockquote>
+<p>参考<a href="https://www.cnblogs.com/ywjy/articles/5433826.html" target="_blank" rel="external">https://www.cnblogs.com/ywjy/articles/5433826.html</a></p>
+</blockquote>
+<p>通过类sql的语法,为consumer指定message的筛选条件。</p>
+<p>发送端设置属性:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">jmsTemplate.send(topic1, new MessageCreator() &#123;</div><div class="line">            @Override</div><div class="line">            public Message createMessage(Session session) throws JMSException &#123;</div><div class="line">                TextMessage textMessage = session.createTextMessage();</div><div class="line">                textMessage.setIntProperty(&quot;count&quot;,10);</div><div class="line">                return textMessage;</div><div class="line">            &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>消费端过滤属性:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">@JmsListener(destination = &quot;file&quot;,selector = &quot;count &gt; 5&quot;)</div></pre></td></tr></table></figure>
+<h2 id="慢消费"><a href="#慢消费" class="headerlink" title="慢消费"></a>慢消费</h2><p>慢消费会在非持久的topic上出现问题,导致消息积压在broker内存中,拖垮整个broker。除了调整客户端prefetchSize,目前AMQ使用Pending Message Limit Strategy来解决这个问题。</p>
+<p>Pending Message Limit Strategy(等待消息限制策略)有两种:</p>
+<ol>
+<li>Constant Pending Message Limit Strategy:</li>
+</ol>
+<p>limit 大小可以设置为0,-1,&gt;0。0表示不额外增加预存大小,-1表示不增加也不丢弃消息,&gt;0表示需要额外增加的大小。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;constantPendingMessageLimitStrategy limit=&quot;50&quot;&gt;</div></pre></td></tr></table></figure>
+<ol>
+<li>Prefetch Rate Pending Message Limit Strategy:</li>
+</ol>
+<p>参数表示扩大目前prefetchSize的多少倍</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;PrefetchRatePendingMessageLimitStrategy multiplier=&quot;3&quot;&gt;</div></pre></td></tr></table></figure>
+<p>添加配置的位置在destinationPolicy-&gt;policyMap-&gt;policyEntries-&gt;policyEntry中。</p>
+<p>消息丢弃策略目前提供三种:</p>
+<ol>
+<li><p>oldestMessageEvicationStrategy:丢弃最旧的消息</p>
+</li>
+<li><p>oldestMessageWithLowestPriorityEvicationStrategy:最旧且优先级最低</p>
+</li>
+<li><p>uniquePropertyMessageEvicationStrategy: 根据消息设置的属性来丢弃消息</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;uniquePropertyMessageEvicationStrategy propertyName=&quot;STOCK&quot; /&gt;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/08/JMS-6-Message高级特性/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/08/JMS-6-Message高级特性/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">JMS(6) Message高级特性</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-08 12:09:46 / 修改时间：14:26:37" itemprop="dateCreated datePublished" datetime="2018-12-08T12:09:46+08:00">2018-12-08</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/JMS/" itemprop="url" rel="index"><span itemprop="name">JMS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="延时投递与定时投递"><a href="#延时投递与定时投递" class="headerlink" title="延时投递与定时投递"></a>延时投递与定时投递</h2><p>AMQ提供了对消息的定时调度机制,只需要把调度信息设置在message中即可。</p>
+<p>首先要在xml中开启设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">schedulerSupport=&quot;true&quot;</div></pre></td></tr></table></figure>
+<ul>
+<li>一共四个属性:</li>
+</ul>
+<ol>
+<li>AMQ_SCHUDULED_DELAY: 延迟投递的时间</li>
+<li>AMQ_SCHUDULED_PERIOD: 延迟投递时间间隔</li>
+<li>AMQ_SCHUDULED_REPEAT: 重复次数</li>
+<li>AMQ_SCHUDULED_CRON: cron表达式</li>
+</ol>
+<ul>
+<li>AMQ也提供了封装的消息类型:org.apache.activemq.scheduledMessage</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">jmsTemplate.send(new MessageCreator() &#123;</div><div class="line">                @Override</div><div class="line">                public Message createMessage(Session session) throws JMSException &#123;</div><div class="line">                    TextMessage textMessage = session.createTextMessage();</div><div class="line">                    //设置延时投递 60s</div><div class="line">                    textMessage.setLongProperty(ScheduledMessage.AMQ_SCHEDULED_DELAY,60*1000);</div><div class="line">                    //重复3次</div><div class="line">                    textMessage.setIntProperty(ScheduledMessage.AMQ_SCHEDULED_REPEAT,3);</div><div class="line">                    return textMessage;</div><div class="line">                &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h2 id="Blob-Message"><a href="#Blob-Message" class="headerlink" title="Blob Message"></a>Blob Message</h2><p>BlobMessage是用来传递较大的二进制信息,在AMQ的新版本中,默认是关闭的,因为这种方式可能造成安全漏洞。</p>
+<p>可以在发送端的url上进行设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tcp://192.168.1.1:61619?jms.blobTransferPolicy.uploadUrl=http://xx.xx.xx.xx/nsfvol/fhms/</div></pre></td></tr></table></figure>
+<p>sending blobmessage的方式:</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNbRwgy1fxzba3faj1j31880dm3zo.jpg" alt=""></p>
+<p>可以看到这里有三种发送blob Message的方式: url、File 或者 Inputstream,这里需要注意的是由于blobMessage是AMQ提供的扩展,所以要将jms的session强转为Amq的session。</p>
+<p>文件接收方式:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">@JmsListener(destination = &quot;file&quot;)</div><div class="line">    public void fileQ(Message message) throws IOException, JMSException &#123;</div><div class="line">        if(message instanceof BlobMessage)&#123;</div><div class="line">            BlobMessage blobMessage = (BlobMessage) message;</div><div class="line">            InputStream inputStream = blobMessage.getInputStream();</div><div class="line">            byte[] data = new byte[inputStream.available()];</div><div class="line">            inputStream.read(data);</div><div class="line">            inputStream.close();</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/07/JMS-5-AMQ-Message-Dispatch/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/07/JMS-5-AMQ-Message-Dispatch/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">JMS(5)-AMQ Message Dispatch</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-07 15:25:47 / 修改时间：23:16:26" itemprop="dateCreated datePublished" datetime="2018-12-07T15:25:47+08:00">2018-12-07</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/JMS/" itemprop="url" rel="index"><span itemprop="name">JMS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Message-Cursor"><a href="#Message-Cursor" class="headerlink" title="Message Cursor"></a>Message Cursor</h2><p>AMQ发送持久化消息的典型处理方式为,当消费者准备就绪,broker把存储的消息按批次发送给消费者,发送完成后,指针向后移动。这时一种比较理想的方式。在AMQ 5.0版本之后,消息发送开始采用一种混合模式,当消费者活跃时,直接将持久消息发送给消费者,当消费者不活跃时,采用cursor来处理发送消息。</p>
+<blockquote>
+<p>当消费者活跃,处理能力比较强时,消息的直接发送到消费端</p>
+</blockquote>
+<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fxy9mb9u2lj30pu0dgjr9.jpg" alt=""></p>
+<blockquote>
+<p>当消息产生积压,消费者再度活跃时,或者消费者的消费速度比生产速度慢时,消息从pending cursor取出,发送到消费队列。</p>
+</blockquote>
+<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fxy9tgmrq3j30qi0bqdfq.jpg" alt=""></p>
+<p>Message Cursor有三种类型:</p>
+<ol>
+<li>Store-based</li>
+</ol>
+<p>AMQ 5.0之后的默认类型,支持持久化和非持久化,内嵌了file-based。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fxyazo6b1wj31100k2jri.jpg" alt=""></p>
+<ol>
+<li>VM</li>
+</ol>
+<p>这种方式的消息存储在内存中,这种方式处理很快,但是当出现消费端慢消费就可能出现问题。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fxybs0h8uzj30vk09u747.jpg" alt=""></p>
+<ol>
+<li>File-based</li>
+</ol>
+<p>当内存达到限制,消息就会被存储到文件系统的临时文件中</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fxybvbvzfyj30p80iqt8o.jpg" alt=""></p>
+<h2 id="分发策略"><a href="#分发策略" class="headerlink" title="分发策略"></a>分发策略</h2><ol>
+<li>严格顺序分发</li>
+</ol>
+<p>AMQ会保证topic consumer以相同的顺序接收来自同一个producer的消息,但有时也需要保证消费者能以相同的顺序消费来自不同topic producer的消息。例如生产者p1 p2 通过topic关联了c1 c2,p1生产了消息1,2,3而p2生产消息4,5,6。这时c1的消费顺序是123456,而c2的消费顺序是456123。如果我们需要严格保证两个c的消费顺序,这时就会需要严格顺序分发。</p>
+<p>保证严格顺序的一个负面效果就是性能会降低。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;policyEntry topic=&quot;Orders.&gt;&quot;&gt;</div><div class="line">    &lt;dispatchPolicy&gt;</div><div class="line">        &lt;strictOrderDispatchPolicy/&gt;</div><div class="line">    &lt;/dispatchPolicy&gt;</div><div class="line">&lt;/policyEntry&gt;</div></pre></td></tr></table></figure>
+<ol>
+<li>轮询分发策略</li>
+</ol>
+<p>在某些情况下,消息的数量比较少,但每次处理消息的时间会比较长,那么在默认的prefetch参数和dispatch policy下,这些消息会倾向于发送到某个consumer上,就会因为负载不均导致处理时间增加。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;policyEntry topic=&quot;Orders.&gt;&quot;&gt;</div><div class="line">    &lt;dispatchPolicy&gt;</div><div class="line">        &lt;roundRobinDispatchPolicy/&gt;</div><div class="line">    &lt;/dispatchPolicy&gt;</div><div class="line">&lt;/policyEntry&gt;</div></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -1016,7 +1588,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2018/12/06/jms-消息结构/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">JMS(1)-消息结构</a>
+                <a href="/2018/12/06/jms-消息结构/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">JMS(1)-消息基础</a>
               
             
           </h1>
@@ -1041,12 +1613,24 @@
                 
               
 
-              <time title="创建时间：2018-12-06 14:12:58 / 修改时间：14:57:02" itemprop="dateCreated datePublished" datetime="2018-12-06T14:12:58+08:00">2018-12-06</time>
+              <time title="创建时间：2018-12-06 14:12:58" itemprop="dateCreated datePublished" datetime="2018-12-06T14:12:58+08:00">2018-12-06</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-08 16:41:28" itemprop="dateModified" datetime="2018-12-08T16:41:28+08:00">2018-12-08</time>
               
             
           </span>
@@ -1099,7 +1683,10 @@
       
         
           
-            <h2 id="JMS消息结构"><a href="#JMS消息结构" class="headerlink" title="JMS消息结构"></a>JMS消息结构</h2><p>JMS消息由以下部分组成: 消息头 消息体 属性</p>
+            <h2 id="JMS"><a href="#JMS" class="headerlink" title="JMS"></a>JMS</h2><p>JMS即java message service,是一个java面向消息中间件提出的标准化接口。类似于jdbc于mysql-connector的关系。ActiveMQ是apache出的一个消息中间件,实现了JMS协议。目前AMQ的版本为5.x,社区不太活跃,因为AMQ目前的主要精力投入在下一代MQ的开发-appllo上。</p>
+<p>常见MQ的选型,供参考:</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fxz85ye41hj30py0nqq66.jpg" alt=""></p>
+<h2 id="JMS消息结构"><a href="#JMS消息结构" class="headerlink" title="JMS消息结构"></a>JMS消息结构</h2><p>JMS消息由以下部分组成: 消息头 消息体 属性</p>
 <p>消息头包含识别信息和路由信息:</p>
 <ol>
 <li>JMSDestatination: 路由地址,由sender设置</li>
@@ -1753,607 +2340,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/27/表面理解jvm-类加载/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/11/27/表面理解jvm-类加载/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">jvm学习笔记-类加载</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-11-27 08:07:39" itemprop="dateCreated datePublished" datetime="2018-11-27T08:07:39+08:00">2018-11-27</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-11-28 16:41:44" itemprop="dateModified" datetime="2018-11-28T16:41:44+08:00">2018-11-28</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/jvm/" itemprop="url" rel="index"><span itemprop="name">jvm</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="宏观"><a href="#宏观" class="headerlink" title="宏观"></a>宏观</h2><blockquote>
-<p>当我们写好.java程序点击运行的时候发生了什么</p>
-</blockquote>
-<ol>
-<li>当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:</li>
-</ol>
-<ul>
-<li>以魔数Magic Number:0xCafeBabe开头</li>
-<li>ConstantPool:符号表</li>
-<li>FieldInfo:类成员变量表</li>
-<li>方法描述</li>
-<li>附加节点</li>
-<li>…</li>
-</ul>
-<ol>
-<li><p>有了.class文件我们就可以执行java命令运行java程序</p>
-</li>
-<li><p>首先JVM装载.class，也就是类加载器加载字节码。但是类加载器本身也是一个java类，所以它也需要被加载，幸运的是有一个类加载器是用c++编写的，叫做<code>Bootstrap类加载器</code>，属于虚拟机内核，用特定于操作系统的本地代码实现。Bootstrap类加载器负责加载javajava核心包中的类(rt.jar)，这些类的Class.getClassLoader()方法返回值会null，表示需要Bootstrap加载器来加载。JAVA核心包中还有两个类加载器:<code>ExtClassLoader</code>和<code>ApplicationClassLoader</code>。他们都用java语言编写，其中ExtClassLoader负责加载<java_home>/jre/lib/ext目录下的jar，ApplicationClassLoader负责加载应用程序的启动执行类，即当使用java命令去启动执行一个类时，JAVA虚拟机使用AppClassLoader加载这个类。所以这里有个小track就是把一些自己常用但是非java自带的jar放到ext目录下，这样就可以少写几个maven dependency。</java_home></p>
-</li>
-</ol>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/11/27/表面理解jvm-类加载/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/25/红黑树/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/11/25/红黑树/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">红黑树</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-11-25 13:30:45 / 修改时间：13:31:40" itemprop="dateCreated datePublished" datetime="2018-11-25T13:30:45+08:00">2018-11-25</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/算法/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="《算法导论》中的红黑树"><a href="#《算法导论》中的红黑树" class="headerlink" title="《算法导论》中的红黑树"></a>《算法导论》中的红黑树</h2><p>红黑树与AVL相似,都是对BST进行了一系列优化,防止退化成链表的现象。算法导论中对红黑树的定义如下</p>
-<ol>
-<li>每个节点要么是红色,要么是黑色</li>
-<li>根节点必须黑色</li>
-<li>每个叶子节点(空节点)也是黑色</li>
-<li>红节点的孩子节点必须为黑色</li>
-<li>任意节点到叶子节点,经过的黑色节点数量是相同的</li>
-</ol>
-<p>相信大多数人都看过这段关于RBT的描述,然后通过这段描述推导出更多的性质,然后就是一些列的旋转、染色代码,非常不友好。问题就在于我们通过上面的性质根本无法得知红黑树是怎么得来的,作者怎么发明这种算法的。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/11/25/红黑树/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/12/k8s学习总结4-网络/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/11/12/k8s学习总结4-网络/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">k8s学习总结4-网络</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-11-12 13:58:07 / 修改时间：17:25:43" itemprop="dateCreated datePublished" datetime="2018-11-12T13:58:07+08:00">2018-11-12</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>K8S的网络部分确实是一个难点,我在这里卡了很久也看了很多相关的文档。K8S的网络依赖于Docker,Docker的网络离不开linux内核的支持,所以要理解K8S的网络必须要了解linux网络知识。</p>
-<h2 id="linux网络基础"><a href="#linux网络基础" class="headerlink" title="linux网络基础"></a>linux网络基础</h2><p>Docker使用到的linux技术主要包括下面几种:</p>
-<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fx59jhgk3cj307106xmwz.jpg" alt=""></p>
-<p>linux通过命名空间(ns)可以将网络栈进行隔离,不同的ns完全隔离无法进行通信。Docker也正是利用了这种特性实现不同容器网络环境的隔离。那么如果我有需求需要让不同ns的进程进行通信,该怎么做呢?答案就是veth设备对。</p>
-<p>Veth的重要作用就是打通网络栈之间的壁垒,就像一个通道,两端连着不同的网络栈,所以Veth必须成对出现。</p>
-<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fx5a6gasdnj308y056wea.jpg" alt=""></p>
-<p>Docker 服务启动后默认会创建一个 docker0 网桥（其上有一个 docker0 内部接口），它在内核层连通了其他的物理或虚拟网卡，这就将所有容器和本地主机都放到同一个物理网络。linux网桥的作用就是绑定多个以太网设备,将他们桥接起来。网桥上层只需要将数据交给网桥,网桥负责决定是将数据转发到哪些以太网口。以太网口接收到的网络报文,同样只需要交给网桥,网桥负责判断是丢弃还是继续向上层提交。</p>
-<p>假如用户需要对某些关心的数据进行一些操作,Iptable/Netfilter就提供了这种功能,通过在挂载点挂载钩子函数,可以对一些数据包进行过滤、修改、丢弃操作等。Netfilter提供了五个位置来作控制</p>
-<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fx5bbxfwxij30dk0dhdft.jpg" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1.PREROUTING (路由前)</div><div class="line">2.INPUT (数据包流入口)</div><div class="line">3.FORWARD (转发管卡)</div><div class="line">4.OUTPUT(数据包出口)</div><div class="line">5.POSTROUTING（路由后）</div></pre></td></tr></table></figure>
-<p>任何一个数据包，只要经过本机，必将经过这五个链中的其中一个链。接着又定义了表的概念用来管理这些链</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">filter:定义允许与不允许</div><div class="line">manage: 修改数据报文</div><div class="line">nat: 网络地址转换</div></pre></td></tr></table></figure>
-<p>对于filter来讲一般只能做在3个链上：INPUT ，FORWARD ，OUTPUT </p>
-<p>对于nat来讲一般也只能做在3个链上：PREROUTING ，OUTPUT ，POSTROUTING </p>
-<p>而mangle则是5个链都可以做：PREROUTING，INPUT，FORWARD，OUTPUT，POSTROUTING</p>
-<p>iptables是工作在用户控件提供管理这些规则的接口的工具,它的背后就是工作在内和空间的Netfilter。</p>
-<h2 id="Docker网络模型"><a href="#Docker网络模型" class="headerlink" title="Docker网络模型"></a>Docker网络模型</h2><p>docker支持四种网络模式:</p>
-<ul>
-<li>host</li>
-<li>container</li>
-<li>none</li>
-<li>bridge</li>
-</ul>
-<p>docker默认启用的是bridge类型,安装docker后会在宿主机上创建一个docker0网桥,当运行一个容器,veth就被会创建,一端连在docker0网桥上,另一端在宿主机内的eth0网桥上。这样就做到了同一主机上不同容器可以相互访问,但如果要通过其他ip访问这台机器的docker容器,就需要将宿主机上分配端口,将docker0的一个端口映射到宿主机端口上。</p>
-<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fx5cclqoypj30ku09rt8z.jpg" alt=""></p>
-<h2 id="Kubernates网络模型"><a href="#Kubernates网络模型" class="headerlink" title="Kubernates网络模型"></a>Kubernates网络模型</h2><p>K8S作为一种容器编排工具,主要解决一下场景中的问题:</p>
-<ol>
-<li>容器与容器之间的通信</li>
-<li>Pod与Pod之间的通信</li>
-<li>Pod与service之间的通信</li>
-<li>集群内外的通信</li>
-</ol>
-<h3 id="容器与容器"><a href="#容器与容器" class="headerlink" title="容器与容器"></a>容器与容器</h3><p>由于Pod中的容器共享网络栈,所以容器之间可以使用localhost进行通信。</p>
-<h3 id="Pod之间通信"><a href="#Pod之间通信" class="headerlink" title="Pod之间通信"></a>Pod之间通信</h3><p>Pod之间的通信可能存在于同一个Node上,也有可能存在于不同Node上。</p>
-<hr>
-<p>同一个Node上的Pod都是通过veth连接到宿主机的docker0网桥,他们的Ip都是从docker0上动态获取并且和docker0 ip属于同一个网段。</p>
-<hr>
-<p>Pod的地址与docker0在同一个网段,docker0与宿主机eth0属于两个不同的网段,Node之间的通信依赖于宿主机的网卡。所以不同Node的Pod想要通信,首先要找到Node对应的宿主机Ip,将数据包发送到宿主机网卡上,然后在转发给docker0,最后再到达目标Pod。</p>
-<p>这部分的实现通常都是依赖一些网络配置工具来完成,例如flannel,后面再详细介绍。</p>
-<h3 id="Pod与Service"><a href="#Pod与Service" class="headerlink" title="Pod与Service"></a>Pod与Service</h3><p>kubernetes创建服务时，会为服务分配一个虚拟的IP地址，即为ClusterIP，客户端通过访问这</p>
-<p>个虚拟IP地址来访问内部组件。实质上具体访问内部的工作都是kube-proxy来完成的。kube-</p>
-<p>proxy担负着透明代理和负载均衡的角色，其实就是将某个访问service的请求，通过一套算法</p>
-<p>和规则转发给后端的pod，这里说的算法就是Round Robin负载均衡算法和session粘连规则。</p>
-<p>我们还可以通过修改service里面的service.spec.sessionAffinity参数的值来实现会话保持特</p>
-<p>的定向转发。</p>
-<p>总之，不管是clusterIP+targetPort，还是节点IP+NodePort，都会被Iptables规则重新定向到</p>
-<p>kube-proxy监听服务的代理端口。</p>
-<h3 id="集群内外通信"><a href="#集群内外通信" class="headerlink" title="集群内外通信"></a>集群内外通信</h3><ol>
-<li>NodeIP+NodePort</li>
-</ol>
-<p>这种方式就是在宿主机上开放一个端口,供外部访问</p>
-<ol>
-<li>Ingress</li>
-</ol>
-<p>Ingress 可以给 service 提供集群外部访问的 URL、负载均衡、SSL 终止、HTTP 路由等。为了配置这些 Ingress 规则，集群管理员需要部署一个 Ingress controller，它监听 Ingress 和 service 的变化，并根据规则配置负载均衡并提供访问入口。典型的就是Nginx Ingress。</p>
-<ol>
-<li>loadbalance</li>
-</ol>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2405,7 +2391,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-count">77</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
