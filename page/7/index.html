@@ -256,7 +256,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">21</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">22</span></a>
 
   </li>
         
@@ -275,7 +275,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">18</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">16</span></a>
 
   </li>
         
@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">77</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">78</span></a>
 
   </li>
         
@@ -349,6 +349,186 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2017/12/31/springboot-Data-JPA之对象映射/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2017/12/31/springboot-Data-JPA之对象映射/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/7/index.html">SpringBoot-Data JPA之对象映射(1)</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2017-12-31 13:47:04 / 修改时间：13:52:34" itemprop="dateCreated datePublished" datetime="2017-12-31T13:47:04+08:00">2017-12-31</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/SpringBoot/" itemprop="url" rel="index"><span itemprop="name">SpringBoot</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>由于公司使用的是mybatis框架，所以自己学了学Hibernate。用的最多的应该就是SpringBoot-Data-Jpa，记录一下学习笔记。</p>
+<h3 id="基本属性"><a href="#基本属性" class="headerlink" title="基本属性"></a>基本属性</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">@Entity</div><div class="line">@Data</div><div class="line">@Table(name=&quot;sc_category&quot;)</div><div class="line">public class Category &#123;</div><div class="line">    @Id</div><div class="line">    @GeneratedValue</div><div class="line">    private int id;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>@Table 指定表的名称</p>
+<p>@Entity注解表示该对象可以映射成数据库的一张表</p>
+<p>@Id表示该字段为主键</p>
+<p>@GeneratedValue表示主键策略,它包含两个属性，strategy和generator。其中strategy默认为AUTO，generator默认为“”。generator用于自定义主键生成策略，需要额外添加一个@GenericGenerator注解。<br>strategy四个属性为：</p>
+<ul>
+<li>TABLE:根据特定表格生成主键</li>
+<li>SEQUENCE:按照序列生成主键，需要数据库支持</li>
+<li>IDENTITY:主键列自增长</li>
+<li>AUTO: 根据数据库自动选择策略。mysql会选择IDENTITY</li>
+</ul>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2017/12/31/springboot-Data-JPA之对象映射/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -581,12 +761,24 @@
                 
               
 
-              <time title="创建时间：2017-12-23 16:05:24 / 修改时间：16:27:04" itemprop="dateCreated datePublished" datetime="2017-12-23T16:05:24+08:00">2017-12-23</time>
+              <time title="创建时间：2017-12-23 16:05:24" itemprop="dateCreated datePublished" datetime="2017-12-23T16:05:24+08:00">2017-12-23</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-26 09:45:53" itemprop="dateModified" datetime="2018-12-26T09:45:53+08:00">2018-12-26</time>
               
             
           </span>
@@ -603,7 +795,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/RabbitMq/" itemprop="url" rel="index"><span itemprop="name">RabbitMq</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
 
                 
                 
@@ -774,7 +966,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2017-12-23 16:05:06" itemprop="dateModified" datetime="2017-12-23T16:05:06+08:00">2017-12-23</time>
+                <time title="修改时间：2018-12-26 09:45:51" itemprop="dateModified" datetime="2018-12-26T09:45:51+08:00">2018-12-26</time>
               
             
           </span>
@@ -791,7 +983,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/RabbitMq/" itemprop="url" rel="index"><span itemprop="name">RabbitMq</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
 
                 
                 
@@ -1992,197 +2184,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2017/12/09/JAVA并发从入门到崩溃-AQS/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2017/12/09/JAVA并发从入门到崩溃-AQS/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/7/index.html">JUC-AQS(3)</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2017-12-09 08:45:12" itemprop="dateCreated datePublished" datetime="2017-12-09T08:45:12+08:00">2017-12-09</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-01-01 16:04:16" itemprop="dateModified" datetime="2018-01-01T16:04:16+08:00">2018-01-01</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java并发编程/" itemprop="url" rel="index"><span itemprop="name">java并发编程</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="什么是AQS"><a href="#什么是AQS" class="headerlink" title="什么是AQS"></a>什么是AQS</h3><p>AQS是AbstractQueuedSynchronizer的缩写，是用来实现一个锁的底层框架。<br><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1fma8k3ufacj30kf0e7n00.jpg" alt=""></p>
-<p>为什么要了解AQS(队列同步器)呢？因为我们在并发编程的时候很可能用到锁，而AQS与锁的实现密切相关。可是在图中我们并没有看到AQS与Lock产生直接关联，这是因为在每个锁内部都封装了一个抽象类Sync，而sync继承自AQS，如ReentranLock：<br><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fma97wfi6tj30y10810w3.jpg" alt=""></p>
-<p>AQS是JUC中Lock的实现关键，是实现锁或者自定义一个同步组件的基本框架，它使用了一个volatile int state作为同步状态，通过内置的FIFO队列(CLH)完成线程排队工作。AQS同事支持独占式获取同步状态，也支持共享式获取同步状态，以实现不同组件。Lock通过AQS框架，隐藏了具体的实现细节而与用户的交互使用接口，大大简化了锁的实现方式。它封装了线程、挂起唤醒的内部运作，我们只需要通过设置AQS的state值来控制他的线程挂起和唤醒的运作路径，就可以实现我们的同步器类了。</p>
-<p>AQS提供的方法可分为三类:</p>
-<ol>
-<li>独占式获取/释放状态</li>
-<li>共享式获取/释放状态</li>
-<li>查询同步队列情况</li>
-</ol>
-<p>通过以下代码我们就可以简单实现一个互斥锁。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">public class mutex &#123;</div><div class="line">    Sync sync = new Sync();</div><div class="line">    public void lock()&#123;</div><div class="line">        sync.tryAcquire(1);</div><div class="line">    &#125;</div><div class="line">    public void unlock()&#123;</div><div class="line">        sync.tryRelease(0);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    private static class Sync extends AbstractQueuedSynchronizer&#123;</div><div class="line">        @Override</div><div class="line">        protected boolean isHeldExclusively() &#123;</div><div class="line">            return getState() == 1;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        protected boolean tryAcquire(int arg) &#123;</div><div class="line">            if(compareAndSetState(0,1))&#123;</div><div class="line">                setExclusiveOwnerThread(Thread.currentThread());</div><div class="line">                return true;</div><div class="line">            &#125;</div><div class="line">            return false;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        protected boolean tryRelease(int arg) &#123;</div><div class="line">            if(getState()==0)&#123;</div><div class="line">                throw  new IllegalMonitorStateException(&quot;状态不符合预期&quot;);</div><div class="line">            &#125;</div><div class="line">            setExclusiveOwnerThread(null);</div><div class="line">            setState(0);</div><div class="line">            return true;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2017/12/09/JAVA并发从入门到崩溃-AQS/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2234,7 +2235,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-count">78</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2279,11 +2280,7 @@
                     
                       
                     
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-count">16</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -2338,7 +2335,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">21</span>
+                      
+                    
+                    <span class="site-state-item-count">22</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>

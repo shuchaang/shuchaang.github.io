@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="一年多来在工作中接触了Kafka、ActiveMQ,业余时间自己学习了RabbitMQ,基本上已经是市面上主流的几款MQ软件了,后面有时间会继续看一下RocketMQ。 MQ虽然可以用来对系统进行异步调用、解耦,提高用户体验和优化架构。但是MQ降低了系统的可用性,因为当系统进行MQ的改造后,MQ的故障会导致下游的服务不可用和分布式一致性问题。所以在技术上首先要保证MQ集群始终处于可用的状态。 MQ">
+<meta name="keywords" content="消息队列">
+<meta property="og:type" content="article">
+<meta property="og:title" content="消息队列阶段性使用总结">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/12/26/消息队列使用总结/index.html">
+<meta property="og:site_name" content="ShuChang&#39;s Blog">
+<meta property="og:description" content="一年多来在工作中接触了Kafka、ActiveMQ,业余时间自己学习了RabbitMQ,基本上已经是市面上主流的几款MQ软件了,后面有时间会继续看一下RocketMQ。 MQ虽然可以用来对系统进行异步调用、解耦,提高用户体验和优化架构。但是MQ降低了系统的可用性,因为当系统进行MQ的改造后,MQ的故障会导致下游的服务不可用和分布式一致性问题。所以在技术上首先要保证MQ集群始终处于可用的状态。 MQ">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-12-26T08:45:37.811Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="消息队列阶段性使用总结">
+<meta name="twitter:description" content="一年多来在工作中接触了Kafka、ActiveMQ,业余时间自己学习了RabbitMQ,基本上已经是市面上主流的几款MQ软件了,后面有时间会继续看一下RocketMQ。 MQ虽然可以用来对系统进行异步调用、解耦,提高用户体验和优化架构。但是MQ降低了系统的可用性,因为当系统进行MQ的改造后,MQ的故障会导致下游的服务不可用和分布式一致性问题。所以在技术上首先要保证MQ集群始终处于可用的状态。 MQ">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.shuchang.sc.com/2018/12/26/消息队列使用总结/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>消息队列阶段性使用总结 | ShuChang's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ShuChang's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">剑来!</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">22</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">16</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">78</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/26/消息队列使用总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">消息队列阶段性使用总结
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-26 09:43:29 / 修改时间：16:45:37" itemprop="dateCreated datePublished" datetime="2018-12-26T09:43:29+08:00">2018-12-26</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/12/26/消息队列使用总结/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2018/12/26/消息队列使用总结/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>一年多来在工作中接触了Kafka、ActiveMQ,业余时间自己学习了RabbitMQ,基本上已经是市面上主流的几款MQ软件了,后面有时间会继续看一下RocketMQ。</p>
+<p>MQ虽然可以用来对系统进行异步调用、解耦,提高用户体验和优化架构。但是MQ降低了系统的可用性,因为当系统进行MQ的改造后,MQ的故障会导致下游的服务不可用和分布式一致性问题。所以在技术上首先要保证MQ集群始终处于可用的状态。</p>
+<h2 id="MQ集群方案"><a href="#MQ集群方案" class="headerlink" title="MQ集群方案"></a>MQ集群方案</h2><h3 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h3><p>kafka的集群依赖于Zookeeper,因此首要保证ZK的可用性,可以使用3-5台(2n+1)。Zookeeper集群的工作是超过半数才能对外提供服务。</p>
+<p>接着部署多台Kafka,注册到ZK上,Kafka会通过选举选出leader和follower以及replica机制提供集群高可用</p>
+<h3 id="activeMQ"><a href="#activeMQ" class="headerlink" title="activeMQ"></a>activeMQ</h3><p>activemq提供了多种Master/slave模式的集群,公司使用Replicated LevelDB Store的集群方式,也是5.9版本后官方推荐的一种集群方式</p>
+<p>Replicated LevelDB Store方案使用Zookeeper选举Master。要进行选举，则需要多数派的“参与者”。因为Replicated LevelDB Store中有多个Broker，从多个Broker中选举出一个成为Master，其他的则成为Slave。只有Master接收Client的连接，Slave负责连接到Master，并接收（同步方式、异步方式）Master上的数据。<br> 比如说：一共有3个Broker，一个Master，二个Slave。当新消息到达Master时，Master需要将消息同步到其中一台Slave之后，才能向Producer发送ACK确认此次消息成功发送。<br>而剩下的另一台Slave，则可以在后台以异步方式复制这个新消息。此外，还能容忍一台Slave宕机。（能容忍不超过大多数的Broker宕机）</p>
+<h3 id="RabbitMQ"><a href="#RabbitMQ" class="headerlink" title="RabbitMQ"></a>RabbitMQ</h3><p>常见的RabbitMQ集群有两种:</p>
+<ol>
+<li>普通模式</li>
+</ol>
+<p>对于Queue来说,消息只会存储在一个MQ节点上,当请求到达其他节点时,其他节点会来临时请求这个节点的消息。这样做避免了各个节点消息同步,节省了空间,但是当存储消息的节点挂掉,在恢复之前消息都会丢失。</p>
+<ol>
+<li>镜像模式</li>
+</ol>
+<p>把需要的队列做成镜像队列。该模式解决了普通模式中的问题，其实质和普通模式不同之处在于，消息实体会主动在镜像节点间同步，而不是在客户端取数据时临时拉取。该模式带来的副作用也很明显，除了降低系统性能外，如果镜像队列数量过多，加之大量的消息进入，集群内部的网络带宽将会被这种同步通讯大大消耗掉。所以在对可靠性要求较高的场合中适用。</p>
+<h2 id="消息生产保障"><a href="#消息生产保障" class="headerlink" title="消息生产保障"></a>消息生产保障</h2><p>一个非常常见的问题是,怎么保证投递出去的消息一定不会丢失？</p>
+<p>个人认为,这个问题可以拆分为如何保证生产端消息投递成功,如何保证消费端一定收到消息这样两个问题:</p>
+<h3 id="生产端"><a href="#生产端" class="headerlink" title="生产端"></a>生产端</h3><ol>
+<li>rabbitmq在发送端提供了publish-confirm和publish-return机制。</li>
+</ol>
+<p>publish-return机制用来告诉生产者消息有没有被路由到正确的queue中,如果找到的正确的destination则会返回ack,否则返回unack。</p>
+<p>publish-confirm能够在消息进入目标队列后返回一个ack或者unack告诉生产端,如果broker正确处理这条消息,会返回ack。如果broker内部处理时发生了异常,就会返回unack。</p>
+<p>这就使得生产者知道消息是否正确到达目的队列了，如果消息和队列是可持久化的，那么确认消息会将消息写入磁盘之后发出。confirm是一种异步的机制,发送者不必等待消息的确认。confirm机制可以视为一种发送端的事务机制,生产端通过回调消息来对消息进行重新处理。但是Confirm机制，无法进行回滚，就是一旦服务器崩溃，生产者无法得到Confirm信息，生产者其实本身也不知道该消息是否已经被持久化，只有继续重发来保证消息不丢失，但是如果原先已经持久化的消息，并不会被回滚，这样队列中就会存在两条相同的消息，系统需要支持去重。</p>
+<ol>
+<li>ActiveMQ</li>
+</ol>
+<p>Activemq应该是没有专门为生产端保证消息投递的确认机制,我在做这里的时候是根据抛出的JMSException来进行一些补偿处理,同样这里会遇到的问题是你并不确认这个消息是否真的到达了消息队列,当你进行补偿时可能造成了重复消息,这同样需要消费端支持消息去重。</p>
+<ol>
+<li>Kafka</li>
+</ol>
+<p>对于Kafka,注重的是高吞吐,一般涉及业务逻辑的消息都不会选择kafka,它提供了三种可靠性投递保证:</p>
+<ul>
+<li>生产端发送出去就算成功</li>
+<li>Master-Slave模型，只有当Master和所有Slave都接收到消息时，才算投递成功，这种模型提供了最高的投递可靠性，但是损伤了性能</li>
+<li>即只要Master确认收到消息就算投递成功</li>
+</ul>
+<p>实际使用中都会折中选择第三种方案</p>
+<h3 id="消费端"><a href="#消费端" class="headerlink" title="消费端"></a>消费端</h3><p>对于消费端,大多数业务系统都会选择进行手动签收。当取到消息,进行正确处理并入库,才会对broker返回ack。</p>
+<h3 id="通用"><a href="#通用" class="headerlink" title="通用"></a>通用</h3><p>仅仅依赖于上述消息队列提供的消息保证机制是不够的,因为MQ并不擅长做这个。对于业务要求比较严格的场景,每条消息都需要可追溯,也就需要对消息落库,并通过定时任务扫描状态异常的消息,进行重新发送或者人工干预。</p>
+<p>对于吞吐率要求比较高的系统,落库的负担就太大,这时比较常用的一种方案就是延迟确认消息。在发送业务消息的同时发送一条延迟确认消息,确认消费端系统是否正确处理消息。这种方案在于提高了系统的吞吐量但是可能造成一段时间内业务状态不一致。</p>
+<h2 id="如何保证消息不重复"><a href="#如何保证消息不重复" class="headerlink" title="如何保证消息不重复"></a>如何保证消息不重复</h2><p>虽然这时我们解决了消息投递问题,但是它又引入了消息重复的问题。消息重复投递的原因可能在broker,也可能在生产端和消费端。那么我们可以把问题简化为如何保证消费端消费消息的幂等性,那么这时就可以忽略broker和生产者带来的问题。</p>
+<p>首先每个消息都会有一个MessageID,这应该是全局唯一的。消费端要做的就是将存储MessageId以及这条消息的处理状态。当消息来的时候首先要在消息表对比是否已经成功处理这条消息,成功处理则将这条消息丢弃。这里消费端需要注意控制并发,因为重复消息可能同时到达,在并发消费。在查询时可以限制时间范围,因为一般重复消息间隔时间不会太久。</p>
+<h2 id="消息顺序消费保证"><a href="#消息顺序消费保证" class="headerlink" title="消息顺序消费保证"></a>消息顺序消费保证</h2><ol>
+<li>rabbitmq/activemq 保证消息顺序是通过独占队列(exclusive)来保证,这样虽然可以严格保证消息顺序,但是无法进行扩展,吞吐率低。对于QPS高的系统确实是无法承受的。更好的处理方式就是不处理,因为MQ并不是设计来做这些的。所以消费端就需要对消息顺序做处理。生产端在消息中附加额外的信息,版本号 &amp; 状态机 &amp; msgid &amp; parent_msgid，通过 parent_msgid 判断消息的顺序（需要全局存储，记录消息的执行状态）</li>
+</ol>
+<ol>
+<li>如果要Kafka本身保证顺序消费,就失去了使用Kafka的意义。这种场景不应该选择kafka。只能将处理逻辑放到应用中。</li>
+</ol>
+<h2 id="消息堆积"><a href="#消息堆积" class="headerlink" title="消息堆积"></a>消息堆积</h2><p>关键还是在消费端进行配置,有两个关键参数:concurrentConsumerCount 和 prefetchCount。可以适当提高这两个参数。</p>
+<h2 id="各个MQ的缺陷"><a href="#各个MQ的缺陷" class="headerlink" title="各个MQ的缺陷"></a>各个MQ的缺陷</h2><p>相比于知道各个MQ的优势,知道它们的劣势更加重要,因为在选型的时候首先要将不能满足要求的进行排除</p>
+<h3 id="AMQ"><a href="#AMQ" class="headerlink" title="AMQ"></a>AMQ</h3><p>AMQ的消息模型比较简单,只支持PTP和topic两种模式。对于消息分组的场景支持比较弱(依赖于消费端的选择器),权限精度不高,社区不活跃可用插件比较少,控制台功能比较简单。</p>
+<p>据说会有消息丢失等问题,但是我没遇到过。</p>
+<h3 id="RabbitMQ-1"><a href="#RabbitMQ-1" class="headerlink" title="RabbitMQ"></a>RabbitMQ</h3><p>相比于AMQ有更高的性能,相比于Kafka支持更多的场景。在产生消息堆积时性能会有大幅度下降,使用erlang开发,进行修改或二次开发比较困难。是大多数互联网公司的选择。</p>
+<h3 id="Kafka-1"><a href="#Kafka-1" class="headerlink" title="Kafka"></a>Kafka</h3><p>速度快,吞吐量高,适合处理大量数据,如日志场景。Kafka的核心概念就是partition,consumer消费是通过绑定partition来消费的。如果consumer数量大于partition数量就会浪费,所以最佳就是consumer和partition成比例关系。这种静态的绑定会导致扩缩容的麻烦,也就是当流量高峰时,仅仅增加consumer不能解决问题,还要增加partition。但是partition增加后又不能再减少,最后导致rebalance。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>赏口饭吧</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Shuchang 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="Shuchang 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/消息队列/" rel="tag"># 消息队列</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/08/JMS-7-Consumer高级特性/" rel="next" title="JMS(7) Consumer高级特性">
+                <i class="fa fa-chevron-left"></i> JMS(7) Consumer高级特性
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/123.png"
+                alt="Shuchang" />
+            
+              <p class="site-author-name" itemprop="name">Shuchang</p>
+              <p class="site-description motion-element" itemprop="description">身怀利器，杀心自起，慎而重之</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">78</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">22</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://gitee.com/swiftsc" title="GitHub &rarr; https://gitee.com/swiftsc" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/shuchang0403@gmail.com" title="E-Mail &rarr; shuchang0403@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MQ集群方案"><span class="nav-number">1.</span> <span class="nav-text">MQ集群方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka"><span class="nav-number">1.1.</span> <span class="nav-text">Kafka</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#activeMQ"><span class="nav-number">1.2.</span> <span class="nav-text">activeMQ</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RabbitMQ"><span class="nav-number">1.3.</span> <span class="nav-text">RabbitMQ</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息生产保障"><span class="nav-number">2.</span> <span class="nav-text">消息生产保障</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#生产端"><span class="nav-number">2.1.</span> <span class="nav-text">生产端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消费端"><span class="nav-number">2.2.</span> <span class="nav-text">消费端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通用"><span class="nav-number">2.3.</span> <span class="nav-text">通用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何保证消息不重复"><span class="nav-number">3.</span> <span class="nav-text">如何保证消息不重复</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息顺序消费保证"><span class="nav-number">4.</span> <span class="nav-text">消息顺序消费保证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息堆积"><span class="nav-number">5.</span> <span class="nav-text">消息堆积</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#各个MQ的缺陷"><span class="nav-number">6.</span> <span class="nav-text">各个MQ的缺陷</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AMQ"><span class="nav-number">6.1.</span> <span class="nav-text">AMQ</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RabbitMQ-1"><span class="nav-number">6.2.</span> <span class="nav-text">RabbitMQ</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka-1"><span class="nav-number">6.3.</span> <span class="nav-text">Kafka</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">  <a href="http://www.miitbeian.gov.cn" rel="noopener" target="_blank">浙ICP备17049505号 </a>&copy; 2015 – <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shuchang</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+      
+  
+  <script type="text/javascript" color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname,
+            owner: 'shuchaang',
+            repo: 'shuchaang.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+            
+                client_id: 'c5aa96bb5e5656512174'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function (i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap')
+      $(e).after($wrap)
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+        var code = $(this).parent().find('.code').find('.line').map(function (i, e) {
+          return $(e).text()
+        }).toArray().join('\n')
+        var ta = document.createElement('textarea')
+        document.body.appendChild(ta)
+        ta.style.position = 'absolute'
+        ta.style.top = '0px'
+        ta.style.left = '0px'
+        ta.value = code
+        ta.select()
+        ta.focus()
+        var result = document.execCommand('copy')
+        document.body.removeChild(ta)
+        
+          if(result)$(this).text('复制成功')
+          else $(this).text('复制失败')
+        
+        $(this).blur()
+      })).on('mouseleave', function (e) {
+        var $b = $(this).find('.copy-btn')
+        setTimeout(function () {
+          $b.text('复制')
+        }, 300)
+      }).append(e)
+    })
+  </script>
+
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>
