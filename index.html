@@ -410,12 +410,24 @@
                 
               
 
-              <time title="创建时间：2019-03-07 15:20:03 / 修改时间：15:51:53" itemprop="dateCreated datePublished" datetime="2019-03-07T15:20:03+08:00">2019-03-07</time>
+              <time title="创建时间：2019-03-07 15:20:03" itemprop="dateCreated datePublished" datetime="2019-03-07T15:20:03+08:00">2019-03-07</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-03-08 14:58:35" itemprop="dateModified" datetime="2019-03-08T14:58:35+08:00">2019-03-08</time>
               
             
           </span>
@@ -479,14 +491,6 @@
 </ul>
 <p>生成一个goroutine的方式非常的简单：Go一下，就生成了。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">go f();</div></pre></td></tr></table></figure>
-<p>通信机制channel也很方便，传数据用channel &lt;- data，取数据用&lt;-channel。<br>在通信过程中，传数据channel &lt;- data和取数据&lt;-channel必然会成对出现，因为这边传，那边取，两个goroutine之间才会实现通信。<br>而且不管传还是取，必阻塞，直到另外的goroutine传或者取为止。<br>有两个goroutine，其中一个发起了向channel中发起了传值操作。（goroutine为矩形，channel为箭头）</p>
-<p><img src="https://ws3.sinaimg.cn/large/006tKfTcly1g0u9eu5xuwj30n00kgt8s.jpg" alt=""></p>
-<p>左边的goroutine开始阻塞，等待有人接收。</p>
-<p>这时候，右边的goroutine发起了接收操作。<br><img src="https://ws2.sinaimg.cn/large/006tKfTcly1g0u9f3ug9mj30ro0ko0sx.jpg" alt=""></p>
-<p>右边的goroutine也开始阻塞，等待别人传送。</p>
-<p>这时候，两边goroutine都发现了对方，于是两个goroutine开始一传，一收。</p>
-<p><img src="https://ws1.sinaimg.cn/large/006tKfTcly1g0u9f9wesxj30le0lmmxb.jpg" alt=""></p>
-<p>这便是Golang CSP并发模型最基本的形式。</p>
 <p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
 <ul>
 <li>
@@ -615,7 +619,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-03-08 14:53:18" itemprop="dateModified" datetime="2019-03-08T14:53:18+08:00">2019-03-08</time>
+                <time title="修改时间：2019-03-08 14:58:21" itemprop="dateModified" datetime="2019-03-08T14:58:21+08:00">2019-03-08</time>
               
             
           </span>
@@ -667,8 +671,7 @@
 
       
         
-          
-            <h2 id="JAVA-SPI"><a href="#JAVA-SPI" class="headerlink" title="JAVA SPI"></a>JAVA SPI</h2><p>java spi一直都是一个很少有人关注的点,我听到这个词还是源于Dubbo SPI,Dubbo SPI是对java SPI进行了一些优化得到的。这个机制主要是针对厂商或者插件,但是我们日常中确一直在使用。</p>
+          <h2 id="JAVA-SPI"><a href="#JAVA-SPI" class="headerlink" title="JAVA SPI"></a>JAVA SPI</h2><p>java spi一直都是一个很少有人关注的点,我听到这个词还是源于Dubbo SPI,Dubbo SPI是对java SPI进行了一些优化得到的。这个机制主要是针对厂商或者插件,但是我们日常中确一直在使用。</p>
 <h3 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h3><p><img src="https://ws1.sinaimg.cn/large/006tKfTcly1g0vc2gbxpuj30dm0743yf.jpg" alt=""></p>
 <ul>
 <li>bad good 是两个interface的实现</li>
@@ -683,48 +686,18 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public class MainApp &#123;</div><div class="line"></div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        ServiceLoader&lt;Printer&gt; printerLoader = ServiceLoader.load(Printer.class);</div><div class="line">        for (Printer printer : printerLoader) &#123;</div><div class="line">            printer.print();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">i am good</div></pre></td></tr></table></figure>
 <p>并且通过切换bad依赖,输出的结果是不同的,这就是java spi的简单示例。</p>
-<h3 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a>实际应用</h3><p>根据上面的demo我们可以猜测,最关键的部分就是在resources\META-INF\services目录下创建的文件,文件名是标准接口全路径,内容就是实现类的全路径。</p>
-<p>我们平时最常见的第三方厂商当然就是mysql啦,打开mysql。在mysql-connector-java-xxx.jar中发现了META-INF\services\java.sql.Driver文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">com.mysql.jdbc.Driver</div><div class="line">com.mysql.fabric.jdbc.FabricMySQLDriver</div></pre></td></tr></table></figure>
-<p>我们可以分析出，java.sql.Driver是一个规范接口，com.mysql.jdbc.Driver<br>com.mysql.fabric.jdbc.FabricMySQLDriver则是mysql-connector-java-xxx.jar对这个规范的实现接口。</p>
-<p>还记得一道经典的面试题：class.forName(“com.mysql.jdbc.Driver”)到底做了什么事？</p>
-<p>都知道class.forName与类加载机制有关，会触发执行com.mysql.jdbc.Driver类中的静态方法，从而使主类加载数据库驱动。因为数据库驱动类的特殊性质，JDBC规范中明确要求Driver类必须向DriverManager注册自己，导致其必须由class.forName手动触发。</p>
-<p>但是在较新的mysql驱动版本中,DriverManager已经废弃了class.forName的方式而是改用spi加载jdbc驱动。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">public Void run() &#123;</div><div class="line">    ServiceLoader&lt;Driver&gt; loadedDrivers = ServiceLoader.load(Driver.class);</div><div class="line">    Iterator&lt;Driver&gt; driversIterator = loadedDrivers.iterator();</div><div class="line">    ....</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="java-spi-源码"><a href="#java-spi-源码" class="headerlink" title="java spi 源码"></a>java spi 源码</h2><p>java spi的源码主要在com.util.ServiceLoader类中</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">private static final String PREFIX = &quot;META-INF/services/&quot;;</div></pre></td></tr></table></figure>
-<p>首先定义了一个PREFIX,也就是为什么我们要把文件写在这个路径下</p>
-<p>load方法的作用就是将接口封装为ServiceLoader,主要的功能是在遍历时实现的</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">private boolean hasNextService() &#123;</div><div class="line">            if (nextName != null) &#123;</div><div class="line">                return true;</div><div class="line">            &#125;</div><div class="line">            if (configs == null) &#123;</div><div class="line">                try &#123;</div><div class="line">                    String fullName = PREFIX + service.getName();</div><div class="line">                    if (loader == null)</div><div class="line">                        configs = ClassLoader.getSystemResources(fullName);</div><div class="line">                    else</div><div class="line">                        configs = loader.getResources(fullName);</div><div class="line">                &#125; catch (IOException x) &#123;</div><div class="line">                    fail(service, &quot;Error locating configuration files&quot;, x);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            while ((pending == null) || !pending.hasNext()) &#123;</div><div class="line">                if (!configs.hasMoreElements()) &#123;</div><div class="line">                    return false;</div><div class="line">                &#125;</div><div class="line">                pending = parse(service, configs.nextElement());</div><div class="line">            &#125;</div><div class="line">            nextName = pending.next();</div><div class="line">            return true;</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
-<p>代码还是比较简单,首先找到接口实现类的全限定名,根据hasNextService获取的实现类信息,使用指定的ClassLoader进行加载和实例化。</p>
-<h2 id="Dubbo-SPI"><a href="#Dubbo-SPI" class="headerlink" title="Dubbo SPI"></a>Dubbo SPI</h2><p>Java SPI的使用很简单。也做到了基本的加载扩展点的功能。但根据上面的代码可以看到Java SPI有以下的不足:</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
 <ul>
-<li>需要遍历所有的实现，并实例化，然后我们在循环中才能找到我们需要的实现,并且默认会去实例化所有实现类。</li>
-<li>配置文件中只是简单的列出了所有的扩展实现，而没有给他们命名。导致在程序中很难去准确的引用它们。</li>
-<li>扩展如果依赖其他的扩展，做不到自动注入和装配</li>
-<li>不提供类似于Spring的IOC和AOP功能</li>
-<li>扩展很难和其他的框架集成，比如扩展里面依赖了一个Spring bean，原生的Java SPI不支持<br>所以Java SPI应付一些简单的场景是可以的，但对于Dubbo，它的功能还是比较弱的。Dubbo对原生SPI机制进行了一些扩展。接下来，我们就更深入地了解下Dubbo的SPI机制。</li>
-</ul>
-<h3 id="一些术语"><a href="#一些术语" class="headerlink" title="一些术语"></a>一些术语</h3><ul>
-<li>扩展点 -  java接口</li>
-<li>扩展  -  java实现类</li>
-<li>扩展实例 - 实例化的java类</li>
-<li>扩展自适应点 - 根据入参不同,自动选择扩展实例。这个机制对于使用者来说是透明的,实际上就是动态代理。</li>
-</ul>
-<h3 id="dubbo-spi-demo"><a href="#dubbo-spi-demo" class="headerlink" title="dubbo spi demo"></a>dubbo spi demo</h3><p>例如我们要实现一个LoadBalance策略</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class DemoLoadBalance implements LoadBalance &#123;</div><div class="line">    @Override</div><div class="line">    public &lt;T&gt; Invoker&lt;T&gt; select(List&lt;Invoker&lt;T&gt;&gt; invokers, URL url, Invocation invocation) throws RpcException &#123;</div><div class="line">        System.out.println(&quot;DemoLoadBalance: Select the first invoker...&quot;);</div><div class="line">        return invokers.get(0);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>添加文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">META-INF/dubbo/com.alibaba.dubbo.rpc.cluster.LoadBalance</div></pre></td></tr></table></figure>
-<p>内容</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">demo=com.dubbo.spi.demo.consumer.DemoLoadBalance</div></pre></td></tr></table></figure>
-<p>使用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;dubbo:reference id=&quot;helloService&quot; interface=&quot;com.dubbo.spi.demo.api.IHelloService&quot; loadbalance=&quot;demo&quot; /&gt;</div></pre></td></tr></table></figure>
-<h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><p>官方已经在这里已经讲的非常明白了,对java spi进行了扩展,主要是按需实例化,并且自动注入属性以及通过Wrapper提供了AOP的功能。</p>
-<blockquote>
-<p><a href="http://dubbo.apache.org/zh-cn/blog/introduction-to-dubbo-spi-2.html" target="_blank" rel="external">http://dubbo.apache.org/zh-cn/blog/introduction-to-dubbo-spi-2.html</a></p>
-</blockquote>
-
+<li>
+          <!--noindex-->
           
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/02/20/java-SPI与Dubbo-SPI/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
         
       
     </div>
