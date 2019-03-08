@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="提出两个问题   Netty在哪里检测到新连接的接入 新连接怎样注册到NioEventLoop线程  我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤  检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件  创建Channel:基于JDK的nioChannel创建出Netty NioSoc">
+<meta name="keywords" content="Netty,JAVA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty(3) 新连接接入">
+<meta property="og:url" content="http://www.shuchang.sc.com/2018/07/03/Netty-新连接接入-3/index.html">
+<meta property="og:site_name" content="ShuChang&#39;s Blog">
+<meta property="og:description" content="提出两个问题   Netty在哪里检测到新连接的接入 新连接怎样注册到NioEventLoop线程  我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤  检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件  创建Channel:基于JDK的nioChannel创建出Netty NioSoc">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180704153067048025149.png">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fsxmlg099gj30zc0j6ach.jpg">
+<meta property="og:updated_time" content="2018-07-05T06:15:41.033Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Netty(3) 新连接接入">
+<meta name="twitter:description" content="提出两个问题   Netty在哪里检测到新连接的接入 新连接怎样注册到NioEventLoop线程  我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤  检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件  创建Channel:基于JDK的nioChannel创建出Netty NioSoc">
+<meta name="twitter:image" content="http://p1vpfd8u5.bkt.clouddn.com/20180704153067048025149.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.shuchang.sc.com/2018/07/03/Netty-新连接接入-3/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Netty(3) 新连接接入 | ShuChang's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ShuChang's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">剑来!</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">24</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">19</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">83</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/03/Netty-新连接接入-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Netty(3) 新连接接入
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-03 09:31:54" itemprop="dateCreated datePublished" datetime="2018-07-03T09:31:54+08:00">2018-07-03</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-07-05 14:15:41" itemprop="dateModified" datetime="2018-07-05T14:15:41+08:00">2018-07-05</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/07/03/Netty-新连接接入-3/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2018/07/03/Netty-新连接接入-3/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>提出两个问题</p>
+</blockquote>
+<ol>
+<li>Netty在哪里检测到新连接的接入</li>
+<li>新连接怎样注册到NioEventLoop线程</li>
+</ol>
+<p>我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤</p>
+<ol>
+<li><p>检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件</p>
+</li>
+<li><p>创建Channel:基于JDK的nioChannel创建出Netty NioSocketChannel</p>
+</li>
+<li><p>Netty给客户端channel分配NioEventLoop,并将channel绑定</p>
+</li>
+<li><p>向selector注册读事件</p>
+</li>
+</ol>
+<p><excerpt in="" index="" |="" 首页摘要=""><br><a id="more"></a></excerpt></p>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+
+
+<h2 id="检测新连接"><a href="#检测新连接" class="headerlink" title="检测新连接"></a>检测新连接</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">processSelectedKey(key,channel) [入口]</div><div class="line">    NioMessageUnsafe.read()</div><div class="line">        doReadMessage()  [while 循环]</div><div class="line">            javaChannel().accept()</div></pre></td></tr></table></figure>
+<h2 id="创建NioSocketChannel"><a href="#创建NioSocketChannel" class="headerlink" title="创建NioSocketChannel"></a>创建NioSocketChannel</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">new NioSocketChannel(parent,ch)  [入口]</div><div class="line">    AbstractNioByteChannel(p,ch,opread)</div><div class="line">        configBlocking(false) &amp; interest_op [注册事件]</div><div class="line">        create id,unsafe,pipeline</div><div class="line">    new NioSocketChannelConfig()  [创建绑定配置]</div><div class="line">        setTcpNoDelay(true)       [禁止Nagle算法,小数据包尽量快发送]</div></pre></td></tr></table></figure>
+<p>跟进到NioServerSocketChannel.doReadMessages(buf):</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">protected int doReadMessages(List&lt;Object&gt; buf) throws Exception &#123;</div><div class="line">    SocketChannel ch = SocketUtils.accept(javaChannel());</div><div class="line">    try &#123;</div><div class="line">        if (ch != null) &#123;</div><div class="line">            buf.add(new NioSocketChannel(this, ch));</div><div class="line">            return 1;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>首先创建一个jdk的channel,然后将jdk的channel与当前类this,共同构造一个Netty的NioSocketChannel</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public NioSocketChannel(Channel parent, SocketChannel socket) &#123;</div><div class="line">    super(parent, socket);</div><div class="line">    config = new NioSocketChannelConfig(this, socket.socket());</div><div class="line">&#125;</div><div class="line"></div><div class="line">protected AbstractNioByteChannel(Channel parent, SelectableChannel ch) &#123;</div><div class="line">        super(parent, ch, SelectionKey.OP_READ);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在这里跟进到父类,发现Netty默认传递了一个OP_READ事件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">protected AbstractNioChannel(Channel parent, SelectableChannel ch, int readInterestOp) &#123;</div><div class="line">    super(parent);</div><div class="line">    this.ch = ch;</div><div class="line">    this.readInterestOp = readInterestOp;</div><div class="line">    try &#123;</div><div class="line">        ch.configureBlocking(false);</div><div class="line">    &#125;</div><div class="line">    ....</div></pre></td></tr></table></figure>
+<p>在这里,将read事件注册到了channel,并且设置为非阻塞模式,继续向上跟进父类,就会创建id,unsafe,pipeline组件。NioSocketChannelConfig主要作用就是设置setTcpNoDelay(true)。如果是false,则会将小的数据包尽量集合成大的数据包然后发送出去,而Netty默认是关闭的,如果运行在Android系统上,则默认开启。</p>
+<h2 id="Netty中Channel的分类"><a href="#Netty中Channel的分类" class="headerlink" title="Netty中Channel的分类"></a>Netty中Channel的分类</h2><h3 id="Channel层级关系"><a href="#Channel层级关系" class="headerlink" title="Channel层级关系"></a>Channel层级关系</h3><p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180704153067048025149.png" alt="20180704153067048025149.png"></p>
+<p>顶层接口channel主要定义了网络IO的读写,绑定,是一个最顶级的抽象。AbstractChannel是一个抽象的实现,并且定义了重要的成员变量。</p>
+<p>接着是AbstractNioChannel,他有两个子类channel,这两个子类差别主要是向AbstractNioChannel注册的io事件不同,可以看一下构造函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public NioServerSocketChannel(ServerSocketChannel channel) &#123;</div><div class="line">        super(null, channel, SelectionKey.OP_ACCEPT);</div><div class="line">        config = new NioServerSocketChannelConfig(this, javaChannel().socket());</div><div class="line">&#125;</div><div class="line"></div><div class="line">protected AbstractNioByteChannel(Channel parent, SelectableChannel ch) &#123;</div><div class="line">    super(parent, ch, SelectionKey.OP_READ);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到服务端channel感兴趣的是accept事件,而客户端channel感兴趣的是read事件。除此之外可以发现,服务端channel和客户端channel对应的unsafe不同,对于服务端NioMessageUnsafe处理的是连接的读取,而客户端NioByteUnsafe是字节读取。</p>
+<p>客户端和服务端都有相应的config进行配置</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fsxmlg099gj30zc0j6ach.jpg" alt=""></p>
+<h2 id="新连接NioEventLoop分配和selector注册"><a href="#新连接NioEventLoop分配和selector注册" class="headerlink" title="新连接NioEventLoop分配和selector注册"></a>新连接NioEventLoop分配和selector注册</h2><p>方法的入口为MultithreadEventLoopGroup</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public ChannelFuture register(Channel channel) &#123;</div><div class="line">    return next().register(channel);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里会next()返回一个NioEventLoop,然后chooser选择一个NioEventLoop,调用register方法,过程中利用了串行无锁化技术,调用底层jdk channel,注册一个accept事件</p>
+<h2 id="NioSocketChannel读事件注册"><a href="#NioSocketChannel读事件注册" class="headerlink" title="NioSocketChannel读事件注册"></a>NioSocketChannel读事件注册</h2><p>入口方法位于AbstractChannel的register0()</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">if (isActive()) &#123;</div><div class="line">    if (firstRegistration) &#123;</div><div class="line">        pipeline.fireChannelActive();</div><div class="line">    &#125; else if (config().isAutoRead()) &#123;</div><div class="line">        beginRead();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里因为新连接已经介入,所以isActive()返回true,并且firstRegistration也为true。调用  pipeline.fireChannelActive();后续会调用readIfIsAutoRead(),默认情况下是自动读的,AbstractNioChannel.beginRead()。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">protected void doBeginRead() throws Exception &#123;</div><div class="line">    // Channel.read() or ChannelHandlerContext.read() was called</div><div class="line">    final SelectionKey selectionKey = this.selectionKey;</div><div class="line">    if (!selectionKey.isValid()) &#123;</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    readPending = true;</div><div class="line"></div><div class="line">    final int interestOps = selectionKey.interestOps();</div><div class="line">    if ((interestOps &amp; readInterestOp) == 0) &#123;</div><div class="line">        selectionKey.interestOps(interestOps | readInterestOp);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里由于初始化设置interestOps为0,所以会再添加一个readInterestOp,也就可以监听OP_READ事件了。</p>
+</the>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>赏口饭吧</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Shuchang 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="Shuchang 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Netty/" rel="tag"># Netty</a>
+          
+            <a href="/tags/JAVA/" rel="tag"># JAVA</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/02/Netty-NioEventLoop-2/" rel="next" title="Netty(2) NioEventLoop">
+                <i class="fa fa-chevron-left"></i> Netty(2) NioEventLoop
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/04/Netty-4-Pipeline/" rel="prev" title="Netty(4) Pipeline">
+                Netty(4) Pipeline <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/123.png"
+                alt="Shuchang" />
+            
+              <p class="site-author-name" itemprop="name">Shuchang</p>
+              <p class="site-description motion-element" itemprop="description">身怀利器，杀心自起，慎而重之</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">83</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">24</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://gitee.com/swiftsc" title="GitHub &rarr; https://gitee.com/swiftsc" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/shuchang0403@gmail.com" title="E-Mail &rarr; shuchang0403@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#检测新连接"><span class="nav-number">1.</span> <span class="nav-text">检测新连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建NioSocketChannel"><span class="nav-number">2.</span> <span class="nav-text">创建NioSocketChannel</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Netty中Channel的分类"><span class="nav-number">3.</span> <span class="nav-text">Netty中Channel的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Channel层级关系"><span class="nav-number">3.1.</span> <span class="nav-text">Channel层级关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#新连接NioEventLoop分配和selector注册"><span class="nav-number">4.</span> <span class="nav-text">新连接NioEventLoop分配和selector注册</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NioSocketChannel读事件注册"><span class="nav-number">5.</span> <span class="nav-text">NioSocketChannel读事件注册</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">  <a href="http://www.miitbeian.gov.cn" rel="noopener" target="_blank">浙ICP备17049505号 </a>&copy; 2015 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shuchang</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+      
+  
+  <script type="text/javascript" color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname,
+            owner: 'shuchaang',
+            repo: 'shuchaang.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+            
+                client_id: 'c5aa96bb5e5656512174'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function (i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap')
+      $(e).after($wrap)
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+        var code = $(this).parent().find('.code').find('.line').map(function (i, e) {
+          return $(e).text()
+        }).toArray().join('\n')
+        var ta = document.createElement('textarea')
+        document.body.appendChild(ta)
+        ta.style.position = 'absolute'
+        ta.style.top = '0px'
+        ta.style.left = '0px'
+        ta.value = code
+        ta.select()
+        ta.focus()
+        var result = document.execCommand('copy')
+        document.body.removeChild(ta)
+        
+          if(result)$(this).text('复制成功')
+          else $(this).text('复制失败')
+        
+        $(this).blur()
+      })).on('mouseleave', function (e) {
+        var $b = $(this).find('.copy-btn')
+        setTimeout(function () {
+          $b.text('复制')
+        }, 300)
+      }).append(e)
+    })
+  </script>
+
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>

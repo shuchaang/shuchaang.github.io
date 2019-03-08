@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">82</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">83</span></a>
 
   </li>
         
@@ -349,6 +349,205 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/06/JMS-3-JMS结构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/06/JMS-3-JMS结构/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/2/index.html">JMS(3)-JMS API结构</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-06 15:53:11" itemprop="dateCreated datePublished" datetime="2018-12-06T15:53:11+08:00">2018-12-06</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-26 09:46:43" itemprop="dateModified" datetime="2018-12-26T09:46:43+08:00">2018-12-26</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fxx3glglroj30n40hm0tm.jpg" alt=""></p>
+<p>JMS API的结构还是比较简单的。</p>
+<p>创建一个JMS的基本步骤是:</p>
+<ol>
+<li>创建JMS ConnectionFactory</li>
+<li>通过ConnectionFactory创建一个Connection</li>
+<li>通过Connection创建jms session</li>
+<li>创建destination、producer、consumer</li>
+<li>发送消息</li>
+<li>关闭资源</li>
+</ol>
+<h2 id="JmsTempate"><a href="#JmsTempate" class="headerlink" title="JmsTempate"></a>JmsTempate</h2><p>在Springboot中一般使用JmsTempate进行操作,所以对照上面的过程,看一下template是如何进行封装的。</p>
+<ol>
+<li>引入Pom</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;dependency&gt;</div><div class="line">	&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</div><div class="line">	&lt;artifactId&gt;spring-boot-starter-activemq&lt;/artifactId&gt;</div><div class="line">&lt;/dependency&gt;</div><div class="line"></div><div class="line">&lt;dependency&gt;</div><div class="line">	&lt;groupId&gt;org.apache.activemq&lt;/groupId&gt;</div><div class="line">	&lt;artifactId&gt;activemq-pool&lt;/artifactId&gt;</div><div class="line">&lt;/dependency&gt;</div></pre></td></tr></table></figure>
+<ol>
+<li>code</li>
+</ol>
+<p>首先在启动类上添加注解@EnableJms,会启动一些JMS的自动配置,包括JmsTempate。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public JmsTemplate(ConnectionFactory connectionFactory) &#123;</div><div class="line">		this();</div><div class="line">		setConnectionFactory(connectionFactory);</div><div class="line">		afterPropertiesSet();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>JmsTemplate的构造函数中需要一个ConnectionFactory,因此会先实例化一个ConnectionFactory。也就对应了上面过程中的第一步。</p>
+<p>当注入JmsTemplate我们就可以调用send方法进行消息发送,非常简单。但正是因为它封装的太好了,我们反而不容易了解它的具体实现细节,所以进入send方法的源码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public void send(final Destination destination, final MessageCreator messageCreator) throws JmsException &#123;</div><div class="line">		execute(session -&gt; &#123;</div><div class="line">			doSend(session, destination, messageCreator);</div><div class="line">			return null;</div><div class="line">		&#125;, false);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>send方法调用了内部方法execute,而且我们看到一个关键参数名session,这里是一个lambda表达式,在session内封装了消息和destination,然后丢进execute方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">public &lt;T&gt; T execute(SessionCallback&lt;T&gt; action, boolean startConnection) throws JmsException &#123;</div><div class="line">		Assert.notNull(action, &quot;Callback object must not be null&quot;);</div><div class="line">		Connection conToClose = null;</div><div class="line">		Session sessionToClose = null;</div><div class="line">		try &#123;</div><div class="line">			Session sessionToUse = ConnectionFactoryUtils.doGetTransactionalSession(</div><div class="line">					obtainConnectionFactory(), this.transactionalResourceFactory, startConnection);</div><div class="line">			if (sessionToUse == null) &#123;</div><div class="line">				conToClose = createConnection();</div><div class="line">				sessionToClose = createSession(conToClose);</div><div class="line">				if (startConnection) &#123;</div><div class="line">					conToClose.start();</div><div class="line">				&#125;</div><div class="line">				sessionToUse = sessionToClose;</div><div class="line">			&#125;</div><div class="line">			if (logger.isDebugEnabled()) &#123;</div><div class="line">				logger.debug(&quot;Executing callback on JMS Session: &quot; + sessionToUse);</div><div class="line">			&#125;</div><div class="line">			return action.doInJms(sessionToUse);</div><div class="line">		&#125;</div><div class="line">		catch (JMSException ex) &#123;</div><div class="line">			throw convertJmsAccessException(ex);</div><div class="line">		&#125;</div><div class="line">		finally &#123;</div><div class="line">			JmsUtils.closeSession(sessionToClose);</div><div class="line">			ConnectionFactoryUtils.releaseConnection(conToClose, getConnectionFactory(), startConnection);</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>execute方法创建connection,绑定session。调用doInJms方法将message发送到broker,然后释放资源。</p>
+<p>这样粗略的看了一下消息的发送原理。</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -2165,201 +2364,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/10/k8s学习总结2-Pod/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/11/10/k8s学习总结2-Pod/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/2/index.html">k8s学习总结-2</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-11-10 17:02:51" itemprop="dateCreated datePublished" datetime="2018-11-10T17:02:51+08:00">2018-11-10</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-11-12 11:09:03" itemprop="dateModified" datetime="2018-11-12T11:09:03+08:00">2018-11-12</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="为什么我们需要Pod"><a href="#为什么我们需要Pod" class="headerlink" title="为什么我们需要Pod"></a>为什么我们需要Pod</h2><p>关于docker容器,我们都知道它的技术原理就是Namespace做隔离,cgroups做限制,rootfs做文件系统,那么k8s为什么又提出了Pod这个概念呢。</p>
-<p>我们可以这样理解,容器就是一个特殊的进程,而k8s就类似于操作系统,去调度管理这些特殊的进程,那么k8s就可以比做操作系统。我们知道,在真正的操作系统中,进程并不是孤单的运行,它存在于一个进程组之中,被操作系统有规则的组织在一起。</p>
-<p>那么我们可以理解Pod其实就是将操作系统中进程组的概念抽象到了K8s中,因为k8s的设计脱身于borg系统,谷歌的开发者们发现,他们部署的应用,往往都存在进程与进程组的关系,这些应用密切协作,必须部署在一台机器上。而如果没有组这个概念,这种组织关系就难以维护,而Pod就是将操作系统中的进程组的概念映射到了容器中。</p>
-<p>关于Pod的一个事实是,Pod只是一个逻辑概念,Pod里的容器共享网络栈并且可以声明共享同一个Volume。</p>
-<p>Pod的设计降低了调度的复杂度,考虑这样一种场景:A/B/C三个容器必须要部署在一起,各需要1G内存。现在node1有3G内存,node2有2.5G内存。若A首先初始化,部署到了node2上,那么轮到C就不满足硬件条件而部署失败。那么就必须要将AB两个容器回滚,重新部署到node1上。</p>
-<p>这就是一个典型的成组调度没有被妥善处理的例子,虽然有很多可供选择的方案,但谈不上完美,要么造成资源的严重浪费,要么技术难度不是常规团队可以驾驭。而加入了Pod这种概念,Pod是K8s调度的原子单位,调度器是按照Pod的需求而不是容器的需求来进行计算的。根据这种调度方式,上述的例子就会选择node1而不会选择node2进行调度。</p>
-<p>Pod除了简化调度模型,还有个更重要的意义就是容器设计模式。</p>
-<p>首先要弄清楚Pod的实现原理,Pod的实现需要一个中间容器,叫做infra容器(k8s.gcr.io/pause)。在Pod中,infra会首先被创建,其他容器都是通过join network namespace的方式与infra容器关联在一起。因此对于一个pod中的A B两个容器来说:</p>
-<ul>
-<li>可以使用localhost进行通信</li>
-<li>Pod的生命周期与infra容器一致,与A B无关</li>
-</ul>
-<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fx530pb14ij30dh0d474j.jpg" alt=""></p>
-<p>而对于volume的共享,K8s只需要将所有volume的定义都设计在Pod层就好</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: Pod</div><div class="line">metadata:</div><div class="line">  name: two-containers</div><div class="line">spec:</div><div class="line">  restartPolicy: Never</div><div class="line">  volumes:</div><div class="line">  - name: shared-data</div><div class="line">    hostPath:      </div><div class="line">      path: /data</div><div class="line">  containers:</div><div class="line">  - name: nginx-container</div><div class="line">    image: nginx</div><div class="line">    volumeMounts:</div><div class="line">    - name: shared-data</div><div class="line">      mountPath: /usr/share/nginx/html</div><div class="line">  - name: debian-container</div><div class="line">    image: debian</div><div class="line">    volumeMounts:</div><div class="line">    - name: shared-data</div><div class="line">      mountPath: /pod-data</div><div class="line">    command: [&quot;/bin/sh&quot;]</div><div class="line">    args: [&quot;-c&quot;, &quot;echo Hello from the debian container &gt; /pod-data/index.html&quot;]</div></pre></td></tr></table></figure>
-<p>所以Pod这种”超亲密关系”容器的设计思想,实际上就是希望当用户想在容器里完成多个应用的时候,应该考虑是不是可以描述为一个pod里的多个容器。</p>
-<p>例如应用war包和tomcat容器,可以描述为一个Pod内的多个容器,以组合的方式解决war和tomcat的耦合关系。但是应用与mysql等数据库的关系,不应该描述为一个Pod,我们不能因为应用宕机而造成数据库无法使用,所以应用与数据库要分为两个Pod来部署。</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2411,7 +2415,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">82</span>
+                    <span class="site-state-item-count">83</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>

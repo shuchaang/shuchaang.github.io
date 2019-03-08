@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">82</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">83</span></a>
 
   </li>
         
@@ -499,6 +499,232 @@
             </div>
          
           <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2019/02/20/java-SPI与Dubbo-SPI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/02/20/java-SPI与Dubbo-SPI/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">java SPI与Dubbo SPI</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-20 12:48:57" itemprop="dateCreated datePublished" datetime="2019-02-20T12:48:57+08:00">2019-02-20</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-03-08 14:53:18" itemprop="dateModified" datetime="2019-03-08T14:53:18+08:00">2019-03-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="JAVA-SPI"><a href="#JAVA-SPI" class="headerlink" title="JAVA SPI"></a>JAVA SPI</h2><p>java spi一直都是一个很少有人关注的点,我听到这个词还是源于Dubbo SPI,Dubbo SPI是对java SPI进行了一些优化得到的。这个机制主要是针对厂商或者插件,但是我们日常中确一直在使用。</p>
+<h3 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h3><p><img src="https://ws1.sinaimg.cn/large/006tKfTcly1g0vc2gbxpuj30dm0743yf.jpg" alt=""></p>
+<ul>
+<li>bad good 是两个interface的实现</li>
+<li>interface 提供一个标准接口</li>
+<li>invoker负责最后的调用</li>
+</ul>
+<h4 id="interface"><a href="#interface" class="headerlink" title="interface"></a>interface</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public interface Printer &#123;</div><div class="line">    void print();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="bad-amp-good"><a href="#bad-amp-good" class="headerlink" title="bad&amp;good"></a>bad&amp;good</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">添加依赖</div><div class="line">&lt;dependency&gt;</div><div class="line">            &lt;groupId&gt;com.sc&lt;/groupId&gt;</div><div class="line">            &lt;artifactId&gt;interface&lt;/artifactId&gt;</div><div class="line">            &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div><div class="line"></div><div class="line">实现接口</div><div class="line">public class GoodPrint implements Printer &#123;</div><div class="line">    public void print() &#123;</div><div class="line">        System.out.println(&quot;i am good&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">public class BadPrinter implements Printer &#123;</div><div class="line"></div><div class="line">    public void print() &#123;</div><div class="line">        System.out.println(&quot;i am bad&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">新建文件resources\META-INF\services\com.sc.Printer</div><div class="line"></div><div class="line">文件内容</div><div class="line">com.sc.GoodPrint</div></pre></td></tr></table></figure>
+<h4 id="invoker"><a href="#invoker" class="headerlink" title="invoker"></a>invoker</h4><p>添加依赖</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;com.sc&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;interface&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;com.sc&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;good-printer&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div></pre></td></tr></table></figure>
+<p>编写主类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public class MainApp &#123;</div><div class="line"></div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        ServiceLoader&lt;Printer&gt; printerLoader = ServiceLoader.load(Printer.class);</div><div class="line">        for (Printer printer : printerLoader) &#123;</div><div class="line">            printer.print();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">i am good</div></pre></td></tr></table></figure>
+<p>并且通过切换bad依赖,输出的结果是不同的,这就是java spi的简单示例。</p>
+<h3 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a>实际应用</h3><p>根据上面的demo我们可以猜测,最关键的部分就是在resources\META-INF\services目录下创建的文件,文件名是标准接口全路径,内容就是实现类的全路径。</p>
+<p>我们平时最常见的第三方厂商当然就是mysql啦,打开mysql。在mysql-connector-java-xxx.jar中发现了META-INF\services\java.sql.Driver文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">com.mysql.jdbc.Driver</div><div class="line">com.mysql.fabric.jdbc.FabricMySQLDriver</div></pre></td></tr></table></figure>
+<p>我们可以分析出，java.sql.Driver是一个规范接口，com.mysql.jdbc.Driver<br>com.mysql.fabric.jdbc.FabricMySQLDriver则是mysql-connector-java-xxx.jar对这个规范的实现接口。</p>
+<p>还记得一道经典的面试题：class.forName(“com.mysql.jdbc.Driver”)到底做了什么事？</p>
+<p>都知道class.forName与类加载机制有关，会触发执行com.mysql.jdbc.Driver类中的静态方法，从而使主类加载数据库驱动。因为数据库驱动类的特殊性质，JDBC规范中明确要求Driver类必须向DriverManager注册自己，导致其必须由class.forName手动触发。</p>
+<p>但是在较新的mysql驱动版本中,DriverManager已经废弃了class.forName的方式而是改用spi加载jdbc驱动。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">public Void run() &#123;</div><div class="line">    ServiceLoader&lt;Driver&gt; loadedDrivers = ServiceLoader.load(Driver.class);</div><div class="line">    Iterator&lt;Driver&gt; driversIterator = loadedDrivers.iterator();</div><div class="line">    ....</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="java-spi-源码"><a href="#java-spi-源码" class="headerlink" title="java spi 源码"></a>java spi 源码</h2><p>java spi的源码主要在com.util.ServiceLoader类中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">private static final String PREFIX = &quot;META-INF/services/&quot;;</div></pre></td></tr></table></figure>
+<p>首先定义了一个PREFIX,也就是为什么我们要把文件写在这个路径下</p>
+<p>load方法的作用就是将接口封装为ServiceLoader,主要的功能是在遍历时实现的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">private boolean hasNextService() &#123;</div><div class="line">            if (nextName != null) &#123;</div><div class="line">                return true;</div><div class="line">            &#125;</div><div class="line">            if (configs == null) &#123;</div><div class="line">                try &#123;</div><div class="line">                    String fullName = PREFIX + service.getName();</div><div class="line">                    if (loader == null)</div><div class="line">                        configs = ClassLoader.getSystemResources(fullName);</div><div class="line">                    else</div><div class="line">                        configs = loader.getResources(fullName);</div><div class="line">                &#125; catch (IOException x) &#123;</div><div class="line">                    fail(service, &quot;Error locating configuration files&quot;, x);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            while ((pending == null) || !pending.hasNext()) &#123;</div><div class="line">                if (!configs.hasMoreElements()) &#123;</div><div class="line">                    return false;</div><div class="line">                &#125;</div><div class="line">                pending = parse(service, configs.nextElement());</div><div class="line">            &#125;</div><div class="line">            nextName = pending.next();</div><div class="line">            return true;</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
+<p>代码还是比较简单,首先找到接口实现类的全限定名,根据hasNextService获取的实现类信息,使用指定的ClassLoader进行加载和实例化。</p>
+<h2 id="Dubbo-SPI"><a href="#Dubbo-SPI" class="headerlink" title="Dubbo SPI"></a>Dubbo SPI</h2><p>Java SPI的使用很简单。也做到了基本的加载扩展点的功能。但根据上面的代码可以看到Java SPI有以下的不足:</p>
+<ul>
+<li>需要遍历所有的实现，并实例化，然后我们在循环中才能找到我们需要的实现,并且默认会去实例化所有实现类。</li>
+<li>配置文件中只是简单的列出了所有的扩展实现，而没有给他们命名。导致在程序中很难去准确的引用它们。</li>
+<li>扩展如果依赖其他的扩展，做不到自动注入和装配</li>
+<li>不提供类似于Spring的IOC和AOP功能</li>
+<li>扩展很难和其他的框架集成，比如扩展里面依赖了一个Spring bean，原生的Java SPI不支持<br>所以Java SPI应付一些简单的场景是可以的，但对于Dubbo，它的功能还是比较弱的。Dubbo对原生SPI机制进行了一些扩展。接下来，我们就更深入地了解下Dubbo的SPI机制。</li>
+</ul>
+<h3 id="一些术语"><a href="#一些术语" class="headerlink" title="一些术语"></a>一些术语</h3><ul>
+<li>扩展点 -  java接口</li>
+<li>扩展  -  java实现类</li>
+<li>扩展实例 - 实例化的java类</li>
+<li>扩展自适应点 - 根据入参不同,自动选择扩展实例。这个机制对于使用者来说是透明的,实际上就是动态代理。</li>
+</ul>
+<h3 id="dubbo-spi-demo"><a href="#dubbo-spi-demo" class="headerlink" title="dubbo spi demo"></a>dubbo spi demo</h3><p>例如我们要实现一个LoadBalance策略</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class DemoLoadBalance implements LoadBalance &#123;</div><div class="line">    @Override</div><div class="line">    public &lt;T&gt; Invoker&lt;T&gt; select(List&lt;Invoker&lt;T&gt;&gt; invokers, URL url, Invocation invocation) throws RpcException &#123;</div><div class="line">        System.out.println(&quot;DemoLoadBalance: Select the first invoker...&quot;);</div><div class="line">        return invokers.get(0);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>添加文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">META-INF/dubbo/com.alibaba.dubbo.rpc.cluster.LoadBalance</div></pre></td></tr></table></figure>
+<p>内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">demo=com.dubbo.spi.demo.consumer.DemoLoadBalance</div></pre></td></tr></table></figure>
+<p>使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;dubbo:reference id=&quot;helloService&quot; interface=&quot;com.dubbo.spi.demo.api.IHelloService&quot; loadbalance=&quot;demo&quot; /&gt;</div></pre></td></tr></table></figure>
+<h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><p>官方已经在这里已经讲的非常明白了,对java spi进行了扩展,主要是按需实例化,并且自动注入属性以及通过Wrapper提供了AOP的功能。</p>
+<blockquote>
+<p><a href="http://dubbo.apache.org/zh-cn/blog/introduction-to-dubbo-spi-2.html" target="_blank" rel="external">http://dubbo.apache.org/zh-cn/blog/introduction-to-dubbo-spi-2.html</a></p>
+</blockquote>
+
+          
         
       
     </div>
@@ -2143,205 +2369,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/06/JMS-3-JMS结构/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/12/06/JMS-3-JMS结构/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">JMS(3)-JMS API结构</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-12-06 15:53:11" itemprop="dateCreated datePublished" datetime="2018-12-06T15:53:11+08:00">2018-12-06</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-26 09:46:43" itemprop="dateModified" datetime="2018-12-26T09:46:43+08:00">2018-12-26</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fxx3glglroj30n40hm0tm.jpg" alt=""></p>
-<p>JMS API的结构还是比较简单的。</p>
-<p>创建一个JMS的基本步骤是:</p>
-<ol>
-<li>创建JMS ConnectionFactory</li>
-<li>通过ConnectionFactory创建一个Connection</li>
-<li>通过Connection创建jms session</li>
-<li>创建destination、producer、consumer</li>
-<li>发送消息</li>
-<li>关闭资源</li>
-</ol>
-<h2 id="JmsTempate"><a href="#JmsTempate" class="headerlink" title="JmsTempate"></a>JmsTempate</h2><p>在Springboot中一般使用JmsTempate进行操作,所以对照上面的过程,看一下template是如何进行封装的。</p>
-<ol>
-<li>引入Pom</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;dependency&gt;</div><div class="line">	&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</div><div class="line">	&lt;artifactId&gt;spring-boot-starter-activemq&lt;/artifactId&gt;</div><div class="line">&lt;/dependency&gt;</div><div class="line"></div><div class="line">&lt;dependency&gt;</div><div class="line">	&lt;groupId&gt;org.apache.activemq&lt;/groupId&gt;</div><div class="line">	&lt;artifactId&gt;activemq-pool&lt;/artifactId&gt;</div><div class="line">&lt;/dependency&gt;</div></pre></td></tr></table></figure>
-<ol>
-<li>code</li>
-</ol>
-<p>首先在启动类上添加注解@EnableJms,会启动一些JMS的自动配置,包括JmsTempate。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public JmsTemplate(ConnectionFactory connectionFactory) &#123;</div><div class="line">		this();</div><div class="line">		setConnectionFactory(connectionFactory);</div><div class="line">		afterPropertiesSet();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
-<p>JmsTemplate的构造函数中需要一个ConnectionFactory,因此会先实例化一个ConnectionFactory。也就对应了上面过程中的第一步。</p>
-<p>当注入JmsTemplate我们就可以调用send方法进行消息发送,非常简单。但正是因为它封装的太好了,我们反而不容易了解它的具体实现细节,所以进入send方法的源码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public void send(final Destination destination, final MessageCreator messageCreator) throws JmsException &#123;</div><div class="line">		execute(session -&gt; &#123;</div><div class="line">			doSend(session, destination, messageCreator);</div><div class="line">			return null;</div><div class="line">		&#125;, false);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
-<p>send方法调用了内部方法execute,而且我们看到一个关键参数名session,这里是一个lambda表达式,在session内封装了消息和destination,然后丢进execute方法。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">public &lt;T&gt; T execute(SessionCallback&lt;T&gt; action, boolean startConnection) throws JmsException &#123;</div><div class="line">		Assert.notNull(action, &quot;Callback object must not be null&quot;);</div><div class="line">		Connection conToClose = null;</div><div class="line">		Session sessionToClose = null;</div><div class="line">		try &#123;</div><div class="line">			Session sessionToUse = ConnectionFactoryUtils.doGetTransactionalSession(</div><div class="line">					obtainConnectionFactory(), this.transactionalResourceFactory, startConnection);</div><div class="line">			if (sessionToUse == null) &#123;</div><div class="line">				conToClose = createConnection();</div><div class="line">				sessionToClose = createSession(conToClose);</div><div class="line">				if (startConnection) &#123;</div><div class="line">					conToClose.start();</div><div class="line">				&#125;</div><div class="line">				sessionToUse = sessionToClose;</div><div class="line">			&#125;</div><div class="line">			if (logger.isDebugEnabled()) &#123;</div><div class="line">				logger.debug(&quot;Executing callback on JMS Session: &quot; + sessionToUse);</div><div class="line">			&#125;</div><div class="line">			return action.doInJms(sessionToUse);</div><div class="line">		&#125;</div><div class="line">		catch (JMSException ex) &#123;</div><div class="line">			throw convertJmsAccessException(ex);</div><div class="line">		&#125;</div><div class="line">		finally &#123;</div><div class="line">			JmsUtils.closeSession(sessionToClose);</div><div class="line">			ConnectionFactoryUtils.releaseConnection(conToClose, getConnectionFactory(), startConnection);</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
-<p>execute方法创建connection,绑定session。调用doInJms方法将message发送到broker,然后释放资源。</p>
-<p>这样粗略的看了一下消息的发送原理。</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2393,7 +2420,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">82</span>
+                    <span class="site-state-item-count">83</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
