@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">84</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">85</span></a>
 
   </li>
         
@@ -349,6 +349,212 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/07/JMS-5-AMQ-Message-Dispatch/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/07/JMS-5-AMQ-Message-Dispatch/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/2/index.html">JMS(5)-AMQ Message Dispatch</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-07 15:25:47" itemprop="dateCreated datePublished" datetime="2018-12-07T15:25:47+08:00">2018-12-07</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-26 09:46:35" itemprop="dateModified" datetime="2018-12-26T09:46:35+08:00">2018-12-26</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Message-Cursor"><a href="#Message-Cursor" class="headerlink" title="Message Cursor"></a>Message Cursor</h2><p>AMQ发送持久化消息的典型处理方式为,当消费者准备就绪,broker把存储的消息按批次发送给消费者,发送完成后,指针向后移动。这时一种比较理想的方式。在AMQ 5.0版本之后,消息发送开始采用一种混合模式,当消费者活跃时,直接将持久消息发送给消费者,当消费者不活跃时,采用cursor来处理发送消息。</p>
+<blockquote>
+<p>当消费者活跃,处理能力比较强时,消息的直接发送到消费端</p>
+</blockquote>
+<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fxy9mb9u2lj30pu0dgjr9.jpg" alt=""></p>
+<blockquote>
+<p>当消息产生积压,消费者再度活跃时,或者消费者的消费速度比生产速度慢时,消息从pending cursor取出,发送到消费队列。</p>
+</blockquote>
+<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fxy9tgmrq3j30qi0bqdfq.jpg" alt=""></p>
+<p>Message Cursor有三种类型:</p>
+<ol>
+<li>Store-based</li>
+</ol>
+<p>AMQ 5.0之后的默认类型,支持持久化和非持久化,内嵌了file-based。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fxyazo6b1wj31100k2jri.jpg" alt=""></p>
+<ol>
+<li>VM</li>
+</ol>
+<p>这种方式的消息存储在内存中,这种方式处理很快,但是当出现消费端慢消费就可能出现问题。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fxybs0h8uzj30vk09u747.jpg" alt=""></p>
+<ol>
+<li>File-based</li>
+</ol>
+<p>当内存达到限制,消息就会被存储到文件系统的临时文件中</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fxybvbvzfyj30p80iqt8o.jpg" alt=""></p>
+<h2 id="分发策略"><a href="#分发策略" class="headerlink" title="分发策略"></a>分发策略</h2><ol>
+<li>严格顺序分发</li>
+</ol>
+<p>AMQ会保证topic consumer以相同的顺序接收来自同一个producer的消息,但有时也需要保证消费者能以相同的顺序消费来自不同topic producer的消息。例如生产者p1 p2 通过topic关联了c1 c2,p1生产了消息1,2,3而p2生产消息4,5,6。这时c1的消费顺序是123456,而c2的消费顺序是456123。如果我们需要严格保证两个c的消费顺序,这时就会需要严格顺序分发。</p>
+<p>保证严格顺序的一个负面效果就是性能会降低。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;policyEntry topic=&quot;Orders.&gt;&quot;&gt;</div><div class="line">    &lt;dispatchPolicy&gt;</div><div class="line">        &lt;strictOrderDispatchPolicy/&gt;</div><div class="line">    &lt;/dispatchPolicy&gt;</div><div class="line">&lt;/policyEntry&gt;</div></pre></td></tr></table></figure>
+<ol>
+<li>轮询分发策略</li>
+</ol>
+<p>在某些情况下,消息的数量比较少,但每次处理消息的时间会比较长,那么在默认的prefetch参数和dispatch policy下,这些消息会倾向于发送到某个consumer上,就会因为负载不均导致处理时间增加。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;policyEntry topic=&quot;Orders.&gt;&quot;&gt;</div><div class="line">    &lt;dispatchPolicy&gt;</div><div class="line">        &lt;roundRobinDispatchPolicy/&gt;</div><div class="line">    &lt;/dispatchPolicy&gt;</div><div class="line">&lt;/policyEntry&gt;</div></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -2169,230 +2375,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/12/k8s学习总结4-网络/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/11/12/k8s学习总结4-网络/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/2/index.html">k8s学习总结4-网络</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-11-12 13:58:07 / 修改时间：17:25:43" itemprop="dateCreated datePublished" datetime="2018-11-12T13:58:07+08:00">2018-11-12</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>K8S的网络部分确实是一个难点,我在这里卡了很久也看了很多相关的文档。K8S的网络依赖于Docker,Docker的网络离不开linux内核的支持,所以要理解K8S的网络必须要了解linux网络知识。</p>
-<h2 id="linux网络基础"><a href="#linux网络基础" class="headerlink" title="linux网络基础"></a>linux网络基础</h2><p>Docker使用到的linux技术主要包括下面几种:</p>
-<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fx59jhgk3cj307106xmwz.jpg" alt=""></p>
-<p>linux通过命名空间(ns)可以将网络栈进行隔离,不同的ns完全隔离无法进行通信。Docker也正是利用了这种特性实现不同容器网络环境的隔离。那么如果我有需求需要让不同ns的进程进行通信,该怎么做呢?答案就是veth设备对。</p>
-<p>Veth的重要作用就是打通网络栈之间的壁垒,就像一个通道,两端连着不同的网络栈,所以Veth必须成对出现。</p>
-<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fx5a6gasdnj308y056wea.jpg" alt=""></p>
-<p>Docker 服务启动后默认会创建一个 docker0 网桥（其上有一个 docker0 内部接口），它在内核层连通了其他的物理或虚拟网卡，这就将所有容器和本地主机都放到同一个物理网络。linux网桥的作用就是绑定多个以太网设备,将他们桥接起来。网桥上层只需要将数据交给网桥,网桥负责决定是将数据转发到哪些以太网口。以太网口接收到的网络报文,同样只需要交给网桥,网桥负责判断是丢弃还是继续向上层提交。</p>
-<p>假如用户需要对某些关心的数据进行一些操作,Iptable/Netfilter就提供了这种功能,通过在挂载点挂载钩子函数,可以对一些数据包进行过滤、修改、丢弃操作等。Netfilter提供了五个位置来作控制</p>
-<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fx5bbxfwxij30dk0dhdft.jpg" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1.PREROUTING (路由前)</div><div class="line">2.INPUT (数据包流入口)</div><div class="line">3.FORWARD (转发管卡)</div><div class="line">4.OUTPUT(数据包出口)</div><div class="line">5.POSTROUTING（路由后）</div></pre></td></tr></table></figure>
-<p>任何一个数据包，只要经过本机，必将经过这五个链中的其中一个链。接着又定义了表的概念用来管理这些链</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">filter:定义允许与不允许</div><div class="line">manage: 修改数据报文</div><div class="line">nat: 网络地址转换</div></pre></td></tr></table></figure>
-<p>对于filter来讲一般只能做在3个链上：INPUT ，FORWARD ，OUTPUT </p>
-<p>对于nat来讲一般也只能做在3个链上：PREROUTING ，OUTPUT ，POSTROUTING </p>
-<p>而mangle则是5个链都可以做：PREROUTING，INPUT，FORWARD，OUTPUT，POSTROUTING</p>
-<p>iptables是工作在用户控件提供管理这些规则的接口的工具,它的背后就是工作在内和空间的Netfilter。</p>
-<h2 id="Docker网络模型"><a href="#Docker网络模型" class="headerlink" title="Docker网络模型"></a>Docker网络模型</h2><p>docker支持四种网络模式:</p>
-<ul>
-<li>host</li>
-<li>container</li>
-<li>none</li>
-<li>bridge</li>
-</ul>
-<p>docker默认启用的是bridge类型,安装docker后会在宿主机上创建一个docker0网桥,当运行一个容器,veth就被会创建,一端连在docker0网桥上,另一端在宿主机内的eth0网桥上。这样就做到了同一主机上不同容器可以相互访问,但如果要通过其他ip访问这台机器的docker容器,就需要将宿主机上分配端口,将docker0的一个端口映射到宿主机端口上。</p>
-<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fx5cclqoypj30ku09rt8z.jpg" alt=""></p>
-<h2 id="Kubernates网络模型"><a href="#Kubernates网络模型" class="headerlink" title="Kubernates网络模型"></a>Kubernates网络模型</h2><p>K8S作为一种容器编排工具,主要解决一下场景中的问题:</p>
-<ol>
-<li>容器与容器之间的通信</li>
-<li>Pod与Pod之间的通信</li>
-<li>Pod与service之间的通信</li>
-<li>集群内外的通信</li>
-</ol>
-<h3 id="容器与容器"><a href="#容器与容器" class="headerlink" title="容器与容器"></a>容器与容器</h3><p>由于Pod中的容器共享网络栈,所以容器之间可以使用localhost进行通信。</p>
-<h3 id="Pod之间通信"><a href="#Pod之间通信" class="headerlink" title="Pod之间通信"></a>Pod之间通信</h3><p>Pod之间的通信可能存在于同一个Node上,也有可能存在于不同Node上。</p>
-<hr>
-<p>同一个Node上的Pod都是通过veth连接到宿主机的docker0网桥,他们的Ip都是从docker0上动态获取并且和docker0 ip属于同一个网段。</p>
-<hr>
-<p>Pod的地址与docker0在同一个网段,docker0与宿主机eth0属于两个不同的网段,Node之间的通信依赖于宿主机的网卡。所以不同Node的Pod想要通信,首先要找到Node对应的宿主机Ip,将数据包发送到宿主机网卡上,然后在转发给docker0,最后再到达目标Pod。</p>
-<p>这部分的实现通常都是依赖一些网络配置工具来完成,例如flannel,后面再详细介绍。</p>
-<h3 id="Pod与Service"><a href="#Pod与Service" class="headerlink" title="Pod与Service"></a>Pod与Service</h3><p>kubernetes创建服务时，会为服务分配一个虚拟的IP地址，即为ClusterIP，客户端通过访问这</p>
-<p>个虚拟IP地址来访问内部组件。实质上具体访问内部的工作都是kube-proxy来完成的。kube-</p>
-<p>proxy担负着透明代理和负载均衡的角色，其实就是将某个访问service的请求，通过一套算法</p>
-<p>和规则转发给后端的pod，这里说的算法就是Round Robin负载均衡算法和session粘连规则。</p>
-<p>我们还可以通过修改service里面的service.spec.sessionAffinity参数的值来实现会话保持特</p>
-<p>的定向转发。</p>
-<p>总之，不管是clusterIP+targetPort，还是节点IP+NodePort，都会被Iptables规则重新定向到</p>
-<p>kube-proxy监听服务的代理端口。</p>
-<h3 id="集群内外通信"><a href="#集群内外通信" class="headerlink" title="集群内外通信"></a>集群内外通信</h3><ol>
-<li>NodeIP+NodePort</li>
-</ol>
-<p>这种方式就是在宿主机上开放一个端口,供外部访问</p>
-<ol>
-<li>Ingress</li>
-</ol>
-<p>Ingress 可以给 service 提供集群外部访问的 URL、负载均衡、SSL 终止、HTTP 路由等。为了配置这些 Ingress 规则，集群管理员需要部署一个 Ingress controller，它监听 Ingress 和 service 的变化，并根据规则配置负载均衡并提供访问入口。典型的就是Nginx Ingress。</p>
-<ol>
-<li>loadbalance</li>
-</ol>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2444,7 +2426,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">84</span>
+                    <span class="site-state-item-count">85</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>

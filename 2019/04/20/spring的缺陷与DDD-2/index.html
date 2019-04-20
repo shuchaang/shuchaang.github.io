@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="架构风格在《实现领域驱动设计》一书中提到了几种架构风格：六边形架构、REST架构、CQRS 和事件驱动等。在实际使用中，落地的架构并非是纯粹其中的一种，而很有可能户将上述几种架构风格结合起来实现。 分层架构分层架构的一个重要原则是每层只能与位于其下方的层发生耦合。分层架构可以简单分为两种，即严格分层架构和松散分层架构。在严格分层架构中，某层只能与位于其直接下方的层发生耦合，而在松散分层架构中，则允">
+<meta name="keywords" content="DDD">
+<meta property="og:type" content="article">
+<meta property="og:title" content="spring的缺陷与DDD(2)">
+<meta property="og:url" content="http://www.shuchang.sc.com/2019/04/20/spring的缺陷与DDD-2/index.html">
+<meta property="og:site_name" content="ShuChang&#39;s Blog">
+<meta property="og:description" content="架构风格在《实现领域驱动设计》一书中提到了几种架构风格：六边形架构、REST架构、CQRS 和事件驱动等。在实际使用中，落地的架构并非是纯粹其中的一种，而很有可能户将上述几种架构风格结合起来实现。 分层架构分层架构的一个重要原则是每层只能与位于其下方的层发生耦合。分层架构可以简单分为两种，即严格分层架构和松散分层架构。在严格分层架构中，某层只能与位于其直接下方的层发生耦合，而在松散分层架构中，则允">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g298gyarr1j311a0nyafl.jpg">
+<meta property="og:updated_time" content="2019-04-20T09:52:11.842Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="spring的缺陷与DDD(2)">
+<meta name="twitter:description" content="架构风格在《实现领域驱动设计》一书中提到了几种架构风格：六边形架构、REST架构、CQRS 和事件驱动等。在实际使用中，落地的架构并非是纯粹其中的一种，而很有可能户将上述几种架构风格结合起来实现。 分层架构分层架构的一个重要原则是每层只能与位于其下方的层发生耦合。分层架构可以简单分为两种，即严格分层架构和松散分层架构。在严格分层架构中，某层只能与位于其直接下方的层发生耦合，而在松散分层架构中，则允">
+<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1g298gyarr1j311a0nyafl.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.shuchang.sc.com/2019/04/20/spring的缺陷与DDD-2/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>spring的缺陷与DDD(2) | ShuChang's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ShuChang's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">剑来!</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">25</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">20</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">85</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2019/04/20/spring的缺陷与DDD-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">spring的缺陷与DDD(2)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-20 17:19:56 / 修改时间：17:52:11" itemprop="dateCreated datePublished" datetime="2019-04-20T17:19:56+08:00">2019-04-20</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/系统设计/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/04/20/spring的缺陷与DDD-2/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2019/04/20/spring的缺陷与DDD-2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="架构风格"><a href="#架构风格" class="headerlink" title="架构风格"></a>架构风格</h2><p>在《实现领域驱动设计》一书中提到了几种架构风格：六边形架构、REST架构、CQRS 和事件驱动等。在实际使用中，落地的架构并非是纯粹其中的一种，而很有可能户将上述几种架构风格结合起来实现。</p>
+<h3 id="分层架构"><a href="#分层架构" class="headerlink" title="分层架构"></a>分层架构</h3><p>分层架构的一个重要原则是每层只能与位于其下方的层发生耦合。分层架构可以简单分为两种，即严格分层架构和松散分层架构。在严格分层架构中，某层只能与位于其直接下方的层发生耦合，而在松散分层架构中，则允许某层与它的任意下方层发生耦合。DDD分层架构中比较经典的三种模式：四层架构、五层架构和六边形架构。</p>
+<h3 id="四层架构"><a href="#四层架构" class="headerlink" title="四层架构"></a>四层架构</h3><p>Eric Evans在《领域驱动设计－软件核心复杂性应对之道》这本书中提出了传统的四层架构模式：</p>
+<ul>
+<li><p>User Interface为用户界面层（或表示层），负责向用户显示信息和解释用户命令。这里指的用户可以是另一个计算机系统，不一定是使用用户界面的人。</p>
+</li>
+<li><p>Application为应用层，定义软件要完成的任务，并且指挥表达领域概念的对象来解决问题。这一层所负责的工作对业务来说意义重大，也是与其它系统的应用层进行交互的必要渠道。应用层要尽量简单，不包含业务规则或者知识，而只为下一层中的领域对象协调任务，分配工作，使它们互相协作。它没有反映业务情况的状态，但是却可以具有另外一种状态，为用户或程序显示某个任务的进度。</p>
+</li>
+<li><p>Domain为领域层（或模型层），负责表达业务概念，业务状态信息以及业务规则。尽管保存业务状态的技术细节是由基础设施层实现的，但是反映业务情况的状态是由本层控制并且使用的。领域层是业务软件的核心，领域模型位于这一层。</p>
+</li>
+<li><p>Infrastructure层为基础实施层，向其他层提供通用的技术能力：为应用层传递消息，为领域层提供持久化机制，为用户界面层绘制屏幕组件，等等。基础设施层还能够通过架构框架来支持四个层次间的交互模式</p>
+</li>
+</ul>
+<p>传统的四层架构都是限定型松散分层架构，即Infrastructure层的任意上层都可以访问该层（“L”型），而其它层遵守严格分层架构。</p>
+<h3 id="五层架构"><a href="#五层架构" class="headerlink" title="五层架构"></a>五层架构</h3><p>五层架构是根据《DCI架构：面向对象编程的新构想》中提及的DCI架构模式总结而成。DCI架构（Data、Context和Interactive三层架构）：</p>
+<ul>
+<li><p>Data层描述系统有哪些领域概念及其之间的关系，该层专注于领域对象的确立和这些对象的生命周期管理及关系，让程序员站在对象的角度思考系统，从而让“系统是什么”更容易被理解。</p>
+</li>
+<li><p>Context层：是尽可能薄的一层。Context往往被实现得无状态，只是找到合适的role，让role交互起来完成业务逻辑即可。但是简单并不代表不重要，显示化context层正是为人去理解软件业务流程提供切入点和主线。</p>
+</li>
+<li><p>Interactive层主要体现在对role的建模，role是每个context中复杂的业务逻辑的真正执行者，体现“系统做什么”。role所做的是对行为进行建模，它联接了context和领域对象。由于系统的行为是复杂且多变的，role使得系统将稳定的领域模型层和多变的系统行为层进行了分离，由role专注于对系统行为进行建模。该层往往关注于系统的可扩展性，更加贴近于软件工程实践，在面向对象中更多的是以类的视角进行思考设计。</p>
+</li>
+</ul>
+<p>DCI目前广泛被看作是对DDD的一种发展和补充，用在基于面向对象的领域建模上。五层架构的具体定义如下：</p>
+<ul>
+<li><p>User Interface是用户接口层，主要用于处理用户发送的Restful请求和解析用户输入的配置文件等，并将信息传递给Application层的接口。</p>
+</li>
+<li><p>Application层是应用层，负责多进程管理及调度、多线程管理及调度、多协程调度和维护业务实例的状态模型。当调度层收到用户接口层的请求后，委托Context层与本次业务相关的上下文进行处理。</p>
+</li>
+<li><p>Context是环境层，以上下文为单位，将Domain层的领域对象cast成合适的role，让role交互起来完成业务逻辑。</p>
+</li>
+<li><p>Domain层是领域层，定义领域模型，不仅包括领域对象及其之间关系的建模，还包括对象的角色role的显式建模。</p>
+</li>
+<li><p>Infrastructure层是基础实施层，为其他层提供通用的技术能力：业务平台，编程框架，持久化机制，消息机制，第三方库的封装，通用算法，等等。</p>
+</li>
+</ul>
+<h3 id="六边形架构"><a href="#六边形架构" class="headerlink" title="六边形架构"></a>六边形架构</h3><p>六边形架构（Hexagonal Architecture），又称为端口和适配器风格，最早由 Alistair Cockburn 提出。在 DDD 社区得到了发展和推广，之所以是六变形是为了突显这是个扁平的架构，每个边界的权重是相等的。</p>
+<p>我们知道，经典分层架构分为三层（展现层、应用层、数据访问层），而对于六边形架构，可以分成另外的三层:</p>
+<ul>
+<li>领域层（Domain Layer）：最里面，纯粹的核心业务逻辑，一般不包含任何技术实现或引用</li>
+<li>端口层（Ports Layer）：领域层之外，负责接收与用例相关的所有请求，这些请求负责在领域层中协调工作。端口层在端口内部作为领域层的边界，在端口外部则扮演了外部实体的角色。</li>
+<li>适配器层（Adapters Layer）：端口层之外，负责以某种格式接收输入、及产生输出。比如，对于 HTTP 用户请求，适配器会将转换为对领域层的调用，并将领域层传回的响应进行封送，通过 HTTP 传回调用客户端。在适配器层不存在领域逻辑，它的唯一职责就是在外部世界与领域层之间进行技术性的转换。适配器能够与端口的某个协议相关联并使用该端口，多个适配器可以使用同一个端口，在切换到某种新的用户界面时，可以让新界面与老界面同时使用相同的端口。</li>
+</ul>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g298gyarr1j311a0nyafl.jpg" alt=""></p>
+<p>这样做的好处是将使业务边界更加清晰，从而获得更好的扩展性，除此之外，业务复杂度和技术复杂度分离，是 DDD 的重要基础，核心的领域层可以专注在业务逻辑而不用理会技术依赖，外部接口在被消费者调用的时候也不用去关心业务内部是如何实现。</p>
+<h3 id="REST架构"><a href="#REST架构" class="headerlink" title="REST架构"></a>REST架构</h3><p>RESTful风格的架构将 资源 放在第一位，每个 资源 都有一个 URI 与之对应，可以将 资源 看着是 DDD 中的实体；RESTful 采用具有自描述功能的消息实现无状态通信，提高系统的可用性；至于 资源 的哪些属性可以公开出去，针对 资源的操作，RESTful使用HTTP协议的已有方法来实现：GET、PUT、POST和DELETE。</p>
+<p>在 DDD 的实现中，我们可以将对外的服务设计为 RESTful 风格的服务，将实体/值对象/领域服务作为资源对外提供增删改查服务。但是并不建议直接将实体暴露在外，一来实体的某些隐私属性并不能对外暴露，二来某些资源获取场景并不是一个实体就能满足。因此我们在实际实践过程中，在领域模型上增加了 DTO 这样一个角色，DTO 可以组合多个实体/值对象的资源对外暴露。</p>
+<h3 id="CQRS"><a href="#CQRS" class="headerlink" title="CQRS"></a>CQRS</h3><p>CQRS 就是平常大家在讲的读写分离，通常读写分离的目的是为了提高查询性能，同时达到读/写的解耦。让 DDD 和 CQRS 结合，我们可以分别对读和写建模，查询模型通常是一种非规范化数据模型，它并不反映领域行为，只是用于数据显示；命令模型执行领域行为，且在领域行为执行完成后，想办法通知到查询模型。</p>
+<p>那么命令模型如何通知到查询模型呢？ 如果查询模型和领域模型共享数据源，则可以省却这一步；如果没有共用数据源，则可以借助于 消息模式（Messaging Patterns）通知到查询模型，从而达到最终一致性（Eventual Consistency）。</p>
+<p>Martin 在 blog 中指出：CQRS 适用于极少数复杂的业务领域，如果不是很适合反而会增加复杂度；另一个适用场景为获取高性能的服务。</p>
+<h2 id="领域模型"><a href="#领域模型" class="headerlink" title="领域模型"></a>领域模型</h2><p>在上面小节讲解了领域驱动设计的几种架构风格，下面我们具体结合简单的实例来看其中的领域模型划分，初步分为4大类</p>
+<ol>
+<li>失血模型</li>
+<li>贫血模型</li>
+<li>充血模型</li>
+<li>涨血模型</li>
+</ol>
+<p>我们看看这些领域模型的具体内容，以及他们的优缺点。</p>
+<h3 id="失血模型"><a href="#失血模型" class="headerlink" title="失血模型"></a>失血模型</h3><p>失血模型简单来说，就是domain object只有属性的getter/setter方法的纯数据类，所有的业务逻辑完全由business object来完成(又称TransactionScript)，这种模型下的domain object被Martin Fowler称之为“贫血的domain object”。</p>
+<h3 id="贫血模型"><a href="#贫血模型" class="headerlink" title="贫血模型"></a>贫血模型</h3><p>简单来说，就是 domain ojbect 包含了不依赖于持久化的领域逻辑，而那些依赖持久化的领域逻辑被分离到 Service 层。</p>
+<p>Service(业务逻辑，事务封装) –&gt; DAO —&gt; domain object</p>
+<p>这也就是 Martin Fowler 指的 rich domain object:</p>
+<ul>
+<li>一个带有业务逻辑的实体类，即domain object是Item</li>
+<li>一个DAO接口ItemDao</li>
+<li>一个DAO实现ItemDaoHibernateImpl</li>
+<li>一个业务逻辑对象ItemManager<br>这种模型的优点：</li>
+</ul>
+<ol>
+<li>各层单向依赖，结构清楚，易于实现和维护</li>
+<li>设计简单易行，底层模型非常稳定</li>
+</ol>
+<p>缺点为：</p>
+<ol>
+<li>domain object的部分比较紧密依赖的持久化 domain logic 被分离到Service层，显得不够 OO</li>
+<li>Service 层过于厚重</li>
+</ol>
+<h3 id="充血模型"><a href="#充血模型" class="headerlink" title="充血模型"></a>充血模型</h3><p>充血模型和第二种模型差不多，所不同的就是如何划分业务逻辑，即认为，绝大多业务逻辑都应该被放在domain object里面(包括持久化逻辑)，而Service层应该是很薄的一层，仅仅封装事务和少量逻辑，不和DAO层打交道。</p>
+<p>Service(事务封装) —&gt; domain object &lt;—&gt; DAO</p>
+<p>这种模型就是把第二种模型的 domain object 和 business object 合二为一了。所以 ItemManager 就不需要了，在这种模型下面，只有三个类，他们分别是</p>
+<ul>
+<li>Item：包含了实体类信息，也包含了所有的业务逻辑</li>
+<li>ItemDao：持久化DAO接口类</li>
+<li>ItemDaoHibernateImpl：DAO接口的实现类</li>
+</ul>
+<p>在这种模型中，所有的业务逻辑全部都在Item中，事务管理也在Item中实现。<br>这种模型的优点：</p>
+<ol>
+<li>更加符合OO的原则</li>
+<li>Service层很薄，只充当Facade的角色，不和DAO打交道。</li>
+</ol>
+<p>这种模型的缺点：</p>
+<ol>
+<li>DAO和domain object形成了双向依赖，复杂的双向依赖会导致很多潜在的问题。</li>
+<li>如何划分Service层逻辑和domain层逻辑是非常含混的，在实际项目中，由于设计和开发人员的水平差异，可能导致整个结构的混乱无序。</li>
+<li>考虑到Service层的事务封装特性，Service层必须对所有的domain object的逻辑提供相应的事务封装方法，其结果就是Service完全重定义一遍所有的domain logic，非常烦琐，而且 Service 的事务化封装其意义就等于把 OO 的domain logic 转换为过程的 Service TransactionScript。</li>
+</ol>
+<h3 id="胀血模型"><a href="#胀血模型" class="headerlink" title="胀血模型"></a>胀血模型</h3><p>基于充血模型的第三个缺点，有同学提出，干脆取消Service层，只剩下domain object和DAO两层，在domain object的domain logic上面封装事务。</p>
+<p>domain object(事务封装，业务逻辑) &lt;—&gt; DAO</p>
+<p>似乎ruby on rails就是这种模型，他甚至把 domain object 和 DAO 都合并了。</p>
+<p>该模型优点：</p>
+<ol>
+<li>简化了分层</li>
+<li>也算符合OO</li>
+</ol>
+<p>缺点: </p>
+<ol>
+<li><p>很多不是domain logic的 service 逻辑也被强行放入 domain object，引起了domain ojbect模型的不稳定</p>
+</li>
+<li><p>domain object 暴露给web层过多的信息，可能引起意想不到的副作用。</p>
+</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在这四种模型当中，失血模型和胀血模型应该是不被提倡的。而贫血模型和充血模型从技术上来说，都已经是可行的了。贫血模型和充血模型哪个更加好一些？人们针对这个问题进行了旷日持久的争论，最后仍然没有什么结果。双方争论的焦点主要在我上面加粗的两句话上，就是领域模型是否要依赖持久层，因为依赖持久层就意味着单元测试的展开要更加困难（无法脱离框架进行测试，原文的讨论中这里专指Hibernate），领域层就更难独立，将来也更难从应用程序中剥离出来，当然好处是业务逻辑不必混放在不同的层中，使得单一职责性体现的更好。而支持者（充血模型）认为，只要将持久层抽象出来，即可减少测试的困难性，同时适用充血模型毕竟带来了不少开发上的便利性，除了依赖持久层这一点，拥有更多好处的充血模型仍然值得选择。最后，谁也没能说服谁，关于贫血模型和充血模型的选择，更多的要靠具体的业务场景来决定，并不能说哪一种更比哪一种好。设计模式这种东西不是向来都没有什么定论么。</p>
+<p>我个人则倾向使用充血模型，因为充血模型更加像一个设计完善的系统架构，好在计算机世界里有很多的 IOC 和 DI 框架，唯一的缺陷依赖持久层可以通过各种变通的方法绕过，随着技术的进步，一些缺陷也会被慢慢解决。我的思路是这样的：先将持久层抽象为接口，然后通过服务层将持久层注入到领域模型中，这样领域模型仅仅会依赖于持久层的接口。而这个接口，可以利用现有框架的技术进行抽象。</p>
+<blockquote>
+<p>转自: <a href="http://blueskykong.com/2019/03/28/ddd-2/" target="_blank" rel="external">http://blueskykong.com/2019/03/28/ddd-2/</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>赏口饭吧</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Shuchang 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="Shuchang 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/DDD/" rel="tag"># DDD</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/10/spring的缺陷与DDD-1/" rel="next" title="Spring的缺陷与DDD(1)">
+                <i class="fa fa-chevron-left"></i> Spring的缺陷与DDD(1)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/123.png"
+                alt="Shuchang" />
+            
+              <p class="site-author-name" itemprop="name">Shuchang</p>
+              <p class="site-description motion-element" itemprop="description">身怀利器，杀心自起，慎而重之</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">85</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">20</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">25</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://gitee.com/swiftsc" title="GitHub &rarr; https://gitee.com/swiftsc" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/shuchang0403@gmail.com" title="E-Mail &rarr; shuchang0403@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#架构风格"><span class="nav-number">1.</span> <span class="nav-text">架构风格</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#分层架构"><span class="nav-number">1.1.</span> <span class="nav-text">分层架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四层架构"><span class="nav-number">1.2.</span> <span class="nav-text">四层架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五层架构"><span class="nav-number">1.3.</span> <span class="nav-text">五层架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#六边形架构"><span class="nav-number">1.4.</span> <span class="nav-text">六边形架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#REST架构"><span class="nav-number">1.5.</span> <span class="nav-text">REST架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CQRS"><span class="nav-number">1.6.</span> <span class="nav-text">CQRS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#领域模型"><span class="nav-number">2.</span> <span class="nav-text">领域模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#失血模型"><span class="nav-number">2.1.</span> <span class="nav-text">失血模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#贫血模型"><span class="nav-number">2.2.</span> <span class="nav-text">贫血模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#充血模型"><span class="nav-number">2.3.</span> <span class="nav-text">充血模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#胀血模型"><span class="nav-number">2.4.</span> <span class="nav-text">胀血模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">  <a href="http://www.miitbeian.gov.cn" rel="noopener" target="_blank">浙ICP备17049505号 </a>&copy; 2015 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shuchang</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+      
+  
+  <script type="text/javascript" color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname,
+            owner: 'shuchaang',
+            repo: 'shuchaang.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+            
+                client_id: 'c5aa96bb5e5656512174'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function (i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap')
+      $(e).after($wrap)
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+        var code = $(this).parent().find('.code').find('.line').map(function (i, e) {
+          return $(e).text()
+        }).toArray().join('\n')
+        var ta = document.createElement('textarea')
+        document.body.appendChild(ta)
+        ta.style.position = 'absolute'
+        ta.style.top = '0px'
+        ta.style.left = '0px'
+        ta.value = code
+        ta.select()
+        ta.focus()
+        var result = document.execCommand('copy')
+        document.body.removeChild(ta)
+        
+          if(result)$(this).text('复制成功')
+          else $(this).text('复制失败')
+        
+        $(this).blur()
+      })).on('mouseleave', function (e) {
+        var $b = $(this).find('.copy-btn')
+        setTimeout(function () {
+          $b.text('复制')
+        }, 300)
+      }).append(e)
+    })
+  </script>
+
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>
