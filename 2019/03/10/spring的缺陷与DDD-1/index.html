@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Spring 框架已经成为构建企业级 Java 应用事实上的标准了，众多的企业项目都构建在 Spring 项目及其子项目之上，特别是 Java Web 项目，很多都使用了 Spring 并且遵循着 Web、Service、Dao 这样的分层原则，下层向上层提供服务；不过Petri Kainulainen在其博客中却指出了众多 Spring Web 应用的最大瑕疵。  多数有经验的程序开发者都应该">
+<meta name="keywords" content="DDD">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring的缺陷与DDD(1)">
+<meta property="og:url" content="http://www.shuchang.sc.com/2019/03/10/spring的缺陷与DDD-1/index.html">
+<meta property="og:site_name" content="ShuChang&#39;s Blog">
+<meta property="og:description" content="Spring 框架已经成为构建企业级 Java 应用事实上的标准了，众多的企业项目都构建在 Spring 项目及其子项目之上，特别是 Java Web 项目，很多都使用了 Spring 并且遵循着 Web、Service、Dao 这样的分层原则，下层向上层提供服务；不过Petri Kainulainen在其博客中却指出了众多 Spring Web 应用的最大瑕疵。  多数有经验的程序开发者都应该">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g297fblc1gj30s80iwqa1.jpg">
+<meta property="og:updated_time" content="2019-04-20T09:06:54.611Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring的缺陷与DDD(1)">
+<meta name="twitter:description" content="Spring 框架已经成为构建企业级 Java 应用事实上的标准了，众多的企业项目都构建在 Spring 项目及其子项目之上，特别是 Java Web 项目，很多都使用了 Spring 并且遵循着 Web、Service、Dao 这样的分层原则，下层向上层提供服务；不过Petri Kainulainen在其博客中却指出了众多 Spring Web 应用的最大瑕疵。  多数有经验的程序开发者都应该">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1g297fblc1gj30s80iwqa1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.shuchang.sc.com/2019/03/10/spring的缺陷与DDD-1/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Spring的缺陷与DDD(1) | ShuChang's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ShuChang's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">剑来!</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">25</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">20</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">84</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2019/03/10/spring的缺陷与DDD-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spring的缺陷与DDD(1)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-03-10 16:51:03" itemprop="dateCreated datePublished" datetime="2019-03-10T16:51:03+08:00">2019-03-10</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-20 17:06:54" itemprop="dateModified" datetime="2019-04-20T17:06:54+08:00">2019-04-20</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/系统设计/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/03/10/spring的缺陷与DDD-1/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2019/03/10/spring的缺陷与DDD-1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>Spring 框架已经成为构建企业级 Java 应用事实上的标准了，众多的企业项目都构建在 Spring 项目及其子项目之上，特别是 Java Web 项目，很多都使用了 Spring 并且遵循着 Web、Service、Dao 这样的分层原则，下层向上层提供服务；不过Petri Kainulainen在其博客中却指出了众多 Spring Web 应用的最大瑕疵。</p>
+</blockquote>
+<p>多数有经验的程序开发者都应该听说过DDD，并且尝试过将其应用在自己的项目中。不知你是否遇到过这样的场景：你创建了一个资源库（Repository），但一段时间之后发现这个资源库和传统的DAO越来越像了，你开始反思自己的实现方式是正确的吗？或者，你创建了一个聚合，然后发现这个聚合是如此的庞大，它为什么引用了如此多的对象，难道又是我做错了吗？</p>
+<p>本文将会谈谈有关领域驱动设计，和领域驱动设计中使用贫血、失血和充血模型。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li><a id="more"></a>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+</the></li>
+</ul>
+<h2 id="Spring的缺陷"><a href="#Spring的缺陷" class="headerlink" title="Spring的缺陷"></a>Spring的缺陷</h2><p>现在大部分应用Spring框架的Java Web应用都相当关注单一职责原则和关注分离原则，但是在此之上却诞生了一些不太好的反模式和设计原则，比如：</p>
+<ul>
+<li>领域模型对象只是用来存储应用的数据（领域模型使用了贫血模型这种反模式）。</li>
+<li>业务逻辑位于服务层中，管理域对象的数据。</li>
+<li>在服务层中，应用的每个实体对应一个服务类。</li>
+</ul>
+<p>使用 Spring 框架构建应用的开发者很乐于谈论依赖注入的好处。但遗憾的是，他们很多人并没有在其应用中很好地利用其优势，如单一职责原则和关注分离原则。如果仔细看看基于 Spring 的 Web 应用，你会发现很多都是使用如下这些常见且错误的设计原则来实现的：</p>
+<p>这类设计原则的应用非常广泛，我现在所在的Java Web项目就是使用这样的设计原则进行架构设计的，基本都是常见的三层或多层架构，他们大概是什么样的呢？</p>
+<ul>
+<li>Web层（俗称展现层吧，Presentation Layer)：接收用户输入，将数据传至服务层；</li>
+<li>服务层(Service Layer，可以叫Business Logic Layer)：事务边界，处理业务逻辑、权限管理与授权，并与存储层通信</li>
+<li>存储层（Data access layer）：与数据库进行通信，对数据进行持久化。</li>
+</ul>
+<p>但是发现什么没有？问题出在了服务层，他承受了太多的职责，像事务管理、业务逻辑、权限检查等等，这违反了单一职责原则和关注分离原则，并且产生了大量的依赖和循环依赖。当业务复杂度上升时，服务层所包含的代码将会非常庞大和复杂，直接导致了测试成本的上升。服务层主要有两个问题：</p>
+<ul>
+<li>应用的业务逻辑来自于服务层。</li>
+</ul>
+<p>业务逻辑散落在服务层。如果需要查看某个业务规则是如何实现的，我们需要先找到它。此外，如果有多个服务类都需要相同的业务规则，那么会将这个业务规则从一个服务复制到另一个服务中，大量的代码重复。</p>
+<ul>
+<li>每个领域模型类在服务层中都有一个服务类。</li>
+</ul>
+<p>这违背了单一职责原则：单一职责原则表明每个类都应该只有一个职责，这个职责应该完全被这个类所封装。它的所有服务都应该与这个职责保持一致。</p>
+<p>如何改善现状，下面具体介绍领域驱动设计的相关概念和实施策略。</p>
+<h2 id="领域驱动模型"><a href="#领域驱动模型" class="headerlink" title="领域驱动模型"></a>领域驱动模型</h2><p>DDD总体结构分为四层: Infrastructure(基础实施层)，Domain(领域层)，Application(应用层)，Interfaces(表示层，也叫用户界面层或是接口层)，各个层面的作用下面介绍。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g297fblc1gj30s80iwqa1.jpg" alt=""></p>
+<ul>
+<li>用户界面（表现层）：负责给用户展示信息，并解释用户命</li>
+<li>应用层：该层协调应用程序的活动。不包括任何业务逻辑，不保存业务对象的状态，但能保存应用程序任务过程的状态。</li>
+<li>领域层：这一层包括业务领域的信息。业务对象的状态在这里保存。业务对象的持久化和它们的状态可能会委托给基础设施层。</li>
+<li>基础设施层：对其它层来说，这一层是一个支持性的库。它提供层之间的信息传递，实现业务对象的持久化，包含对用户界面层的支持性库等。</li>
+</ul>
+<h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><h4 id="实体"><a href="#实体" class="headerlink" title="实体"></a>实体</h4><p>当一个对象由其标识(而不是属性)区分时，这种对象称为实体(Entity)。比如当两个对象的标识不同时，即使两个对象的其他属性全都相同，我们也认为他们是两个完全不同的实体。</p>
+<h4 id="值对象（Value-Object）"><a href="#值对象（Value-Object）" class="headerlink" title="值对象（Value Object）"></a>值对象（Value Object）</h4><p>当一个对象用于对事物进行描述而没有唯一标识时，那么它被称作值对象。因为在领域中并不是任何时候一个事物都需要有一个唯一的标识，也就是说我们并不关心具体是哪个事物，只关心这个事物是什么。比如下单流程中，对于配送地址来说，只要是地址信息相同，我们就认为是同一个配送地址。由于不具有唯一标示，我们也不能说”这一个”值对象或者”那一个”值对象。</p>
+<h4 id="领域服务（Domain-Service）"><a href="#领域服务（Domain-Service）" class="headerlink" title="领域服务（Domain Service）"></a>领域服务（Domain Service）</h4><p>一些重要的领域行为或操作，它们不太适合建模为实体对象或者值对象，它们本质上只是一些操作，并不是具体的事物，另一方面这些操作往往又会涉及到多个领域对象的操作，它们只负责来协调这些领域对象完成操作而已，那么我们可以归类它们为领域服务。它实现了全部业务逻辑并且通过各种校验手段保证业务的正确性。同时呢，它也能避免在应用层出现领域逻辑。理解起来，领域服务有点facade的味道。</p>
+<h4 id="聚合及聚合根（Aggregate，Aggregate-Root"><a href="#聚合及聚合根（Aggregate，Aggregate-Root" class="headerlink" title="聚合及聚合根（Aggregate，Aggregate Root)"></a>聚合及聚合根（Aggregate，Aggregate Root)</h4><p>聚合是通过定义领域对象之间清晰的所属关系以及边界来实现领域模型的内聚，以此来避免形成错综复杂的、难以维护的对象关系网。聚合定义了一组具有内聚关系的相关领域对象的集合，我们可以把聚合看作是一个修改数据的单元。</p>
+<p>聚合根属于实体对象，它是领域对象中一个高度内聚的核心对象。(聚合根具有全局的唯一标识，而实体只有在聚合内部有唯一的本地标识，值对象没有唯一标识，不存在这个值对象或那个值对象的说法)</p>
+<p>若一个聚合仅有一个实体，那这个实体就是聚合根；但要有多个实体，我们就要思考聚合内哪个对象有独立存在的意义且可以和外部领域直接进行交互。</p>
+<h4 id="工厂（Factory）"><a href="#工厂（Factory）" class="headerlink" title="工厂（Factory）"></a>工厂（Factory）</h4><p>DDD中的工厂也是一种封装思想的体现。引入工厂的原因是：有时创建一个领域对象是一件相对比较复杂的事情，而不是简单的new操作。工厂的作用是隐藏创建对象的细节。事实上大部分情况下，领域对象的创建都不会相对太复杂，故我们仅需使用简单的构造函数创建对象就可以。隐藏创建对象细节的好处是显而易见的，这样就可以不会让领域层的业务逻辑泄露到应用层，同时也减轻应用层负担，它只要简单调用领域工厂来创建出期望的对象就可以了。</p>
+<h4 id="仓储（Repository）"><a href="#仓储（Repository）" class="headerlink" title="仓储（Repository）"></a>仓储（Repository）</h4><p>资源仓储封装了基础设施来提供查询和持久化聚合操作。这样能够让我们始终关注在模型层面，把对象的存储和访问都委托给资源库来完成。它不是数据库的封装，而是领域层与基础设施之间的桥梁。DDD 关心的是领域内的模型，而不是数据库的操作。</p>
+<h3 id="DDD设计"><a href="#DDD设计" class="headerlink" title="DDD设计"></a>DDD设计</h3><p>DDD 概念理解起来有点抽象，这个有点像设计模式，感觉很有用，但是自己开发的时候又不知道怎么应用到代码里面，或者生搬硬套后自己看起来都很别扭。DDD的战略设计主要包括领域/子域、通用语言、限界上下文和架构风格等概念。</p>
+<h4 id="领域和子域"><a href="#领域和子域" class="headerlink" title="领域和子域"></a>领域和子域</h4><p>现实世界中，领域包含了问题域和解系统。一般认为软件是对现实世界的部分模拟。在DDD中，解系统可以映射为一个个限界上下文，限界上下文就是软件对于问题域的一个特定的、有限的解决方案。</p>
+<p>在日常开发中，我们通常会将一个大型的软件系统拆分成若干个子系统。这种划分有可能是基于架构方面的考虑，也有可能是基于基础设施的。但是在DDD中，我们对系统的划分是基于领域的，也即是基于业务的。</p>
+<h4 id="限界上下文"><a href="#限界上下文" class="headerlink" title="限界上下文"></a>限界上下文</h4><p>一个由显示边界限定的特定职责。领域模型便存在于这个边界之内。在边界内，每一个模型概念，包括它的属性和操作，都具有特殊的含义。</p>
+<p>将一个限界上下文中的所有概念，包括名词、动词和形容词全部集中在一起，我们便为该限界上下文创建了一套通用语言。通用语言是一个团队所有成员交流时所使用的语言，业务分析人员、编码人员和测试人员都应该直接通过通用语言进行交流。</p>
+<p>对于上文中提到的各个子域之间的集成问题，其实也是限界上下文之间的集成问题。在集成时，我们主要关心的是领域模型和集成手段之间的关系。比如需要与一个REST资源集成，你需要提供基础设施（比如Spring 中的RestTemplate），但是这些设施并不是你核心领域模型的一部分，你应该怎么办呢？答案是防腐层，该层负责与外部服务提供方打交道，还负责将外部概念翻译成自己的核心领域能够理解的概念。当然，防腐层只是限界上下文之间众多集成方式的一种，另外还有共享内核、开放主机服务等，具体细节请参考《实现领域驱动设计》原书。限界上下文之间的集成关系也可以理解为是领域概念在不同上下文之间的映射关系，因此，限界上下文之间的集成也称为上下文映射图。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文通过Spring Web应用的瑕疵引出改善的措施，随后介绍了领域驱动开发的相关概念和设计策略。在前面讲了这么多概念，想必读者一定有了解如何落地领域驱动设计的冲动。笔者将在下一篇文章介绍领域模型的几种类型和DDD的具体实践案例。</p>
+<blockquote>
+<p>转自:<a href="http://blueskykong.com/2019/01/07/ddd-1/" target="_blank" rel="external">http://blueskykong.com/2019/01/07/ddd-1/</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>赏口饭吧</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Shuchang 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="Shuchang 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/DDD/" rel="tag"># DDD</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/07/Go语言并发模型/" rel="next" title="Go语言并发模型">
+                <i class="fa fa-chevron-left"></i> Go语言并发模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/123.png"
+                alt="Shuchang" />
+            
+              <p class="site-author-name" itemprop="name">Shuchang</p>
+              <p class="site-description motion-element" itemprop="description">身怀利器，杀心自起，慎而重之</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">84</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">20</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">25</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://gitee.com/swiftsc" title="GitHub &rarr; https://gitee.com/swiftsc" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/shuchang0403@gmail.com" title="E-Mail &rarr; shuchang0403@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring的缺陷"><span class="nav-number">1.</span> <span class="nav-text">Spring的缺陷</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#领域驱动模型"><span class="nav-number">2.</span> <span class="nav-text">领域驱动模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本概念"><span class="nav-number">2.1.</span> <span class="nav-text">基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#实体"><span class="nav-number">2.1.1.</span> <span class="nav-text">实体</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#值对象（Value-Object）"><span class="nav-number">2.1.2.</span> <span class="nav-text">值对象（Value Object）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#领域服务（Domain-Service）"><span class="nav-number">2.1.3.</span> <span class="nav-text">领域服务（Domain Service）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#聚合及聚合根（Aggregate，Aggregate-Root"><span class="nav-number">2.1.4.</span> <span class="nav-text">聚合及聚合根（Aggregate，Aggregate Root)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#工厂（Factory）"><span class="nav-number">2.1.5.</span> <span class="nav-text">工厂（Factory）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#仓储（Repository）"><span class="nav-number">2.1.6.</span> <span class="nav-text">仓储（Repository）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DDD设计"><span class="nav-number">2.2.</span> <span class="nav-text">DDD设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#领域和子域"><span class="nav-number">2.2.1.</span> <span class="nav-text">领域和子域</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#限界上下文"><span class="nav-number">2.2.2.</span> <span class="nav-text">限界上下文</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">  <a href="http://www.miitbeian.gov.cn" rel="noopener" target="_blank">浙ICP备17049505号 </a>&copy; 2015 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shuchang</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+      
+  
+  <script type="text/javascript" color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname,
+            owner: 'shuchaang',
+            repo: 'shuchaang.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+            
+                client_id: 'c5aa96bb5e5656512174'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function (i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap')
+      $(e).after($wrap)
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+        var code = $(this).parent().find('.code').find('.line').map(function (i, e) {
+          return $(e).text()
+        }).toArray().join('\n')
+        var ta = document.createElement('textarea')
+        document.body.appendChild(ta)
+        ta.style.position = 'absolute'
+        ta.style.top = '0px'
+        ta.style.left = '0px'
+        ta.value = code
+        ta.select()
+        ta.focus()
+        var result = document.execCommand('copy')
+        document.body.removeChild(ta)
+        
+          if(result)$(this).text('复制成功')
+          else $(this).text('复制失败')
+        
+        $(this).blur()
+      })).on('mouseleave', function (e) {
+        var $b = $(this).find('.copy-btn')
+        setTimeout(function () {
+          $b.text('复制')
+        }, 300)
+      }).append(e)
+    })
+  </script>
+
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>
