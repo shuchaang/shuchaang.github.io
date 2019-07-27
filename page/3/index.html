@@ -275,7 +275,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">20</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">19</span></a>
 
   </li>
         
@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">85</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">91</span></a>
 
   </li>
         
@@ -349,6 +349,1170 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/06/jms-消息结构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/06/jms-消息结构/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">JMS(1)-消息基础</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-06 14:12:58" itemprop="dateCreated datePublished" datetime="2018-12-06T14:12:58+08:00">2018-12-06</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-26 09:46:25" itemprop="dateModified" datetime="2018-12-26T09:46:25+08:00">2018-12-26</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="JMS"><a href="#JMS" class="headerlink" title="JMS"></a>JMS</h2><p>JMS即java message service,是一个java面向消息中间件提出的标准化接口。类似于jdbc于mysql-connector的关系。ActiveMQ是apache出的一个消息中间件,实现了JMS协议。目前AMQ的版本为5.x,社区不太活跃,因为AMQ目前的主要精力投入在下一代MQ的开发-appllo上。</p>
+<p>常见MQ的选型,供参考:</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fxz85ye41hj30py0nqq66.jpg" alt=""></p>
+<h2 id="JMS消息结构"><a href="#JMS消息结构" class="headerlink" title="JMS消息结构"></a>JMS消息结构</h2><p>JMS消息由以下部分组成: 消息头 消息体 属性</p>
+<p>消息头包含识别信息和路由信息:</p>
+<ol>
+<li>JMSDestatination: 路由地址,由sender设置</li>
+<li>JMSDeliveryMode: 传送模式。两种: 持久模式和非持久化模式,持久模式消息会被传送”仅仅一次”。也就是说当broker宕机,消息不会丢失,当broker恢复后会再次发送消息。非持久消息保证传输最多一次,当机器宕机,数据将永远消失。</li>
+<li>JMSExpiration: 消息过期时间,消息在过期时间内没有被消费,则会删除。</li>
+<li>JMSPriority: 消息优先级,从0-9,0-4是普通消息,5-9是加急消息。JMS提供的保障的是加急消息先于普通消息送达,其他尽量保证,默认为4</li>
+<li>JMSMessageID: 每个消息的唯一识别,可以手动设置为业务id,否则会自动生成。</li>
+<li>JMSCorrelationID: 用来连接到另外一个消息,典型的应用是将回复消息链接到原消息,也就是有应答的场景。</li>
+<li>JMSReplyTo: 提供本消息回复消息的目的地址</li>
+<li>JMSType: 消息类型识别符</li>
+<li>JMSRedelivered: 如果客户端收到一个设置了JMSRedelivered属性的消息,表示客户端之前接受过这个消息,但是没有ack。如果触发了消息重新发送,JMSRedelivered=true,否则false。</li>
+</ol>
+<p>JMS消息体提供了5种消息体:</p>
+<ul>
+<li>TextMessage</li>
+<li>MapMessage</li>
+<li>BytesMessage</li>
+<li>StreamMessage</li>
+<li>ObjectMessage</li>
+</ul>
+<p>JMS提供三种消息属性:</p>
+<ol>
+<li>应用程序添加的属性: Message.setStringProperty(k,v)</li>
+<li>JMS定义的属性: connection.getMetaData().getJMSXPropertyNames() 获取jms定义的属性</li>
+<li>三方插件提供的特殊属性</li>
+</ol>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/05/k8s学习总结5-调度/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/05/k8s学习总结5-调度/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">k8s学习总结5-调度</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-05 16:05:02" itemprop="dateCreated datePublished" datetime="2018-12-05T16:05:02+08:00">2018-12-05</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-06 19:37:28" itemprop="dateModified" datetime="2018-12-06T19:37:28+08:00">2018-12-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>K8S调度器的主要任务就是为Pod寻找一个合适的Node。</p>
+<h2 id="默认调度器"><a href="#默认调度器" class="headerlink" title="默认调度器"></a>默认调度器</h2><p>K8S提供了默认调度器,它的主要流程是:根据Predicate算法检查每个Node。然后再调用Priority算法给Node打分。最终调度结果就是选择分数最高的那个Node。</p>
+<p>K8S调度算法的流程如下:</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fxvz4mqinzj312u0nowfp.jpg" alt=""></p>
+<p>主要是两个循环过程:</p>
+<p>第一个循环informer负责监听etcd中Pod、Node、Service等需要调度的组件。一旦发现informer就将它放入一个优先级队列。</p>
+<p>第二个循环是Scheduling Path,不断从优先队列中取出一个Pod,使用Predicate算法过滤出一组Node,Node的信息从Cache中获取。选出一个合适的Node之后,调度器就会进行绑定操作,将Pod的nodeName填写为筛选出的Node名称。</p>
+<h2 id="Predicates"><a href="#Predicates" class="headerlink" title="Predicates"></a>Predicates</h2><p>K8S中Predicates算法默认提供四种调度策略:</p>
+<h3 id="GeneralPredicates"><a href="#GeneralPredicates" class="headerlink" title="GeneralPredicates"></a>GeneralPredicates</h3><p>这是第一组过滤策略,也是最基础的调度规则。目的就是根据yaml配置文件检查硬件资源是否充足,端口是否冲突。由于调度策略采用了无锁化设计,所以当一个Pod被调度到Node上时,Node会再次执行一遍这个策略。</p>
+<h3 id="Volume相关过滤"><a href="#Volume相关过滤" class="headerlink" title="Volume相关过滤"></a>Volume相关过滤</h3><p>这组规则主要对Volume进行过滤。</p>
+<p>首先是NoDiskconflict,检查Pod声明挂载的volume是否存在冲突。</p>
+<p>接着是MaxPDVolumeCountPredicate,判断节点某种volume类型是否超过上限。</p>
+<p>接着是VolumeBindingPredicate,主要作用是判断节点亲和性。</p>
+<h3 id="宿主机相关过滤规则"><a href="#宿主机相关过滤规则" class="headerlink" title="宿主机相关过滤规则"></a>宿主机相关过滤规则</h3><p>这组规则是判断Pod是否满足Node的某些条件。</p>
+<p>例如配置了PodToleratesNodeTaints字段,只有当Pod的Toleration和Node的taint字段相匹配,才能调度到该节点。</p>
+<h3 id="Pod相关过滤规则"><a href="#Pod相关过滤规则" class="headerlink" title="Pod相关过滤规则"></a>Pod相关过滤规则</h3><p>这组检查和GeneralPredicates有很多重合,比较特殊的一点是PodAffinityPredicate。用来检查Node上Pod之间的亲密和反亲密关系。</p>
+<p>上面这四种类型的 Predicates，就构成了调度器确定一个Node可以运行待调度Pod的基本策略。</p>
+<h2 id="Priorites"><a href="#Priorites" class="headerlink" title="Priorites"></a>Priorites</h2><p>Proorites根据算法对选出的Node打分,最常用的是LeastRequestedPriority</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">score = (cpu((capacity-sum(requested))10/capacity) + memory((capacity-sum(requested))10/capacity))/2</div></pre></td></tr></table></figure>
+<p>其实就是选择内存和CPU最多的主机,除此之外还有NodeAffinityPriority,TaintTolerationPriority以及InterPodAffinityPriority。</p>
+<h2 id="优先级与抢占机制"><a href="#优先级与抢占机制" class="headerlink" title="优先级与抢占机制"></a>优先级与抢占机制</h2><h3 id="优先级"><a href="#优先级" class="headerlink" title="优先级"></a>优先级</h3><p>首先要明确的是,优先级与抢占解决的是Pod调度失败的问题。</p>
+<p>通常情况下,调度失败的Pod会被搁置,直到出现满足条件的Node才能再次调度。但是如果这个Pod是一个优先级非常高的系统,我们希望能通过减少一部分优先度低的Pod,给优先级高的Pod空出位置。</p>
+<p>在K8S 1.10版本提供了优先级与抢占机制,首先要定义一个PriorityClass类型的yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">apiVersion: scheduling.k8s.io/v1beta1</div><div class="line">kind: PriorityClass</div><div class="line">metadata:</div><div class="line">  name: high-priority</div><div class="line">value: 1000000</div><div class="line">globalDefault: false</div><div class="line">description: &quot;This priority class should be used for high priority service pods only.&quot;</div></pre></td></tr></table></figure>
+<p>这里定义了优先级为1000000的配置文件,globalDefault如果设置为true,就会将Pod的默认优先级定义为1000000,而实际默认是0。优先级最大为10亿,超过10亿为K8S内部的Pod。</p>
+<p>定义过后就可以在Pod中使用:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: Pod</div><div class="line">metadata:</div><div class="line">  name: nginx</div><div class="line">  labels:</div><div class="line">    env: test</div><div class="line">spec:</div><div class="line">  containers:</div><div class="line">  - name: nginx</div><div class="line">    image: nginx</div><div class="line">    imagePullPolicy: IfNotPresent</div><div class="line">  priorityClassName: high-priority</div></pre></td></tr></table></figure>
+<p>经过配置之后,调度队列就会将这个Pod就会比优先级低的Pod提前出队。</p>
+<h3 id="抢占"><a href="#抢占" class="headerlink" title="抢占"></a>抢占</h3><p>抢占机制相比优先级要复杂的多。当一个高优先级的Pod调度失败之后,就会触发抢占机制。抢占的大概过程如下:</p>
+<p>k8s选出优先级较低的Pod所在的Node节点,将抢占者的spec.nominatedNodeName填写为该Node,然后将该pod重新入队。如果在下个周期,这个Pod没有抢到node(出现了优先级更高的pod),将spec.nominatedNodeName去掉重新入队,如果抢占成功,则让被抢占节点优雅退出(delete api),将新pod部署。</p>
+<p>接下来讲述一下详细原理,我们将这个Pod称为抢占者,旧的节点称为牺牲者:</p>
+<p>抢占的重要设计就是在调度队列的实现里,实现了两个不同的队列。</p>
+<ol>
+<li><p>activeQ: 存放下个周期需要调度的Pod</p>
+</li>
+<li><p>unschedulableQ: 用于存放调度失败的Pod,当这个队列中的Pod被更新时,k8s将它重新放入activeq。</p>
+</li>
+</ol>
+<p>在这里发生调度失败,也就是节点入队时会去触发寻找牺牲者的流程。</p>
+<p>首先调度器检查这次调度失败的原因,用来确认抢占机制可以实现重新调度。</p>
+<p>如果抢占可以发生,调度器将缓存的所有节点信息复制一份,然后利用副本去模拟一遍抢占过程。</p>
+<p>模拟成功之后会选出一个最佳Node,接着调度器就会开始真正的抢占操作:</p>
+<p>首先检查牺牲者列表,清理Pod的spec.nominatedNodeName字段</p>
+<p>为抢占者设置spec.nominatedNodeName属性</p>
+<p>开启协程,删除旧Pod,完成抢占</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/04/mysql之redo-log和undo-log/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/04/mysql之redo-log和undo-log/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">mysql之日志模块</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-04 18:30:18 / 修改时间：20:18:26" itemprop="dateCreated datePublished" datetime="2018-12-04T18:30:18+08:00">2018-12-04</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>平时在看一些mysql的文章时,不可避免看到过undolog,redolog,binlog等xxlog概念,这些概念都属于mysql的日志模块,这里对这些概念做一次总结。</p>
+<h2 id="redolog"><a href="#redolog" class="headerlink" title="redolog"></a>redolog</h2><p>redolog也叫重做日志,是innodb特有的一种log,用于保证事务的持久性。在事务提交时,必须将该事务所有事务日志写到磁盘的redologfile 和 undologfile上。</p>
+<p>我们知道mysql的数据会持久化到磁盘上,但是如果每次进行更新都写磁盘。磁盘要进行io操作找到这条记录并更改,成本很高。因此mysql就是用了redolog来提升效率。</p>
+<p>具体来说,当有一条记录更新时,Innodb将数据循环写到redolog中,更新内存。当数据库空闲时或者redolog满,就会异步刷写到磁盘上。这种基于WAL(预写日志)的存储,都是crash-safe的,因为mysql可以通过redolog在crash之后恢复数据。redo log是在事务开始之后就开始逐步写入磁盘。</p>
+<p>关于redolog比较重要的一个参数是innodb_flush_log_at_trx_commit</p>
+<ul>
+<li><p>innodb_flush_log_at_trx_commit=1,每次commit都会将日志从redo log buffer(用户空间)写到system buffer(内核空间),并fsync刷新到磁盘文件中。</p>
+</li>
+<li><p>innodb_flush_log_at_trx_commit=2,每次commit都会将日志从redo log buffer(用户空间)写到system buffer(内核空间),由系统决定什么时候fsync到磁盘。如果这时服务器宕机,则会丢失这部分数据。</p>
+</li>
+<li><p>innodb_flush_log_at_trx_commit=0,mysql每秒从redo log buffer,把数据写入到系统中去。数据库宕机则丢失一秒内的数据。</p>
+</li>
+</ul>
+<h2 id="binlog"><a href="#binlog" class="headerlink" title="binlog"></a>binlog</h2><p>binlog是mysql服务器级别的日志,也叫做归档日志,二进制日志。这是因为innodb并不是mysql原生的引擎,binlog只能用于归档,并没有提供crash-safe能力。</p>
+<p>binlog在事务提交的时候产生,将事务中的语句按照一定的格式记录到binlog中。这里binlog的功能与redolog有些类似,但是精度也就是可靠性明显不同,redolog作用于事务层面,而binlog则主要用来做数据库备份,同步。另一个区别在于redolog是循环写的,不提供持久保存,而binlog提供归档的功能。</p>
+<p>binlog有两种模式:row和statement:statement记录的是sql语句,row模式记录变更前后的内容,会记录两条。因此row模式更安全,但是会是log变大。</p>
+<h3 id="两阶段提交"><a href="#两阶段提交" class="headerlink" title="两阶段提交"></a>两阶段提交</h3><p>由于redo log和binlog都会记录事务,那么这就对binlog和redolog的提交有要求。如果binlog和redolog的记录不一致,那么就会出现事务不一致的状况,这常常发生在主从复制的环境下。</p>
+<p>MySQL通过两阶段提交过程来完成事务的一致性的,也即redo log和binlog的一致性的,先写redo log,处于prepare状态,再写binlog,写成功后进入commit状态。两个日志都提交成功（刷入磁盘），事务才算真正的完成。</p>
+<h2 id="undolog"><a href="#undolog" class="headerlink" title="undolog"></a>undolog</h2><p>undolog也叫回滚日志,保存了事务发生之前数据的版本,可以用来回滚,并提供MVCC。</p>
+<p>当我们对数据进行更新操作就会产生undolog,可以把undolog可以理解为一个链表,保存了一个字段连续变化的过程。当我们进行修改时,会将数据备份到undolog,并在undlog中进行修改。如果出现了错误或者用户执行了ROLLBACK语句，系统可以利用Undo Log中的备份将数据恢复到事务开始之前的状态。undolog正式凭借此保证事务的原子性。</p>
+<p>undolog另一个重要作用就是并发读写时支持mvcc(多版本并发控制)机制。当一行数据被写操作锁定时,读操作可以根据事务号到undolog中找到合适版本的数据,而不会写锁阻塞读操作,这就是一致性视图。</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/29/jvm学习笔记-重载与重写/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/11/29/jvm学习笔记-重载与重写/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">jvm学习笔记-重载与重写</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-11-29 13:58:59 / 修改时间：19:23:16" itemprop="dateCreated datePublished" datetime="2018-11-29T13:58:59+08:00">2018-11-29</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/jvm/" itemprop="url" rel="index"><span itemprop="name">jvm</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="重载与重写"><a href="#重载与重写" class="headerlink" title="重载与重写"></a>重载与重写</h2><p>重载与重写是java中相当重要的一组概念,java利用重载和重写实现了多态,看下面一个例子</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">void invoke(Object obj, Object... args) &#123; ... &#125;</div><div class="line">void invoke(String s, Object obj, Object... args) &#123; ... &#125;</div><div class="line"></div><div class="line">invoke(null, 1);    // 调用第二个 invoke 方法</div><div class="line">invoke(null, 1, 2); // 调用第二个 invoke 方法</div></pre></td></tr></table></figure>
+<p>在java中,如果一个类中存在相同名字的函数,并且参数也相同,那么它是无法通过编译的。那么就需要修改参数类型让他们不同,这种方法之间的关系,就是重载。</p>
+<p>重载的方法在编译阶段就可以识别,有以下几个原则:</p>
+<ol>
+<li>首先在不进行自动装箱/拆箱的情况下调用方法</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public void test(int i )&#123;</div><div class="line">    System.out.println(&quot;test int&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">public void test(Integer i)&#123;</div><div class="line">    System.out.println(&quot;test integer&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">public static void main(String[] args) &#123;</div><div class="line">    Rich r = new Rich();</div><div class="line">    r.test(1);  // 执行第一个</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>在1不匹配的情况下,允许自动拆箱装箱,不优先选择带有可变长参数方法:</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public void test(int i,String hello)&#123;</div><div class="line">    System.out.println(&quot;test int&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">public void test(Integer i,String ... hellos)&#123;</div><div class="line">    System.out.println(&quot;test integer&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">public static void main(String[] args) &#123;</div><div class="line">    Rich r = new Rich();</div><div class="line">    r.test(1,&quot;1&quot;); //执行第一个</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>在2不匹配的情况下,允许自动装箱拆箱/允许可变长参数</li>
+</ol>
+<p>除了同一个类中的方法,重载也可以作用于父类与子类之间,如果子类定义了与父类方法名称相同而参数类型不同,那么这两个方法也构成了重载。</p>
+<p>那么如果子类定义了与父类非私有方法同名的方法,并且参数类型也相同,那么这时子类重写了父类的方法。方法的重写,正是多态的一种重要体现方式,它允许子类继承父类部分功能的同时,拥有自己独特的行为。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/11/29/jvm学习笔记-重载与重写/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/27/表面理解jvm-类加载/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/11/27/表面理解jvm-类加载/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">jvm学习笔记-类加载</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-11-27 08:07:39" itemprop="dateCreated datePublished" datetime="2018-11-27T08:07:39+08:00">2018-11-27</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-11-28 16:41:44" itemprop="dateModified" datetime="2018-11-28T16:41:44+08:00">2018-11-28</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/jvm/" itemprop="url" rel="index"><span itemprop="name">jvm</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="宏观"><a href="#宏观" class="headerlink" title="宏观"></a>宏观</h2><blockquote>
+<p>当我们写好.java程序点击运行的时候发生了什么</p>
+</blockquote>
+<ol>
+<li>当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:</li>
+</ol>
+<ul>
+<li>以魔数Magic Number:0xCafeBabe开头</li>
+<li>ConstantPool:符号表</li>
+<li>FieldInfo:类成员变量表</li>
+<li>方法描述</li>
+<li>附加节点</li>
+<li>…</li>
+</ul>
+<ol>
+<li><p>有了.class文件我们就可以执行java命令运行java程序</p>
+</li>
+<li><p>首先JVM装载.class，也就是类加载器加载字节码。但是类加载器本身也是一个java类，所以它也需要被加载，幸运的是有一个类加载器是用c++编写的，叫做<code>Bootstrap类加载器</code>，属于虚拟机内核，用特定于操作系统的本地代码实现。Bootstrap类加载器负责加载javajava核心包中的类(rt.jar)，这些类的Class.getClassLoader()方法返回值会null，表示需要Bootstrap加载器来加载。JAVA核心包中还有两个类加载器:<code>ExtClassLoader</code>和<code>ApplicationClassLoader</code>。他们都用java语言编写，其中ExtClassLoader负责加载<java_home>/jre/lib/ext目录下的jar，ApplicationClassLoader负责加载应用程序的启动执行类，即当使用java命令去启动执行一个类时，JAVA虚拟机使用AppClassLoader加载这个类。所以这里有个小track就是把一些自己常用但是非java自带的jar放到ext目录下，这样就可以少写几个maven dependency。</java_home></p>
+</li>
+</ol>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/11/27/表面理解jvm-类加载/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/25/红黑树/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/11/25/红黑树/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">红黑树</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-11-25 13:30:45 / 修改时间：13:31:40" itemprop="dateCreated datePublished" datetime="2018-11-25T13:30:45+08:00">2018-11-25</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/算法/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="《算法导论》中的红黑树"><a href="#《算法导论》中的红黑树" class="headerlink" title="《算法导论》中的红黑树"></a>《算法导论》中的红黑树</h2><p>红黑树与AVL相似,都是对BST进行了一系列优化,防止退化成链表的现象。算法导论中对红黑树的定义如下</p>
+<ol>
+<li>每个节点要么是红色,要么是黑色</li>
+<li>根节点必须黑色</li>
+<li>每个叶子节点(空节点)也是黑色</li>
+<li>红节点的孩子节点必须为黑色</li>
+<li>任意节点到叶子节点,经过的黑色节点数量是相同的</li>
+</ol>
+<p>相信大多数人都看过这段关于RBT的描述,然后通过这段描述推导出更多的性质,然后就是一些列的旋转、染色代码,非常不友好。问题就在于我们通过上面的性质根本无法得知红黑树是怎么得来的,作者怎么发明这种算法的。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/11/25/红黑树/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -1167,1105 +2331,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/27/Rabbitmq常用模式/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/09/27/Rabbitmq常用模式/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">Rabbitmq常用模式</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-09-27 09:40:15" itemprop="dateCreated datePublished" datetime="2018-09-27T09:40:15+08:00">2018-09-27</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-26 09:46:00" itemprop="dateModified" datetime="2018-12-26T09:46:00+08:00">2018-12-26</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="RabbitMQ常用模式"><a href="#RabbitMQ常用模式" class="headerlink" title="RabbitMQ常用模式"></a>RabbitMQ常用模式</h2><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fvnbel6rimj30uy0gaqeu.jpg" alt=""></p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/09/27/Rabbitmq常用模式/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/22/Rabbitmq与Springboot/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/09/22/Rabbitmq与Springboot/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">Rabbitmq与Springboot</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-09-22 18:20:01" itemprop="dateCreated datePublished" datetime="2018-09-22T18:20:01+08:00">2018-09-22</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-26 09:45:44" itemprop="dateModified" datetime="2018-12-26T09:45:44+08:00">2018-12-26</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvihp66f5rj308v04eq2s.jpg" alt=""></p>
-<h2 id="SimpleMessageListenerContainer"><a href="#SimpleMessageListenerContainer" class="headerlink" title="SimpleMessageListenerContainer"></a>SimpleMessageListenerContainer</h2><p>SimpleMessageListenerContainer是一个简单消息监听容器,提供了事务特性的设置,包括事务并发量,回滚以及消息确认,重回队列等绝大部分消费者的设置。</p>
-<p>SimpleMessageListenerContainer支持动态修改消费者的配置,可以根据这一特性去自定义rabbitmq管控台。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/09/22/Rabbitmq与Springboot/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/18/redis底层数据结构/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/09/18/redis底层数据结构/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">redis底层数据结构</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-09-18 16:24:43 / 修改时间：18:24:31" itemprop="dateCreated datePublished" datetime="2018-09-18T16:24:43+08:00">2018-09-18</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>redis中常用的数据结构包括String,Hash,List,Set,Sorted Set,每种都有对应的底层C语言结构。如下图所示</p>
-<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvdtlczh7wj30ra088t90.jpg" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">String      : SDS</div><div class="line">Hash        : zipList/hashtable</div><div class="line">List        : quickList</div><div class="line">Set         : intSet/hashtable</div><div class="line">Sorted Set  : skipList</div></pre></td></tr></table></figure>
-<h2 id="SDS"><a href="#SDS" class="headerlink" title="SDS"></a>SDS</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">struct SDS&lt;T&gt; &#123;</div><div class="line">    T capacity; // 数组容量</div><div class="line">    T len; // 数组长度</div><div class="line">    byte flags; // 特殊标识位</div><div class="line">    byte[] content; // 数组内容</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>SDS全称为simple dynamic string,由于c语言中的字符串,每次进行len()操作的时候,都要进行遍历,复杂度为O(n),对于单线程的redis来说,O(n)复杂度都是不可接受的,所以在C语言的String基础上改造成了SDS类型。</p>
-<p>SDS内部会维护当前content的长度记为len,capacity为容量,&gt;=len。在字符串进行扩展是,redis会分配一部分额外的空间放置频繁的进行扩张</p>
-<h2 id="ZipList"><a href="#ZipList" class="headerlink" title="ZipList"></a>ZipList</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">struct ziplist&lt;T&gt; &#123;</div><div class="line">    int32 zlbytes; // 整个压缩列表占用字节数</div><div class="line">    int32 zltail_offset; // 最后一个元素距离压缩列表起始位置的偏移量，用于快速定位到最后一个节点</div><div class="line">    int16 zllength; // 元素个数</div><div class="line">    T[] entries; // 元素内容列表，挨个挨个紧凑存储</div><div class="line">    int8 zlend; // 标志压缩列表的结束，值恒为 0xFF</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>顾名思义,ZipList是一个紧凑的list,用于Hash结构元素较少的时候使用。压缩列表是一块连续的内存空间，元素之间紧挨着存储，没有任何冗余空隙。各个元素之间是双向的连接,配合zltail_offset可以实现从后向前遍历。</p>
-<p>但是ZipList也存在局限性,导致它并不适合在大量元素的情况下使用。</p>
-<p>由于ZipList是一块连续的内存区域,那么存在一种情况就是添加元素时已经没有地方realloc,那么这时候就需要重新找一块连续的内存进行分配,这时就需要将这块内存全部拷贝到新的地址空间上去。</p>
-<h2 id="QuickList"><a href="#QuickList" class="headerlink" title="QuickList"></a>QuickList</h2><p>List结构早期元素少时用 ziplist，元素多时用linkedlist。但是linkedlist会导致内存碎片化严重,并且linkedlist指针成本很高,所以在zipList和LinkedList的基础上改造成了QuickList。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">struct ziplist_compressed &#123;</div><div class="line">    int32 size;</div><div class="line">    byte[] compressed_data;</div><div class="line">&#125;</div><div class="line">struct quicklistNode &#123;</div><div class="line">    quicklistNode* prev;</div><div class="line">    quicklistNode* next;</div><div class="line">    ziplist* zl; // 指向压缩列表</div><div class="line">    int32 size; // ziplist 的字节总数</div><div class="line">    int16 count; // ziplist 中的元素数量</div><div class="line">    int2 encoding; // 存储形式 2bit，原生字节数组还是 LZF 压缩存储</div><div class="line"></div><div class="line">&#125;</div><div class="line">struct quicklist &#123;</div><div class="line">    quicklistNode* head;</div><div class="line">    quicklistNode* tail;</div><div class="line">    long count; // 元素总数</div><div class="line">    int nodes; // ziplist 节点的个数</div><div class="line">    int compressDepth; // LZF 算法压缩深度</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>可见QuickList中的每个节点都是一个ZipList,ZipList之间通过指针双向连接。同时QuickList可以进行数据压缩,默认为0即不压缩。为1则表示QuickList首尾不压缩,2则表示就表示 quicklist 的首尾第一个 ziplist 以及首尾第二个 ziplist 都不压缩。</p>
-<h2 id="DIC"><a href="#DIC" class="headerlink" title="DIC"></a>DIC</h2><p>Dic内部包含了两个hashtable,dict 结构内部包含两个 hashtable，通常情况下只有一个 hashtable 是有值的。但是在 dict 扩容缩容时，需要分配新的 hashtable，然后进行渐进式搬迁，这时候两个 hashtable 存储的分别是旧的 hashtable 和新的 hashtable。待搬迁结束后，旧的 hashtable 被删除，新的 hashtable 取而代之。</p>
-<p>数据量较大的hash以及存储了非整数的set内部都是用了DIC结构,Hashtable和java中的HashTable非常类似。</p>
-<h3 id="渐进式rehash"><a href="#渐进式rehash" class="headerlink" title="渐进式rehash"></a>渐进式rehash</h3><p>与java中的hashTable不同的是,redis中的hashtable使用的是渐进式的rehash,因为redis中的hashtable数据量可能非常大,redis单线程进行复制可能会造成阻塞。一般来说rehash操作会隐藏在一些指令之后,如果没有执行完成,redis会交给后台的定时任务去完成。</p>
-<h3 id="扩容-缩容"><a href="#扩容-缩容" class="headerlink" title="扩容/缩容"></a>扩容/缩容</h3><p>hashtable扩容后会变为原数组的两倍大小。如果Redis 正在做 bgsave，为了减少内存页的过多分离 (Copy On Write)，Redis 尽量不去扩容 (dict_can_resize)，但是如果 hash 表已经非常满了，元素的个数已经达到了第一维数组长度的 5 倍 (dict_force_resize_ratio)，说明 hash 表已经过于拥挤了，这个时候就会强制扩容。</p>
-<p>当元素的个数小于数组大小的10%,就会进行缩容,缩容不需要考虑bgsave。</p>
-<h2 id="SkipList"><a href="#SkipList" class="headerlink" title="SkipList"></a>SkipList</h2><p>redis的sorted list内部使用skipList(跳表)实现。skipList的结构与java中的skipList几乎一致。SkipList首先要求是一个有序的列表,redis 通过set 一个score来实现。拿到这样一个list之后,redis会从list中利用算法均匀的筛选一些元素组成上层list,如此循环,redis中的跳表共有64层。理想情况下,跳表最终会形成如下的形状,也就是一个正态分布图。利用这种结构,redis每次从上到下进行匹配,可已将查询的复杂度从O(n)降低到O(1)</p>
-<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvduzjv8nyj30eo0a2t8h.jpg" alt=""></p>
-<h2 id="intSet"><a href="#intSet" class="headerlink" title="intSet"></a>intSet</h2><p>inSet是一个整数类型的集合,包括16位整数,32位整数,64位整数类型。个人理解这个结构是某些场景下用来节省空间的。例如set中只有整数类型是,当元素大小可以用16位表示,则这个set的encoding就是int16,当出现有元素必须用32位表示时,那么所有的整数都升级为int32,int64以此类推。但是当你删除了int32的数据,intSet是不会降级为int16的。也就是说只能升级不能降级。当set中出现了非整数类型时,redis使用hashtable代替intSet。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>redis的底层数据结构,几乎都针对redis本身进行了优化。无论在提高性能还是节省空间上,作者都花了很多功夫。</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/18/rabbitmq高级特性/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/09/18/rabbitmq高级特性/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">rabbitmq高级特性</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-09-18 10:16:09" itemprop="dateCreated datePublished" datetime="2018-09-18T10:16:09+08:00">2018-09-18</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-26 09:46:02" itemprop="dateModified" datetime="2018-12-26T09:46:02+08:00">2018-12-26</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="消息可靠投递"><a href="#消息可靠投递" class="headerlink" title="消息可靠投递"></a>消息可靠投递</h2><blockquote>
-<p>什么是生产端的可靠性投递</p>
-</blockquote>
-<ul>
-<li>保证消息发出</li>
-<li>保证MQ接收到消息</li>
-<li>发送端收到MQ的应答</li>
-<li>消息补偿机制</li>
-</ul>
-<h3 id="方案一-消息落库并设置状态"><a href="#方案一-消息落库并设置状态" class="headerlink" title="方案一:消息落库并设置状态"></a>方案一:消息落库并设置状态</h3><p><img src="https://ws4.sinaimg.cn/large/006tNbRwgy1fvbrjpf4okj30tl0dgdir.jpg" alt=""></p>
-<p>通过上面的图示很容易理解这种方案的做法。首先要保证在第一步两个入库操作都要成功,这里必定涉及到事务,要做到同时成功,失败则要fail-fast。如果涉及到不同的库或者数据源还可能涉及分布式事务。所以这个设计最大的性能阻塞点就在这里,添加事务就无法应对高并发的场景。</p>
-<p>分布式定时任务用来做消息补偿,重跑一些异常状态的消息。这里有一个可能存在一个问题,当一个消息刚发送出去,定时任务就启动了,导致消息重复发送的情况。所以定时任务出了要判断消息状态,还应该对间隔时间做一个限制。例如查询状态=1并且距离更新时间大于一分钟的消息进行补偿重试。</p>
-<h3 id="方案二-消息延迟投递-做二次确认-回调检查"><a href="#方案二-消息延迟投递-做二次确认-回调检查" class="headerlink" title="方案二:消息延迟投递,做二次确认,回调检查"></a>方案二:消息延迟投递,做二次确认,回调检查</h3><p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fvbrk01lblj30ke09p75o.jpg" alt=""></p>
-<p>上面说了方案一并不适合在高并发的场景下使用,那么方案二就是应对高并发场景下的常用设计。</p>
-<ol>
-<li>首先上游业务模块将数据入库并发送到broker的业务队列,同时生成一条deley check消息发送到另一个队列,设置延迟发送时间几秒或几分钟之后</li>
-<li>下游业务收到消息并消费后发送confirm消息到broker的一个队列</li>
-<li>callback服务收到确认消息,做消息持久化。</li>
-<li>当延迟确认消息到来之后,如果数据库中有,则成功,否则要callback服务需要进行rpc调用上游服务再次发送一遍消息</li>
-</ol>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/09/18/rabbitmq高级特性/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/08/ElasticSearch分布式架构-5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/09/08/ElasticSearch分布式架构-5/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">系统学习ElasticSearch-分布式架构(5)</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-09-08 17:57:57" itemprop="dateCreated datePublished" datetime="2018-09-08T17:57:57+08:00">2018-09-08</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-09-18 18:03:04" itemprop="dateModified" datetime="2018-09-18T18:03:04+08:00">2018-09-18</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><img src="https://ws1.sinaimg.cn/large/0069RVTdgy1fv2aitojvfj30xk0e0aa6.jpg" alt=""></p>
-<p>ES是一套天生支持分布式的系统,分布式的目的是解决大数据量的问题。但是在我们使用的过程中,并没有对其分布式特性进行特殊配置。这时因为ES对用户隐藏了复杂的分布式机制,包括分片,集群发现,负载均衡,replica,路由,扩容以及reIndex。使得用户通过简单的配置就可以对ES实现开箱即用。但是对于开发人员,我们还是要理解ES隐藏的机制和架构,做到知其然也知其所以然。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/09/08/ElasticSearch分布式架构-5/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/08/Hbase数据存取过程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/09/08/Hbase数据存取过程/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">Hbase数据存取过程</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-09-08 13:20:57 / 修改时间：13:21:44" itemprop="dateCreated datePublished" datetime="2018-09-08T13:20:57+08:00">2018-09-08</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Hbase/" itemprop="url" rel="index"><span itemprop="name">Hbase</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="Hbase数据存储"><a href="#Hbase数据存储" class="headerlink" title="Hbase数据存储"></a>Hbase数据存储</h2><h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><p>在提交之前,Hbase client回去请求zk,从mate表中确定要存取regionServer的位置。根据rowKey找到对应的regionServer。拿到地址之后,默认情况下像put、delete这类操作是默认提交的,会直接提交到对应的regionServer上,也可以设置autoflush为false,当到达默认的2M的缓存阈值后才会异步批量提交到服务端。</p>
-<p><img src="https://ws3.sinaimg.cn/large/0069RVTdgy1fv21klmsihj30bv07dmxt.jpg" alt=""></p>
-<p>至此,客户端的操作就完成了</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/09/08/Hbase数据存取过程/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2312,7 +2382,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">85</span>
+                    <span class="site-state-item-count">91</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2363,9 +2433,7 @@
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">20</span>
+                    <span class="site-state-item-count">19</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>

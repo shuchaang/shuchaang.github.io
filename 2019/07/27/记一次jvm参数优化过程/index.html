@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="最近在做一个功能,将pdf转成html然后上传到es进行文档检索。在做大批量的文件解析时,发现内存消耗的厉害,平时项目内存占用一般在2G左右,现在飙升到了8G。这时任务才跑了1/3,担心生产会有问题,所以决定排查一下内存消耗。  准备工作 首先检查了一下错误日志,发现没有报错,说明都是正常消耗,还没有OOM等要命的问题 看了一下gc日志,发现gc日志在疯狂打印,比较明显的提示就是 Allocati">
+<meta name="keywords" content="java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次jvm参数优化过程">
+<meta property="og:url" content="http://www.shuchang.sc.com/2019/07/27/记一次jvm参数优化过程/index.html">
+<meta property="og:site_name" content="ShuChang&#39;s Blog">
+<meta property="og:description" content="最近在做一个功能,将pdf转成html然后上传到es进行文档检索。在做大批量的文件解析时,发现内存消耗的厉害,平时项目内存占用一般在2G左右,现在飙升到了8G。这时任务才跑了1/3,担心生产会有问题,所以决定排查一下内存消耗。  准备工作 首先检查了一下错误日志,发现没有报错,说明都是正常消耗,还没有OOM等要命的问题 看了一下gc日志,发现gc日志在疯狂打印,比较明显的提示就是 Allocati">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://s2.ax1x.com/2019/07/26/emzF2D.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/07/26/enINxx.png">
+<meta property="og:image" content="https://s2.ax1x.com/2019/07/26/enoAOK.png">
+<meta property="og:updated_time" content="2019-07-27T06:01:20.939Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="记一次jvm参数优化过程">
+<meta name="twitter:description" content="最近在做一个功能,将pdf转成html然后上传到es进行文档检索。在做大批量的文件解析时,发现内存消耗的厉害,平时项目内存占用一般在2G左右,现在飙升到了8G。这时任务才跑了1/3,担心生产会有问题,所以决定排查一下内存消耗。  准备工作 首先检查了一下错误日志,发现没有报错,说明都是正常消耗,还没有OOM等要命的问题 看了一下gc日志,发现gc日志在疯狂打印,比较明显的提示就是 Allocati">
+<meta name="twitter:image" content="https://s2.ax1x.com/2019/07/26/emzF2D.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.shuchang.sc.com/2019/07/27/记一次jvm参数优化过程/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>记一次jvm参数优化过程 | ShuChang's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ShuChang's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">剑来!</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">25</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">19</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">91</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2019/07/27/记一次jvm参数优化过程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">记一次jvm参数优化过程
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-27 13:50:54 / 修改时间：14:01:20" itemprop="dateCreated datePublished" datetime="2019-07-27T13:50:54+08:00">2019-07-27</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/07/27/记一次jvm参数优化过程/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2019/07/27/记一次jvm参数优化过程/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近在做一个功能,将pdf转成html然后上传到es进行文档检索。在做大批量的文件解析时,发现内存消耗的厉害,平时项目<br>内存占用一般在2G左右,现在飙升到了8G。这时任务才跑了1/3,担心生产会有问题,所以决定排查一下内存消耗。</p>
+<p><img src="https://s2.ax1x.com/2019/07/26/emzF2D.png" alt="emzF2D.png"></p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ol>
+<li>首先检查了一下错误日志,发现没有报错,说明都是正常消耗,还没有OOM等要命的问题</li>
+<li>看了一下gc日志,发现gc日志在疯狂打印,比较明显的提示就是 Allocation Failed</li>
+<li>dump了一下内存快照: jmap–dump:live,format=b,file=dump.bin 1</li>
+</ol>
+<p>将gc.log 和 dump.bin文件下载到本地</p>
+<p>dump文件使用MAT分析</p>
+<blockquote>
+<p><a href="https://www.eclipse.org/mat/" target="_blank" rel="external">https://www.eclipse.org/mat/</a></p>
+</blockquote>
+<p>gc.log使用人工没有智能来分析,首先确定一下现有的jvm参数,因为公司的Dockerfile封装了java的启动参数，所以使用</p>
+<blockquote>
+<p>ps aux|grep java</p>
+</blockquote>
+<p>清除一些没有用的内容后:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">java -jar  -XX:+UseConcMarkSweepGC</div></pre></td></tr></table></figure>
+<p>竟然只指定了使用cms gc - -,有点坑爹</p>
+<blockquote>
+<p>优化目标: 主要降低full gc的时间和次数,minor gc 随缘优化,总时间减少就可以</p>
+</blockquote>
+<p><excerpt in="" index="" |="" 首页摘要=""><br><a id="more"></a></excerpt></p>
+<the rest="" of="" contents="" |="" 余下全文="">
+
+<h2 id="GC-LOG分析"><a href="#GC-LOG分析" class="headerlink" title="GC LOG分析"></a>GC LOG分析</h2><p>大概看了一下GC日志内容,是以cms的gc过程循环打印的，所以截取一份较早时间的日志和较晚的比较一下:</p>
+<ol>
+<li>早</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">9.411: [GC (Allocation Failure) 9.411: [ParNew: 73185K-&gt;3665K(76800K), 0.0178127 secs] 96691K-&gt;27510K(247488K), 0.0179101 secs] [Times: user=0.03 sys=0.00, real=0.02 secs] </div><div class="line">9.602: [GC (Allocation Failure) 9.602: [ParNew: 71953K-&gt;7230K(76800K), 0.0092362 secs] 95798K-&gt;31284K(247488K), 0.0093250 secs] [Times: user=0.03 sys=0.00, real=0.01 secs] </div><div class="line">9.712: [GC (Allocation Failure) 9.712: [ParNew: 75518K-&gt;4273K(76800K), 0.0154785 secs] 99572K-&gt;30230K(247488K), 0.0155762 secs] [Times: user=0.06 sys=0.00, real=0.02 secs] </div><div class="line">9.986: [GC (Allocation Failure) 9.986: [ParNew: 72561K-&gt;4198K(76800K), 0.0077535 secs] 98518K-&gt;30155K(247488K), 0.0078248 secs] [Times: user=0.03 sys=0.00, real=0.01 secs] </div><div class="line">10.101: [GC (Allocation Failure) 10.101: [ParNew: 72486K-&gt;3239K(76800K), 0.0061450 secs] 98443K-&gt;29196K(247488K), 0.0062183 secs] [Times: user=0.03 sys=0.00, real=0.01 secs] </div><div class="line">10.210: [GC (Allocation Failure) 10.210: [ParNew: 71527K-&gt;4158K(76800K), 0.0086700 secs] 97484K-&gt;30115K(247488K), 0.0087512 secs] [Times: user=0.03 sys=0.00, real=0.01 secs] </div><div class="line">10.386: [GC (Allocation Failure) 10.386: [ParNew: 72446K-&gt;3962K(76800K), 0.0208521 secs] 98403K-&gt;29919K(247488K), 0.0209370 secs] [Times: user=0.07 sys=0.00, real=0.03 secs] </div><div class="line">10.619: [GC (Allocation Failure) 10.619: [ParNew: 72250K-&gt;4710K(76800K), 0.0101005 secs] 98207K-&gt;31336K(247488K), 0.0101816 secs] [Times: user=0.04 sys=0.00, real=0.01 secs] </div><div class="line">10.786: [GC (Allocation Failure) 10.786: [ParNew: 72998K-&gt;8511K(76800K), 0.0167864 secs] 99624K-&gt;36963K(247488K), 0.0168856 secs] [Times: user=0.07 sys=0.00, real=0.02 secs] </div><div class="line">10.949: [GC (Allocation Failure) 10.949: [ParNew: 76799K-&gt;8512K(76800K), 0.0215472 secs] 105251K-&gt;41344K(247488K), 0.0216415 secs] [Times: user=0.07 sys=0.00, real=0.02 secs] </div><div class="line">11.122: [GC (Allocation Failure) 11.123: [ParNew: 76800K-&gt;6231K(76800K), 0.0065761 secs] 109632K-&gt;39403K(247488K), 0.0066749 secs] [Times: user=0.02 sys=0.00, real=0.01 secs] </div><div class="line">11.278: [GC (Allocation Failure) 11.279: [ParNew: 74519K-&gt;6285K(76800K), 0.0182307 secs] 107691K-&gt;39504K(247488K), 0.0183195 secs] [Times: user=0.07 sys=0.00, real=0.02 secs]</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">9.012: [GC (CMS Initial Mark) [1 CMS-initial-mark: 24438K(170688K)] 31453K(247488K), 0.0030023 secs] [Times: user=0.01 sys=0.00, real=0.00 secs] </div><div class="line">9.015: [CMS-concurrent-mark-start]</div><div class="line">9.077: [CMS-concurrent-mark: 0.056/0.062 secs] [Times: user=0.23 sys=0.00, real=0.07 secs] </div><div class="line">9.078: [CMS-concurrent-preclean-start]</div><div class="line">9.080: [CMS-concurrent-preclean: 0.002/0.002 secs] [Times: user=0.01 sys=0.00, real=0.00 secs] </div><div class="line">9.080: [CMS-concurrent-abortable-preclean-start]</div><div class="line">9.215: [GC (Allocation Failure) 9.215: [ParNew: 71219K-&gt;4897K(76800K), 0.0104260 secs] 95658K-&gt;29670K(247488K), 0.0105128 secs] [Times: user=0.02 sys=0.00, real=0.01 secs] </div><div class="line">9.328: [CMS-concurrent-abortable-preclean: 0.113/0.248 secs] [Times: user=0.75 sys=0.01, real=0.25 secs] </div><div class="line">9.328: [GC (CMS Final Remark) [YG occupancy: 49393 K (76800 K)]9.328: [Rescan (parallel) , 0.0083639 secs]</div><div class="line">       [weak refs processing, 0.0000296 secs]9.337: [class unloading, 0.0079019 secs]</div><div class="line">       [scrub symbol table, 0.0054243 secs]9.350: [scrub string table, 0.0009452 secs][1 CMS-remark: 24772K(170688K)] 74165K(247488K), 0.0238257 secs] [Times: user=0.06 sys=0.00, real=0.02 secs] </div><div class="line">9.353: [CMS-concurrent-sweep-start]</div><div class="line">9.363: [CMS-concurrent-sweep: 0.010/0.010 secs] [Times: user=0.04 sys=0.00, real=0.01 secs] </div><div class="line">9.363: [CMS-concurrent-reset-start]</div><div class="line">9.372: [CMS-concurrent-reset: 0.009/0.009 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]</div></pre></td></tr></table></figure>
+<p>分析:</p>
+<p>首先可以确定的是gc的组合: 年轻代ParNew,老年代CMS</p>
+<p>cms垃圾收集器gc有4个过程: 初始化标记(stw)-&gt;并发标记-&gt;重新标记(stw)-&gt;并发清除。但是从gc日志上来看并没有那么简单,实际上有</p>
+<p>Initial Mark(初始标记)-&gt;concurrent-mark(并发标记)-&gt;preclean(预清理)-&gt;abortable-preclean(可中断预清理)-&gt;<br>Final Remark(重新标记)-&gt;concurrent-sweep(并发清理)-&gt;concurrent-reset(并发重置)共7个阶段。</p>
+<p>如果在面试的时候告诉面试官这7个阶段而不是4个阶段,一定可以超过80%的面试者。</p>
+<h3 id="第一个片段表示的是Minor-GC"><a href="#第一个片段表示的是Minor-GC" class="headerlink" title="第一个片段表示的是Minor GC"></a>第一个片段表示的是Minor GC</h3><blockquote>
+<p>[GC (Allocation Failure) 9.411: [ParNew: 73185K-&gt;3665K(76800K), 0.0178127 secs] 96691K-&gt;27510K(247488K), 0.0179101 secs] [Times: user=0.03 sys=0.00, real=0.02 secs]</p>
+</blockquote>
+<ul>
+<li>GC 表示进行的是年轻代的GC</li>
+<li>Allocation Failure GC原因,由于年轻代分配空间不足,触发了Minor gc</li>
+<li>73185K-&gt;3665K 经过Minor GC,年轻代从71mb减少到了3mb</li>
+<li>76800K 年轻代的总大小75mb    </li>
+<li>0.0178127 secs 年轻代GC耗时</li>
+<li>96691K-&gt;27510K 堆空间占用情况94mb-&gt;26m</li>
+<li>247488K 整个堆得大小约240mb</li>
+<li>0.0179101 GC+清理的总共耗时</li>
+</ul>
+<p>分析一下gc情况:开始的时候堆是96mb,年轻代71mb，那么老年代94-71=23mb。结束时堆26mb,年轻代3mb，那么老年代23mb。<br>那么这次gc其实效率是非常高的,几乎没有对象晋升到老年代。GC时间基本都在0.01s左右,所以这里不需要怎么调整。<br>或者可以尝试增大年轻代,减少gc次数,但是有可能会增加每一次的gc时间。</p>
+<h3 id="full-gc"><a href="#full-gc" class="headerlink" title="full gc"></a>full gc</h3><p>由cms引起的gc都是老年代的gc,是主要关注点</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">9.012: [GC (CMS Initial Mark) [1 CMS-initial-mark: 24438K(170688K)] 31453K(247488K), 0.0030023 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]</div></pre></td></tr></table></figure>
+<ul>
+<li>初始化标记阶段,根据gc root标记可回收对象,会产生stw。</li>
+<li>24438K(170688K) 老年代使用了24mb,共有170mb空间</li>
+<li>31453K(247488K) 整个堆使用了31mb,公有240mb的空间</li>
+<li>0.0030023 secs 并发标记阶段的耗时</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">9.015: [CMS-concurrent-mark-start]</div><div class="line">9.077: [CMS-concurrent-mark: 0.056/0.062 secs] [Times: user=0.23 sys=0.00, real=0.07 secs]</div></pre></td></tr></table></figure>
+<p>这个阶段会遍历整个老年代并且标记所有存活的对象，从“初始化标记”阶段找到的GC Roots开始。<br>并发标记的特点是和应用程序线程同时运行。并不是老年代的所有存活对象都会被标记，因为标记的同时应用程序会改变一些对象的引用等。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">9.078: [CMS-concurrent-preclean-start]</div><div class="line">9.080: [CMS-concurrent-preclean: 0.002/0.002 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]</div></pre></td></tr></table></figure>
+<p>并发预清理,上面一个阶段在并发标记的时候,可能某些对象状态发生了变化，被jvm标记为dirty。preClean会对这些对象进行可达性分析,然后清除dirty标记</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">9.080: [CMS-concurrent-abortable-preclean-start]</div><div class="line">9.215: [GC (Allocation Failure) 9.215: [ParNew: 71219K-&gt;4897K(76800K), 0.0104260 secs] 95658K-&gt;29670K(247488K), 0.0105128 secs] [Times: user=0.02 sys=0.00, real=0.01 secs] </div><div class="line">9.328: [CMS-concurrent-abortable-preclean: 0.113/0.248 secs] [Times: user=0.75 sys=0.01, real=0.25 secs]</div></pre></td></tr></table></figure>
+<p>可中断的预清理,这里在等待重新标记的间隙进行一些清理工作。可以减少Final Remark阶段的stw时间。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">9.328: [GC (CMS Final Remark) [YG occupancy: 49393 K (76800 K)]9.328: [Rescan (parallel) , 0.0083639 secs]</div><div class="line">       [weak refs processing, 0.0000296 secs]9.337: [class unloading, 0.0079019 secs]</div><div class="line">       [scrub symbol table, 0.0054243 secs]9.350: [scrub string table, 0.0009452 secs]</div><div class="line">       [1 CMS-remark: 24772K(170688K)] 74165K(247488K), 0.0238257 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]</div></pre></td></tr></table></figure>
+<p>重新标记,会产生stw</p>
+<ul>
+<li>YG occupancy: 49393 K (76800 K) 年轻代使用了49393,容量为76800</li>
+<li>Rescan 停顿并标记</li>
+<li>weak refs processing 处理弱引用</li>
+<li>class unloading 卸载一些不要的类</li>
+<li>scrub symbol table  应该是清理一些符号链接表</li>
+<li>scrub string table 清理一些字符串的引用</li>
+<li>24772K(170688K) 老年带的使用和容量</li>
+<li>74165K(247488K) 整个堆得使用和容量</li>
+<li>0.0238257 secs 耗时</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">9.353: [CMS-concurrent-sweep-start]</div><div class="line">9.363: [CMS-concurrent-sweep: 0.010/0.010 secs] [Times: user=0.04 sys=0.00, real=0.01 secs]</div></pre></td></tr></table></figure>
+<p>并发清理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">9.363: [CMS-concurrent-reset-start]</div><div class="line">9.372: [CMS-concurrent-reset: 0.009/0.009 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]</div></pre></td></tr></table></figure>
+<p>重置一些参数,准备下一次gc。</p>
+<p>这是项目刚启动不久的gc情况,发现这时gc耗时都还可以接受,都只有10ms,20ms。</p>
+<ol>
+<li>晚</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">20725.412: [GC (CMS Initial Mark) [1 CMS-initial-mark: 3352734K(3643636K)] 3361558K(3720436K), 0.0074892 secs] [Times: user=0.01 sys=0.00, real=0.01 secs] </div><div class="line">20725.420: [CMS-concurrent-mark-start]</div><div class="line">20725.580: [CMS-concurrent-mark: 0.160/0.160 secs] [Times: user=0.32 sys=0.00, real=0.16 secs] </div><div class="line">20725.580: [CMS-concurrent-preclean-start]</div><div class="line">20725.587: [CMS-concurrent-preclean: 0.007/0.007 secs] [Times: user=0.02 sys=0.00, real=0.01 secs] </div><div class="line">20725.587: [CMS-concurrent-abortable-preclean-start]</div><div class="line">20726.825: [GC (Allocation Failure) 20726.825: [ParNew: 75590K-&gt;4377K(76800K), 0.0141963 secs] 3428324K-&gt;3357111K(3720436K), 0.0143311 secs] [Times: user=0.04 sys=0.00, real=0.02 secs] </div><div class="line">20726.894: [GC (Allocation Failure) 20726.894: [ParNew: 71723K-&gt;8002K(76800K), 0.0118239 secs] 3424457K-&gt;3360736K(3720436K), 0.0119725 secs] [Times: user=0.03 sys=0.00, real=0.01 secs] </div><div class="line">20726.954: [CMS-concurrent-abortable-preclean: 0.490/1.367 secs] [Times: user=1.90 sys=0.01, real=1.36 secs] </div><div class="line">20726.955: [GC (CMS Final Remark) [YG occupancy: 54892 K (76800 K)]20726.955: [Rescan (parallel) , 0.0182664 secs]20726.973: [weak refs processing, 0.0144155 secs]20726.987: [class unloading, 0.0349071 secs]20727.022: [scrub symbol table, 0.0116247 secs]20727.034: [scrub string table, 0.0015885 secs][1 CMS-remark: 3352734K(3643636K)] 3407626K(3720436K), 0.0830734 secs] [Times: user=0.10 sys=0.00, real=0.09 secs] </div><div class="line">20727.038: [CMS-concurrent-sweep-start]</div><div class="line">20727.694: [GC (Allocation Failure) 20727.694: [ParNew: 76290K-&gt;8512K(76800K), 0.0414213 secs] 2895898K-&gt;2838568K(3720436K), 0.0415563 secs] [Times: user=0.09 sys=0.00, real=0.04 secs] </div><div class="line">20728.550: [GC (Allocation Failure) 20728.550: [ParNew: 76800K-&gt;8512K(76800K), 0.0259377 secs] 2060111K-&gt;2000178K(3720436K), 0.0260683 secs] [Times: user=0.07 sys=0.00, real=0.02 secs] </div><div class="line">20729.426: [GC (Allocation Failure) 20729.426: [ParNew: 76800K-&gt;7522K(76800K), 0.0357161 secs] 812595K-&gt;751373K(3720436K), 0.0358904 secs] [Times: user=0.10 sys=0.00, real=0.04 secs] </div><div class="line">20729.797: [CMS-concurrent-sweep: 2.653/2.759 secs] [Times: user=5.55 sys=0.00, real=2.76 secs] </div><div class="line">20729.797: [CMS-concurrent-reset-start]</div><div class="line">20729.805: [CMS-concurrent-reset: 0.008/0.008 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">19388.266: [GC (Allocation Failure) 19388.266: [ParNew: 71444K-&gt;8512K(76800K), 0.0580897 secs] 2977856K-&gt;2928817K(3720436K), 0.0582062 secs] [Times: user=0.14 sys=0.00, real=0.06 secs] </div><div class="line">19388.397: [GC (Allocation Failure) 19388.397: [ParNew: 76800K-&gt;8512K(76800K), 0.0352685 secs] 2936085K-&gt;2880630K(3720436K), 0.0353905 secs] [Times: user=0.10 sys=0.00, real=0.03 secs] </div><div class="line">19388.506: [GC (Allocation Failure) 19388.506: [ParNew: 76800K-&gt;7459K(76800K), 0.0280484 secs] 2887098K-&gt;2825976K(3720436K), 0.0281762 secs] [Times: user=0.06 sys=0.00, real=0.03 secs] </div><div class="line">19388.596: [GC (Allocation Failure) 19388.596: [ParNew: 73066K-&gt;7391K(76800K), 0.0142430 secs] 2831575K-&gt;2765900K(3720436K), 0.0143670 secs] [Times: user=0.03 sys=0.00, real=0.02 secs] </div><div class="line">19388.663: [GC (Allocation Failure) 19388.663: [ParNew: 75662K-&gt;6742K(76800K), 0.0136076 secs] 2788394K-&gt;2721039K(3720436K), 0.0136992 secs] [Times: user=0.03 sys=0.00, real=0.02 secs] </div><div class="line">19388.717: [GC (Allocation Failure) 19388.717: [ParNew: 73206K-&gt;5184K(76800K), 0.0092950 secs] 2743990K-&gt;2700422K(3720436K), 0.0094194 secs] [Times: user=0.04 sys=0.00, real=0.01 secs] </div><div class="line">19388.802: [GC (Allocation Failure) 19388.803: [ParNew: 73472K-&gt;8512K(76800K), 0.0526273 secs] 2695157K-&gt;2648144K(3720436K), 0.0527772 secs] [Times: user=0.11 sys=0.00, real=0.05 secs] </div><div class="line">19388.921: [GC (Allocation Failure) 19388.921: [ParNew: 76800K-&gt;8512K(76800K), 0.0359122 secs] 2659652K-&gt;2607475K(3720436K), 0.0360345 secs] [Times: user=0.11 sys=0.00, real=0.04 secs]</div></pre></td></tr></table></figure>
+<p>上面是运行了大概6个小时后的情况,对比年轻代,gc时间虽然有些增大,但还可以接受,没有超过100ms。<br>年轻代的大小也没有变化,大概75mb。但是堆得大小明显增长，<br>从240mb变成了3.5G,也就是说老年代增大了3G左右。所以继续看cms的gc过程,在预清理阶段消耗了1.36s,在并发清理阶段消耗了2.76s,所以这次gc大概造成了4-5s的停顿。<br>所以这是主要的优化目标。</p>
+<h2 id="内存dump分析"><a href="#内存dump分析" class="headerlink" title="内存dump分析"></a>内存dump分析</h2><p>因为并没有OOM,Stack OverFlow等错误,所以dump分析的主要目的是看看哪里的对象占用内存较多</p>
+<p><a href="https://imgchr.com/i/enINxx" target="_blank" rel="external"><img src="https://s2.ax1x.com/2019/07/26/enINxx.png" alt="enINxx.png"></a></p>
+<p><a href="https://imgchr.com/i/enoAOK" target="_blank" rel="external"><img src="https://s2.ax1x.com/2019/07/26/enoAOK.png" alt="enoAOK.png"></a></p>
+<p>通过首页的饼图可以发现是我写的pdf-es-worker线程占用内存较多。白色的66Mb是remainder线程,不知道是干嘛的，不用管它。</p>
+<p>接着打开线程分析,排在第一个仍然是pdf-es-worker。这里要提的就是重命名线程池的一个好处,很快就能定位问题。<br>打开这个线程栈,不出所料持有大量的string对象无法释放。接着看string的引用栈,看类名猜到是pdf转html需要的样式库,<br>很多与font相关的内容,猜测是格式转换时需要引用字体库,而字体库又是很大的资源,所以读取的pdf越多,就有越多的样式需要转换。<br>造成了老年代空间猛涨。</p>
+<p>经过上面的分析,从代码层面去优化是没有什么空间了，所以只能优化一下jvm参数,看看能不能有效果。</p>
+<h2 id="参数设置"><a href="#参数设置" class="headerlink" title="参数设置"></a>参数设置</h2><p>首先就是设置xmx和xms,防止对伸缩带来的性能影响。看了一下机器内存是16G,但是用的是docker应该是虚拟机有16G内存,<br>16G分给了N个镜像,每个拿到的就不多了,所以不能给的太多,防止机器异常。<br>因为默认没有设置xmx,所以jvm会根据拿到的环境的内存进行增长,记得好像会增长到内存的1/4?目前最大跑到了3.6G,所以就定到4G吧。</p>
+<p>整个JVM内存大小=年轻代大小 + 年老代大小 + 持久代大小（元数据区）。</p>
+<p>年轻代GC有些频繁,之前是76800K,大约75M。基本上都是从75000k左右gc到800K,所以这里一个survivor区大约要给1000K,<br>防止放不下引起一次full gc。所以这里可以给年轻代256M,应该够用了。</p>
+<p>加一些cms常用的配置</p>
+<ul>
+<li>UseCMSInitiatingOccupancyOnly </li>
+<li>CMSParallelRemarkEnabled</li>
+<li>XX:CMSInitiatingOccupancyFraction=70 默认68,可以适当调高</li>
+</ul>
+<p>总结一下需要添加的配置:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">-server</div><div class="line">-Xmx4g </div><div class="line">-Xms4g </div><div class="line">-Xmn256m </div><div class="line">-XX:+DisableExplicitGC </div><div class="line">-XX:+UseConcMarkSweepGC </div><div class="line">-XX:+CMSParallelRemarkEnabled </div><div class="line">-XX:+UseCMSInitiatingOccupancyOnly </div><div class="line">-XX:CMSInitiatingOccupancyFraction=70</div><div class="line">-Duser.timezone=GMT+8</div></pre></td></tr></table></figure>
+<p>剩下的就是把参数配上去,然后再跑一边这个流程,观察gc变化。</p>
+</the>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>赏口饭吧</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Shuchang 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="Shuchang 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/15/类隔离器方案调研/" rel="next" title="类隔离器方案调研">
+                <i class="fa fa-chevron-left"></i> 类隔离器方案调研
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/123.png"
+                alt="Shuchang" />
+            
+              <p class="site-author-name" itemprop="name">Shuchang</p>
+              <p class="site-description motion-element" itemprop="description">身怀利器，杀心自起，慎而重之</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">91</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">25</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://gitee.com/swiftsc" title="GitHub &rarr; https://gitee.com/swiftsc" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/shuchang0403@gmail.com" title="E-Mail &rarr; shuchang0403@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#准备工作"><span class="nav-number">1.</span> <span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GC-LOG分析"><span class="nav-number">2.</span> <span class="nav-text">GC LOG分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一个片段表示的是Minor-GC"><span class="nav-number">2.1.</span> <span class="nav-text">第一个片段表示的是Minor GC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#full-gc"><span class="nav-number">2.2.</span> <span class="nav-text">full gc</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存dump分析"><span class="nav-number">3.</span> <span class="nav-text">内存dump分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数设置"><span class="nav-number">4.</span> <span class="nav-text">参数设置</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">  <a href="http://www.miitbeian.gov.cn" rel="noopener" target="_blank">浙ICP备17049505号 </a>&copy; 2015 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shuchang</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+      
+  
+  <script type="text/javascript" color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname,
+            owner: 'shuchaang',
+            repo: 'shuchaang.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+            
+                client_id: 'c5aa96bb5e5656512174'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function (i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap')
+      $(e).after($wrap)
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+        var code = $(this).parent().find('.code').find('.line').map(function (i, e) {
+          return $(e).text()
+        }).toArray().join('\n')
+        var ta = document.createElement('textarea')
+        document.body.appendChild(ta)
+        ta.style.position = 'absolute'
+        ta.style.top = '0px'
+        ta.style.left = '0px'
+        ta.value = code
+        ta.select()
+        ta.focus()
+        var result = document.execCommand('copy')
+        document.body.removeChild(ta)
+        
+          if(result)$(this).text('复制成功')
+          else $(this).text('复制失败')
+        
+        $(this).blur()
+      })).on('mouseleave', function (e) {
+        var $b = $(this).find('.copy-btn')
+        setTimeout(function () {
+          $b.text('复制')
+        }, 300)
+      }).append(e)
+    })
+  </script>
+
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>
