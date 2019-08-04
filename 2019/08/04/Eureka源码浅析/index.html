@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="概览 首先eureka整体使用了gradle构建,从依赖上来看,使用的http作为通讯协议,内部使用了guice作为ioc框架,不少中间件都会使用guice,例如es。web容器使用jersey,国内还是很少使用这些依赖。  大概了解了一下框架情况,打算从eureka几个关键功能去看一下源码的具体实现  eureka server eureka client 注册 续租 下线 自我保护  Eure">
+<meta name="keywords" content="java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Eureka源码浅析">
+<meta property="og:url" content="http://www.shuchang.sc.com/2019/08/04/Eureka源码浅析/index.html">
+<meta property="og:site_name" content="ShuChang&#39;s Blog">
+<meta property="og:description" content="概览 首先eureka整体使用了gradle构建,从依赖上来看,使用的http作为通讯协议,内部使用了guice作为ioc框架,不少中间件都会使用guice,例如es。web容器使用jersey,国内还是很少使用这些依赖。  大概了解了一下框架情况,打算从eureka几个关键功能去看一下源码的具体实现  eureka server eureka client 注册 续租 下线 自我保护  Eure">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNc79gy1g5hmytu3exj30k80qywht.jpg">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNc79gy1g5ithbxgcwj31hy0o4jta.jpg">
+<meta property="og:updated_time" content="2019-08-04T09:06:14.557Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Eureka源码浅析">
+<meta name="twitter:description" content="概览 首先eureka整体使用了gradle构建,从依赖上来看,使用的http作为通讯协议,内部使用了guice作为ioc框架,不少中间件都会使用guice,例如es。web容器使用jersey,国内还是很少使用这些依赖。  大概了解了一下框架情况,打算从eureka几个关键功能去看一下源码的具体实现  eureka server eureka client 注册 续租 下线 自我保护  Eure">
+<meta name="twitter:image" content="http://ww3.sinaimg.cn/large/006tNc79gy1g5hmytu3exj30k80qywht.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.shuchang.sc.com/2019/08/04/Eureka源码浅析/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Eureka源码浅析 | ShuChang's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ShuChang's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">剑来!</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">25</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">19</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">93</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2019/08/04/Eureka源码浅析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Eureka源码浅析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-04 17:05:41 / 修改时间：17:06:14" itemprop="dateCreated datePublished" datetime="2019-08-04T17:05:41+08:00">2019-08-04</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/08/04/Eureka源码浅析/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2019/08/04/Eureka源码浅析/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p><img src="http://ww3.sinaimg.cn/large/006tNc79gy1g5hmytu3exj30k80qywht.jpg" width="50%" height="50%"></p>
+<p>首先eureka整体使用了gradle构建,从依赖上来看,使用的http作为通讯协议,内部使用了guice作为ioc框架,不少中间件都会使用guice,例如es。web容器使用jersey,国内还是很少使用这些依赖。 </p>
+<p>大概了解了一下框架情况,打算从eureka几个关键功能去看一下源码的具体实现</p>
+<ul>
+<li>eureka server</li>
+<li>eureka client</li>
+<li>注册</li>
+<li>续租</li>
+<li>下线</li>
+<li>自我保护</li>
+</ul>
+<h2 id="Eureka-Server"><a href="#Eureka-Server" class="headerlink" title="Eureka Server"></a>Eureka Server</h2><p>server 的启动类在</p>
+<blockquote>
+<p>com.netflix.eureka.EurekaBootStrap</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public EurekaBootStrap(EurekaClient eurekaClient) &#123;</div><div class="line">    this.eurekaClient = eurekaClient;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过构造函数来看,server内部传入了一个client,可以猜到server其实也是一个client,只是增加了一些特殊的功能,eureka的核心功能都在client模块。这也比较符合一个p2p集群的设计。</p>
+<p>server实现了ServletContextListener接口,在servelet容器启动时会调用contextInitialized方法初始化</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">    public void contextInitialized(ServletContextEvent event) &#123;</div><div class="line">        try &#123;</div><div class="line">            initEurekaEnvironment();</div><div class="line">            initEurekaServerContext();</div><div class="line"></div><div class="line">            ServletContext sc = event.getServletContext();</div><div class="line">            sc.setAttribute(EurekaServerContext.class.getName(), serverContext);</div><div class="line">        &#125; catch (Throwable e) &#123;</div><div class="line">            logger.error(&quot;Cannot bootstrap eureka server :&quot;, e);</div><div class="line">            throw new RuntimeException(&quot;Cannot bootstrap eureka server :&quot;, e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>第一行代码主要是根据配置文件初始化eureka的环境,非常简单。主要关注第二行,eureka上下文的初始化</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div></pre></td><td class="code"><pre><div class="line">protected void initEurekaServerContext() throws Exception &#123;</div><div class="line">    </div><div class="line">    //创建配置</div><div class="line">        EurekaServerConfig eurekaServerConfig = new DefaultEurekaServerConfig();</div><div class="line">// 请求和响应数据</div><div class="line">JsonXStream.getInstance().registerConverter(new V1AwareInstanceInfoConverter(), XStream.PRIORITY_VERY_HIGH);</div><div class="line">        XmlXStream.getInstance().registerConverter(new V1AwareInstanceInfoConverter(), XStream.PRIORITY_VERY_HIGH);</div><div class="line"></div><div class="line">        //编解码器</div><div class="line">        ServerCodecs serverCodecs = new DefaultServerCodecs(eurekaServerConfig);</div><div class="line"></div><div class="line">       //根据配置创建eureka client和applicationInfoManager</div><div class="line">        ApplicationInfoManager applicationInfoManager = null;</div><div class="line">        if (eurekaClient == null) &#123;</div><div class="line">            EurekaInstanceConfig instanceConfig = isCloud(ConfigurationManager.getDeploymentContext())</div><div class="line">                    ? new CloudInstanceConfig()</div><div class="line">                    : new MyDataCenterInstanceConfig();</div><div class="line">            </div><div class="line">            applicationInfoManager = new ApplicationInfoManager(</div><div class="line">                    instanceConfig, new EurekaConfigBasedInstanceInfoProvider(instanceConfig).get());</div><div class="line">            </div><div class="line">            EurekaClientConfig eurekaClientConfig = new DefaultEurekaClientConfig();</div><div class="line">            eurekaClient = new DiscoveryClient(applicationInfoManager, eurekaClientConfig);</div><div class="line">        &#125; else &#123;</div><div class="line">            applicationInfoManager = eurekaClient.getApplicationInfoManager();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">//创建应用实例注册表</div><div class="line">        PeerAwareInstanceRegistry registry;</div><div class="line">        if (isAws(applicationInfoManager.getInfo())) &#123;</div><div class="line">            // aws相关</div><div class="line">        &#125; else &#123;</div><div class="line">            registry = new PeerAwareInstanceRegistryImpl(</div><div class="line">                    eurekaServerConfig,</div><div class="line">                    eurekaClient.getEurekaClientConfig(),</div><div class="line">                    serverCodecs,</div><div class="line">                    eurekaClient</div><div class="line">            );</div><div class="line">        &#125;</div><div class="line">//加入server集群</div><div class="line">        PeerEurekaNodes peerEurekaNodes = getPeerEurekaNodes(</div><div class="line">                registry,</div><div class="line">                eurekaServerConfig,</div><div class="line">                eurekaClient.getEurekaClientConfig(),</div><div class="line">                serverCodecs,</div><div class="line">                applicationInfoManager</div><div class="line">        );</div><div class="line"></div><div class="line">//将上面的信息封装为server上下文</div><div class="line">        serverContext = new DefaultEurekaServerContext(</div><div class="line">                eurekaServerConfig,</div><div class="line">                serverCodecs,</div><div class="line">                registry,</div><div class="line">                peerEurekaNodes,</div><div class="line">                applicationInfoManager</div><div class="line">        );</div><div class="line">//将上下文信息给EurekaServerContextHolder,可以通过这个类进行外部访问</div><div class="line">        EurekaServerContextHolder.initialize(serverContext);</div><div class="line"></div><div class="line">        serverContext.initialize();</div><div class="line">        logger.info(&quot;Initialized server context&quot;);</div><div class="line"></div><div class="line">        //获取其他server节点的注册信息</div><div class="line">        int registryCount = registry.syncUp();</div><div class="line">        registry.openForTraffic(applicationInfoManager, registryCount);</div><div class="line"></div><div class="line">        //注册监控信息</div><div class="line">        EurekaMonitors.registerAllStats();</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">```    </div><div class="line"></div><div class="line">通过上面的过程就完成了server节点的初始化工作</div><div class="line"></div><div class="line">## Eureka Client</div></pre></td></tr></table></figure>
+<p>public class DiscoveryClient implements EurekaClient {}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">eurekaClient默认只有一个实现类就是DiscoveryClient,根据接口方法信息,client提供的功能有:</div><div class="line"></div><div class="line">* 实例注册</div><div class="line">* 刷新租约</div><div class="line">* 释放租约</div><div class="line">* 实例信息查询</div></pre></td></tr></table></figure></p>
+<p>DiscoveryClient(<br>ApplicationInfoManager applicationInfoManager,<br>EurekaClientConfig config, AbstractDiscoveryClientOptionalArgs args,<br>Provider<backupregistry> backupRegistryProvider,<br>EndpointRandomizer endpointRandomizer){}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line">client的构造函数默认需要提供五个参数,其中ApplicationInfo比较重要,其他几个都属于配置类的参数,根据相关配置封装为dao传入就可以了。</div><div class="line"></div><div class="line">代码逻辑都比较简单,根据配置初始化信息,创建一个2个线程的线程池,一个线程执行心跳定时任务,一个定时刷新任务。</div><div class="line"></div><div class="line"></div><div class="line">## 注册</div><div class="line"></div><div class="line">### client端</div><div class="line"></div><div class="line">注册发生的时机有两个,一个时client刚启动去server注册,另一个就是更新了client的关键信息,如host,instanceId等要重新到server注册</div></pre></td></tr></table></figure></backupregistry></p>
+<p>boolean register() throws Throwable {<br>        EurekaHttpResponse<void> httpResponse;<br>        try {<br>            httpResponse = eurekaTransport.registrationClient.register(instanceInfo);<br>        } catch (Exception e) {<br>            logger.warn(PREFIX + “{} - registration failed {}”, appPathIdentifier, e.getMessage(), e);<br>            throw e;<br>        }<br>        return httpResponse.getStatusCode() == Status.NO_CONTENT.getStatusCode();<br>    }<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">注册传入的参数就是instanceInfo,也就是当前client节点的信息</div></pre></td></tr></table></figure></void></p>
+<pre><code>@Override
+public EurekaHttpResponse&lt;Void&gt; register(InstanceInfo info) {
+    String urlPath = &quot;apps/&quot; + info.getAppName();
+    Response response = null;
+    try {
+        Builder resourceBuilder = jerseyClient.target(serviceUrl).path(urlPath).request();
+        addExtraProperties(resourceBuilder);
+        addExtraHeaders(resourceBuilder);
+        response = resourceBuilder
+                .accept(MediaType.APPLICATION_JSON)
+                .acceptEncoding(&quot;gzip&quot;)
+                .post(Entity.json(info));
+        return anEurekaHttpResponse(response.getStatus()).headers(headersOf(response)).build();
+    } finally {
+        if (logger.isDebugEnabled()) {
+            logger.debug(&quot;Jersey2 HTTP POST {}/{} with instance {}; statusCode={}&quot;, serviceUrl, urlPath, info.getId(),
+                    response == null ? &quot;N/A&quot; : response.getStatus());
+        }
+        if (response != null) {
+            response.close();
+        }
+    }
+}
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">实际执行的代码也比较简单,类似于使用restTemplate发送到一个json接口</div><div class="line"></div><div class="line"></div><div class="line">### server端</div><div class="line"></div><div class="line">server端的接收在</div><div class="line"></div><div class="line">&gt;com.netflix.eureka.resources.ApplicationResource#addInstance</div><div class="line"></div><div class="line"></div><div class="line">核心代码只有一行</div></pre></td></tr></table></figure>
+<p>registry.register(info, “true”.equals(isReplication));<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div></pre></td></tr></table></figure></p>
+<p>@Override<br>    public void register(final InstanceInfo info, final boolean isReplication) {<br>        int leaseDuration = Lease.DEFAULT_DURATION_IN_SECS;<br>        if (info.getLeaseInfo() != null &amp;&amp; info.getLeaseInfo().getDurationInSecs() &gt; 0) {<br>            leaseDuration = info.getLeaseInfo().getDurationInSecs();<br>        }<br>        super.register(info, leaseDuration, isReplication);<br>        replicateToPeers(Action.Register, info.getAppName(), info.getId(), info, null, isReplication);<br>    }<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">内部执行逻辑首先初始化租约时间,默认90s。如果info自带了租约信息,则使用带过来的。执行父类的注册方法完成注册,接着向其他server扩散这个注册信息。</div></pre></td></tr></table></figure></p>
+<p>public void register(InstanceInfo registrant, int leaseDuration, boolean isReplication) {<br>        try {<br>        //获取读锁 这里其实非常烧脑,对于注册操作明明是个写操作,却使用了读锁,<br>        //后面会针对读写锁的使用专门分析一下<br>            read.lock();<br>        //判断这个instanceId是否有租约信息,有的话就不是第一次注册<br>            Map<string, lease<instanceinfo="">&gt; gMap = registry.get(registrant.getAppName());<br>            REGISTER.increment(isReplication);<br>            if (gMap == null) {<br>                final ConcurrentHashMap<string, lease<instanceinfo="">&gt; gNewMap = new ConcurrentHashMap<string, lease<instanceinfo="">&gt;();<br>                //注册应用<br>                gMap = registry.putIfAbsent(registrant.getAppName(), gNewMap);<br>                if (gMap == null) {<br>                    gMap = gNewMap;<br>                }<br>            }<br>            Lease<instanceinfo> existingLease = gMap.get(registrant.getId());<br>            // instance已经有租约信息<br>            if (existingLease != null &amp;&amp; (existingLease.getHolder() != null)) {<br>                Long existingLastDirtyTimestamp = existingLease.getHolder().getLastDirtyTimestamp();<br>                Long registrationLastDirtyTimestamp = registrant.getLastDirtyTimestamp();</instanceinfo></string,></string,></string,></p>
+<pre><code>   //如果server已经有这个instance的注册信息,
+   //并且有效时间大于这次注册的有效时间,则使用server的替换传进来的参数,
+   //这次的注册可能是因为网络延迟导致的过期注册信息传过来
+    if (existingLastDirtyTimestamp &gt; registrationLastDirtyTimestamp) {
+        registrant = existingLease.getHolder();
+    }
+} else {
+    // instance第一次注册,先调整一些参数,与自我保护机制有关
+    synchronized (lock) {
+        if (this.expectedNumberOfClientsSendingRenews &gt; 0) {
+
+            this.expectedNumberOfClientsSendingRenews = this.expectedNumberOfClientsSendingRenews + 1;
+            updateRenewsPerMinThreshold();
+        }
+    }
+}
+//封装租约信息
+Lease&lt;InstanceInfo&gt; lease = new Lease&lt;InstanceInfo&gt;(registrant, leaseDuration);
+if (existingLease != null) {
+    lease.setServiceUpTimestamp(existingLease.getServiceUpTimestamp());
+}
+gMap.put(registrant.getId(), lease);
+//这个队列的信息只是用于server界面展示用,没有实际业务意义
+synchronized (recentRegisteredQueue) {
+    recentRegisteredQueue.add(new Pair&lt;Long, String&gt;(
+            System.currentTimeMillis(),
+            registrant.getAppName() + &quot;(&quot; + registrant.getId() + &quot;)&quot;));
+}
+</code></pre><p>//设置应用实例的覆盖状态,可以在不关闭应用的情况下,关闭某些服务<br>            if (!InstanceStatus.UNKNOWN.equals(registrant.getOverriddenStatus())) {</p>
+<pre><code>    if (!overriddenInstanceStatusMap.containsKey(registrant.getId())) {
+
+        overriddenInstanceStatusMap.put(registrant.getId(), registrant.getOverriddenStatus());
+    }
+}
+InstanceStatus overriddenStatusFromMap = overriddenInstanceStatusMap.get(registrant.getId());
+if (overriddenStatusFromMap != null) {
+    logger.info(&quot;Storing overridden status {} from map&quot;, overriddenStatusFromMap);
+    registrant.setOverriddenStatus(overriddenStatusFromMap);
+}
+InstanceStatus overriddenInstanceStatus = getOverriddenInstanceStatus(registrant, existingLease, isReplication);
+registrant.setStatusWithoutDirty(overriddenInstanceStatus);
+</code></pre><p> //服务上线<br>            if (InstanceStatus.UP.equals(registrant.getStatus())) {<br>                lease.serviceUp();<br>            }<br>            registrant.setActionType(ActionType.ADDED);<br>            recentlyChangedQueue.add(new RecentlyChangedItem(lease));<br>            //设置租约的更新时间 并清空缓存<br>            registrant.setLastUpdatedTimestamp();<br>            invalidateCache(registrant.getAppName(), registrant.getVIPAddress(), registrant.getSecureVipAddress());<br>        } finally {<br>            read.unlock();<br>        }<br>    }</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">服务注册的逻辑还是比较复杂,主要是租约和覆盖状态相关的逻辑判断比较多,又涉及到缓存的处理。</div><div class="line"></div><div class="line"></div><div class="line">## 下线&amp;过期</div><div class="line"></div><div class="line"></div><div class="line">下线和过期操作是完全不同的两个逻辑,下线操作是由client主动发起的,过期操作则可能是一些网络异常导致的,所以server端会提供一些保护机制。</div><div class="line"></div><div class="line">对于下线的client操作比较简单,封装结构体然后post到server端就可以了,主要看一下server端的处理逻辑</div><div class="line"></div><div class="line">###下线</div><div class="line"></div><div class="line">&gt;com.netflix.eureka.resources.InstanceResource#cancelLease</div></pre></td></tr></table></figure>
+<p>protected boolean internalCancel(String appName, String id, boolean isReplication) {<br>        try {<br>        //获取读锁<br>            read.lock();<br>            CANCEL.increment(isReplication);<br>       //获取租约信息 并清除<br>            Map<string, lease<instanceinfo="">&gt; gMap = registry.get(appName);<br>            Lease<instanceinfo> leaseToCancel = null;<br>            if (gMap != null) {<br>                leaseToCancel = gMap.remove(id);<br>            }<br>       //加入队列,方便进行增量同步到其他server<br>            synchronized (recentCanceledQueue) {<br>                recentCanceledQueue.add(new Pair<long, string="">(System.currentTimeMillis(), appName + “(“ + id + “)”));<br>            }<br>       //删除相关覆盖状态信息<br>            InstanceStatus instanceStatus = overriddenInstanceStatusMap.remove(id);<br>            if (instanceStatus != null) {<br>                logger.debug(“Removed instance id {} from the overridden map which has value {}”, id, instanceStatus.name());<br>            }</long,></instanceinfo></string,></p>
+<pre><code>        //instance没有相关租约信息
+        if (leaseToCancel == null) {
+            CANCEL_NOT_FOUND.increment(isReplication);
+            logger.warn(&quot;DS: Registry: cancel failed because Lease is not registered for: {}/{}&quot;, appName, id);
+            return false;
+        } else {
+       //instance租约信息存在,进行取消 
+            leaseToCancel.cancel();
+            InstanceInfo instanceInfo = leaseToCancel.getHolder();
+            String vip = null;
+            String svip = null;
+            if (instanceInfo != null) {
+                instanceInfo.setActionType(ActionType.DELETED);
+                recentlyChangedQueue.add(new RecentlyChangedItem(leaseToCancel));
+                instanceInfo.setLastUpdatedTimestamp();
+                vip = instanceInfo.getVIPAddress();
+                svip = instanceInfo.getSecureVipAddress();
+            }
+            //清除缓存
+            invalidateCache(appName, vip, svip);
+
+            return true;
+        }
+    } finally {
+        read.unlock();
+    }
+}
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">相比注册逻辑,取消操作简单许多。</div><div class="line"></div><div class="line">### 过期</div><div class="line"></div><div class="line">过期逻辑发生在servder端的定时检测,是在server端启动的时候就进行了初始化。</div><div class="line"></div><div class="line">&gt;com.netflix.eureka.registry.AbstractInstanceRegistry.EvictionTask</div><div class="line"></div><div class="line">主要代码逻辑如下:</div></pre></td></tr></table></figure>
+<p>public void evict(long additionalLeaseMs) {<br>        logger.debug(“Running the evict task”);</p>
+<pre><code>    if (!isLeaseExpirationEnabled()) {
+        logger.debug(&quot;DS: lease expiration is currently disabled.&quot;);
+        return;
+    }
+
+    //获取所有过期的instance
+    List&lt;Lease&lt;InstanceInfo&gt;&gt; expiredLeases = new ArrayList&lt;&gt;();
+    for (Entry&lt;String, Map&lt;String, Lease&lt;InstanceInfo&gt;&gt;&gt; groupEntry : registry.entrySet()) {
+        Map&lt;String, Lease&lt;InstanceInfo&gt;&gt; leaseMap = groupEntry.getValue();
+        if (leaseMap != null) {
+            for (Entry&lt;String, Lease&lt;InstanceInfo&gt;&gt; leaseEntry : leaseMap.entrySet()) {
+                Lease&lt;InstanceInfo&gt; lease = leaseEntry.getValue();
+                if (lease.isExpired(additionalLeaseMs) &amp;&amp; lease.getHolder() != null) {
+                    expiredLeases.add(lease);
+                }
+            }
+        }
+    }
+    //因为可能受到gc或者本地时间的影响,造成一些instance租约超时,
+    //这时应该引入一些容错机制,就是eureka的自我保护机制,
+    //会根据公式计算出一个阈值,过期的数量不能超过这个阈值
+    int registrySize = (int) getLocalRegistrySize();
+    int registrySizeThreshold = (int) (registrySize * serverConfig.getRenewalPercentThreshold());
+    int evictionLimit = registrySize - registrySizeThreshold;
+
+    //得到最终的驱逐数量
+    int toEvict = Math.min(expiredLeases.size(), evictionLimit);
+    if (toEvict &gt; 0) {
+        //随机驱逐
+        Random random = new Random(System.currentTimeMillis());
+        for (int i = 0; i &lt; toEvict; i++) {
+            // Pick a random item (Knuth shuffle algorithm)
+            int next = i + random.nextInt(expiredLeases.size() - i);
+            Collections.swap(expiredLeases, i, next);
+            Lease&lt;InstanceInfo&gt; lease = expiredLeases.get(i);
+
+            String appName = lease.getHolder().getAppName();
+            String id = lease.getHolder().getId();
+            EXPIRED.increment();
+
+            internalCancel(appName, id, false);
+        }
+    }
+}
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">这里如果关闭了保护模式,效果就分批驱逐,默认参数是0.85</div></pre></td></tr></table></figure>
+<p>// 假设 20 个租约，其中有 10 个租约过期。</p>
+<p>// 第一轮执行开始<br>int registrySize = 20;<br>int registrySizeThreshold = (int) (20 * 0.85) = 17;<br>int evictionLimit = 20 - 17 = 3;<br>int toEvict = Math.min(10, 3) = 3;<br>// 第一轮执行结束，剩余 17 个租约，其中有 7 个租约过期。</p>
+<p>// 第二轮执行开始<br>int registrySize = 17;<br>int registrySizeThreshold = (int) (17 * 0.85) = 14;<br>int evictionLimit = 17 - 14 = 3;<br>int toEvict = Math.min(7, 3) = 3;<br>// 第二轮执行结束，剩余 14 个租约，其中有 4 个租约过期。</p>
+<p>// 第三轮执行开始<br>int registrySize = 14;<br>int registrySizeThreshold = (int) (14 * 0.85) = 11;<br>int evictionLimit = 14 - 11 = 3;<br>int toEvict = Math.min(4, 3) = 3;<br>// 第三轮执行结束，剩余 11 个租约，其中有 1 个租约过期。</p>
+<p>// 第四轮执行开始<br>int registrySize = 11;<br>int registrySizeThreshold = (int) (11 * 0.85) = 9;<br>int evictionLimit = 11 - 9 = 2;<br>int toEvict = Math.min(1, 2) = 1;<br>// 第四轮执行结束，剩余 10 个租约，其中有 0 个租约过期。结束。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">这里使用随机清理的好出就是,可以防止一个应用的服务一次全部过期。</div><div class="line"></div><div class="line"></div><div class="line">## 自我保护机制</div><div class="line"></div><div class="line">当Eureka Server节点在短时间内丢失过多客户端时（可能发生了网络分区故障），那么这个节点就会进入自我保护模式。一旦进入该模式，Eureka Server就会保护服务注册表中的信息，不再删除服务注册表中的数据（也就是不会注销任何微服务）。当网络故障恢复后，该Eureka Server节点会自动退出自我保护模式。</div><div class="line"></div><div class="line"></div><div class="line">### 触发条件</div><div class="line"></div><div class="line">&gt;com.netflix.eureka.registry.AbstractInstanceRegistry#evict(long)</div><div class="line"></div><div class="line">这里在驱逐过期服务之前会进行判断,如果过期enable才可以清除。enable包括两种判断,第一就是在配置上打开了保护模式,另一种就是下面的判断:</div><div class="line"></div><div class="line">每分钟允许更新的数量&gt;0&amp;&amp;上一分钟更新的数量&gt;每分钟允许更新的数量</div></pre></td></tr></table></figure></p>
+<p>public boolean isLeaseExpirationEnabled() {<br>        if (!isSelfPreservationModeEnabled()) {<br>            // The self preservation mode is disabled, hence allowing the instances to expire.<br>            return true;<br>        }<br>        return numberOfRenewsPerMinThreshold &gt; 0 &amp;&amp; getNumOfRenewsInLastMin() &gt; numberOfRenewsPerMinThreshold;<br>    }<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">当每分钟心跳次数( renewsLastMin ) 小于 numberOfRenewsPerMinThreshold 时,</div><div class="line">并且开启自动保护模式开关( eureka.enableSelfPreservation = true ) 时,</div><div class="line">触发自动保护机制，不再自动过期租约。</div><div class="line"></div><div class="line">### 公式</div><div class="line"></div><div class="line">* expectedNumberOfRenewsPerMin=当前应用注册数*2</div><div class="line">* numberOfRenewsPerMinThreshold= numberOfRenewsPerMinThreshold* eureka.renewalPercentThreshold</div><div class="line"></div><div class="line"></div><div class="line">这里×2是因为默认每30s注册一次,所以每分钟就要×2。eureka.renewalPercentThreshold默认是0.85。所以除非有特殊情况,不要去修改心跳频率,因为这会影响自我保护机制。</div><div class="line"></div><div class="line"></div><div class="line">## 续租</div><div class="line"></div><div class="line">服务第一次到server可以获得一个90s的租约,此后每30s通过心跳进行续租。</div><div class="line"></div><div class="line">&gt; com.netflix.discovery.DiscoveryClient#initScheduledTasks</div></pre></td></tr></table></figure></p>
+<p>scheduler.schedule(<br>                    new TimedSupervisorTask(<br>                            “heartbeat”,<br>                            scheduler,<br>                            heartbeatExecutor,<br>                            renewalIntervalInSecs,<br>                            TimeUnit.SECONDS,<br>                            expBackOffBound,<br>                            new HeartbeatThread()<br>                    ),<br>                    renewalIntervalInSecs, TimeUnit.SECONDS);<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">初始化定时任务,内容在HeartBeat线程</div></pre></td></tr></table></figure></p>
+<pre><code>boolean renew() {
+    EurekaHttpResponse&lt;InstanceInfo&gt; httpResponse;
+    try {
+        httpResponse = eurekaTransport.registrationClient.sendHeartBeat(instanceInfo.getAppName(), instanceInfo.getId(), instanceInfo, null);
+        logger.debug(PREFIX + &quot;{} - Heartbeat status: {}&quot;, appPathIdentifier, httpResponse.getStatusCode());
+        if (httpResponse.getStatusCode() == Status.NOT_FOUND.getStatusCode()) {
+            REREGISTER_COUNTER.increment();
+            logger.info(PREFIX + &quot;{} - Re-registering apps/{}&quot;, appPathIdentifier, instanceInfo.getAppName());
+            long timestamp = instanceInfo.setIsDirtyWithTime();
+            boolean success = register();
+            if (success) {
+                instanceInfo.unsetIsDirty(timestamp);
+            }
+            return success;
+        }
+        return httpResponse.getStatusCode() == Status.OK.getStatusCode();
+    } catch (Throwable e) {
+        logger.error(PREFIX + &quot;{} - was unable to send heartbeat!&quot;, appPathIdentifier, e);
+        return false;
+    }
+}
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">通过put一个rest接口实现续租</div><div class="line"></div><div class="line">server端通过renewLease接口接受rest参数</div><div class="line"></div><div class="line">&gt;com.netflix.eureka.resources.InstanceResource#renewLease</div></pre></td></tr></table></figure>
+<p>public boolean renew(final String appName, final String id, final boolean isReplication) {<br>        if (super.renew(appName, id, isReplication)) {<br>            replicateToPeers(Action.Heartbeat, appName, id, null, null, isReplication);<br>            return true;<br>        }<br>        return false;<br>    }<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">server接到参数后首先会renew自己的服务信息,接着发布到server集群。</div></pre></td></tr></table></figure></p>
+<p>public boolean renew(String appName, String id, boolean isReplication) {<br>        RENEW.increment(isReplication);<br>        Map<string, lease<instanceinfo="">&gt; gMap = registry.get(appName);<br>        Lease<instanceinfo> leaseToRenew = null;<br>        if (gMap != null) {<br>            leaseToRenew = gMap.get(id);<br>        }<br>        //租约不存在 返回false<br>        if (leaseToRenew == null) {<br>            RENEW_NOT_FOUND.increment(isReplication);<br>            return false;<br>        } else {<br>            InstanceInfo instanceInfo = leaseToRenew.getHolder();<br>            if (instanceInfo != null) {<br>                InstanceStatus overriddenInstanceStatus = this.getOverriddenInstanceStatus(<br>                        instanceInfo, leaseToRenew, isReplication);<br>                 //UNKNOWN状态无法续约<br>                if (overriddenInstanceStatus == InstanceStatus.UNKNOWN) {<br>                    RENEW_NOT_FOUND.increment(isReplication);<br>                    return false;<br>                }<br>                //使用最终状态覆盖应用的状态<br>                if (!instanceInfo.getStatus().equals(overriddenInstanceStatus)) {<br>                instanceInfo.getOverriddenStatus().name(),<br>                instanceInfo.getId());<br>                instanceInfo.setStatusWithoutDirty(overriddenInstanceStatus);<br>                }<br>            }<br>            //续约成功<br>            renewsLastMin.increment();<br>            leaseToRenew.renew();<br>            return true;<br>        }<br>    }<br>```    </instanceinfo></string,></p>
+<h2 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a>读写锁</h2><blockquote>
+<p>com.netflix.eureka.registry.AbstractInstanceRegistry</p>
+</blockquote>
+<p>涉及读写锁的方法如下,可以看到对于注册,取消,过期,这类的写操作使用了读锁。而get这种读操作使用写锁。</p>
+<p><img src="http://ww3.sinaimg.cn/large/006tNc79gy1g5ithbxgcwj31hy0o4jta.jpg" alt=""></p>
+<p>getApplicationDeltasFromMultipleRegions这是唯一一个使用了写锁的方法,这个方法需要保证recentChangedQueue和registry的状态一致,不然会导致增量应用实例的集合不准确。为了达到这个效果,需要和使用了读锁的几个方法做互斥。这时有几个方案:</p>
+<ol>
+<li>全部加锁</li>
+<li>getApplicationDeltasFromMultipleRegions使用读锁,其他五个使用写锁</li>
+<li>getApplicationDeltasFromMultipleRegions使用写锁,其他五个使用读锁</li>
+</ol>
+<p>如果其他五个方法使用了写锁,那必然造成很大的冲突影响性能,并且getApplicationDeltasFromMultipleRegions使用了缓存,只有过期才会调用写锁,所以使用写锁的频率会降低,因此使用了这样的设计方案。</p>
+<p>由于renew方法每次心跳都会执行这里的逻辑,因此加锁的性能损耗比较大,所以没有使用锁,在某些极端情况下可能会造成数据不一致,但是在下一次心跳过来的时候会修正这个问题。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>赏口饭吧</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Shuchang 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="Shuchang 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/27/记一次jvm参数优化过程/" rel="next" title="记一次jvm参数优化过程">
+                <i class="fa fa-chevron-left"></i> 记一次jvm参数优化过程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/04/String-intern/" rel="prev" title="String.intern">
+                String.intern <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/123.png"
+                alt="Shuchang" />
+            
+              <p class="site-author-name" itemprop="name">Shuchang</p>
+              <p class="site-description motion-element" itemprop="description">身怀利器，杀心自起，慎而重之</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">93</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">25</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://gitee.com/swiftsc" title="GitHub &rarr; https://gitee.com/swiftsc" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/shuchang0403@gmail.com" title="E-Mail &rarr; shuchang0403@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概览"><span class="nav-number">1.</span> <span class="nav-text">概览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Eureka-Server"><span class="nav-number">2.</span> <span class="nav-text">Eureka Server</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#读写锁"><span class="nav-number">3.</span> <span class="nav-text">读写锁</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">  <a href="http://www.miitbeian.gov.cn" rel="noopener" target="_blank">浙ICP备17049505号 </a>&copy; 2015 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shuchang</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+      
+  
+  <script type="text/javascript" color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname,
+            owner: 'shuchaang',
+            repo: 'shuchaang.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: 'cf8b60f5b29d873de44d218c0e4f31c0f8435a4f',
+            
+                client_id: 'c5aa96bb5e5656512174'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function (i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap')
+      $(e).after($wrap)
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+        var code = $(this).parent().find('.code').find('.line').map(function (i, e) {
+          return $(e).text()
+        }).toArray().join('\n')
+        var ta = document.createElement('textarea')
+        document.body.appendChild(ta)
+        ta.style.position = 'absolute'
+        ta.style.top = '0px'
+        ta.style.left = '0px'
+        ta.value = code
+        ta.select()
+        ta.focus()
+        var result = document.execCommand('copy')
+        document.body.removeChild(ta)
+        
+          if(result)$(this).text('复制成功')
+          else $(this).text('复制失败')
+        
+        $(this).blur()
+      })).on('mouseleave', function (e) {
+        var $b = $(this).find('.copy-btn')
+        setTimeout(function () {
+          $b.text('复制')
+        }, 300)
+      }).append(e)
+    })
+  </script>
+
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>

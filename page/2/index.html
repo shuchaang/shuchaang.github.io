@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">91</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">93</span></a>
 
   </li>
         
@@ -349,6 +349,393 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2019/03/07/Go语言并发模型/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/03/07/Go语言并发模型/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/2/index.html">Go语言并发模型</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-03-07 15:20:03" itemprop="dateCreated datePublished" datetime="2019-03-07T15:20:03+08:00">2019-03-07</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-03-08 14:58:35" itemprop="dateModified" datetime="2019-03-08T14:58:35+08:00">2019-03-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Go/" itemprop="url" rel="index"><span itemprop="name">Go</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="并发与并行"><a href="#并发与并行" class="headerlink" title="并发与并行"></a>并发与并行</h2><p>并发(concurrency)：两个或两个以上的任务在一段时间内被执行。我们不必care这些任务在某一个时间点是否是同时执行，可能同时执行，也可能不是，我们只关心在一段时间内，哪怕是很短的时间（一秒或者两秒）是否执行解决了两个或两个以上任务。</p>
+<p>并行(parallellism)：两个或两个以上的任务在同一时刻被同时执行。<br>并发说的是逻辑上的概念，而并行，强调的是物理运行状态。并发“包含”并行。</p>
+<h2 id="Go的CSP并发模型"><a href="#Go的CSP并发模型" class="headerlink" title="Go的CSP并发模型"></a>Go的CSP并发模型</h2><p>Go实现了两种并发形式。第一种是大家普遍认知的：多线程共享内存。其实就是Java或者C++等语言中的多线程开发。另外一种是Go语言特有的，也是Go语言推荐的：CSP（communicating sequential processes）并发模型。</p>
+<p>CSP并发模型是在1970年左右提出的概念，属于比较新的概念，不同于传统的多线程通过共享内存来通信，CSP讲究的是“以通信的方式来共享内存”。</p>
+<p>普通的线程并发模型，就是像Java、C++、或者Python，他们线程间通信都是通过共享内存的方式来进行的。非常典型的方式就是，在访问共享数据（例如数组、Map、或者某个结构体或对象）的时候，通过锁来访问，因此，在很多时候，衍生出一种方便操作的数据结构，叫做“线程安全的数据结构”。例如Java提供的包”java.util.concurrent”中的数据结构。Go中也实现了传统的线程并发模型。</p>
+<p>Go的CSP并发模型，是通过goroutine和channel来实现的。</p>
+<ul>
+<li>goroutine 是Go语言中并发的执行单位。有点抽象，其实就是和传统概念上的”线程“类似，可以理解为”线程“。</li>
+<li>channel是Go语言中各个并发结构体(goroutine)之前的通信机制。 通俗的讲，就是各个goroutine之间通信的”管道“，有点类似于Linux中的管道。</li>
+</ul>
+<p>生成一个goroutine的方式非常的简单：Go一下，就生成了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">go f();</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/03/07/Go语言并发模型/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2019/02/20/java-SPI与Dubbo-SPI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/02/20/java-SPI与Dubbo-SPI/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/2/index.html">java SPI与Dubbo SPI</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-20 12:48:57" itemprop="dateCreated datePublished" datetime="2019-02-20T12:48:57+08:00">2019-02-20</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-03-08 14:58:21" itemprop="dateModified" datetime="2019-03-08T14:58:21+08:00">2019-03-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="JAVA-SPI"><a href="#JAVA-SPI" class="headerlink" title="JAVA SPI"></a>JAVA SPI</h2><p>java spi一直都是一个很少有人关注的点,我听到这个词还是源于Dubbo SPI,Dubbo SPI是对java SPI进行了一些优化得到的。这个机制主要是针对厂商或者插件,但是我们日常中确一直在使用。</p>
+<h3 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h3><p><img src="https://ws1.sinaimg.cn/large/006tKfTcly1g0vc2gbxpuj30dm0743yf.jpg" alt=""></p>
+<ul>
+<li>bad good 是两个interface的实现</li>
+<li>interface 提供一个标准接口</li>
+<li>invoker负责最后的调用</li>
+</ul>
+<h4 id="interface"><a href="#interface" class="headerlink" title="interface"></a>interface</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public interface Printer &#123;</div><div class="line">    void print();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="bad-amp-good"><a href="#bad-amp-good" class="headerlink" title="bad&amp;good"></a>bad&amp;good</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">添加依赖</div><div class="line">&lt;dependency&gt;</div><div class="line">            &lt;groupId&gt;com.sc&lt;/groupId&gt;</div><div class="line">            &lt;artifactId&gt;interface&lt;/artifactId&gt;</div><div class="line">            &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div><div class="line"></div><div class="line">实现接口</div><div class="line">public class GoodPrint implements Printer &#123;</div><div class="line">    public void print() &#123;</div><div class="line">        System.out.println(&quot;i am good&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">public class BadPrinter implements Printer &#123;</div><div class="line"></div><div class="line">    public void print() &#123;</div><div class="line">        System.out.println(&quot;i am bad&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">新建文件resources\META-INF\services\com.sc.Printer</div><div class="line"></div><div class="line">文件内容</div><div class="line">com.sc.GoodPrint</div></pre></td></tr></table></figure>
+<h4 id="invoker"><a href="#invoker" class="headerlink" title="invoker"></a>invoker</h4><p>添加依赖</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;com.sc&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;interface&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;com.sc&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;good-printer&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div></pre></td></tr></table></figure>
+<p>编写主类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public class MainApp &#123;</div><div class="line"></div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        ServiceLoader&lt;Printer&gt; printerLoader = ServiceLoader.load(Printer.class);</div><div class="line">        for (Printer printer : printerLoader) &#123;</div><div class="line">            printer.print();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">i am good</div></pre></td></tr></table></figure>
+<p>并且通过切换bad依赖,输出的结果是不同的,这就是java spi的简单示例。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/02/20/java-SPI与Dubbo-SPI/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -1955,423 +2342,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/06/JMS-3-JMS结构/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/12/06/JMS-3-JMS结构/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/2/index.html">JMS(3)-JMS API结构</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-12-06 15:53:11" itemprop="dateCreated datePublished" datetime="2018-12-06T15:53:11+08:00">2018-12-06</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-26 09:46:43" itemprop="dateModified" datetime="2018-12-26T09:46:43+08:00">2018-12-26</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fxx3glglroj30n40hm0tm.jpg" alt=""></p>
-<p>JMS API的结构还是比较简单的。</p>
-<p>创建一个JMS的基本步骤是:</p>
-<ol>
-<li>创建JMS ConnectionFactory</li>
-<li>通过ConnectionFactory创建一个Connection</li>
-<li>通过Connection创建jms session</li>
-<li>创建destination、producer、consumer</li>
-<li>发送消息</li>
-<li>关闭资源</li>
-</ol>
-<h2 id="JmsTempate"><a href="#JmsTempate" class="headerlink" title="JmsTempate"></a>JmsTempate</h2><p>在Springboot中一般使用JmsTempate进行操作,所以对照上面的过程,看一下template是如何进行封装的。</p>
-<ol>
-<li>引入Pom</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;dependency&gt;</div><div class="line">	&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</div><div class="line">	&lt;artifactId&gt;spring-boot-starter-activemq&lt;/artifactId&gt;</div><div class="line">&lt;/dependency&gt;</div><div class="line"></div><div class="line">&lt;dependency&gt;</div><div class="line">	&lt;groupId&gt;org.apache.activemq&lt;/groupId&gt;</div><div class="line">	&lt;artifactId&gt;activemq-pool&lt;/artifactId&gt;</div><div class="line">&lt;/dependency&gt;</div></pre></td></tr></table></figure>
-<ol>
-<li>code</li>
-</ol>
-<p>首先在启动类上添加注解@EnableJms,会启动一些JMS的自动配置,包括JmsTempate。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public JmsTemplate(ConnectionFactory connectionFactory) &#123;</div><div class="line">		this();</div><div class="line">		setConnectionFactory(connectionFactory);</div><div class="line">		afterPropertiesSet();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
-<p>JmsTemplate的构造函数中需要一个ConnectionFactory,因此会先实例化一个ConnectionFactory。也就对应了上面过程中的第一步。</p>
-<p>当注入JmsTemplate我们就可以调用send方法进行消息发送,非常简单。但正是因为它封装的太好了,我们反而不容易了解它的具体实现细节,所以进入send方法的源码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public void send(final Destination destination, final MessageCreator messageCreator) throws JmsException &#123;</div><div class="line">		execute(session -&gt; &#123;</div><div class="line">			doSend(session, destination, messageCreator);</div><div class="line">			return null;</div><div class="line">		&#125;, false);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
-<p>send方法调用了内部方法execute,而且我们看到一个关键参数名session,这里是一个lambda表达式,在session内封装了消息和destination,然后丢进execute方法。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">public &lt;T&gt; T execute(SessionCallback&lt;T&gt; action, boolean startConnection) throws JmsException &#123;</div><div class="line">		Assert.notNull(action, &quot;Callback object must not be null&quot;);</div><div class="line">		Connection conToClose = null;</div><div class="line">		Session sessionToClose = null;</div><div class="line">		try &#123;</div><div class="line">			Session sessionToUse = ConnectionFactoryUtils.doGetTransactionalSession(</div><div class="line">					obtainConnectionFactory(), this.transactionalResourceFactory, startConnection);</div><div class="line">			if (sessionToUse == null) &#123;</div><div class="line">				conToClose = createConnection();</div><div class="line">				sessionToClose = createSession(conToClose);</div><div class="line">				if (startConnection) &#123;</div><div class="line">					conToClose.start();</div><div class="line">				&#125;</div><div class="line">				sessionToUse = sessionToClose;</div><div class="line">			&#125;</div><div class="line">			if (logger.isDebugEnabled()) &#123;</div><div class="line">				logger.debug(&quot;Executing callback on JMS Session: &quot; + sessionToUse);</div><div class="line">			&#125;</div><div class="line">			return action.doInJms(sessionToUse);</div><div class="line">		&#125;</div><div class="line">		catch (JMSException ex) &#123;</div><div class="line">			throw convertJmsAccessException(ex);</div><div class="line">		&#125;</div><div class="line">		finally &#123;</div><div class="line">			JmsUtils.closeSession(sessionToClose);</div><div class="line">			ConnectionFactoryUtils.releaseConnection(conToClose, getConnectionFactory(), startConnection);</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
-<p>execute方法创建connection,绑定session。调用doInJms方法将message发送到broker,然后释放资源。</p>
-<p>这样粗略的看了一下消息的发送原理。</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/06/JMS-2-可靠性保证/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="身怀利器，杀心自起，慎而重之">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/12/06/JMS-2-可靠性保证/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/2/index.html">JMS(2)-可靠性保证与消息模型</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-12-06 14:57:26" itemprop="dateCreated datePublished" datetime="2018-12-06T14:57:26+08:00">2018-12-06</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-26 09:46:47" itemprop="dateModified" datetime="2018-12-26T09:46:47+08:00">2018-12-26</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="消息确认"><a href="#消息确认" class="headerlink" title="消息确认"></a>消息确认</h2><p>对于一个消息中间件来说,可靠性保证一直是一个重要主题。Jms消息的可靠性保证,通常包含三个阶段: 客户端接收消息/客户端处理消息/客户端ACK</p>
-<p>在事务性会话中(jms session),当事务被提交,即发生自动确认。在非事务会话中,消息的确认取决于应答模式:包含三种应答模式:</p>
-<ul>
-<li>client 客户端手动确认</li>
-<li>auto 自动确认</li>
-<li>dups_ok 一种延迟确认的模式,个人理解是一种批量签收。可以减少开销,但是可能会造成重复的ack。如果没有仔细研究过原理,不建议使用</li>
-</ul>
-<h2 id="消息持久化"><a href="#消息持久化" class="headerlink" title="消息持久化"></a>消息持久化</h2><p>JMS消息持久化有两种方式:</p>
-<p>PERSISTENT: 持久化模式,消息不会因为broker宕机而丢失,默认模式</p>
-<p>NO_PERSISTENT: broker宕机,消息丢失</p>
-<p>ActiveMQ内部消息存储默认使用了KahaDB,同时开支持的方式有AMQ,JDBC,Memory。可以在activemq.xml中对KahaDB进行配置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;persistenceAdapter&gt;</div><div class="line">    &lt;kahaDB directory=&quot;$&#123;activemq.data&#125;/kahadb&quot;/&gt;</div><div class="line">&lt;/persistenceAdapter&gt;</div></pre></td></tr></table></figure>
-<p>可用属性:</p>
-<ol>
-<li><p>indexWriteBatchSize: 批量写入磁盘索引的数量,默认1000</p>
-</li>
-<li><p>indexCacheSize: 内存中缓存索引的page数量,默认1000</p>
-</li>
-<li><p>enableIndexWriteAsync: 是否异步写出索引,默认false</p>
-</li>
-<li><p>journalMaxFileLength: 设置每个消息datalog大小,默认32MB</p>
-</li>
-<li><p>enableJournalDiskSyncs: 如果没有加事务,是否需要写入磁盘。JMS持久化时需要设置为false</p>
-</li>
-<li><p>cleanUpInterval: 清理过期消息,默认30000</p>
-</li>
-<li><p>archiveDataLogs: 对于需要删除的文件,不做删除,而是进行压缩。默认为false</p>
-</li>
-<li><p>directoryArchive: 压缩文件的存放位置</p>
-</li>
-</ol>
-<h2 id="消息过期"><a href="#消息过期" class="headerlink" title="消息过期"></a>消息过期</h2><p>可以设置消息的过期时间,默认是永不过期。</p>
-<h2 id="临时目的地"><a href="#临时目的地" class="headerlink" title="临时目的地"></a>临时目的地</h2><p>jms session可以创建临时的queue或者topic,当创建临时目的地的连接断开,临时目的地也就删除。只有创建临时目的地连接的消费者才可以消费这里的信息。</p>
-<h2 id="本地事务"><a href="#本地事务" class="headerlink" title="本地事务"></a>本地事务</h2><p>在JMS客户端中,可以使用本地事务来组合消息的接收和发送,最后使用commit提交或者使用rollback进行回滚。事务提交表示发送者的消息都已经发送,消费者消息都已确认。事务回滚意味着生产的所有消息被销毁，消费的所有消息被恢复并重新提交。</p>
-<p>需要注意的是,如果业务是一个请求/回复模式,发送一个消息,同时希望在事务中等待消息的回复,那么程序会被挂起,因为直到事务提交,发送操作才会真正执行。</p>
-<p>消息的生产和消费不能再同一个事务中。</p>
-<h2 id="消息模型-PTP"><a href="#消息模型-PTP" class="headerlink" title="消息模型-PTP"></a>消息模型-PTP</h2><p>PTP就是一种点对点的模型,一个消费者一个生产者,是一种单播模式。</p>
-<p>当session关闭时,如果有一些消息已经收到,但还没有签收,那么当客户端再次连接上时,这些消息还会被再次接收。</p>
-<p>如果消费端设置了选择器,那么不符合条件的消息会留在队列中,不会被接收。</p>
-<p>队列可以持久保存消息知道消费端收到消息,充分体现异步传输的优势</p>
-<h2 id="消息模型-pub-sub"><a href="#消息模型-pub-sub" class="headerlink" title="消息模型-pub/sub"></a>消息模型-pub/sub</h2><p>发布订阅模式,生产者制定一个主题,多个消费端可以订阅这个主题来收到消息,是一种广播模式。</p>
-<ol>
-<li><p>消息订阅分为持久订阅和非持久订阅:非持久订阅当客户端处于非激活状态时,消息将会消失,永远不能接收到。<br>持久模式则是消费端向JMS注册自身,当消费端宕机,broker会保存这个主题的消息,当消费端上线时,可以得到离线时漏掉的消息。</p>
-</li>
-<li><p>非持久模式下不能重新派送一个未签收的消息,所以需要设置为持久化模式。</p>
-</li>
-</ol>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2423,7 +2393,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">91</span>
+                    <span class="site-state-item-count">93</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
