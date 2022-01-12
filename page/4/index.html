@@ -256,7 +256,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">25</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">26</span></a>
 
   </li>
         
@@ -275,7 +275,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">19</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">20</span></a>
 
   </li>
         
@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">94</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">95</span></a>
 
   </li>
         
@@ -349,6 +349,230 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/12/k8s学习总结4-网络/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/11/12/k8s学习总结4-网络/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">k8s学习总结4-网络</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-11-12 13:58:07 / 修改时间：17:25:43" itemprop="dateCreated datePublished" datetime="2018-11-12T13:58:07+08:00">2018-11-12</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>K8S的网络部分确实是一个难点,我在这里卡了很久也看了很多相关的文档。K8S的网络依赖于Docker,Docker的网络离不开linux内核的支持,所以要理解K8S的网络必须要了解linux网络知识。</p>
+<h2 id="linux网络基础"><a href="#linux网络基础" class="headerlink" title="linux网络基础"></a>linux网络基础</h2><p>Docker使用到的linux技术主要包括下面几种:</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fx59jhgk3cj307106xmwz.jpg" alt=""></p>
+<p>linux通过命名空间(ns)可以将网络栈进行隔离,不同的ns完全隔离无法进行通信。Docker也正是利用了这种特性实现不同容器网络环境的隔离。那么如果我有需求需要让不同ns的进程进行通信,该怎么做呢?答案就是veth设备对。</p>
+<p>Veth的重要作用就是打通网络栈之间的壁垒,就像一个通道,两端连着不同的网络栈,所以Veth必须成对出现。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fx5a6gasdnj308y056wea.jpg" alt=""></p>
+<p>Docker 服务启动后默认会创建一个 docker0 网桥（其上有一个 docker0 内部接口），它在内核层连通了其他的物理或虚拟网卡，这就将所有容器和本地主机都放到同一个物理网络。linux网桥的作用就是绑定多个以太网设备,将他们桥接起来。网桥上层只需要将数据交给网桥,网桥负责决定是将数据转发到哪些以太网口。以太网口接收到的网络报文,同样只需要交给网桥,网桥负责判断是丢弃还是继续向上层提交。</p>
+<p>假如用户需要对某些关心的数据进行一些操作,Iptable/Netfilter就提供了这种功能,通过在挂载点挂载钩子函数,可以对一些数据包进行过滤、修改、丢弃操作等。Netfilter提供了五个位置来作控制</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fx5bbxfwxij30dk0dhdft.jpg" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1.PREROUTING (路由前)</div><div class="line">2.INPUT (数据包流入口)</div><div class="line">3.FORWARD (转发管卡)</div><div class="line">4.OUTPUT(数据包出口)</div><div class="line">5.POSTROUTING（路由后）</div></pre></td></tr></table></figure>
+<p>任何一个数据包，只要经过本机，必将经过这五个链中的其中一个链。接着又定义了表的概念用来管理这些链</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">filter:定义允许与不允许</div><div class="line">manage: 修改数据报文</div><div class="line">nat: 网络地址转换</div></pre></td></tr></table></figure>
+<p>对于filter来讲一般只能做在3个链上：INPUT ，FORWARD ，OUTPUT </p>
+<p>对于nat来讲一般也只能做在3个链上：PREROUTING ，OUTPUT ，POSTROUTING </p>
+<p>而mangle则是5个链都可以做：PREROUTING，INPUT，FORWARD，OUTPUT，POSTROUTING</p>
+<p>iptables是工作在用户控件提供管理这些规则的接口的工具,它的背后就是工作在内和空间的Netfilter。</p>
+<h2 id="Docker网络模型"><a href="#Docker网络模型" class="headerlink" title="Docker网络模型"></a>Docker网络模型</h2><p>docker支持四种网络模式:</p>
+<ul>
+<li>host</li>
+<li>container</li>
+<li>none</li>
+<li>bridge</li>
+</ul>
+<p>docker默认启用的是bridge类型,安装docker后会在宿主机上创建一个docker0网桥,当运行一个容器,veth就被会创建,一端连在docker0网桥上,另一端在宿主机内的eth0网桥上。这样就做到了同一主机上不同容器可以相互访问,但如果要通过其他ip访问这台机器的docker容器,就需要将宿主机上分配端口,将docker0的一个端口映射到宿主机端口上。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fx5cclqoypj30ku09rt8z.jpg" alt=""></p>
+<h2 id="Kubernates网络模型"><a href="#Kubernates网络模型" class="headerlink" title="Kubernates网络模型"></a>Kubernates网络模型</h2><p>K8S作为一种容器编排工具,主要解决一下场景中的问题:</p>
+<ol>
+<li>容器与容器之间的通信</li>
+<li>Pod与Pod之间的通信</li>
+<li>Pod与service之间的通信</li>
+<li>集群内外的通信</li>
+</ol>
+<h3 id="容器与容器"><a href="#容器与容器" class="headerlink" title="容器与容器"></a>容器与容器</h3><p>由于Pod中的容器共享网络栈,所以容器之间可以使用localhost进行通信。</p>
+<h3 id="Pod之间通信"><a href="#Pod之间通信" class="headerlink" title="Pod之间通信"></a>Pod之间通信</h3><p>Pod之间的通信可能存在于同一个Node上,也有可能存在于不同Node上。</p>
+<hr>
+<p>同一个Node上的Pod都是通过veth连接到宿主机的docker0网桥,他们的Ip都是从docker0上动态获取并且和docker0 ip属于同一个网段。</p>
+<hr>
+<p>Pod的地址与docker0在同一个网段,docker0与宿主机eth0属于两个不同的网段,Node之间的通信依赖于宿主机的网卡。所以不同Node的Pod想要通信,首先要找到Node对应的宿主机Ip,将数据包发送到宿主机网卡上,然后在转发给docker0,最后再到达目标Pod。</p>
+<p>这部分的实现通常都是依赖一些网络配置工具来完成,例如flannel,后面再详细介绍。</p>
+<h3 id="Pod与Service"><a href="#Pod与Service" class="headerlink" title="Pod与Service"></a>Pod与Service</h3><p>kubernetes创建服务时，会为服务分配一个虚拟的IP地址，即为ClusterIP，客户端通过访问这</p>
+<p>个虚拟IP地址来访问内部组件。实质上具体访问内部的工作都是kube-proxy来完成的。kube-</p>
+<p>proxy担负着透明代理和负载均衡的角色，其实就是将某个访问service的请求，通过一套算法</p>
+<p>和规则转发给后端的pod，这里说的算法就是Round Robin负载均衡算法和session粘连规则。</p>
+<p>我们还可以通过修改service里面的service.spec.sessionAffinity参数的值来实现会话保持特</p>
+<p>的定向转发。</p>
+<p>总之，不管是clusterIP+targetPort，还是节点IP+NodePort，都会被Iptables规则重新定向到</p>
+<p>kube-proxy监听服务的代理端口。</p>
+<h3 id="集群内外通信"><a href="#集群内外通信" class="headerlink" title="集群内外通信"></a>集群内外通信</h3><ol>
+<li>NodeIP+NodePort</li>
+</ol>
+<p>这种方式就是在宿主机上开放一个端口,供外部访问</p>
+<ol>
+<li>Ingress</li>
+</ol>
+<p>Ingress 可以给 service 提供集群外部访问的 URL、负载均衡、SSL 终止、HTTP 路由等。为了配置这些 Ingress 规则，集群管理员需要部署一个 Ingress controller，它监听 Ingress 和 service 的变化，并根据规则配置负载均衡并提供访问入口。典型的就是Nginx Ingress。</p>
+<ol>
+<li>loadbalance</li>
+</ol>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -2037,179 +2261,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/07/Hbase基础/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/09/07/Hbase基础/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">Hbase基础</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-09-07 23:45:57 / 修改时间：23:48:58" itemprop="dateCreated datePublished" datetime="2018-09-07T23:45:57+08:00">2018-09-07</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Hbase/" itemprop="url" rel="index"><span itemprop="name">Hbase</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Hbase是一个分布式的、面向列的开源数据库</p>
-<p>Hbase在Hadoop之上提供了类似于Bigtable(源自google,建立在GFS之上)的能力</p>
-<p>Hbase适合存储非结构化数据</p>
-<h3 id="列是数据库是什么"><a href="#列是数据库是什么" class="headerlink" title="列是数据库是什么"></a>列是数据库是什么</h3><p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1ftqyydrkx1j30p30con1i.jpg" alt=""></p>
-<p>可以看到,列式数据库和传统的关系型数据库相比,旋转了90度,将关系型数据库的一列保存为一行。列式存储的主要优点之一就是可以大幅降低系统的I/O，尤其是在海量数据查询时,因为对一列的查询时一个连续的物理空间。行式更适合OLTP，比如传统的基于增删改查操作的应用。列式更适合OLAP，非常适合于在数据仓库领域发挥作用，比如数据分析、海量存储和商业智能；涉及不经常更新的数据。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/09/07/Hbase基础/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2261,7 +2312,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">94</span>
+                    <span class="site-state-item-count">95</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2312,7 +2363,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">19</span>
+                      
+                    
+                    <span class="site-state-item-count">20</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -2375,7 +2428,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">25</span>
+                      
+                    
+                    <span class="site-state-item-count">26</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -2440,7 +2495,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">  <a href="http://www.miitbeian.gov.cn" rel="noopener" target="_blank">浙ICP备17049505号 </a>&copy; 2015 – <span itemprop="copyrightYear">2021</span>
+        <div class="copyright">  <a href="http://www.miitbeian.gov.cn" rel="noopener" target="_blank">浙ICP备17049505号 </a>&copy; 2015 – <span itemprop="copyrightYear">2022</span>
   <span class="with-love" id="animate">
     <i class="fa fa-user"></i>
   </span>
