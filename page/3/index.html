@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">95</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">96</span></a>
 
   </li>
         
@@ -349,6 +349,200 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/08/JMS-6-Message高级特性/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/08/JMS-6-Message高级特性/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">JMS(6) Message高级特性</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-08 12:09:46" itemprop="dateCreated datePublished" datetime="2018-12-08T12:09:46+08:00">2018-12-08</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-26 09:46:33" itemprop="dateModified" datetime="2018-12-26T09:46:33+08:00">2018-12-26</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="延时投递与定时投递"><a href="#延时投递与定时投递" class="headerlink" title="延时投递与定时投递"></a>延时投递与定时投递</h2><p>AMQ提供了对消息的定时调度机制,只需要把调度信息设置在message中即可。</p>
+<p>首先要在xml中开启设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">schedulerSupport=&quot;true&quot;</div></pre></td></tr></table></figure>
+<ul>
+<li>一共四个属性:</li>
+</ul>
+<ol>
+<li>AMQ_SCHUDULED_DELAY: 延迟投递的时间</li>
+<li>AMQ_SCHUDULED_PERIOD: 延迟投递时间间隔</li>
+<li>AMQ_SCHUDULED_REPEAT: 重复次数</li>
+<li>AMQ_SCHUDULED_CRON: cron表达式</li>
+</ol>
+<ul>
+<li>AMQ也提供了封装的消息类型:org.apache.activemq.scheduledMessage</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">jmsTemplate.send(new MessageCreator() &#123;</div><div class="line">                @Override</div><div class="line">                public Message createMessage(Session session) throws JMSException &#123;</div><div class="line">                    TextMessage textMessage = session.createTextMessage();</div><div class="line">                    //设置延时投递 60s</div><div class="line">                    textMessage.setLongProperty(ScheduledMessage.AMQ_SCHEDULED_DELAY,60*1000);</div><div class="line">                    //重复3次</div><div class="line">                    textMessage.setIntProperty(ScheduledMessage.AMQ_SCHEDULED_REPEAT,3);</div><div class="line">                    return textMessage;</div><div class="line">                &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h2 id="Blob-Message"><a href="#Blob-Message" class="headerlink" title="Blob Message"></a>Blob Message</h2><p>BlobMessage是用来传递较大的二进制信息,在AMQ的新版本中,默认是关闭的,因为这种方式可能造成安全漏洞。</p>
+<p>可以在发送端的url上进行设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tcp://192.168.1.1:61619?jms.blobTransferPolicy.uploadUrl=http://xx.xx.xx.xx/nsfvol/fhms/</div></pre></td></tr></table></figure>
+<p>sending blobmessage的方式:</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNbRwgy1fxzba3faj1j31880dm3zo.jpg" alt=""></p>
+<p>可以看到这里有三种发送blob Message的方式: url、File 或者 Inputstream,这里需要注意的是由于blobMessage是AMQ提供的扩展,所以要将jms的session强转为Amq的session。</p>
+<p>文件接收方式:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">@JmsListener(destination = &quot;file&quot;)</div><div class="line">    public void fileQ(Message message) throws IOException, JMSException &#123;</div><div class="line">        if(message instanceof BlobMessage)&#123;</div><div class="line">            BlobMessage blobMessage = (BlobMessage) message;</div><div class="line">            InputStream inputStream = blobMessage.getInputStream();</div><div class="line">            byte[] data = new byte[inputStream.available()];</div><div class="line">            inputStream.read(data);</div><div class="line">            inputStream.close();</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -2198,183 +2392,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/25/红黑树/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/11/25/红黑树/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">红黑树</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-11-25 13:30:45 / 修改时间：13:31:40" itemprop="dateCreated datePublished" datetime="2018-11-25T13:30:45+08:00">2018-11-25</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/算法/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="《算法导论》中的红黑树"><a href="#《算法导论》中的红黑树" class="headerlink" title="《算法导论》中的红黑树"></a>《算法导论》中的红黑树</h2><p>红黑树与AVL相似,都是对BST进行了一系列优化,防止退化成链表的现象。算法导论中对红黑树的定义如下</p>
-<ol>
-<li>每个节点要么是红色,要么是黑色</li>
-<li>根节点必须黑色</li>
-<li>每个叶子节点(空节点)也是黑色</li>
-<li>红节点的孩子节点必须为黑色</li>
-<li>任意节点到叶子节点,经过的黑色节点数量是相同的</li>
-</ol>
-<p>相信大多数人都看过这段关于RBT的描述,然后通过这段描述推导出更多的性质,然后就是一些列的旋转、染色代码,非常不友好。问题就在于我们通过上面的性质根本无法得知红黑树是怎么得来的,作者怎么发明这种算法的。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/11/25/红黑树/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2426,7 +2443,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">95</span>
+                    <span class="site-state-item-count">96</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
