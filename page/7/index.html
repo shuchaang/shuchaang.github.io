@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">97</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">98</span></a>
 
   </li>
         
@@ -349,6 +349,203 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/03/29/系统学习ElasticSearch-CRUD-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/03/29/系统学习ElasticSearch-CRUD-2/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/7/index.html">系统学习ElasticSearch-CRUD(2)</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-03-29 21:23:18 / 修改时间：23:03:09" itemprop="dateCreated datePublished" datetime="2018-03-29T21:23:18+08:00">2018-03-29</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><blockquote>
+<p>ES 5.5  kibana 5.5 </p>
+</blockquote>
+<h2 id="电商案例"><a href="#电商案例" class="headerlink" title="电商案例"></a>电商案例</h2><p>假设我们有一个java pojo</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class product&#123;</div><div class="line">    private String name;</div><div class="line">    private String desc;</div><div class="line">    private Integer price;</div><div class="line">    private String producer;</div><div class="line">    private List  tags;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>那么我们首先将pojo对应的一条数据存储到ES中,相信大家都知道将上上面的pojo存储到数据库中应该怎么做,ES是面向文档(document)的搜索分析引擎,文档中存储的数据结构,与面向对象的数据结构是一样的,基于这样的数据结构,ES可以提供复杂的索引,全文检索,分析聚合等功能,ES的document使用json来表达。</p>
+<h3 id="新增"><a href="#新增" class="headerlink" title="新增"></a>新增</h3><p>使用kibana的dev tools,新增的语法为:</p>
+<blockquote>
+<p>PUT /索引名称/类型名称/ID {数据}</p>
+</blockquote>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/2018032915223340444178.png" alt="2018032915223340444178.png"></p>
+<p>如上我们建立了一个索引放入ES中,就像对数据库的表中加入了一条记录</p>
+<h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p>查询的语法相对比较简单,这里的查询是指单单查找这一条记录,而不是根据条件进行搜索。</p>
+<blockquote>
+<p>GET /索引名称/类型名称/ID {数据}</p>
+</blockquote>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180329152233469761469.png" alt="20180329152233469761469.png"></p>
+<p>可以看到索引的一些基本信息,数据信息是在source下的,同时有一个version字段,表示这条索引的修改次数，同时也可以用于并发控制</p>
+<h3 id="修改"><a href="#修改" class="headerlink" title="修改"></a>修改</h3><p>修改索引有两种方式,第一种是替换,另一种是更新</p>
+<p>先来看替换</p>
+<blockquote>
+<p>PUT /索引名称/类型名称/ID {数据}</p>
+</blockquote>
+<p>使用这种方式,对于没有更新的数据也要带上,否则就会认为没有这个字段</p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180329152233513023560.png" alt="20180329152233513023560.png"></p>
+<p>这里我们修改一下name字段,可以看到version自增,reslut和created字段也表明了更新成功。</p>
+<p>更新文档方式</p>
+<blockquote>
+<p>POST /索引名称/类型名称/ID/_update {<br>    “doc”:{“字段名”:数据}<br>}</p>
+</blockquote>
+<p>这种方式对于不需要修改的字段,不需要添加进去</p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180329152233554191011.png" alt="20180329152233554191011.png"></p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180329152233564161234.png" alt="20180329152233564161234.png"></p>
+<p>可以看到通过这种方式,我们就将想修改的字段单独做了修改</p>
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><blockquote>
+<p>delete /索引名称/类型名称/ID</p>
+</blockquote>
+<p>这样在使用get方式就无法查询到这条数据啦</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -1958,181 +2155,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/01/30/JAVA继承机制与多态/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/01/30/JAVA继承机制与多态/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/7/index.html">JAVA继承机制与多态</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-01-30 08:34:27 / 修改时间：08:36:48" itemprop="dateCreated datePublished" datetime="2018-01-30T08:34:27+08:00">2018-01-30</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java基础/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>java的继承机制无论在工作中还是面试中，都是一个让人非常迷惑的地方。今天被一个朋友的问题难住了，所以查阅了一下相关的资料，在此整理一下</p>
-<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><ol>
-<li>java不支持多继承但支持实现多个接口</li>
-<li>在多态情况下,重写方法会调用派生类的方法。非多态情况下会调用本类的方法</li>
-<li>对于不同的访问修饰符，成员变量的覆盖情况不同</li>
-</ol>
-<p>下面举几个例子加深理解，题目来源于网络</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/01/30/JAVA继承机制与多态/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2184,7 +2206,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">97</span>
+                    <span class="site-state-item-count">98</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
