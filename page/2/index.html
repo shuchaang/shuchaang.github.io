@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">98</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">99</span></a>
 
   </li>
         
@@ -349,6 +349,196 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2019/06/30/ES默认参数优化/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/06/30/ES默认参数优化/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/2/index.html">ES默认参数优化</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-30 13:48:59" itemprop="dateCreated datePublished" datetime="2019-06-30T13:48:59+08:00">2019-06-30</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-07-27 13:49:53" itemprop="dateModified" datetime="2019-07-27T13:49:53+08:00">2019-07-27</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="ES重要参数调优"><a href="#ES重要参数调优" class="headerlink" title="ES重要参数调优"></a>ES重要参数调优</h2><h3 id="文件路径"><a href="#文件路径" class="headerlink" title="文件路径"></a>文件路径</h3><p>在es进行升级的时候,可能会导致data、config、plugin这些文件夹被覆盖导致数据丢失,所以再生产环境中,要将重要的文件路径重新设定,放在es的安装路径之外。path.data可以指定多个目录,用逗号分隔。</p>
+<h3 id="避免脑裂"><a href="#避免脑裂" class="headerlink" title="避免脑裂"></a>避免脑裂</h3><ul>
+<li>discovery.zen.min_master_nodes参数对于集群的可靠性来说非常重要,它定义了最少要有多少个节点参与选主,这个参数要设置成master候选节点的quorum数量,也就是大多数。es生产环境至少要有3个节点,并且quorum至少为2。</li>
+<li>es集群是可以动态增加和下线节点的,所以随时可能改变quorum。所以这个参数也是可以通过api随时修改的,在上线和下线是都要进行修改,一旦修改,这个配置就会被持久化。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">PUT /_cluster/settings</div><div class="line">&#123;</div><div class="line">	&quot;persistent&quot;:&#123;</div><div class="line">		&quot;discovery.zen.minimum_master_nodes:2</div><div class="line">		&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="避免无意义的shard重分配"><a href="#避免无意义的shard重分配" class="headerlink" title="避免无意义的shard重分配"></a>避免无意义的shard重分配</h3><ul>
+<li>shard重新复制、移动、删除的过程,会大量消耗网络和硬盘资源。如果所有的节点都可以等待整个集群中的所有节点都完全上线以后,再决定是否要复制和移动shard,性能会好很多。</li>
+<li>gateway.recover_after_nodes 这个参数可以让有足够多的node上线之后,在进行shard recovery的工作</li>
+</ul>
+<h3 id="jvm-heap分配策略"><a href="#jvm-heap分配策略" class="headerlink" title="jvm heap分配策略"></a>jvm heap分配策略</h3><ul>
+<li>es的默认堆大小为2g,几乎再生产都要调整这个大小</li>
+<li>最简单的调整方式就是设置环境变量:ES_HEAP_SIZE=10g 或者在启动参数里面指定 -Xmx -Xms,两个参数设置为一样大,防止resize。在5.x版本之后推荐在jvm.options文件中设置相关参数</li>
+<li>虽然heap对于es来说非常重要,但并不是越大越好。因为es底层使用的lucence也要消耗内存,而lucence消耗的是底层os cache,主要是存放倒排索引以及正排索引。如果lucence内存不足,es性能也不会太好。</li>
+<li>一般可以讲内存一半给es,一半给os cache。甚至可以给os cache更多的空间。如果我们确定不需要对text feild进行聚合操作,那么就不需要fielddata,因为fielddata使用jvm heap。这样更多的内存留给lucence,可以提升索引性能。</li>
+<li>不要给jvm分配超过32g内存，如果heap小于32,jvm会使用指针压缩技术来压缩对象指针。这个技术的核心思想就是:不要让对象指针引用内存中的二进制地址,而是引用对象的偏移量。这就意味着32位指针可以引用400万个对象,而不是400万字节。一旦超过了这个界限,指针就只能去指向二进制地址,这样在64位系统中,指针就会变成8字节,消耗很大的空间。具体大小设置应该根据jvm版本以及机器实际情况而定。</li>
+</ul>
+<h3 id="swapping分配策略"><a href="#swapping分配策略" class="headerlink" title="swapping分配策略"></a>swapping分配策略</h3><p>如果内存和磁盘频繁进行swap,那么会造成性能的极大降低。可以彻底关闭机器上的swap, swapoff -a,如果需要永久关闭,需要在/etc/fstab中配置。在es的配置文件中也可以配置bootstrap.mloclall:true让jvm lock住自己的内存不被swap到磁盘上去。</p>
+<h3 id="file-descriptor检查"><a href="#file-descriptor检查" class="headerlink" title="file descriptor检查"></a>file descriptor检查</h3><p>file descriptor也叫文件句柄,是unix的一种数据结构,用来track打开的文件。在unix中所有东西都是file。因为es需要大量的文件句柄,如果文件句柄耗尽可能造成数据丢失。因此可以将文件句柄调整到65536.在/etc/security/limits.conf中设置。</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -2146,188 +2336,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2019/01/02/ThreadLocal源码阅读/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/01/02/ThreadLocal源码阅读/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/2/index.html">ThreadLocal源码阅读</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-01-02 12:28:49" itemprop="dateCreated datePublished" datetime="2019-01-02T12:28:49+08:00">2019-01-02</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-02-20 12:29:24" itemprop="dateModified" datetime="2019-02-20T12:29:24+08:00">2019-02-20</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>ThreadLocal是开发中比较常用的一个工具,可以用来传递变量或者做数据隔离。那么ThreadLocal是如何实现线程隔离呢,可以通过set方法来看。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public void set(T value) &#123;</div><div class="line">       Thread t = Thread.currentThread();</div><div class="line">       ThreadLocalMap map = getMap(t);</div><div class="line">       if (map != null)</div><div class="line">           map.set(this, value);</div><div class="line">       else</div><div class="line">           createMap(t, value);</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">   </div><div class="line">   ThreadLocalMap getMap(Thread t) &#123;</div><div class="line">       return t.threadLocals;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
-<p>首先set方法获取了当前线程,然后获取当前线程的threadLocals变量,其中ThreadLocalMap类的定义是在ThreadLocal类中，真正的引用却是在Thread类中。得到map后如果不为null,则将当前threadLocal对象作为key,放入map,否则创建一个map再赋值。</p>
-<p>刚开始看这里很让人费解的一个地方就是为什么要用ThreadLocal对象作为key呢？为什么不能直接以当前线程的ID作为key呢?</p>
-<p>这里想了很久突然明白了,因为一个线程可以创建多个ThreadLocal去存储变量,那么如果我用线程ID去作为key,那么当有多个threadLocal的时候就不知道取哪一个了,所以使用threadLocal作为key,但其实还是取了threadLocal内部的一个hashcode作为唯一标示。</p>
-<p>进入ThreadLocalMap源码,它的实现是一个Entry数组,Entry的key为ThreadLocal的弱引用,value为变量值。也就是说在这里如果使用threadLocal对象作为key,有一个好出就是当发生gc时,没有用的threadLocal会被回收,而如果使用线程ID,则这个threadLocal不会被回收。但是threadLocalMap对象并没有被回收,也就是说value是个强引用,key被回收后会形成一个key为null的Entry。</p>
-<p>所以这时如果这个线程是个耗时非常长的业务,或者你在线程池中使用了threadLocal,那么这里就会一直存在内存占用,过多就形成了内存泄露。 </p>
-<p>为了解决这个问题,map的get/set操作都会对无效的key进行清理,或者调用remove方法进行清理,所以这里依赖于程序员的良好习惯。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">private void set(ThreadLocal&lt;?&gt; key, Object value) &#123;</div><div class="line"></div><div class="line">            // We don&apos;t use a fast path as with get() because it is at</div><div class="line">            // least as common to use set() to create new entries as</div><div class="line">            // it is to replace existing ones, in which case, a fast</div><div class="line">            // path would fail more often than not.</div><div class="line"></div><div class="line">            Entry[] tab = table;</div><div class="line">            int len = tab.length;</div><div class="line">            int i = key.threadLocalHashCode &amp; (len-1);</div><div class="line"></div><div class="line">            for (Entry e = tab[i];</div><div class="line">                 e != null;</div><div class="line">                 e = tab[i = nextIndex(i, len)]) &#123;</div><div class="line">                ThreadLocal&lt;?&gt; k = e.get();</div><div class="line"></div><div class="line">                if (k == key) &#123;</div><div class="line">                    e.value = value;</div><div class="line">                    return;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                if (k == null) &#123;</div><div class="line">                    replaceStaleEntry(key, value, i);</div><div class="line">                    return;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            tab[i] = new Entry(key, value);</div><div class="line">            int sz = ++size;</div><div class="line">            if (!cleanSomeSlots(i, sz) &amp;&amp; sz &gt;= threshold)</div><div class="line">                rehash();</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
-<p>那么key是否可以作为一个强引用呢?使用强引用会带来什么问题呢?</p>
-<p>如果key使用强引用：引用的ThreadLocal的对象被回收了，但是ThreadLocalMap还持有ThreadLocal的强引用，如果没有手动删除，ThreadLocal不会被回收，导致Entry内存泄漏。所以这里使用弱引用如果有良好的习惯,每次操作完remove,造成的问题会比强引用小。</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2379,7 +2387,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">98</span>
+                    <span class="site-state-item-count">99</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>

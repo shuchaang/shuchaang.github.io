@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">98</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">99</span></a>
 
   </li>
         
@@ -349,6 +349,187 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/18/redis底层数据结构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/09/18/redis底层数据结构/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">redis底层数据结构</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-09-18 16:24:43 / 修改时间：18:24:31" itemprop="dateCreated datePublished" datetime="2018-09-18T16:24:43+08:00">2018-09-18</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>redis中常用的数据结构包括String,Hash,List,Set,Sorted Set,每种都有对应的底层C语言结构。如下图所示</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvdtlczh7wj30ra088t90.jpg" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">String      : SDS</div><div class="line">Hash        : zipList/hashtable</div><div class="line">List        : quickList</div><div class="line">Set         : intSet/hashtable</div><div class="line">Sorted Set  : skipList</div></pre></td></tr></table></figure>
+<h2 id="SDS"><a href="#SDS" class="headerlink" title="SDS"></a>SDS</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">struct SDS&lt;T&gt; &#123;</div><div class="line">    T capacity; // 数组容量</div><div class="line">    T len; // 数组长度</div><div class="line">    byte flags; // 特殊标识位</div><div class="line">    byte[] content; // 数组内容</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>SDS全称为simple dynamic string,由于c语言中的字符串,每次进行len()操作的时候,都要进行遍历,复杂度为O(n),对于单线程的redis来说,O(n)复杂度都是不可接受的,所以在C语言的String基础上改造成了SDS类型。</p>
+<p>SDS内部会维护当前content的长度记为len,capacity为容量,&gt;=len。在字符串进行扩展是,redis会分配一部分额外的空间放置频繁的进行扩张</p>
+<h2 id="ZipList"><a href="#ZipList" class="headerlink" title="ZipList"></a>ZipList</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">struct ziplist&lt;T&gt; &#123;</div><div class="line">    int32 zlbytes; // 整个压缩列表占用字节数</div><div class="line">    int32 zltail_offset; // 最后一个元素距离压缩列表起始位置的偏移量，用于快速定位到最后一个节点</div><div class="line">    int16 zllength; // 元素个数</div><div class="line">    T[] entries; // 元素内容列表，挨个挨个紧凑存储</div><div class="line">    int8 zlend; // 标志压缩列表的结束，值恒为 0xFF</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>顾名思义,ZipList是一个紧凑的list,用于Hash结构元素较少的时候使用。压缩列表是一块连续的内存空间，元素之间紧挨着存储，没有任何冗余空隙。各个元素之间是双向的连接,配合zltail_offset可以实现从后向前遍历。</p>
+<p>但是ZipList也存在局限性,导致它并不适合在大量元素的情况下使用。</p>
+<p>由于ZipList是一块连续的内存区域,那么存在一种情况就是添加元素时已经没有地方realloc,那么这时候就需要重新找一块连续的内存进行分配,这时就需要将这块内存全部拷贝到新的地址空间上去。</p>
+<h2 id="QuickList"><a href="#QuickList" class="headerlink" title="QuickList"></a>QuickList</h2><p>List结构早期元素少时用 ziplist，元素多时用linkedlist。但是linkedlist会导致内存碎片化严重,并且linkedlist指针成本很高,所以在zipList和LinkedList的基础上改造成了QuickList。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">struct ziplist_compressed &#123;</div><div class="line">    int32 size;</div><div class="line">    byte[] compressed_data;</div><div class="line">&#125;</div><div class="line">struct quicklistNode &#123;</div><div class="line">    quicklistNode* prev;</div><div class="line">    quicklistNode* next;</div><div class="line">    ziplist* zl; // 指向压缩列表</div><div class="line">    int32 size; // ziplist 的字节总数</div><div class="line">    int16 count; // ziplist 中的元素数量</div><div class="line">    int2 encoding; // 存储形式 2bit，原生字节数组还是 LZF 压缩存储</div><div class="line"></div><div class="line">&#125;</div><div class="line">struct quicklist &#123;</div><div class="line">    quicklistNode* head;</div><div class="line">    quicklistNode* tail;</div><div class="line">    long count; // 元素总数</div><div class="line">    int nodes; // ziplist 节点的个数</div><div class="line">    int compressDepth; // LZF 算法压缩深度</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可见QuickList中的每个节点都是一个ZipList,ZipList之间通过指针双向连接。同时QuickList可以进行数据压缩,默认为0即不压缩。为1则表示QuickList首尾不压缩,2则表示就表示 quicklist 的首尾第一个 ziplist 以及首尾第二个 ziplist 都不压缩。</p>
+<h2 id="DIC"><a href="#DIC" class="headerlink" title="DIC"></a>DIC</h2><p>Dic内部包含了两个hashtable,dict 结构内部包含两个 hashtable，通常情况下只有一个 hashtable 是有值的。但是在 dict 扩容缩容时，需要分配新的 hashtable，然后进行渐进式搬迁，这时候两个 hashtable 存储的分别是旧的 hashtable 和新的 hashtable。待搬迁结束后，旧的 hashtable 被删除，新的 hashtable 取而代之。</p>
+<p>数据量较大的hash以及存储了非整数的set内部都是用了DIC结构,Hashtable和java中的HashTable非常类似。</p>
+<h3 id="渐进式rehash"><a href="#渐进式rehash" class="headerlink" title="渐进式rehash"></a>渐进式rehash</h3><p>与java中的hashTable不同的是,redis中的hashtable使用的是渐进式的rehash,因为redis中的hashtable数据量可能非常大,redis单线程进行复制可能会造成阻塞。一般来说rehash操作会隐藏在一些指令之后,如果没有执行完成,redis会交给后台的定时任务去完成。</p>
+<h3 id="扩容-缩容"><a href="#扩容-缩容" class="headerlink" title="扩容/缩容"></a>扩容/缩容</h3><p>hashtable扩容后会变为原数组的两倍大小。如果Redis 正在做 bgsave，为了减少内存页的过多分离 (Copy On Write)，Redis 尽量不去扩容 (dict_can_resize)，但是如果 hash 表已经非常满了，元素的个数已经达到了第一维数组长度的 5 倍 (dict_force_resize_ratio)，说明 hash 表已经过于拥挤了，这个时候就会强制扩容。</p>
+<p>当元素的个数小于数组大小的10%,就会进行缩容,缩容不需要考虑bgsave。</p>
+<h2 id="SkipList"><a href="#SkipList" class="headerlink" title="SkipList"></a>SkipList</h2><p>redis的sorted list内部使用skipList(跳表)实现。skipList的结构与java中的skipList几乎一致。SkipList首先要求是一个有序的列表,redis 通过set 一个score来实现。拿到这样一个list之后,redis会从list中利用算法均匀的筛选一些元素组成上层list,如此循环,redis中的跳表共有64层。理想情况下,跳表最终会形成如下的形状,也就是一个正态分布图。利用这种结构,redis每次从上到下进行匹配,可已将查询的复杂度从O(n)降低到O(1)</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvduzjv8nyj30eo0a2t8h.jpg" alt=""></p>
+<h2 id="intSet"><a href="#intSet" class="headerlink" title="intSet"></a>intSet</h2><p>inSet是一个整数类型的集合,包括16位整数,32位整数,64位整数类型。个人理解这个结构是某些场景下用来节省空间的。例如set中只有整数类型是,当元素大小可以用16位表示,则这个set的encoding就是int16,当出现有元素必须用32位表示时,那么所有的整数都升级为int32,int64以此类推。但是当你删除了int32的数据,intSet是不会降级为int16的。也就是说只能升级不能降级。当set中出现了非整数类型时,redis使用hashtable代替intSet。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>redis的底层数据结构,几乎都针对redis本身进行了优化。无论在提高性能还是节省空间上,作者都花了很多功夫。</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -1974,197 +2155,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/06/Netty-5-ByteBuf/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/07/06/Netty-5-ByteBuf/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">Netty(5) ByteBuf</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-07-06 08:56:35" itemprop="dateCreated datePublished" datetime="2018-07-06T08:56:35+08:00">2018-07-06</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-07-07 17:54:55" itemprop="dateModified" datetime="2018-07-07T17:54:55+08:00">2018-07-07</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <blockquote>
-<p>三个问题</p>
-</blockquote>
-<ol>
-<li>内存的类别有哪些</li>
-<li>如何减少多线程内存分配的竞争</li>
-<li>不同大小的内存是如何进行分配的</li>
-</ol>
-<h2 id="内存与内存管理器的抽象"><a href="#内存与内存管理器的抽象" class="headerlink" title="内存与内存管理器的抽象"></a>内存与内存管理器的抽象</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">* &lt;pre&gt;</div><div class="line">*      +-------------------+------------------+------------------+</div><div class="line">*      | discardable bytes |  readable bytes  |  writable bytes  |</div><div class="line">*      |                   |     (CONTENT)    |                  |</div><div class="line">*      +-------------------+------------------+------------------+</div><div class="line">*      |                   |                  |                  |</div><div class="line">*      0      &lt;=      readerIndex   &lt;=   writerIndex    &lt;=    capacity</div><div class="line">* &lt;/pre&gt;</div></pre></td></tr></table></figure>
-<p>byteBuf有三个非常重要的指针,readerIndex/writerIndex/capacity。0到readerIndex是已经读完,可以丢弃的数据,readerIndex和writerIndex之间是可读区域,writerIndex到capacity是可写区域。</p>
-<h2 id="不同大小和不同类型的内存分配策略"><a href="#不同大小和不同类型的内存分配策略" class="headerlink" title="不同大小和不同类型的内存分配策略"></a>不同大小和不同类型的内存分配策略</h2><p>Netty中对ByteBuf进行分配的基类是ByteBufAllocator,提供了一些内存分配的抽象方法。在注释中可以看到关于直接内存和堆内存的不同分配。</p>
-<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180706153084075739585.png" alt="20180706153084075739585.png"></p>
-<p>可以看到ByteBufAllocator是一个最顶层的抽象,AbstractByteBufAllocator实现了接口的大部分功能,然后最终暴露出两个方法(new DirectByteBuf和new HeapByteBuf)。这两个方法就交给子类pool和unpool,创建堆内和堆外内存的实现。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/07/06/Netty-5-ByteBuf/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2216,7 +2206,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">98</span>
+                    <span class="site-state-item-count">99</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
