@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">99</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">100</span></a>
 
   </li>
         
@@ -349,6 +349,196 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2017/12/17/java并发从入门到崩溃-JMM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2017/12/17/java并发从入门到崩溃-JMM/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/10/index.html">JUC-JMM(5)</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2017-12-17 14:21:21" itemprop="dateCreated datePublished" datetime="2017-12-17T14:21:21+08:00">2017-12-17</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-01-01 16:04:16" itemprop="dateModified" datetime="2018-01-01T16:04:16+08:00">2018-01-01</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java并发编程/" itemprop="url" rel="index"><span itemprop="name">java并发编程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="JMM"><a href="#JMM" class="headerlink" title="JMM"></a>JMM</h3><p>在写这篇博客之前参考了大量的博客和书籍，但是个人总感觉理解不来，在这里记录下自己的看法，可能不对。</p>
+<p>在并发编程中，我们要解决的关键性问题就是线程通信和同步的问题——那么就有两种结局方案，共享内存和消息传递。共享内存的方式就是各个线程在一个公共的内存区域中共同读写变量，消息传递则是通过显示的方法交换信息。</p>
+<p>所以JAVA对内存进行了一种抽象，形成了java内存模型JMM。这种模型可以说就是为了方便多线程编程而设计。JMM的设计说起来其实很简单，各个线程拥有自己的本地内存，线程之间的共享变量存储在<br>主存中，为了提高效率，各自的本地内存中还保留了一份共享变量的拷贝。本地内存是一个抽象的概念，并不存在，它在物理上覆盖了缓存区，寄存器以及各种优化技术。</p>
+<p>因此JAVA中线程之间的通信可以使用以下方式：</p>
+<ol>
+<li>一个线程将数据写入到主存中</li>
+<li>另一个线程去主存获取这个数据</li>
+</ol>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fmjrum6j9lj30ae0be74i.jpg" alt=""></p>
+<p>也就是说线程之间依靠在主存之中共享变量实现了线程之间的通信，虽然说起来这个过程很简单，但我们看的还是太过于宏观，屏蔽了太多底层的东西。因为我们对于多线程的编程都停留在java语言这种高级语言的层面，但是java语言底层会和操作系统、内存、寄存器这些硬件打交道。而这些硬件由于读写速率有很大差别，因此会有一些对编程语言的优化策略，并不是每条指令都是顺序执行的。由于存在这种硬件优化策略，所以java语言就要保证它的多线程编程所得出的结果是程序员所希望的结果，也就是对编程人员的可见性。所以为了保证这种对编程人员的可见性，java并发编程就需要抽象一种既能保证执行结果又能让程序设计人员无需关心底层的内存模型，这就是JMM。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2017/12/17/java并发从入门到崩溃-JMM/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -2063,7 +2253,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">99</span>
+                    <span class="site-state-item-count">100</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>

@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">99</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">100</span></a>
 
   </li>
         
@@ -349,6 +349,190 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2019/02/01/Socket网络编程-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/02/01/Socket网络编程-1/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">Socket网络编程-1</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-01 12:50:56" itemprop="dateCreated datePublished" datetime="2019-02-01T12:50:56+08:00">2019-02-01</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-02-02 11:29:51" itemprop="dateModified" datetime="2019-02-02T11:29:51+08:00">2019-02-02</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/socket/" itemprop="url" rel="index"><span itemprop="name">socket</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近一直在研究Dubbo原理,想深入进去发现内部网络框架使用了Netty,而之前研究过很久Netty发现已经忘得差不多了。回头看了一下Netty,发现自己对底层的网络、Socket都不是很熟悉,所以这里从更底层的socket入手,后面再总结Dubbo。</p>
+<h2 id="网络编程基础"><a href="#网络编程基础" class="headerlink" title="网络编程基础"></a>网络编程基础</h2><h3 id="OSI七层模型"><a href="#OSI七层模型" class="headerlink" title="OSI七层模型"></a>OSI七层模型</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fzr71jnsy9j30rw0k875b.jpg" alt=""></p>
+<p>这是大学教材上计网的第一课,OSI是一个非常理想化的模型,并没有在实际中应用。</p>
+<p>最上层是应用层,也就是我们编写app所在的层级,下一层表示层就是用来将应用层的信息表示成数据层面的东西,例如将字符串转换为byte数组。会话层的主要功能是在两个节点间建立、维护和释放面向用户的连接,并对会话进行管理和控制,保证会话数据可靠传送。传输层的作用就是在必要的时候对消息进行分割,并保证有效性,向下交给网络层。网络层的作用就是控制子网的运行,例如对逻辑地址进行分组的传输,以及路由的选择。数据链路层更加底层,是对物理地址的一个寻找,并将原始比特流转换为逻辑的传输路线,物理层可以理解为比特流与电信号之间的转换。</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79ly1fzr7djjmjsj30t60kwad1.jpg" alt=""></p>
+<p>上图是一个tcp/ip模型与osi模型的映射关系以及一些常见的协议。</p>
+<h2 id="Socket与TCP-UDP"><a href="#Socket与TCP-UDP" class="headerlink" title="Socket与TCP/UDP"></a>Socket与TCP/UDP</h2><p>Socket简单来说是一个端口+ip的结合描述协议(RFC793),是TCP/IP协议相关API的总称,是网络API的集合实现,涵盖了Datagram socket和stream socket。</p>
+<p>TCP是面向连接的协议,通过三次握手建立连接,通讯完成后拆除连接。</p>
+<p>UDP是面向无连接的通讯协议,数据包括源端口号和目标端口号,由于通讯不是端到端的,所以可以实现广播发送</p>
+<h3 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h3><p>一个简单的socket通信编程demo</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line">public class Server &#123;</div><div class="line">    public static void main(String[] args) throws IOException &#123;</div><div class="line">        ServerSocket server = new ServerSocket(2000);</div><div class="line">        System.out.println(&quot;服务器启动&quot;);</div><div class="line"></div><div class="line">        //等待连接</div><div class="line">        for(;;)&#123;</div><div class="line">            Socket client = server.accept();</div><div class="line">            if(client!=null)&#123;</div><div class="line">                ClientHandle clientHandle = new ClientHandle(client);</div><div class="line">                clientHandle.start();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static class ClientHandle extends Thread&#123;</div><div class="line">        private Socket socket;</div><div class="line">        private boolean flag = true;</div><div class="line"></div><div class="line">        ClientHandle(Socket socket)&#123;</div><div class="line">            this.socket = socket;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void run() &#123;</div><div class="line">            System.out.println(&quot;客户端连接&quot;+socket.getPort());</div><div class="line">            try &#123;</div><div class="line">                    PrintStream socketOutput = new PrintStream(socket.getOutputStream());</div><div class="line">                    BufferedReader socketInput  = new BufferedReader(</div><div class="line">                            new InputStreamReader(socket.getInputStream()));</div><div class="line">                do&#123;</div><div class="line">                    String str = socketInput.readLine();</div><div class="line">                    if(str.equalsIgnoreCase(&quot;bye&quot;))&#123;</div><div class="line">                        socketOutput.println(str);</div><div class="line">                        flag=false;</div><div class="line">                    &#125;else&#123;</div><div class="line">                        System.out.println(str);</div><div class="line">                        socketOutput.println(&quot;reply &quot;+str);</div><div class="line">                    &#125;</div><div class="line">                &#125;while (flag);</div><div class="line">                socketInput.close();</div><div class="line">                socketOutput.close();</div><div class="line">            &#125;catch (Exception e)&#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;finally &#123;</div><div class="line">                try &#123;</div><div class="line">                    socket.close();</div><div class="line">                &#125; catch (IOException e) &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            System.out.println(&quot;客户端断开&quot;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">public class Client &#123;</div><div class="line">    public static void main(String[] args) throws IOException &#123;</div><div class="line">        Socket socket = new Socket();</div><div class="line">        socket.setSoTimeout(3000);</div><div class="line">        socket.connect(new InetSocketAddress(Inet4Address.getLocalHost(),2000));</div><div class="line">        System.out.println(&quot;连接完成&quot;);</div><div class="line">        try &#123;</div><div class="line">            todo(socket);</div><div class="line">        &#125;catch (Exception e)&#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        socket.close();</div><div class="line">        System.out.println(&quot;客户端退出&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void todo(Socket socket) throws IOException &#123;</div><div class="line">        InputStream in = System.in;</div><div class="line">        BufferedReader input = new BufferedReader(new InputStreamReader(in));</div><div class="line">        //得到socket输出流,打印</div><div class="line">        OutputStream outputStream = socket.getOutputStream();</div><div class="line">        PrintStream printStream = new PrintStream(outputStream);</div><div class="line"></div><div class="line">        InputStream inputStream = socket.getInputStream();</div><div class="line">        BufferedReader sbuff = new BufferedReader(new InputStreamReader(inputStream));</div><div class="line"></div><div class="line">        boolean  flag=true;</div><div class="line">        do &#123;</div><div class="line">            String str = input.readLine();</div><div class="line">            printStream.println(str);</div><div class="line"></div><div class="line">            String ret = sbuff.readLine();</div><div class="line">            if (&quot;bye&quot;.equalsIgnoreCase(ret)) &#123;</div><div class="line">                flag=false;</div><div class="line">            &#125;else&#123;</div><div class="line">                System.out.println(ret);</div><div class="line">            &#125;</div><div class="line">        &#125;while (flag);</div><div class="line">        sbuff.close();</div><div class="line">        inputStream.close();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面简单写了一个socket通信的demo,可以看到本身java调用socket进行连接是非常简单的,但是一旦涉及到这些IO读写就会变得很复杂,各种stream,reader之间相互转换,后面再对java io进行一下总结。</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -2209,229 +2393,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/05/k8s学习总结5-调度/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/12/05/k8s学习总结5-调度/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">k8s学习总结5-调度</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-12-05 16:05:02" itemprop="dateCreated datePublished" datetime="2018-12-05T16:05:02+08:00">2018-12-05</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-06 19:37:28" itemprop="dateModified" datetime="2018-12-06T19:37:28+08:00">2018-12-06</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>K8S调度器的主要任务就是为Pod寻找一个合适的Node。</p>
-<h2 id="默认调度器"><a href="#默认调度器" class="headerlink" title="默认调度器"></a>默认调度器</h2><p>K8S提供了默认调度器,它的主要流程是:根据Predicate算法检查每个Node。然后再调用Priority算法给Node打分。最终调度结果就是选择分数最高的那个Node。</p>
-<p>K8S调度算法的流程如下:</p>
-<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fxvz4mqinzj312u0nowfp.jpg" alt=""></p>
-<p>主要是两个循环过程:</p>
-<p>第一个循环informer负责监听etcd中Pod、Node、Service等需要调度的组件。一旦发现informer就将它放入一个优先级队列。</p>
-<p>第二个循环是Scheduling Path,不断从优先队列中取出一个Pod,使用Predicate算法过滤出一组Node,Node的信息从Cache中获取。选出一个合适的Node之后,调度器就会进行绑定操作,将Pod的nodeName填写为筛选出的Node名称。</p>
-<h2 id="Predicates"><a href="#Predicates" class="headerlink" title="Predicates"></a>Predicates</h2><p>K8S中Predicates算法默认提供四种调度策略:</p>
-<h3 id="GeneralPredicates"><a href="#GeneralPredicates" class="headerlink" title="GeneralPredicates"></a>GeneralPredicates</h3><p>这是第一组过滤策略,也是最基础的调度规则。目的就是根据yaml配置文件检查硬件资源是否充足,端口是否冲突。由于调度策略采用了无锁化设计,所以当一个Pod被调度到Node上时,Node会再次执行一遍这个策略。</p>
-<h3 id="Volume相关过滤"><a href="#Volume相关过滤" class="headerlink" title="Volume相关过滤"></a>Volume相关过滤</h3><p>这组规则主要对Volume进行过滤。</p>
-<p>首先是NoDiskconflict,检查Pod声明挂载的volume是否存在冲突。</p>
-<p>接着是MaxPDVolumeCountPredicate,判断节点某种volume类型是否超过上限。</p>
-<p>接着是VolumeBindingPredicate,主要作用是判断节点亲和性。</p>
-<h3 id="宿主机相关过滤规则"><a href="#宿主机相关过滤规则" class="headerlink" title="宿主机相关过滤规则"></a>宿主机相关过滤规则</h3><p>这组规则是判断Pod是否满足Node的某些条件。</p>
-<p>例如配置了PodToleratesNodeTaints字段,只有当Pod的Toleration和Node的taint字段相匹配,才能调度到该节点。</p>
-<h3 id="Pod相关过滤规则"><a href="#Pod相关过滤规则" class="headerlink" title="Pod相关过滤规则"></a>Pod相关过滤规则</h3><p>这组检查和GeneralPredicates有很多重合,比较特殊的一点是PodAffinityPredicate。用来检查Node上Pod之间的亲密和反亲密关系。</p>
-<p>上面这四种类型的 Predicates，就构成了调度器确定一个Node可以运行待调度Pod的基本策略。</p>
-<h2 id="Priorites"><a href="#Priorites" class="headerlink" title="Priorites"></a>Priorites</h2><p>Proorites根据算法对选出的Node打分,最常用的是LeastRequestedPriority</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">score = (cpu((capacity-sum(requested))10/capacity) + memory((capacity-sum(requested))10/capacity))/2</div></pre></td></tr></table></figure>
-<p>其实就是选择内存和CPU最多的主机,除此之外还有NodeAffinityPriority,TaintTolerationPriority以及InterPodAffinityPriority。</p>
-<h2 id="优先级与抢占机制"><a href="#优先级与抢占机制" class="headerlink" title="优先级与抢占机制"></a>优先级与抢占机制</h2><h3 id="优先级"><a href="#优先级" class="headerlink" title="优先级"></a>优先级</h3><p>首先要明确的是,优先级与抢占解决的是Pod调度失败的问题。</p>
-<p>通常情况下,调度失败的Pod会被搁置,直到出现满足条件的Node才能再次调度。但是如果这个Pod是一个优先级非常高的系统,我们希望能通过减少一部分优先度低的Pod,给优先级高的Pod空出位置。</p>
-<p>在K8S 1.10版本提供了优先级与抢占机制,首先要定义一个PriorityClass类型的yaml</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">apiVersion: scheduling.k8s.io/v1beta1</div><div class="line">kind: PriorityClass</div><div class="line">metadata:</div><div class="line">  name: high-priority</div><div class="line">value: 1000000</div><div class="line">globalDefault: false</div><div class="line">description: &quot;This priority class should be used for high priority service pods only.&quot;</div></pre></td></tr></table></figure>
-<p>这里定义了优先级为1000000的配置文件,globalDefault如果设置为true,就会将Pod的默认优先级定义为1000000,而实际默认是0。优先级最大为10亿,超过10亿为K8S内部的Pod。</p>
-<p>定义过后就可以在Pod中使用:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: Pod</div><div class="line">metadata:</div><div class="line">  name: nginx</div><div class="line">  labels:</div><div class="line">    env: test</div><div class="line">spec:</div><div class="line">  containers:</div><div class="line">  - name: nginx</div><div class="line">    image: nginx</div><div class="line">    imagePullPolicy: IfNotPresent</div><div class="line">  priorityClassName: high-priority</div></pre></td></tr></table></figure>
-<p>经过配置之后,调度队列就会将这个Pod就会比优先级低的Pod提前出队。</p>
-<h3 id="抢占"><a href="#抢占" class="headerlink" title="抢占"></a>抢占</h3><p>抢占机制相比优先级要复杂的多。当一个高优先级的Pod调度失败之后,就会触发抢占机制。抢占的大概过程如下:</p>
-<p>k8s选出优先级较低的Pod所在的Node节点,将抢占者的spec.nominatedNodeName填写为该Node,然后将该pod重新入队。如果在下个周期,这个Pod没有抢到node(出现了优先级更高的pod),将spec.nominatedNodeName去掉重新入队,如果抢占成功,则让被抢占节点优雅退出(delete api),将新pod部署。</p>
-<p>接下来讲述一下详细原理,我们将这个Pod称为抢占者,旧的节点称为牺牲者:</p>
-<p>抢占的重要设计就是在调度队列的实现里,实现了两个不同的队列。</p>
-<ol>
-<li><p>activeQ: 存放下个周期需要调度的Pod</p>
-</li>
-<li><p>unschedulableQ: 用于存放调度失败的Pod,当这个队列中的Pod被更新时,k8s将它重新放入activeq。</p>
-</li>
-</ol>
-<p>在这里发生调度失败,也就是节点入队时会去触发寻找牺牲者的流程。</p>
-<p>首先调度器检查这次调度失败的原因,用来确认抢占机制可以实现重新调度。</p>
-<p>如果抢占可以发生,调度器将缓存的所有节点信息复制一份,然后利用副本去模拟一遍抢占过程。</p>
-<p>模拟成功之后会选出一个最佳Node,接着调度器就会开始真正的抢占操作:</p>
-<p>首先检查牺牲者列表,清理Pod的spec.nominatedNodeName字段</p>
-<p>为抢占者设置spec.nominatedNodeName属性</p>
-<p>开启协程,删除旧Pod,完成抢占</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2483,7 +2444,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">99</span>
+                    <span class="site-state-item-count">100</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
