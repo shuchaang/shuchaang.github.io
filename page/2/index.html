@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">100</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">101</span></a>
 
   </li>
         
@@ -349,6 +349,194 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2019/07/27/记一次jvm参数优化过程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/07/27/记一次jvm参数优化过程/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/2/index.html">记一次jvm参数优化过程</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-27 13:50:54 / 修改时间：14:01:20" itemprop="dateCreated datePublished" datetime="2019-07-27T13:50:54+08:00">2019-07-27</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>最近在做一个功能,将pdf转成html然后上传到es进行文档检索。在做大批量的文件解析时,发现内存消耗的厉害,平时项目<br>内存占用一般在2G左右,现在飙升到了8G。这时任务才跑了1/3,担心生产会有问题,所以决定排查一下内存消耗。</p>
+<p><img src="https://s2.ax1x.com/2019/07/26/emzF2D.png" alt="emzF2D.png"></p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ol>
+<li>首先检查了一下错误日志,发现没有报错,说明都是正常消耗,还没有OOM等要命的问题</li>
+<li>看了一下gc日志,发现gc日志在疯狂打印,比较明显的提示就是 Allocation Failed</li>
+<li>dump了一下内存快照: jmap–dump:live,format=b,file=dump.bin 1</li>
+</ol>
+<p>将gc.log 和 dump.bin文件下载到本地</p>
+<p>dump文件使用MAT分析</p>
+<blockquote>
+<p><a href="https://www.eclipse.org/mat/" target="_blank" rel="external">https://www.eclipse.org/mat/</a></p>
+</blockquote>
+<p>gc.log使用人工没有智能来分析,首先确定一下现有的jvm参数,因为公司的Dockerfile封装了java的启动参数，所以使用</p>
+<blockquote>
+<p>ps aux|grep java</p>
+</blockquote>
+<p>清除一些没有用的内容后:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">java -jar  -XX:+UseConcMarkSweepGC</div></pre></td></tr></table></figure>
+<p>竟然只指定了使用cms gc - -,有点坑爹</p>
+<blockquote>
+<p>优化目标: 主要降低full gc的时间和次数,minor gc 随缘优化,总时间减少就可以</p>
+</blockquote>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/07/27/记一次jvm参数优化过程/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -2177,191 +2365,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2019/02/02/Socket网络编程-2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/02/02/Socket网络编程-2/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/2/index.html">Socket网络编程-2</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-02-02 11:29:31" itemprop="dateCreated datePublished" datetime="2019-02-02T11:29:31+08:00">2019-02-02</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-02-03 23:05:36" itemprop="dateModified" datetime="2019-02-03T23:05:36+08:00">2019-02-03</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/socket/" itemprop="url" rel="index"><span itemprop="name">socket</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="TCP初始化配置"><a href="#TCP初始化配置" class="headerlink" title="TCP初始化配置"></a>TCP初始化配置</h2><h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">private static Socket createSocket() throws IOException &#123;</div><div class="line">    //相当于无参构造函数</div><div class="line">    Socket socket = new Socket(Proxy.NO_PROXY);</div><div class="line"></div><div class="line">    //具有http代理的构造</div><div class="line">    Proxy proxy = new Proxy(Proxy.Type.HTTP,</div><div class="line">            new InetSocketAddress(InetAddress.getByName(&quot;www.baidu.com&quot;),8080));</div><div class="line">    socket = new Socket(proxy);</div><div class="line"></div><div class="line">    //直连模式</div><div class="line">    socket = new Socket(&quot;localhost&quot;,20000);</div><div class="line"></div><div class="line">    //指定本地端口 连接到20000端口的服务器,客户端使用20001端口</div><div class="line">    socket = new Socket(InetAddress.getLocalHost(),2000,InetAddress.getLocalHost(),</div><div class="line">            20001);</div><div class="line"></div><div class="line">    //作用同上</div><div class="line">    socket = new Socket();</div><div class="line">    socket.bind(new InetSocketAddress(InetAddress.getLocalHost(),20001));</div><div class="line">    socket.connect(new InetSocketAddress(InetAddress.getLocalHost(),20000));</div></pre></td></tr></table></figure>
-<p>Socket有如上几种常见的初始化方式,推荐的做法是使用无参的构造函数,因为有参数的构造函数会在初始化之后就进入连接状态,在连接之后如果想进行一定的参数配置,那么这是无效的。</p>
-<p>下面给出一些常见的socket配置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">private static void initSocket(Socket socket) throws SocketException &#123;</div><div class="line">    // 设置读取超时时间为2s</div><div class="line">    socket.setSoTimeout(2000);</div><div class="line">    //是否复用未完全关闭的socket地址</div><div class="line">    socket.setReuseAddress(true);</div><div class="line">    //是否开启nagle算法,默认开启. 关闭后可以理解为允许批量ack,而不是对于每个数据包都需要ack</div><div class="line">    socket.setTcpNoDelay(false);</div><div class="line">    //长时间无响应时发送确认数据,默认2h</div><div class="line">    socket.setKeepAlive(true);</div><div class="line"></div><div class="line">    //表示对于close操作如何处理</div><div class="line">    //1. false,0 默认情况,关闭时立即返回,底层接管缓冲区,如果没有发送完,则继续</div><div class="line">    //2. true,0 关闭时立即返回,缓冲区数据抛弃,发送RST到对方,无需等待2MSL</div><div class="line">    //3.  true,xx 最长阻塞200ms,然后按照2处理</div><div class="line">    socket.setSoLinger(true,200);</div><div class="line"></div><div class="line">    //是否让业务层接收到紧急数据,默认关闭,建议关闭 可以调用socket.sendUrgentData(1)发送参数的后八位</div><div class="line">    socket.setOOBInline(false);</div><div class="line"></div><div class="line">    //设置缓冲区大小</div><div class="line">    socket.setReceiveBufferSize(64*1024*1024);</div><div class="line">    socket.setSendBufferSize(64*1024*1024);</div><div class="line"></div><div class="line">    //设置连接时间,延迟,带宽对于socket性能评估的权重,如更关心延迟,则可以调高第二个参数</div><div class="line">    socket.setPerformancePreferences(1,1,1);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>在经过自定义的配置之后,再进行socket的bind和connect操作比较合理。</p>
-<h3 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">private static ServerSocket createSocket() throws IOException &#123;</div><div class="line">        ServerSocket ss = new ServerSocket();</div><div class="line">        //等待连接的队列容量为50</div><div class="line">        ss.bind(new InetSocketAddress(InetAddress.getLocalHost(),20001),50);</div><div class="line"></div><div class="line">        ss = new ServerSocket(20001,50);</div><div class="line"></div><div class="line">        return ss;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<p>服务端的socket初始化比较简单,同样推荐使用空的构造函数,以便进行后续配置。服务端socket提供了一个backlog参数,用来表示有多少连接可以加入等待队列,当有空闲时就会从队列中取出连接。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">private static void initServerSocket(ServerSocket ss) throws SocketException &#123;</div><div class="line">        ss.setReuseAddress(true);</div><div class="line">        ss.setReceiveBufferSize(64*1024*1024);</div><div class="line">        ss.setSoTimeout(2000);</div><div class="line">        ss.setPerformancePreferences(1,1,1);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<p>配置参数也比较简单,要注意的是,这里的bufferSize并不是serverSocket的bufferSize,而是accept的client的bufferSize。</p>
-<h2 id="数据传输"><a href="#数据传输" class="headerlink" title="数据传输"></a>数据传输</h2>
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2408,7 +2416,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">100</span>
+                    <span class="site-state-item-count">101</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>

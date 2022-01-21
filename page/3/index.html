@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">100</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">101</span></a>
 
   </li>
         
@@ -349,6 +349,186 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2019/02/02/Socket网络编程-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/02/02/Socket网络编程-2/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">Socket网络编程-2</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-02 11:29:31" itemprop="dateCreated datePublished" datetime="2019-02-02T11:29:31+08:00">2019-02-02</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-02-03 23:05:36" itemprop="dateModified" datetime="2019-02-03T23:05:36+08:00">2019-02-03</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/socket/" itemprop="url" rel="index"><span itemprop="name">socket</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="TCP初始化配置"><a href="#TCP初始化配置" class="headerlink" title="TCP初始化配置"></a>TCP初始化配置</h2><h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">private static Socket createSocket() throws IOException &#123;</div><div class="line">    //相当于无参构造函数</div><div class="line">    Socket socket = new Socket(Proxy.NO_PROXY);</div><div class="line"></div><div class="line">    //具有http代理的构造</div><div class="line">    Proxy proxy = new Proxy(Proxy.Type.HTTP,</div><div class="line">            new InetSocketAddress(InetAddress.getByName(&quot;www.baidu.com&quot;),8080));</div><div class="line">    socket = new Socket(proxy);</div><div class="line"></div><div class="line">    //直连模式</div><div class="line">    socket = new Socket(&quot;localhost&quot;,20000);</div><div class="line"></div><div class="line">    //指定本地端口 连接到20000端口的服务器,客户端使用20001端口</div><div class="line">    socket = new Socket(InetAddress.getLocalHost(),2000,InetAddress.getLocalHost(),</div><div class="line">            20001);</div><div class="line"></div><div class="line">    //作用同上</div><div class="line">    socket = new Socket();</div><div class="line">    socket.bind(new InetSocketAddress(InetAddress.getLocalHost(),20001));</div><div class="line">    socket.connect(new InetSocketAddress(InetAddress.getLocalHost(),20000));</div></pre></td></tr></table></figure>
+<p>Socket有如上几种常见的初始化方式,推荐的做法是使用无参的构造函数,因为有参数的构造函数会在初始化之后就进入连接状态,在连接之后如果想进行一定的参数配置,那么这是无效的。</p>
+<p>下面给出一些常见的socket配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">private static void initSocket(Socket socket) throws SocketException &#123;</div><div class="line">    // 设置读取超时时间为2s</div><div class="line">    socket.setSoTimeout(2000);</div><div class="line">    //是否复用未完全关闭的socket地址</div><div class="line">    socket.setReuseAddress(true);</div><div class="line">    //是否开启nagle算法,默认开启. 关闭后可以理解为允许批量ack,而不是对于每个数据包都需要ack</div><div class="line">    socket.setTcpNoDelay(false);</div><div class="line">    //长时间无响应时发送确认数据,默认2h</div><div class="line">    socket.setKeepAlive(true);</div><div class="line"></div><div class="line">    //表示对于close操作如何处理</div><div class="line">    //1. false,0 默认情况,关闭时立即返回,底层接管缓冲区,如果没有发送完,则继续</div><div class="line">    //2. true,0 关闭时立即返回,缓冲区数据抛弃,发送RST到对方,无需等待2MSL</div><div class="line">    //3.  true,xx 最长阻塞200ms,然后按照2处理</div><div class="line">    socket.setSoLinger(true,200);</div><div class="line"></div><div class="line">    //是否让业务层接收到紧急数据,默认关闭,建议关闭 可以调用socket.sendUrgentData(1)发送参数的后八位</div><div class="line">    socket.setOOBInline(false);</div><div class="line"></div><div class="line">    //设置缓冲区大小</div><div class="line">    socket.setReceiveBufferSize(64*1024*1024);</div><div class="line">    socket.setSendBufferSize(64*1024*1024);</div><div class="line"></div><div class="line">    //设置连接时间,延迟,带宽对于socket性能评估的权重,如更关心延迟,则可以调高第二个参数</div><div class="line">    socket.setPerformancePreferences(1,1,1);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在经过自定义的配置之后,再进行socket的bind和connect操作比较合理。</p>
+<h3 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">private static ServerSocket createSocket() throws IOException &#123;</div><div class="line">        ServerSocket ss = new ServerSocket();</div><div class="line">        //等待连接的队列容量为50</div><div class="line">        ss.bind(new InetSocketAddress(InetAddress.getLocalHost(),20001),50);</div><div class="line"></div><div class="line">        ss = new ServerSocket(20001,50);</div><div class="line"></div><div class="line">        return ss;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>服务端的socket初始化比较简单,同样推荐使用空的构造函数,以便进行后续配置。服务端socket提供了一个backlog参数,用来表示有多少连接可以加入等待队列,当有空闲时就会从队列中取出连接。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">private static void initServerSocket(ServerSocket ss) throws SocketException &#123;</div><div class="line">        ss.setReuseAddress(true);</div><div class="line">        ss.setReceiveBufferSize(64*1024*1024);</div><div class="line">        ss.setSoTimeout(2000);</div><div class="line">        ss.setPerformancePreferences(1,1,1);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>配置参数也比较简单,要注意的是,这里的bufferSize并不是serverSocket的bufferSize,而是accept的client的bufferSize。</p>
+<h2 id="数据传输"><a href="#数据传输" class="headerlink" title="数据传输"></a>数据传输</h2>
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -2192,212 +2372,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/06/jms-消息结构/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/12/06/jms-消息结构/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/3/index.html">JMS(1)-消息基础</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-12-06 14:12:58" itemprop="dateCreated datePublished" datetime="2018-12-06T14:12:58+08:00">2018-12-06</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-26 09:46:25" itemprop="dateModified" datetime="2018-12-26T09:46:25+08:00">2018-12-26</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="JMS"><a href="#JMS" class="headerlink" title="JMS"></a>JMS</h2><p>JMS即java message service,是一个java面向消息中间件提出的标准化接口。类似于jdbc于mysql-connector的关系。ActiveMQ是apache出的一个消息中间件,实现了JMS协议。目前AMQ的版本为5.x,社区不太活跃,因为AMQ目前的主要精力投入在下一代MQ的开发-appllo上。</p>
-<p>常见MQ的选型,供参考:</p>
-<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fxz85ye41hj30py0nqq66.jpg" alt=""></p>
-<h2 id="JMS消息结构"><a href="#JMS消息结构" class="headerlink" title="JMS消息结构"></a>JMS消息结构</h2><p>JMS消息由以下部分组成: 消息头 消息体 属性</p>
-<p>消息头包含识别信息和路由信息:</p>
-<ol>
-<li>JMSDestatination: 路由地址,由sender设置</li>
-<li>JMSDeliveryMode: 传送模式。两种: 持久模式和非持久化模式,持久模式消息会被传送”仅仅一次”。也就是说当broker宕机,消息不会丢失,当broker恢复后会再次发送消息。非持久消息保证传输最多一次,当机器宕机,数据将永远消失。</li>
-<li>JMSExpiration: 消息过期时间,消息在过期时间内没有被消费,则会删除。</li>
-<li>JMSPriority: 消息优先级,从0-9,0-4是普通消息,5-9是加急消息。JMS提供的保障的是加急消息先于普通消息送达,其他尽量保证,默认为4</li>
-<li>JMSMessageID: 每个消息的唯一识别,可以手动设置为业务id,否则会自动生成。</li>
-<li>JMSCorrelationID: 用来连接到另外一个消息,典型的应用是将回复消息链接到原消息,也就是有应答的场景。</li>
-<li>JMSReplyTo: 提供本消息回复消息的目的地址</li>
-<li>JMSType: 消息类型识别符</li>
-<li>JMSRedelivered: 如果客户端收到一个设置了JMSRedelivered属性的消息,表示客户端之前接受过这个消息,但是没有ack。如果触发了消息重新发送,JMSRedelivered=true,否则false。</li>
-</ol>
-<p>JMS消息体提供了5种消息体:</p>
-<ul>
-<li>TextMessage</li>
-<li>MapMessage</li>
-<li>BytesMessage</li>
-<li>StreamMessage</li>
-<li>ObjectMessage</li>
-</ul>
-<p>JMS提供三种消息属性:</p>
-<ol>
-<li>应用程序添加的属性: Message.setStringProperty(k,v)</li>
-<li>JMS定义的属性: connection.getMetaData().getJMSXPropertyNames() 获取jms定义的属性</li>
-<li>三方插件提供的特殊属性</li>
-</ol>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2444,7 +2423,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">100</span>
+                    <span class="site-state-item-count">101</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
