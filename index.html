@@ -256,7 +256,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">26</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">27</span></a>
 
   </li>
         
@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">102</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">103</span></a>
 
   </li>
         
@@ -349,6 +349,187 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2022/02/05/为什么这么设计-网络篇总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2022/02/05/为什么这么设计-网络篇总结/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">为什么这么设计-网络篇总结</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2022-02-05 13:26:26 / 修改时间：16:04:04" itemprop="dateCreated datePublished" datetime="2022-02-05T13:26:26+08:00">2022-02-05</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/系统设计/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-为什么-TCP-建立连接需要三次握手"><a href="#1-为什么-TCP-建立连接需要三次握手" class="headerlink" title="1.为什么 TCP 建立连接需要三次握手"></a>1.为什么 TCP 建立连接需要三次握手</h3><p>TCP 建立连接时通过三次握手可以有效地避免历史错误连接的建立，减少通信双方不必要的资源消耗。</p>
+<p>三次握手能够帮助通信双方获取初始化序列号，它们能够保证数据包传输的不重不丢，还能保证它们的传输顺序，不会因为网络传输的问题发生混乱</p>
+<h3 id="为什么-DNS-使用-UDP-协议"><a href="#为什么-DNS-使用-UDP-协议" class="headerlink" title="为什么 DNS 使用 UDP 协议"></a>为什么 DNS 使用 UDP 协议</h3><p>这个说法是错误的,dns使用udp和tcp协议进行通信。在数据包很小的时候UDP完全可以满足需求,但随着ipv6逐渐普及或者包大小很大的时候或者某些特殊场景,UDP协议包超过512字节可能会被截断,这时候就需要使用tcp协议进行重试。</p>
+<h3 id="TCP协议为什么在弱网环境下有严重的性能问题"><a href="#TCP协议为什么在弱网环境下有严重的性能问题" class="headerlink" title="TCP协议为什么在弱网环境下有严重的性能问题"></a>TCP协议为什么在弱网环境下有严重的性能问题</h3><p>底层的数据传输协议在设计时必须要对带宽的利用率和通信延迟进行权衡和取舍，所以想要解决实际生产中的全部问题是不可能的，TCP 选择了充分利用带宽，为流量而设计，期望在尽可能短的时间内传输更多的数据</p>
+<p>弱网环境下（丢包率高）影响 TCP 性能的三个原因：</p>
+<p>1)TCP 的拥塞控制算法会在丢包时减少发送窗口大小,减少了数据的发送量,但是丢包不一定意味着网络拥塞,有可能是网络状况比较差。<br>2)TCP 的三次握手增加了数据传输的延迟和额外开销,增加了首次传输的网络延迟<br>3)TCP 的累计应答机制导致了数据段的传输,可能会重新发送已经接收到的数据包,导致带宽浪费</p>
+<h3 id="为什么-TCP-IP-协议会拆分数据"><a href="#为什么-TCP-IP-协议会拆分数据" class="headerlink" title="为什么 TCP/IP 协议会拆分数据"></a>为什么 TCP/IP 协议会拆分数据</h3><p>数据拆分的根本原因说到底还是物理设备的限制</p>
+<ul>
+<li><p>IP协议拆分数据是因为物理设备限制,一次能够传输的数据由链路上的MTU决定。超过MTU的大小就需要分片</p>
+</li>
+<li><p>TCP协议拆分数据是因为需要保证可靠传输以及顺序。需要为每个MTU添加协议头和序列号,如果数据段大小超过了MTU的限制,又需要继续分片,带来额外的重传和重组开销</p>
+</li>
+</ul>
+<h3 id="为什么-TCP-协议有-TIME-WAIT-状态"><a href="#为什么-TCP-协议有-TIME-WAIT-状态" class="headerlink" title="为什么 TCP 协议有 TIME_WAIT 状态"></a>为什么 TCP 协议有 TIME_WAIT 状态</h3><p>在默认情况下，如果客户端等待足够长的时间就会遇到以下两种情况：</p>
+<p>1) 收到ACK,正常关闭连接<br>2) 没有收到ACK,重新发送FIN并等待ACK</p>
+<p>只要客户端等待2MSL的时间,服务端和客户端连接就可以正常关闭,新创建TCP受到影响的概率也微乎其微,保证了数据的可靠性。</p>
+<blockquote>
+<p>目前linux的默认MSL为30s,在高并发的压力测试中可能会出现大量处于TIME_WAIT状态的连接 netstat -tan。但是尽量不要去调节linux相关的参数,除非你非常了解后果。不然能加机器就尽量加机器解决。</p>
+</blockquote>
+<h3 id="为什么-IPv6-难以取代-IPv4"><a href="#为什么-IPv6-难以取代-IPv4" class="headerlink" title="为什么 IPv6 难以取代 IPv4"></a>为什么 IPv6 难以取代 IPv4</h3><p>1)NAT技术极大程度缓解了IPV4短缺的问题</p>
+<p>2)IPV6不兼容IPV4,需要隧道技术或者双栈协议支持</p>
+<p>3)目前可以细粒度的管控 IPv4 地址并回收闲置的资源</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -1827,174 +2008,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2019/08/04/String-intern/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/08/04/String-intern/" class="post-title-link" itemprop="http://www.shuchang.sc.com/index.html">String.intern</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-08-04 17:07:46 / 修改时间：17:08:20" itemprop="dateCreated datePublished" datetime="2019-08-04T17:07:46+08:00">2019-08-04</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p><a href="https://tech.meituan.com/2014/03/06/in-depth-understanding-string-intern.html" target="_blank" rel="external">https://tech.meituan.com/2014/03/06/in-depth-understanding-string-intern.html</a></p>
-</blockquote>
-<p>在美团技术博客上看到了这篇文章,涨了见识,简单总结一下。</p>
-<ul>
-<li>如果是用双引号初始化的字符串会直接放在常量池中</li>
-<li>其他初始化字符串的方式可以通过调用inern方法放入常量池</li>
-</ul>
-<p>常量池的大小是有限的,结果类似于hashmap,一旦产生hash冲突就会使用链地址法,所以当数据量非常大并且会发生改变的时候,频繁调用intern会导致链表过长,性能降低。jdk6默认大小是1066,可以通过jvm参数调整这个hashmap的大小。</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2046,7 +2059,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">102</span>
+                    <span class="site-state-item-count">103</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2164,7 +2177,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">26</span>
+                      
+                    
+                    <span class="site-state-item-count">27</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
