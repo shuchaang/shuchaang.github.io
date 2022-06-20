@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">104</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">95</span></a>
 
   </li>
         
@@ -349,1693 +349,6 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/12/k8s学习总结3-存储/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/11/12/k8s学习总结3-存储/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">k8s学习总结3-存储</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-11-12 10:27:05 / 修改时间：10:27:24" itemprop="dateCreated datePublished" datetime="2018-11-12T10:27:05+08:00">2018-11-12</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="PV-PVC-StorageClass"><a href="#PV-PVC-StorageClass" class="headerlink" title="PV PVC StorageClass"></a>PV PVC StorageClass</h2><p>容器化一个应用最麻烦的地方,莫过于对其状态的管理,而最常见的状态就是存储状态。K8s提出了PV和PVC这样的概念,来方便开发人员对存储状态进行管理</p>
-<h3 id="PV"><a href="#PV" class="headerlink" title="PV"></a>PV</h3><p>PV文件描述的是一个持久化存储卷,例如一个Ceph文件系统,一个云盘等等,主要信息就是声明了访问方式以及存储容量的大小,主要由运维人员来维护,开发人员无需关心存储的具体细节。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: PersistentVolume</div><div class="line">metadata:</div><div class="line">  name: nfs</div><div class="line">spec:</div><div class="line">  storageClassName: manual</div><div class="line">  capacity:</div><div class="line">    storage: 1Gi</div><div class="line">  accessModes:</div><div class="line">    - ReadWriteMany</div><div class="line">  nfs:</div><div class="line">    server: 10.244.1.4</div><div class="line">    path: &quot;/&quot;</div></pre></td></tr></table></figure>
-<h3 id="PVC"><a href="#PVC" class="headerlink" title="PVC"></a>PVC</h3><p>PVC描述的是Pod所希望持久化存储的属性,例如所需磁盘的大小,可读写的权限等</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: PersistentVolumeClaim</div><div class="line">metadata:</div><div class="line">  name: nfs</div><div class="line">spec:</div><div class="line">  accessModes:</div><div class="line">    - ReadWriteMany</div><div class="line">  storageClassName: manual</div><div class="line">  resources:</div><div class="line">    requests:</div><div class="line">      storage: 1Gi</div></pre></td></tr></table></figure>
-<p>这里PVC真正能够使用起来,必须要同一个PV进行绑定,这里包括两部分检查:</p>
-<ol>
-<li>PV的存储空间大于等于PVC所声明的</li>
-<li>PV与PVC的storageClassName必须相同</li>
-</ol>
-<p>当PV与PVC进行绑定之后,我们就可以在yaml里使用这个存储了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: Pod</div><div class="line">metadata:</div><div class="line">  labels:</div><div class="line">    role: web-frontend</div><div class="line">spec:</div><div class="line">  containers:</div><div class="line">  - name: web</div><div class="line">    image: nginx</div><div class="line">    ports:</div><div class="line">      - name: web</div><div class="line">        containerPort: 80</div><div class="line">    volumeMounts:</div><div class="line">        - name: nfs</div><div class="line">          mountPath: &quot;/usr/share/nginx/html&quot;</div><div class="line">  volumes:</div><div class="line">  - name: nfs</div><div class="line">    persistentVolumeClaim:</div><div class="line">      claimName: nfs</div></pre></td></tr></table></figure>
-<h3 id="PV与PVC"><a href="#PV与PVC" class="headerlink" title="PV与PVC"></a>PV与PVC</h3><p>PV与PVC是如何做到持久化呢?我们知道Docker的volume机制就是将宿主机上的一个目录与容器里的目录绑定挂在到一起。而对于K8s这种分布式的系统来说,数据的持久化一定不能落在本地盘上,因为这样不具备分布式的特性,会引起单点的故障,所以hostPath和enptyDir是不行的。所以大多数情况下,持久化volume的实现依赖于一个远程存储服务，如NFS。</p>
-<p>K8S所需要做的就是将这个远程存储服务与容器的本地目录进行绑定,这个过程分为两步:</p>
-<ol>
-<li>Attach:连接到远程的存储服务</li>
-<li>Mount: 将磁盘设备格式化并挂载到宿主机目录</li>
-</ol>
-<p>经过这两个阶段的处理,我们就得到了一个持久化的volume宿主机目录,然后通过-v 就可以为Pod里的容器挂在这个持久化volume了,这就是K8s处理PV的过程。</p>
-<p>可以看到PV与PVC的关系就像JAVA中的接口与实现类,这样做的好出就是实现了解耦，与面向对象的思想一致。但是这样的方式也引入了一些困难:因为PV一般都是运维人员进行编写的,如果开发声明了一个PVC但是无法绑定PV,那么Pod就会创建失败,当K8s集群大到一定规模时,这种方式一定会成为一种灾难。</p>
-<h2 id="StorageClass"><a href="#StorageClass" class="headerlink" title="StorageClass"></a>StorageClass</h2><p>由于PV与PVC带来的这种问题,我们很自然的就希望能够提供一个自动创建PV的机制,这就是dynamic provisioning,相比于人工管理PV的方式就叫做static provisioning。</p>
-<p>dynamic provisioning机制的核心就是StorageClass对象,即创建一个PV的模板。一般来说一个StorageClass会定义两部分内容:</p>
-<ol>
-<li>PV的属性,如存储类型,大小</li>
-<li>创建这种PV所需要的插件,如ceph,nfs</li>
-</ol>
-<p>有了这个模板,K8S就能根据用户提交的PVC,找到一个对应的storageClass,然后调用storageClass所声明的插件,创建出PV。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">apiVersion: storage.k8s.io/v1</div><div class="line">kind: StorageClass</div><div class="line">metadata:</div><div class="line">  name: block-service</div><div class="line">provisioner: kubernetes.io/gce-pd</div><div class="line">parameters:</div><div class="line">  type: pd-ssd</div></pre></td></tr></table></figure>
-<p>而作为开发者,我们就只需要在yaml中指定需要使用的storageClass就可以了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: PersistentVolumeClaim</div><div class="line">metadata:</div><div class="line">  name: claim1</div><div class="line">spec:</div><div class="line">  accessModes:</div><div class="line">    - ReadWriteOnce</div><div class="line">  storageClassName: block-service</div><div class="line">  resources:</div><div class="line">    requests:</div><div class="line">      storage: 30Gi</div></pre></td></tr></table></figure>
-<h2 id="本地持久化"><a href="#本地持久化" class="headerlink" title="本地持久化"></a>本地持久化</h2><p>虽然K8S内置了20中持久化实现方式,但是并没有提供本地的持久化存储方式。但是依然有很多用户希望能够直接使用宿主机上的本地磁盘目录,而不依赖远程的存储服务。这样做好出也很明显,Volume直接使用本地磁盘,IO性能会好很多。所以在1.10版本之后,K8S依靠PV/PVC实现了这个特性,即Local Persistent Volume。</p>
-<p>首先本地持久卷并不适用于所有应用,并且相对于其他PV,一旦这些节点宕机,那么数据就会丢失,这就要求使用Local Persistent Volume的节点必须具有备份和回复能力。</p>
-<h3 id="难点1"><a href="#难点1" class="headerlink" title="难点1"></a>难点1</h3><p>Local Persistent Volume并不等于hostPath+nodeAffinity。实际上并不应该把宿主机上的一个目录当做PV来使用,因为本地目录的存储完全不可控,随时都有可能被写满,其次缺少最基础IO隔离机制。所以一个Local Persistent Volume应该等于一块额外挂载到宿主机的磁盘,也就是一个PV一块盘。</p>
-<h3 id="难点2"><a href="#难点2" class="headerlink" title="难点2"></a>难点2</h3><p>调度器如何保证Pod始终能被正确的调度到他所请求的Local Persistent Volume所在的节点。对于local PV来说,每个节点挂载情况可能完全不同,有的节点甚至没有挂载,那么K8s就需要维护这种关系,才能调度Pod,也就是在调度的时候考虑volume分布。</p>
-<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>首先需要手动在node上挂载磁盘,例如/mnt/disks</p>
-<p>接着定义PV</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: PersistentVolume</div><div class="line">metadata:</div><div class="line">  name: example-pv</div><div class="line">spec:</div><div class="line">  capacity:</div><div class="line">    storage: 5Gi</div><div class="line">  volumeMode: Filesystem</div><div class="line">  accessModes:</div><div class="line">  - ReadWriteOnce</div><div class="line">  persistentVolumeReclaimPolicy: Delete</div><div class="line">  storageClassName: local-storage</div><div class="line">  local:</div><div class="line">    path: /mnt/disks/vol1</div><div class="line">  nodeAffinity:</div><div class="line">    required:</div><div class="line">      nodeSelectorTerms:</div><div class="line">      - matchExpressions:</div><div class="line">        - key: kubernetes.io/hostname</div><div class="line">          operator: In</div><div class="line">          values:</div><div class="line">          - node-1</div></pre></td></tr></table></figure>
-<p>可以看到这个PV定义了lcoal字段并且指定了路径.如果Pod要使用这个PV<br>那么就必须运行在这个node-1节点上,所以指定了nodeAffinity。</p>
-<p>接着定义一个StorageClass</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">kind: StorageClass</div><div class="line">apiVersion: storage.k8s.io/v1</div><div class="line">metadata:</div><div class="line">  name: local-storage</div><div class="line">provisioner: kubernetes.io/no-provisioner</div><div class="line">volumeBindingMode: WaitForFirstConsumer</div></pre></td></tr></table></figure>
-<p>这里需要注意local pv目前不支持动态创建,所以需要指定为no-provisioner。所以创建PV的过程是不可以省略的。</p>
-<p>volumeBindingMode=WaitForFirstConsumer属性也非常重要,这是一种延迟绑定的机制,这种绑定会在调度的时候才去绑定,否则就会引起Pod调度的失败。</p>
-<p>接着我们就可以编写一个普通的PVC来使用这个local pv了,这就类似于面向对象的设计,我们只需要修改接口的实现类,就可以动态修改类的表现。</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/10/k8s学习总结2-Pod/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/11/10/k8s学习总结2-Pod/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">k8s学习总结-2</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-11-10 17:02:51" itemprop="dateCreated datePublished" datetime="2018-11-10T17:02:51+08:00">2018-11-10</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-11-12 11:09:03" itemprop="dateModified" datetime="2018-11-12T11:09:03+08:00">2018-11-12</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="为什么我们需要Pod"><a href="#为什么我们需要Pod" class="headerlink" title="为什么我们需要Pod"></a>为什么我们需要Pod</h2><p>关于docker容器,我们都知道它的技术原理就是Namespace做隔离,cgroups做限制,rootfs做文件系统,那么k8s为什么又提出了Pod这个概念呢。</p>
-<p>我们可以这样理解,容器就是一个特殊的进程,而k8s就类似于操作系统,去调度管理这些特殊的进程,那么k8s就可以比做操作系统。我们知道,在真正的操作系统中,进程并不是孤单的运行,它存在于一个进程组之中,被操作系统有规则的组织在一起。</p>
-<p>那么我们可以理解Pod其实就是将操作系统中进程组的概念抽象到了K8s中,因为k8s的设计脱身于borg系统,谷歌的开发者们发现,他们部署的应用,往往都存在进程与进程组的关系,这些应用密切协作,必须部署在一台机器上。而如果没有组这个概念,这种组织关系就难以维护,而Pod就是将操作系统中的进程组的概念映射到了容器中。</p>
-<p>关于Pod的一个事实是,Pod只是一个逻辑概念,Pod里的容器共享网络栈并且可以声明共享同一个Volume。</p>
-<p>Pod的设计降低了调度的复杂度,考虑这样一种场景:A/B/C三个容器必须要部署在一起,各需要1G内存。现在node1有3G内存,node2有2.5G内存。若A首先初始化,部署到了node2上,那么轮到C就不满足硬件条件而部署失败。那么就必须要将AB两个容器回滚,重新部署到node1上。</p>
-<p>这就是一个典型的成组调度没有被妥善处理的例子,虽然有很多可供选择的方案,但谈不上完美,要么造成资源的严重浪费,要么技术难度不是常规团队可以驾驭。而加入了Pod这种概念,Pod是K8s调度的原子单位,调度器是按照Pod的需求而不是容器的需求来进行计算的。根据这种调度方式,上述的例子就会选择node1而不会选择node2进行调度。</p>
-<p>Pod除了简化调度模型,还有个更重要的意义就是容器设计模式。</p>
-<p>首先要弄清楚Pod的实现原理,Pod的实现需要一个中间容器,叫做infra容器(k8s.gcr.io/pause)。在Pod中,infra会首先被创建,其他容器都是通过join network namespace的方式与infra容器关联在一起。因此对于一个pod中的A B两个容器来说:</p>
-<ul>
-<li>可以使用localhost进行通信</li>
-<li>Pod的生命周期与infra容器一致,与A B无关</li>
-</ul>
-<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fx530pb14ij30dh0d474j.jpg" alt=""></p>
-<p>而对于volume的共享,K8s只需要将所有volume的定义都设计在Pod层就好</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: Pod</div><div class="line">metadata:</div><div class="line">  name: two-containers</div><div class="line">spec:</div><div class="line">  restartPolicy: Never</div><div class="line">  volumes:</div><div class="line">  - name: shared-data</div><div class="line">    hostPath:      </div><div class="line">      path: /data</div><div class="line">  containers:</div><div class="line">  - name: nginx-container</div><div class="line">    image: nginx</div><div class="line">    volumeMounts:</div><div class="line">    - name: shared-data</div><div class="line">      mountPath: /usr/share/nginx/html</div><div class="line">  - name: debian-container</div><div class="line">    image: debian</div><div class="line">    volumeMounts:</div><div class="line">    - name: shared-data</div><div class="line">      mountPath: /pod-data</div><div class="line">    command: [&quot;/bin/sh&quot;]</div><div class="line">    args: [&quot;-c&quot;, &quot;echo Hello from the debian container &gt; /pod-data/index.html&quot;]</div></pre></td></tr></table></figure>
-<p>所以Pod这种”超亲密关系”容器的设计思想,实际上就是希望当用户想在容器里完成多个应用的时候,应该考虑是不是可以描述为一个pod里的多个容器。</p>
-<p>例如应用war包和tomcat容器,可以描述为一个Pod内的多个容器,以组合的方式解决war和tomcat的耦合关系。但是应用与mysql等数据库的关系,不应该描述为一个Pod,我们不能因为应用宕机而造成数据库无法使用,所以应用与数据库要分为两个Pod来部署。</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/10/k8s学习总结1-容器/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/11/10/k8s学习总结1-容器/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">k8s学习总结-1</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-11-10 16:01:35" itemprop="dateCreated datePublished" datetime="2018-11-10T16:01:35+08:00">2018-11-10</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-11-12 10:26:08" itemprop="dateModified" datetime="2018-11-12T10:26:08+08:00">2018-11-12</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="什么是容器"><a href="#什么是容器" class="headerlink" title="什么是容器"></a>什么是容器</h2><p>容器其实是一种沙盒技术,能够像集装箱一样,把你的应用装起来。应用与应用之间因为有了边界而不至于互相干扰,被装进集装箱的应用,也可以被方便的搬来搬去,这就是paas最理想的状态。</p>
-<h2 id="docker是如何修改应用的边界"><a href="#docker是如何修改应用的边界" class="headerlink" title="docker是如何修改应用的边界"></a>docker是如何修改应用的边界</h2><p>容器的核心技术,就是通过约束和修改进程的动态表现,从而创造出一种边界。对于Docker等大多数容器来说,Cgroups技术是用来制造约束的主要手段,Namespace技术则是用来修改进程视图的主要方式。</p>
-<p>Namespace可以视为一个障眼法,一个namespace里的应用都只能看到当前namespace下被cgroups等技术所限制的资源,文件,设备,而对于宿主机或其他不相关的应用,就完全看不到。这就是linux容器最基本的实现原理。所以容器技术其实就是一个特殊即进程而已。</p>
-<h2 id="容器与文件系统"><a href="#容器与文件系统" class="headerlink" title="容器与文件系统"></a>容器与文件系统</h2><p>容器里的应用进程,理应看到一份完全独立的文件系统,这样,他就可以在自己的容器目录下完成操作,完全不受宿主机和其他容器的影响。Docker在处理这个问题的时候使用了mount namespace技术,改变了容器文件系统的挂载点,简单来说可以理解为执行一下操作:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cd /var/lib/docker/</div><div class="line">以容器ID为名称创建一个文件夹,如123</div><div class="line">cd 123</div><div class="line">创建一系列文件夹如:etc var lib等待以及所需要的文件内容</div><div class="line">mount(&quot;/&quot;,&quot;var/lib/docker/123&quot;)即修改文件系统挂载点</div></pre></td></tr></table></figure>
-<p>这个挂载到容器根目录上,用来为容器进程提供隔离后执行环境的文件系统,就是所谓的容器镜像。他还有个更专业的名字,rootfs(根文件系统)</p>
-<p>一个常见的rootfs,通常会包含一些文件目录,如/bin /etc /proc等。rootfs只是一个操作系统所包含的文件、配置、目录,并不包含操作系统内核,所以容器镜像要比一个虚拟机iso小的多,因为虚拟机iso文件包含了操作系统的内核。</p>
-<p>除此之外,docker公司做出了一个巨大的创新,就是引入了layer概念,用户每修改一次镜像,都会增量追加一个rootfs,这种做法利用了Union File System技术,即将不同的目录联合挂载到一个目录下,最后我们所看到的文件系统实际上是由多个layer视图叠加显示出来的,一个容器的rootfs实际由三部分组成:</p>
-<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fx3124ugtzj30jf0eiaao.jpg" alt=""></p>
-<p>用户所进行的一切操作都是在最上部的rw层进行的,init层是用来存放/etc/hosts、/etc/resolv.conf等信息。因为这些信息属于底层文件系统的一部分,有些场景需要修改这些文件,但是我们对镜像进行提交时又不希望将这些信息一起提交,所以设计了init层。下面的就全部都是只读的镜像层。</p>
-<p>当我们创建一个文件时,我们实际上只是在最上层的镜像添加了一个文件,当我们删除一个文件时,实际上创建了一个.wh.foo的文件,这样这个文件就被遮罩了起来。当修改一个文件时,首先会从上到下查找有没有这个文件，找到，就复制到容器层中修改，修改的结果就会作用到下层的文件，这种方式也被称为copy-on-write。</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/27/Rabbitmq常用模式/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/09/27/Rabbitmq常用模式/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">Rabbitmq常用模式</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-09-27 09:40:15" itemprop="dateCreated datePublished" datetime="2018-09-27T09:40:15+08:00">2018-09-27</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-26 09:46:00" itemprop="dateModified" datetime="2018-12-26T09:46:00+08:00">2018-12-26</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="RabbitMQ常用模式"><a href="#RabbitMQ常用模式" class="headerlink" title="RabbitMQ常用模式"></a>RabbitMQ常用模式</h2><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fvnbel6rimj30uy0gaqeu.jpg" alt=""></p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/09/27/Rabbitmq常用模式/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/22/Rabbitmq与Springboot/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/09/22/Rabbitmq与Springboot/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">Rabbitmq与Springboot</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-09-22 18:20:01" itemprop="dateCreated datePublished" datetime="2018-09-22T18:20:01+08:00">2018-09-22</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-26 09:45:44" itemprop="dateModified" datetime="2018-12-26T09:45:44+08:00">2018-12-26</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvihp66f5rj308v04eq2s.jpg" alt=""></p>
-<h2 id="SimpleMessageListenerContainer"><a href="#SimpleMessageListenerContainer" class="headerlink" title="SimpleMessageListenerContainer"></a>SimpleMessageListenerContainer</h2><p>SimpleMessageListenerContainer是一个简单消息监听容器,提供了事务特性的设置,包括事务并发量,回滚以及消息确认,重回队列等绝大部分消费者的设置。</p>
-<p>SimpleMessageListenerContainer支持动态修改消费者的配置,可以根据这一特性去自定义rabbitmq管控台。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/09/22/Rabbitmq与Springboot/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/18/redis底层数据结构/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/09/18/redis底层数据结构/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">redis底层数据结构</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-09-18 16:24:43 / 修改时间：18:24:31" itemprop="dateCreated datePublished" datetime="2018-09-18T16:24:43+08:00">2018-09-18</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>redis中常用的数据结构包括String,Hash,List,Set,Sorted Set,每种都有对应的底层C语言结构。如下图所示</p>
-<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvdtlczh7wj30ra088t90.jpg" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">String      : SDS</div><div class="line">Hash        : zipList/hashtable</div><div class="line">List        : quickList</div><div class="line">Set         : intSet/hashtable</div><div class="line">Sorted Set  : skipList</div></pre></td></tr></table></figure>
-<h2 id="SDS"><a href="#SDS" class="headerlink" title="SDS"></a>SDS</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">struct SDS&lt;T&gt; &#123;</div><div class="line">    T capacity; // 数组容量</div><div class="line">    T len; // 数组长度</div><div class="line">    byte flags; // 特殊标识位</div><div class="line">    byte[] content; // 数组内容</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>SDS全称为simple dynamic string,由于c语言中的字符串,每次进行len()操作的时候,都要进行遍历,复杂度为O(n),对于单线程的redis来说,O(n)复杂度都是不可接受的,所以在C语言的String基础上改造成了SDS类型。</p>
-<p>SDS内部会维护当前content的长度记为len,capacity为容量,&gt;=len。在字符串进行扩展是,redis会分配一部分额外的空间放置频繁的进行扩张</p>
-<h2 id="ZipList"><a href="#ZipList" class="headerlink" title="ZipList"></a>ZipList</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">struct ziplist&lt;T&gt; &#123;</div><div class="line">    int32 zlbytes; // 整个压缩列表占用字节数</div><div class="line">    int32 zltail_offset; // 最后一个元素距离压缩列表起始位置的偏移量，用于快速定位到最后一个节点</div><div class="line">    int16 zllength; // 元素个数</div><div class="line">    T[] entries; // 元素内容列表，挨个挨个紧凑存储</div><div class="line">    int8 zlend; // 标志压缩列表的结束，值恒为 0xFF</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>顾名思义,ZipList是一个紧凑的list,用于Hash结构元素较少的时候使用。压缩列表是一块连续的内存空间，元素之间紧挨着存储，没有任何冗余空隙。各个元素之间是双向的连接,配合zltail_offset可以实现从后向前遍历。</p>
-<p>但是ZipList也存在局限性,导致它并不适合在大量元素的情况下使用。</p>
-<p>由于ZipList是一块连续的内存区域,那么存在一种情况就是添加元素时已经没有地方realloc,那么这时候就需要重新找一块连续的内存进行分配,这时就需要将这块内存全部拷贝到新的地址空间上去。</p>
-<h2 id="QuickList"><a href="#QuickList" class="headerlink" title="QuickList"></a>QuickList</h2><p>List结构早期元素少时用 ziplist，元素多时用linkedlist。但是linkedlist会导致内存碎片化严重,并且linkedlist指针成本很高,所以在zipList和LinkedList的基础上改造成了QuickList。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">struct ziplist_compressed &#123;</div><div class="line">    int32 size;</div><div class="line">    byte[] compressed_data;</div><div class="line">&#125;</div><div class="line">struct quicklistNode &#123;</div><div class="line">    quicklistNode* prev;</div><div class="line">    quicklistNode* next;</div><div class="line">    ziplist* zl; // 指向压缩列表</div><div class="line">    int32 size; // ziplist 的字节总数</div><div class="line">    int16 count; // ziplist 中的元素数量</div><div class="line">    int2 encoding; // 存储形式 2bit，原生字节数组还是 LZF 压缩存储</div><div class="line"></div><div class="line">&#125;</div><div class="line">struct quicklist &#123;</div><div class="line">    quicklistNode* head;</div><div class="line">    quicklistNode* tail;</div><div class="line">    long count; // 元素总数</div><div class="line">    int nodes; // ziplist 节点的个数</div><div class="line">    int compressDepth; // LZF 算法压缩深度</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>可见QuickList中的每个节点都是一个ZipList,ZipList之间通过指针双向连接。同时QuickList可以进行数据压缩,默认为0即不压缩。为1则表示QuickList首尾不压缩,2则表示就表示 quicklist 的首尾第一个 ziplist 以及首尾第二个 ziplist 都不压缩。</p>
-<h2 id="DIC"><a href="#DIC" class="headerlink" title="DIC"></a>DIC</h2><p>Dic内部包含了两个hashtable,dict 结构内部包含两个 hashtable，通常情况下只有一个 hashtable 是有值的。但是在 dict 扩容缩容时，需要分配新的 hashtable，然后进行渐进式搬迁，这时候两个 hashtable 存储的分别是旧的 hashtable 和新的 hashtable。待搬迁结束后，旧的 hashtable 被删除，新的 hashtable 取而代之。</p>
-<p>数据量较大的hash以及存储了非整数的set内部都是用了DIC结构,Hashtable和java中的HashTable非常类似。</p>
-<h3 id="渐进式rehash"><a href="#渐进式rehash" class="headerlink" title="渐进式rehash"></a>渐进式rehash</h3><p>与java中的hashTable不同的是,redis中的hashtable使用的是渐进式的rehash,因为redis中的hashtable数据量可能非常大,redis单线程进行复制可能会造成阻塞。一般来说rehash操作会隐藏在一些指令之后,如果没有执行完成,redis会交给后台的定时任务去完成。</p>
-<h3 id="扩容-缩容"><a href="#扩容-缩容" class="headerlink" title="扩容/缩容"></a>扩容/缩容</h3><p>hashtable扩容后会变为原数组的两倍大小。如果Redis 正在做 bgsave，为了减少内存页的过多分离 (Copy On Write)，Redis 尽量不去扩容 (dict_can_resize)，但是如果 hash 表已经非常满了，元素的个数已经达到了第一维数组长度的 5 倍 (dict_force_resize_ratio)，说明 hash 表已经过于拥挤了，这个时候就会强制扩容。</p>
-<p>当元素的个数小于数组大小的10%,就会进行缩容,缩容不需要考虑bgsave。</p>
-<h2 id="SkipList"><a href="#SkipList" class="headerlink" title="SkipList"></a>SkipList</h2><p>redis的sorted list内部使用skipList(跳表)实现。skipList的结构与java中的skipList几乎一致。SkipList首先要求是一个有序的列表,redis 通过set 一个score来实现。拿到这样一个list之后,redis会从list中利用算法均匀的筛选一些元素组成上层list,如此循环,redis中的跳表共有64层。理想情况下,跳表最终会形成如下的形状,也就是一个正态分布图。利用这种结构,redis每次从上到下进行匹配,可已将查询的复杂度从O(n)降低到O(1)</p>
-<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvduzjv8nyj30eo0a2t8h.jpg" alt=""></p>
-<h2 id="intSet"><a href="#intSet" class="headerlink" title="intSet"></a>intSet</h2><p>inSet是一个整数类型的集合,包括16位整数,32位整数,64位整数类型。个人理解这个结构是某些场景下用来节省空间的。例如set中只有整数类型是,当元素大小可以用16位表示,则这个set的encoding就是int16,当出现有元素必须用32位表示时,那么所有的整数都升级为int32,int64以此类推。但是当你删除了int32的数据,intSet是不会降级为int16的。也就是说只能升级不能降级。当set中出现了非整数类型时,redis使用hashtable代替intSet。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>redis的底层数据结构,几乎都针对redis本身进行了优化。无论在提高性能还是节省空间上,作者都花了很多功夫。</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/18/rabbitmq高级特性/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/09/18/rabbitmq高级特性/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">rabbitmq高级特性</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-09-18 10:16:09" itemprop="dateCreated datePublished" datetime="2018-09-18T10:16:09+08:00">2018-09-18</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-26 09:46:02" itemprop="dateModified" datetime="2018-12-26T09:46:02+08:00">2018-12-26</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="消息可靠投递"><a href="#消息可靠投递" class="headerlink" title="消息可靠投递"></a>消息可靠投递</h2><blockquote>
-<p>什么是生产端的可靠性投递</p>
-</blockquote>
-<ul>
-<li>保证消息发出</li>
-<li>保证MQ接收到消息</li>
-<li>发送端收到MQ的应答</li>
-<li>消息补偿机制</li>
-</ul>
-<h3 id="方案一-消息落库并设置状态"><a href="#方案一-消息落库并设置状态" class="headerlink" title="方案一:消息落库并设置状态"></a>方案一:消息落库并设置状态</h3><p><img src="https://ws4.sinaimg.cn/large/006tNbRwgy1fvbrjpf4okj30tl0dgdir.jpg" alt=""></p>
-<p>通过上面的图示很容易理解这种方案的做法。首先要保证在第一步两个入库操作都要成功,这里必定涉及到事务,要做到同时成功,失败则要fail-fast。如果涉及到不同的库或者数据源还可能涉及分布式事务。所以这个设计最大的性能阻塞点就在这里,添加事务就无法应对高并发的场景。</p>
-<p>分布式定时任务用来做消息补偿,重跑一些异常状态的消息。这里有一个可能存在一个问题,当一个消息刚发送出去,定时任务就启动了,导致消息重复发送的情况。所以定时任务出了要判断消息状态,还应该对间隔时间做一个限制。例如查询状态=1并且距离更新时间大于一分钟的消息进行补偿重试。</p>
-<h3 id="方案二-消息延迟投递-做二次确认-回调检查"><a href="#方案二-消息延迟投递-做二次确认-回调检查" class="headerlink" title="方案二:消息延迟投递,做二次确认,回调检查"></a>方案二:消息延迟投递,做二次确认,回调检查</h3><p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fvbrk01lblj30ke09p75o.jpg" alt=""></p>
-<p>上面说了方案一并不适合在高并发的场景下使用,那么方案二就是应对高并发场景下的常用设计。</p>
-<ol>
-<li>首先上游业务模块将数据入库并发送到broker的业务队列,同时生成一条deley check消息发送到另一个队列,设置延迟发送时间几秒或几分钟之后</li>
-<li>下游业务收到消息并消费后发送confirm消息到broker的一个队列</li>
-<li>callback服务收到确认消息,做消息持久化。</li>
-<li>当延迟确认消息到来之后,如果数据库中有,则成功,否则要callback服务需要进行rpc调用上游服务再次发送一遍消息</li>
-</ol>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/09/18/rabbitmq高级特性/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/08/ElasticSearch分布式架构-5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/09/08/ElasticSearch分布式架构-5/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">系统学习ElasticSearch-分布式架构(5)</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-09-08 17:57:57" itemprop="dateCreated datePublished" datetime="2018-09-08T17:57:57+08:00">2018-09-08</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-09-18 18:03:04" itemprop="dateModified" datetime="2018-09-18T18:03:04+08:00">2018-09-18</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><img src="https://ws1.sinaimg.cn/large/0069RVTdgy1fv2aitojvfj30xk0e0aa6.jpg" alt=""></p>
-<p>ES是一套天生支持分布式的系统,分布式的目的是解决大数据量的问题。但是在我们使用的过程中,并没有对其分布式特性进行特殊配置。这时因为ES对用户隐藏了复杂的分布式机制,包括分片,集群发现,负载均衡,replica,路由,扩容以及reIndex。使得用户通过简单的配置就可以对ES实现开箱即用。但是对于开发人员,我们还是要理解ES隐藏的机制和架构,做到知其然也知其所以然。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/09/08/ElasticSearch分布式架构-5/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/08/Hbase数据存取过程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/09/08/Hbase数据存取过程/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">Hbase数据存取过程</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-09-08 13:20:57 / 修改时间：13:21:44" itemprop="dateCreated datePublished" datetime="2018-09-08T13:20:57+08:00">2018-09-08</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Hbase/" itemprop="url" rel="index"><span itemprop="name">Hbase</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="Hbase数据存储"><a href="#Hbase数据存储" class="headerlink" title="Hbase数据存储"></a>Hbase数据存储</h2><h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><p>在提交之前,Hbase client回去请求zk,从mate表中确定要存取regionServer的位置。根据rowKey找到对应的regionServer。拿到地址之后,默认情况下像put、delete这类操作是默认提交的,会直接提交到对应的regionServer上,也可以设置autoflush为false,当到达默认的2M的缓存阈值后才会异步批量提交到服务端。</p>
-<p><img src="https://ws3.sinaimg.cn/large/0069RVTdgy1fv21klmsihj30bv07dmxt.jpg" alt=""></p>
-<p>至此,客户端的操作就完成了</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/09/08/Hbase数据存取过程/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
     
       
 
@@ -2210,11 +523,1678 @@
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/22/Netty-10-Netty中的性能调优/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/07/22/Netty-10-Netty中的性能调优/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">Netty(10) Netty中的性能调优</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-22 15:37:44 / 修改时间：19:38:04" itemprop="dateCreated datePublished" datetime="2018-07-22T15:37:44+08:00">2018-07-22</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="单机百万调优"><a href="#单机百万调优" class="headerlink" title="单机百万调优"></a>单机百万调优</h2><ul>
+<li><p>如何模拟百万连接</p>
+</li>
+<li><p>如何突破局部文件句柄的限制</p>
+</li>
+<li><p>如何突破全局文件句柄的限制</p>
+</li>
+</ul>
+<p>首先第一个问题,当我们启动一个服务端,我们会绑定一个端口。当客户端去连接,默认连接数是有限制的,是65535,并且1024以下只能被root使用,所以单机只有6W左右的连接可以介入。所以可以采取的办法就是服务端开启8000-8100共100个端口,客户端使用1025~65535去连接服务端。100*6w大约600W连接。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/07/22/Netty-10-Netty中的性能调优/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/22/Netty-9-Netty中的设计模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/07/22/Netty-9-Netty中的设计模式/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">Netty(9) Netty中的设计模式</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-22 12:17:22 / 修改时间：15:37:28" itemprop="dateCreated datePublished" datetime="2018-07-22T12:17:22+08:00">2018-07-22</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="单例"><a href="#单例" class="headerlink" title="单例"></a>单例</h2><ul>
+<li><p>一个类全局只有一个对象</p>
+</li>
+<li><p>延迟加载</p>
+</li>
+<li><p>线程安全</p>
+</li>
+</ul>
+<blockquote>
+<p>ReadTimeOutException</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public final class ReadTimeoutException extends TimeoutException &#123;</div><div class="line"></div><div class="line">    private static final long serialVersionUID = 169287984113283421L;</div><div class="line"></div><div class="line">    public static final ReadTimeoutException INSTANCE = new ReadTimeoutException();</div><div class="line"></div><div class="line">    private ReadTimeoutException() &#123; &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里通过private修饰保证了全局只有一个实例</p>
+<p>当我们没有使用到这个类的时候,static变量保证了它是不会被初始化的,这样就保证了延迟加载</p>
+<p>最后我们注意到这个class 使用final修饰的,这样在初始化的时候jvm会默认加上一个同步代码块,保证线程安全</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/07/22/Netty-9-Netty中的设计模式/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/09/Netty-8-性能优化工具类/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/07/09/Netty-8-性能优化工具类/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">Netty(8) 性能优化工具类</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-09 18:37:46" itemprop="dateCreated datePublished" datetime="2018-07-09T18:37:46+08:00">2018-07-09</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-07-22 12:17:46" itemprop="dateModified" datetime="2018-07-22T12:17:46+08:00">2018-07-22</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>Netty中有两个比较常见的优化工具类</p>
+<ul>
+<li>FastThreadLocal</li>
+<li>Recycler对象池</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">public class FastThreadLocalTest &#123;</div><div class="line">    private static FastThreadLocal&lt;Object&gt; threadLocal = new FastThreadLocal&lt;Object&gt;()&#123;</div><div class="line">        @Override</div><div class="line">        protected Object initialValue() throws Exception &#123;</div><div class="line">            return new Object();</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        new Thread(()-&gt;&#123;</div><div class="line">            Object o = threadLocal.get();</div><div class="line">            System.out.println(o);</div><div class="line">        &#125;).start();</div><div class="line">        new Thread(()-&gt;&#123;</div><div class="line">            Object o = threadLocal.get();</div><div class="line">            System.out.println(o);</div><div class="line">        &#125;).start();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过这个简单的test,多次打印object的内存地址,就会发现一个object被多次复用。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/07/09/Netty-8-性能优化工具类/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/08/Netty-7-编码/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/07/08/Netty-7-编码/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">Netty(7) 编码</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-08 11:46:40 / 修改时间：22:49:43" itemprop="dateCreated datePublished" datetime="2018-07-08T11:46:40+08:00">2018-07-08</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <blockquote>
+<p>一个问题</p>
+</blockquote>
+<p>Netty如何将对象编码成字节流,写到socket底层</p>
+<p>这里我们在 服务端添加两个handler</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">new Encoder();</div><div class="line">new BizHandler();</div><div class="line"></div><div class="line"></div><div class="line">public class BizHandler extends ChannelInboundHandlerAdapter &#123;</div><div class="line">    @Override</div><div class="line">    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception &#123;</div><div class="line">        User u = new User(&quot;sc&quot;,12);</div><div class="line">        ctx.channel().writeAndFlush(u);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class Encoder extends MessageToByteEncoder&lt;User&gt; &#123;</div><div class="line">    @Override</div><div class="line">    protected void encode(ChannelHandlerContext ctx, User user, ByteBuf out) throws Exception &#123;</div><div class="line">        byte[] bytes = user.getName().getBytes();</div><div class="line">        out.writeInt(4+bytes.length);</div><div class="line">        out.writeInt(user.getAge());</div><div class="line">        out.writeBytes(bytes);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里的Encode方法使用了如下的编码方式:第一个字段为正整数长度,在java平台上统一为4字节,第二个Age正整数,为4个字节,Name是可变长度的string类型。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> *  -------------------------</div><div class="line"> * | Length |   Age |    Name|</div><div class="line"> * ---------------------------</div><div class="line"> * |    4   |   4   |    ??   |</div><div class="line"> * --------------------------</div><div class="line"> */</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/07/08/Netty-7-编码/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/07/Netty-6-解码/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/07/07/Netty-6-解码/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">Netty(6) 解码</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-07 20:32:32" itemprop="dateCreated datePublished" datetime="2018-07-07T20:32:32+08:00">2018-07-07</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-07-08 01:04:53" itemprop="dateModified" datetime="2018-07-08T01:04:53+08:00">2018-07-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>所谓解码,就是讲二进制数据流解析为指定协议的数据包,之后交给业务逻辑进行处理。</p>
+<blockquote>
+<p>两个问题</p>
+</blockquote>
+<p>解码器抽象的解码过程</p>
+<p>Netty有哪些开箱即用的解码器</p>
+<h2 id="基类ByteToMessageDecoder"><a href="#基类ByteToMessageDecoder" class="headerlink" title="基类ByteToMessageDecoder"></a>基类ByteToMessageDecoder</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">累加字节流</div><div class="line">调用子类的decode方法进行解析</div><div class="line">将解析的ByteBuf向下传播</div></pre></td></tr></table></figure>
+<p>进入channelRead方法,这里将传入的数据包装为bytebuf然后交给cumulator,将数据进行累加。然后调用callDecode方法,利用不同的子类实现进行解析,将解析后的结果放在List<object> out中</object></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cumulation = cumulator.cumulate(ctx.alloc(), cumulation, data);</div><div class="line"></div><div class="line">callDecode(ctx, cumulation, out);</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/07/07/Netty-6-解码/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/06/Netty-5-ByteBuf/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/07/06/Netty-5-ByteBuf/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">Netty(5) ByteBuf</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-06 08:56:35" itemprop="dateCreated datePublished" datetime="2018-07-06T08:56:35+08:00">2018-07-06</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-07-07 17:54:55" itemprop="dateModified" datetime="2018-07-07T17:54:55+08:00">2018-07-07</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <blockquote>
+<p>三个问题</p>
+</blockquote>
+<ol>
+<li>内存的类别有哪些</li>
+<li>如何减少多线程内存分配的竞争</li>
+<li>不同大小的内存是如何进行分配的</li>
+</ol>
+<h2 id="内存与内存管理器的抽象"><a href="#内存与内存管理器的抽象" class="headerlink" title="内存与内存管理器的抽象"></a>内存与内存管理器的抽象</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">* &lt;pre&gt;</div><div class="line">*      +-------------------+------------------+------------------+</div><div class="line">*      | discardable bytes |  readable bytes  |  writable bytes  |</div><div class="line">*      |                   |     (CONTENT)    |                  |</div><div class="line">*      +-------------------+------------------+------------------+</div><div class="line">*      |                   |                  |                  |</div><div class="line">*      0      &lt;=      readerIndex   &lt;=   writerIndex    &lt;=    capacity</div><div class="line">* &lt;/pre&gt;</div></pre></td></tr></table></figure>
+<p>byteBuf有三个非常重要的指针,readerIndex/writerIndex/capacity。0到readerIndex是已经读完,可以丢弃的数据,readerIndex和writerIndex之间是可读区域,writerIndex到capacity是可写区域。</p>
+<h2 id="不同大小和不同类型的内存分配策略"><a href="#不同大小和不同类型的内存分配策略" class="headerlink" title="不同大小和不同类型的内存分配策略"></a>不同大小和不同类型的内存分配策略</h2><p>Netty中对ByteBuf进行分配的基类是ByteBufAllocator,提供了一些内存分配的抽象方法。在注释中可以看到关于直接内存和堆内存的不同分配。</p>
+<p><img src="http://p1vpfd8u5.bkt.clouddn.com/20180706153084075739585.png" alt="20180706153084075739585.png"></p>
+<p>可以看到ByteBufAllocator是一个最顶层的抽象,AbstractByteBufAllocator实现了接口的大部分功能,然后最终暴露出两个方法(new DirectByteBuf和new HeapByteBuf)。这两个方法就交给子类pool和unpool,创建堆内和堆外内存的实现。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/07/06/Netty-5-ByteBuf/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/04/Netty-4-Pipeline/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/07/04/Netty-4-Pipeline/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">Netty(4) Pipeline</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-04 18:50:43" itemprop="dateCreated datePublished" datetime="2018-07-04T18:50:43+08:00">2018-07-04</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-07-07 20:33:05" itemprop="dateModified" datetime="2018-07-07T20:33:05+08:00">2018-07-07</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <blockquote>
+<p>三个问题</p>
+</blockquote>
+<ul>
+<li>Netty如何判断ChannelHandler类型(in  out)</li>
+<li>ChannelHandler添加应按照什么样的顺序</li>
+<li>用户手动触发事件传播,不同的触发方式有什么区别</li>
+</ul>
+<h2 id="Pipeline的初始化"><a href="#Pipeline的初始化" class="headerlink" title="Pipeline的初始化"></a>Pipeline的初始化</h2><p>在之前的代码分析中,不管服务端还是客户端,最后都会进入AbstractChannel,创建PipeLine</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">protected AbstractChannel(Channel parent, ChannelId id) &#123;</div><div class="line">    this.parent = parent;</div><div class="line">    this.id = id;</div><div class="line">    unsafe = newUnsafe();</div><div class="line">    pipeline = newChannelPipeline();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/07/04/Netty-4-Pipeline/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/03/Netty-新连接接入-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/07/03/Netty-新连接接入-3/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">Netty(3) 新连接接入</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-03 09:31:54" itemprop="dateCreated datePublished" datetime="2018-07-03T09:31:54+08:00">2018-07-03</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-07-05 14:15:41" itemprop="dateModified" datetime="2018-07-05T14:15:41+08:00">2018-07-05</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <blockquote>
+<p>提出两个问题</p>
+</blockquote>
+<ol>
+<li>Netty在哪里检测到新连接的接入</li>
+<li>新连接怎样注册到NioEventLoop线程</li>
+</ol>
+<p>我们知道Nio的多路复用是指多个连接复用一条线程,对应netty就是nioeventloop,新连接处理主要有四个步骤</p>
+<ol>
+<li><p>检测新连接: 新连接通过服务端Channel绑定的selector轮询出ACCEPT事件</p>
+</li>
+<li><p>创建Channel:基于JDK的nioChannel创建出Netty NioSocketChannel</p>
+</li>
+<li><p>Netty给客户端channel分配NioEventLoop,并将channel绑定</p>
+</li>
+<li><p>向selector注册读事件</p>
+</li>
+</ol>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/07/03/Netty-新连接接入-3/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/07/02/Netty-NioEventLoop-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/07/02/Netty-NioEventLoop-2/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/5/index.html">Netty(2) NioEventLoop</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-07-02 10:51:12" itemprop="dateCreated datePublished" datetime="2018-07-02T10:51:12+08:00">2018-07-02</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-07-04 18:42:48" itemprop="dateModified" datetime="2018-07-04T18:42:48+08:00">2018-07-04</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <blockquote>
+<p>相关的三个问题</p>
+</blockquote>
+<ol>
+<li>默认情况下,Netty服务端起多少线程,何时启动</li>
+<li>Netty如何解决JDK空轮训bug</li>
+<li>Netty如何保证异步串行无锁化</li>
+</ol>
+<h2 id="NioEventLoop创建"><a href="#NioEventLoop创建" class="headerlink" title="NioEventLoop创建"></a>NioEventLoop创建</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">new NioEventLoopGroup() [线程组,默认cpu*2]</div><div class="line">    new ThreadPerTaskExecutor() [线程创建器]</div><div class="line">    for()&#123;new Child()&#125; [构造Eventloop]</div><div class="line">    chooserFactory.newChooser()[线程选择器]</div></pre></td></tr></table></figure>
+<p>从用户代码进入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NioEventLoopGroup boss = new NioEventLoopGroup(1);</div><div class="line">NioEventLoopGroup worker = new NioEventLoopGroup();</div></pre></td></tr></table></figure>
+<p>跟进到这里可以看到,默认不传参数的eventgroup会赋予一个DEFAULT_EVENT_LOOP_THREADS大小的线程,为cpu数量的2倍。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">protected MultithreadEventLoopGroup(int nThreads, Executor executor, Object... args) &#123;</div><div class="line">    super(nThreads == 0 ? DEFAULT_EVENT_LOOP_THREADS : nThreads, executor, args);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/07/02/Netty-NioEventLoop-2/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2261,7 +2241,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">104</span>
+                    <span class="site-state-item-count">95</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>

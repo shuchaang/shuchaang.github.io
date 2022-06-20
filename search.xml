@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title><![CDATA[好用的学习网站整理]]></title>
-    <url>%2F2022%2F03%2F15%2F%E5%A5%BD%E7%94%A8%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%BD%91%E7%AB%99%E6%95%B4%E7%90%86%2F</url>
-    <content type="text"><![CDATA[golang golang基础知识框架等 https://www.topgoer.com/ 架构 周志明老师凤凰架构 http://icyfenix.cn/ 面试题 http://learn.lianglianglee.com 技术周刊 https://www.tuicool.com/mags/622c197ba2683344b18331e0]]></content>
-  </entry>
-  <entry>
     <title><![CDATA[为什么这么设计-网络篇总结]]></title>
     <url>%2F2022%2F02%2F05%2F%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E8%AE%BE%E8%AE%A1-%E7%BD%91%E7%BB%9C%E7%AF%87%E6%80%BB%E7%BB%93%2F</url>
     <content type="text"><![CDATA[1.为什么 TCP 建立连接需要三次握手TCP 建立连接时通过三次握手可以有效地避免历史错误连接的建立，减少通信双方不必要的资源消耗。 三次握手能够帮助通信双方获取初始化序列号，它们能够保证数据包传输的不重不丢，还能保证它们的传输顺序，不会因为网络传输的问题发生混乱 为什么 DNS 使用 UDP 协议这个说法是错误的,dns使用udp和tcp协议进行通信。在数据包很小的时候UDP完全可以满足需求,但随着ipv6逐渐普及或者包大小很大的时候或者某些特殊场景,UDP协议包超过512字节可能会被截断,这时候就需要使用tcp协议进行重试。 TCP协议为什么在弱网环境下有严重的性能问题底层的数据传输协议在设计时必须要对带宽的利用率和通信延迟进行权衡和取舍，所以想要解决实际生产中的全部问题是不可能的，TCP 选择了充分利用带宽，为流量而设计，期望在尽可能短的时间内传输更多的数据 弱网环境下（丢包率高）影响 TCP 性能的三个原因： 1)TCP 的拥塞控制算法会在丢包时减少发送窗口大小,减少了数据的发送量,但是丢包不一定意味着网络拥塞,有可能是网络状况比较差。2)TCP 的三次握手增加了数据传输的延迟和额外开销,增加了首次传输的网络延迟3)TCP 的累计应答机制导致了数据段的传输,可能会重新发送已经接收到的数据包,导致带宽浪费 为什么 TCP/IP 协议会拆分数据数据拆分的根本原因说到底还是物理设备的限制 IP协议拆分数据是因为物理设备限制,一次能够传输的数据由链路上的MTU决定。超过MTU的大小就需要分片 TCP协议拆分数据是因为需要保证可靠传输以及顺序。需要为每个MTU添加协议头和序列号,如果数据段大小超过了MTU的限制,又需要继续分片,带来额外的重传和重组开销 为什么 TCP 协议有 TIME_WAIT 状态在默认情况下，如果客户端等待足够长的时间就会遇到以下两种情况： 1) 收到ACK,正常关闭连接2) 没有收到ACK,重新发送FIN并等待ACK 只要客户端等待2MSL的时间,服务端和客户端连接就可以正常关闭,新创建TCP受到影响的概率也微乎其微,保证了数据的可靠性。 目前linux的默认MSL为30s,在高并发的压力测试中可能会出现大量处于TIME_WAIT状态的连接 netstat -tan。但是尽量不要去调节linux相关的参数,除非你非常了解后果。不然能加机器就尽量加机器解决。 为什么 IPv6 难以取代 IPv41)NAT技术极大程度缓解了IPV4短缺的问题 2)IPV6不兼容IPV4,需要隧道技术或者双栈协议支持 3)目前可以细粒度的管控 IPv4 地址并回收闲置的资源]]></content>
@@ -14,94 +9,6 @@
       </categories>
       <tags>
         <tag>计算机网络</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[失恋的碎碎念-8]]></title>
-    <url>%2F2022%2F01%2F24%2F%E5%A4%B1%E6%81%8B%E7%9A%84%E7%A2%8E%E7%A2%8E%E5%BF%B5-8%2F</url>
-    <content type="text"><![CDATA[最近和一些朋友谈了一下我和小胖的感情问题,她们都认为我们之间短期应该是没戏了。我也已经开始慢慢接受这个现实,开始计划一个人的独处时间,希望自己能够更成熟一些吧,变得优秀一点。 我和她还能偶尔聊聊天,从普通朋友做起吧,先不要想那么多,或许有缘分还能够从头再来。]]></content>
-      <categories>
-        <category>life</category>
-      </categories>
-      <tags>
-        <tag>life</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[失恋的碎碎念-7]]></title>
-    <url>%2F2022%2F01%2F21%2F%E5%A4%B1%E6%81%8B%E7%9A%84%E7%A2%8E%E7%A2%8E%E5%BF%B5-7%2F</url>
-    <content type="text"><![CDATA[今天看到有人在小胖的微博下面搞暧昧,当时血压就上来了,阴阳怪气了那个人没想到他什么也没说。 晚上忍不住找她说话,等了好久都没有回，不知道今晚还会不会回我,他到底在干嘛呢。我真的好爱她,好想她。]]></content>
-      <categories>
-        <category>life</category>
-      </categories>
-      <tags>
-        <tag>life</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[失恋的碎碎念-6]]></title>
-    <url>%2F2022%2F01%2F18%2F%E5%A4%B1%E6%81%8B%E7%9A%84%E7%A2%8E%E7%A2%8E%E5%BF%B5-6%2F</url>
-    <content type="text"><![CDATA[最近一直在担心还能不能回家过年,一年一次回家的机会因为疫情的原因可能回不去了。哎,生活好难。 已经开始看支付系统的代码了,由于目前在大面积重构旧服务,所以很多东西不是很好理解,明天仔细问一下。 今天去宝体跑了五公里,还是比较舒服的。听了一些比较伤感的歌,想起了小胖,她之前是个很乐观开朗的人,最近好丧哦。心疼ing,想念ing]]></content>
-      <categories>
-        <category>life</category>
-      </categories>
-      <tags>
-        <tag>life</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[失恋的碎碎念-5]]></title>
-    <url>%2F2022%2F01%2F17%2F%E5%A4%B1%E6%81%8B%E7%9A%84%E7%A2%8E%E7%A2%8E%E5%BF%B5-5%2F</url>
-    <content type="text"><![CDATA[今天跟新的小组长进行了沟通,希望后面的工作能够顺利进行吧。 下班日常五公里,回来的路上忍不住吃了山东煎饼+臭豆腐。 今天得知小胖过得很不好,忍不住找她聊了两句,不了了之。好想请她来我这呆两天,没说出口,而且感觉她应该也不会答应。希望她的生活能尽快好起来。]]></content>
-      <categories>
-        <category>life</category>
-      </categories>
-      <tags>
-        <tag>life</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[失恋的碎碎念-4]]></title>
-    <url>%2F2022%2F01%2F15%2F%E5%A4%B1%E6%81%8B%E7%9A%84%E7%A2%8E%E7%A2%8E%E5%BF%B5-4%2F</url>
-    <content type="text"><![CDATA[今天是第一个单身周末,睡了一个懒觉,下午去公司学了一会算法然后去打羽毛球。打完球感觉稍微放松一点了,不然真不知道今天怎么熬过去。 回来的路上从大新过,是我们一起生活的地方,好多快乐的回忆哦,不知道小胖这个时候在干嘛,她应该下课了 依然是想她的一天]]></content>
-      <categories>
-        <category>life</category>
-      </categories>
-      <tags>
-        <tag>life</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[失恋的碎碎念-3]]></title>
-    <url>%2F2022%2F01%2F14%2F%E5%A4%B1%E6%81%8B%E7%9A%84%E7%A2%8E%E7%A2%8E%E5%BF%B5-3%2F</url>
-    <content type="text"><![CDATA[哦!小胖今天主动跟我说话了,虽然没说啥,但是开心。跑了五公里,但是回来的路上吃的零食太多了,没忍住买了个山东煎饼,好香哦]]></content>
-      <categories>
-        <category>life</category>
-      </categories>
-      <tags>
-        <tag>life</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[失恋的碎碎念-2]]></title>
-    <url>%2F2022%2F01%2F13%2F%E5%A4%B1%E6%81%8B%E7%9A%84%E7%A2%8E%E7%A2%8E%E5%BF%B5-2%2F</url>
-    <content type="text"><![CDATA[今天工作又被领导谈心了,说好了不走不是人的决心又动摇了。我真是个念旧的人,不会拒绝别人的人情。 晚上找lqq聊了一会天,鼓起勇气跟小胖说了两句话,还好,万事开头难。 晚上骑车回屋的路上(我都不愿意称之为家 呜呜),前面是一对情侣,男生载着女生,女生抱着他。我本来也是这样的,我有点后悔给小胖买了个,这样她就不能抱着我了]]></content>
-      <categories>
-        <category>life</category>
-      </categories>
-      <tags>
-        <tag>life</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[失恋的碎碎念-1]]></title>
-    <url>%2F2022%2F01%2F12%2F%E5%A4%B1%E6%81%8B%E7%9A%84%E7%A2%8E%E7%A2%8E%E5%BF%B5-1%2F</url>
-    <content type="text"><![CDATA[2021/1/11正式从小胖家里搬出来,在一个陌生的房间开始独自生活。本以为她只是发发脾气就好了,没想到事情成了这样。 今天好想她,突然发现很多事情是有预兆的,半个月前的一个晚上,我梦到我们都老了,有一天小胖突然就病倒了,生活就剩我一个人,梦里的感觉好无助,惊醒之后小胖睡得像个猪头,我抱紧了她,那感觉真好呀。 今天下班骑车路过一个烤红薯的摊位,他的烤箱(汽油桶)冒着烟,我穿过的时候眼睛瞬间就刺痛了,差点撞到其他人。还好有个小哥及时扶住了我,还帮我捡了东西。好想提醒她骑车离红薯摊远一点。 工作不顺利,关于一个gc参数的优化,搞了好几天才发现方向错了。我好菜,还是需要学习。]]></content>
-      <categories>
-        <category>life</category>
-      </categories>
-      <tags>
-        <tag>life</tag>
       </tags>
   </entry>
   <entry>

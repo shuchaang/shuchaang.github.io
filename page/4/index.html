@@ -294,7 +294,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">104</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">95</span></a>
 
   </li>
         
@@ -349,1825 +349,6 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/07/JMS-4-AMQ-Destination特性/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/12/07/JMS-4-AMQ-Destination特性/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">JMS(4)-AMQ Destination特性</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-12-07 10:18:25" itemprop="dateCreated datePublished" datetime="2018-12-07T10:18:25+08:00">2018-12-07</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-26 09:46:39" itemprop="dateModified" datetime="2018-12-26T09:46:39+08:00">2018-12-26</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="wildcards"><a href="#wildcards" class="headerlink" title="wildcards"></a>wildcards</h2><p>wildcards用来支持名字分层体系,它不属于JMS规范,是AMQ的一个扩展。</p>
-<p>AMQ支持三种wildcards:</p>
-<ol>
-<li><p>‘.’, 路径上名字的分隔符</p>
-</li>
-<li><p>‘*’, 常见的通配符,匹配路径上的所有</p>
-</li>
-<li><p>‘&gt;’,递归匹配以这个名字开头的dest</p>
-</li>
-</ol>
-<p>例如下面两个dest:</p>
-<p>PRICE.STOCK.CN.WANDA<br>PRICE.STOCK.AM.ALIBABA</p>
-<ol>
-<li>PRICE.&gt; 匹配所有的价格变动</li>
-<li>PRICE.STOCK.&gt;匹配所有的股价变动</li>
-<li>PRICE.STOCK.CN.* 匹配所有A股变动</li>
-<li>PRICE.STOCK.*.ALIBABA 匹配与阿里相关的股价变动</li>
-</ol>
-<h2 id="组合队列-composite-destination"><a href="#组合队列-composite-destination" class="headerlink" title="组合队列 composite destination"></a>组合队列 composite destination</h2><p>组合队列允许用一个虚拟的dest代表多个dest,这样就可以通过组合队列在一个操作中同时向多个queue发送消息。</p>
-<p>不同队列名用’,’隔开。如果有topic有ptp,则需要写明</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line">public Queue queue()&#123;</div><div class="line">    return new ActiveMQQueue(&quot;queue.a,queue.b&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">public Queue queue2()&#123;</div><div class="line">    return new ActiveMQQueue(&quot;queue://queue.a,topic://topic.a&quot;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="delete-inactive-destination"><a href="#delete-inactive-destination" class="headerlink" title="delete inactive destination"></a>delete inactive destination</h2><p>上面的组合队列可以很大程度上方便使用,但是可能会造成创建过多的队列,那么就需要一种功能能够自动删除无用的队列。当然也可以通过控制台或者jms远程删除。</p>
-<p>这种方式需要在配置文件进行配置:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">&lt;broker xmlns=&quot;http://activemq.apache.org/schema/core&quot; schedulePeriodForDestinationPurge=&quot;10000&quot;&gt;</div><div class="line"></div><div class="line">&lt;destinationPolicy&gt;</div><div class="line">    &lt;policyMap&gt;</div><div class="line">        &lt;policyEntries&gt;</div><div class="line">                &lt;policyEntry topic=&quot;&gt;&quot; gcInactiveDestinations=&quot;true&quot; inactiveTimeoutBeforeGC=&quot;30000&quot;&gt;</div><div class="line">                &lt;/policyEntry&gt;</div><div class="line">        &lt;/policyEntries&gt;</div><div class="line">    &lt;/policyMap&gt;</div><div class="line">&lt;/destinationPolicy&gt;</div><div class="line"></div><div class="line">&lt;/destinationPolicy&gt;</div><div class="line">&lt;/broker&gt;</div></pre></td></tr></table></figure>
-<p>schedulePeriodForDestinationPurge 设置检查间隔,单位ms</p>
-<p>inactiveTimeoutBeforeGC 表示空闲多久会被删除,单位ms</p>
-<p>gcInactiveDestinations=true 删除不活动的队列</p>
-<h2 id="Destination-options"><a href="#Destination-options" class="headerlink" title="Destination options"></a>Destination options</h2><p>这个特性是AMQ在JMS规范之外提供的特性,以一种url的方式可以对队列进行一些配置。</p>
-<ol>
-<li><p>consumer.prefechSize: consumer一次可以拉取的最大消息数量</p>
-</li>
-<li><p>consumer.maximumPendingMessageLimit: 当存在慢消费的情况时,非持久化的topic允许丢弃消息的最大值</p>
-</li>
-<li><p>consumer.retroactive: 是否为回溯消费者</p>
-</li>
-<li><p>consumer.dispatchAsync: 是否异步分发,默认为true</p>
-</li>
-<li><p>consumer.exclusive: 是否为独占消费者,默认false</p>
-</li>
-<li><p>consumer.priority: 消费者优先级,默认为0</p>
-</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public Queue queue3()&#123;</div><div class="line">        return new ActiveMQQueue(&quot;queue.c?consumer.priority=false&amp;consumer.prefechSize=10&quot;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="Visual-Destitation"><a href="#Visual-Destitation" class="headerlink" title="Visual Destitation"></a>Visual Destitation</h2><p>虚拟dest创建的是逻辑dest,客户端和消费端通过它来生产和消费消息,并把它映射到物理dest。AMQ支持两种方式:</p>
-<ol>
-<li><p>visual topic 虚拟主题</p>
-</li>
-<li><p>composite destination 组合</p>
-</li>
-</ol>
-<p>虚拟dest的作用体现在哪里呢?</p>
-<p>在AMQ,topic只有在持久订阅下才是持久化的,它的每个订阅者都会收到所有的消息。但它存在两个问题:</p>
-<ol>
-<li><p>同一个应用只能用一个listener去监听topic,而不能使用多个,通过负载均衡来处理消息(当消费端部署了多个节点,那么每个节点都会消费一遍这个消息,而我们理想的情况是a节点处理n条,b节点处理m条)。虽然PTP模式可以解决这个问题,但明显会创建过多的Queue。所以,又要订阅发布,又要消息分组,JMS本身是不支持的。</p>
-</li>
-<li><p>同一个应用内,消费者failover问题。由于只能有单个持久订阅者,如果这个订阅者离线,那么消息就无法处理,系统健壮性不足。</p>
-</li>
-</ol>
-<p>为了解决这个问题,AMQ提出了visual topic</p>
-<h3 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Bean</div><div class="line">public Topic topic()&#123;</div><div class="line">        return new ActiveMQTopic(&quot;VirtualTopic.Orders&quot;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>对于消费者来说,只需要创建正常的topic,然后以’VirtualTopic’开头。</p>
-<p>对于消费端来说,需要将自己视为一个队列,不同的应用使用不同的队列名,即可表示自己是一个消费端的负载均衡。队列名必须以‘Consume’开头</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Bean</div><div class="line">public Queue queue4()&#123;</div><div class="line">    return new ActiveMQQueue(&quot;Consumer.A.VirtualTopic.Orders&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">@Bean</div><div class="line">public Queue queue5()&#123;</div><div class="line">    return new ActiveMQQueue(&quot;Consumer.B.VirtualTopic.Orders&quot;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="Mirrored-Queues"><a href="#Mirrored-Queues" class="headerlink" title="Mirrored Queues"></a>Mirrored Queues</h2><p>AMQ中每个Queue中的消息只能被一个consumer消费。但有时候你可能希望监视消息流。因此AMQ提供了mirrored queue机制,broker会把发送到某个queue的消息转发到一个名称类似的topic,监视程序只需要监听这个mirrored queue topic。</p>
-<p>首先要对broker进行配置:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;broker xmlns=&quot;http://activemq.apache.org/schema/core&quot; brokerName=&quot;localhost&quot; dataDirectory=&quot;$&#123;activemq.data&#125;  useMirroredQueues=&quot;true&quot;&gt;</div></pre></td></tr></table></figure>
-<p>如果不进行其他配置,默认的mirror topic前缀是 ‘VirtualTopic.Mirror.’,当然也支持自定义格式:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;destinationInterceptors&gt;</div><div class="line">    &lt;mirroredQueue copyMessage=&quot;true&quot; postPrefix=&quot;.mirror&quot; prefix=&quot;mirror.&quot;&gt;</div><div class="line">&lt;/destinationInterceptors&gt;</div></pre></td></tr></table></figure>
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/06/JMS-3-JMS结构/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/12/06/JMS-3-JMS结构/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">JMS(3)-JMS API结构</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-12-06 15:53:11" itemprop="dateCreated datePublished" datetime="2018-12-06T15:53:11+08:00">2018-12-06</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-26 09:46:43" itemprop="dateModified" datetime="2018-12-26T09:46:43+08:00">2018-12-26</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fxx3glglroj30n40hm0tm.jpg" alt=""></p>
-<p>JMS API的结构还是比较简单的。</p>
-<p>创建一个JMS的基本步骤是:</p>
-<ol>
-<li>创建JMS ConnectionFactory</li>
-<li>通过ConnectionFactory创建一个Connection</li>
-<li>通过Connection创建jms session</li>
-<li>创建destination、producer、consumer</li>
-<li>发送消息</li>
-<li>关闭资源</li>
-</ol>
-<h2 id="JmsTempate"><a href="#JmsTempate" class="headerlink" title="JmsTempate"></a>JmsTempate</h2><p>在Springboot中一般使用JmsTempate进行操作,所以对照上面的过程,看一下template是如何进行封装的。</p>
-<ol>
-<li>引入Pom</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;dependency&gt;</div><div class="line">	&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</div><div class="line">	&lt;artifactId&gt;spring-boot-starter-activemq&lt;/artifactId&gt;</div><div class="line">&lt;/dependency&gt;</div><div class="line"></div><div class="line">&lt;dependency&gt;</div><div class="line">	&lt;groupId&gt;org.apache.activemq&lt;/groupId&gt;</div><div class="line">	&lt;artifactId&gt;activemq-pool&lt;/artifactId&gt;</div><div class="line">&lt;/dependency&gt;</div></pre></td></tr></table></figure>
-<ol>
-<li>code</li>
-</ol>
-<p>首先在启动类上添加注解@EnableJms,会启动一些JMS的自动配置,包括JmsTempate。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public JmsTemplate(ConnectionFactory connectionFactory) &#123;</div><div class="line">		this();</div><div class="line">		setConnectionFactory(connectionFactory);</div><div class="line">		afterPropertiesSet();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
-<p>JmsTemplate的构造函数中需要一个ConnectionFactory,因此会先实例化一个ConnectionFactory。也就对应了上面过程中的第一步。</p>
-<p>当注入JmsTemplate我们就可以调用send方法进行消息发送,非常简单。但正是因为它封装的太好了,我们反而不容易了解它的具体实现细节,所以进入send方法的源码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public void send(final Destination destination, final MessageCreator messageCreator) throws JmsException &#123;</div><div class="line">		execute(session -&gt; &#123;</div><div class="line">			doSend(session, destination, messageCreator);</div><div class="line">			return null;</div><div class="line">		&#125;, false);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
-<p>send方法调用了内部方法execute,而且我们看到一个关键参数名session,这里是一个lambda表达式,在session内封装了消息和destination,然后丢进execute方法。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">public &lt;T&gt; T execute(SessionCallback&lt;T&gt; action, boolean startConnection) throws JmsException &#123;</div><div class="line">		Assert.notNull(action, &quot;Callback object must not be null&quot;);</div><div class="line">		Connection conToClose = null;</div><div class="line">		Session sessionToClose = null;</div><div class="line">		try &#123;</div><div class="line">			Session sessionToUse = ConnectionFactoryUtils.doGetTransactionalSession(</div><div class="line">					obtainConnectionFactory(), this.transactionalResourceFactory, startConnection);</div><div class="line">			if (sessionToUse == null) &#123;</div><div class="line">				conToClose = createConnection();</div><div class="line">				sessionToClose = createSession(conToClose);</div><div class="line">				if (startConnection) &#123;</div><div class="line">					conToClose.start();</div><div class="line">				&#125;</div><div class="line">				sessionToUse = sessionToClose;</div><div class="line">			&#125;</div><div class="line">			if (logger.isDebugEnabled()) &#123;</div><div class="line">				logger.debug(&quot;Executing callback on JMS Session: &quot; + sessionToUse);</div><div class="line">			&#125;</div><div class="line">			return action.doInJms(sessionToUse);</div><div class="line">		&#125;</div><div class="line">		catch (JMSException ex) &#123;</div><div class="line">			throw convertJmsAccessException(ex);</div><div class="line">		&#125;</div><div class="line">		finally &#123;</div><div class="line">			JmsUtils.closeSession(sessionToClose);</div><div class="line">			ConnectionFactoryUtils.releaseConnection(conToClose, getConnectionFactory(), startConnection);</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
-<p>execute方法创建connection,绑定session。调用doInJms方法将message发送到broker,然后释放资源。</p>
-<p>这样粗略的看了一下消息的发送原理。</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/06/JMS-2-可靠性保证/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/12/06/JMS-2-可靠性保证/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">JMS(2)-可靠性保证与消息模型</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-12-06 14:57:26" itemprop="dateCreated datePublished" datetime="2018-12-06T14:57:26+08:00">2018-12-06</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-26 09:46:47" itemprop="dateModified" datetime="2018-12-26T09:46:47+08:00">2018-12-26</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="消息确认"><a href="#消息确认" class="headerlink" title="消息确认"></a>消息确认</h2><p>对于一个消息中间件来说,可靠性保证一直是一个重要主题。Jms消息的可靠性保证,通常包含三个阶段: 客户端接收消息/客户端处理消息/客户端ACK</p>
-<p>在事务性会话中(jms session),当事务被提交,即发生自动确认。在非事务会话中,消息的确认取决于应答模式:包含三种应答模式:</p>
-<ul>
-<li>client 客户端手动确认</li>
-<li>auto 自动确认</li>
-<li>dups_ok 一种延迟确认的模式,个人理解是一种批量签收。可以减少开销,但是可能会造成重复的ack。如果没有仔细研究过原理,不建议使用</li>
-</ul>
-<h2 id="消息持久化"><a href="#消息持久化" class="headerlink" title="消息持久化"></a>消息持久化</h2><p>JMS消息持久化有两种方式:</p>
-<p>PERSISTENT: 持久化模式,消息不会因为broker宕机而丢失,默认模式</p>
-<p>NO_PERSISTENT: broker宕机,消息丢失</p>
-<p>ActiveMQ内部消息存储默认使用了KahaDB,同时开支持的方式有AMQ,JDBC,Memory。可以在activemq.xml中对KahaDB进行配置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;persistenceAdapter&gt;</div><div class="line">    &lt;kahaDB directory=&quot;$&#123;activemq.data&#125;/kahadb&quot;/&gt;</div><div class="line">&lt;/persistenceAdapter&gt;</div></pre></td></tr></table></figure>
-<p>可用属性:</p>
-<ol>
-<li><p>indexWriteBatchSize: 批量写入磁盘索引的数量,默认1000</p>
-</li>
-<li><p>indexCacheSize: 内存中缓存索引的page数量,默认1000</p>
-</li>
-<li><p>enableIndexWriteAsync: 是否异步写出索引,默认false</p>
-</li>
-<li><p>journalMaxFileLength: 设置每个消息datalog大小,默认32MB</p>
-</li>
-<li><p>enableJournalDiskSyncs: 如果没有加事务,是否需要写入磁盘。JMS持久化时需要设置为false</p>
-</li>
-<li><p>cleanUpInterval: 清理过期消息,默认30000</p>
-</li>
-<li><p>archiveDataLogs: 对于需要删除的文件,不做删除,而是进行压缩。默认为false</p>
-</li>
-<li><p>directoryArchive: 压缩文件的存放位置</p>
-</li>
-</ol>
-<h2 id="消息过期"><a href="#消息过期" class="headerlink" title="消息过期"></a>消息过期</h2><p>可以设置消息的过期时间,默认是永不过期。</p>
-<h2 id="临时目的地"><a href="#临时目的地" class="headerlink" title="临时目的地"></a>临时目的地</h2><p>jms session可以创建临时的queue或者topic,当创建临时目的地的连接断开,临时目的地也就删除。只有创建临时目的地连接的消费者才可以消费这里的信息。</p>
-<h2 id="本地事务"><a href="#本地事务" class="headerlink" title="本地事务"></a>本地事务</h2><p>在JMS客户端中,可以使用本地事务来组合消息的接收和发送,最后使用commit提交或者使用rollback进行回滚。事务提交表示发送者的消息都已经发送,消费者消息都已确认。事务回滚意味着生产的所有消息被销毁，消费的所有消息被恢复并重新提交。</p>
-<p>需要注意的是,如果业务是一个请求/回复模式,发送一个消息,同时希望在事务中等待消息的回复,那么程序会被挂起,因为直到事务提交,发送操作才会真正执行。</p>
-<p>消息的生产和消费不能再同一个事务中。</p>
-<h2 id="消息模型-PTP"><a href="#消息模型-PTP" class="headerlink" title="消息模型-PTP"></a>消息模型-PTP</h2><p>PTP就是一种点对点的模型,一个消费者一个生产者,是一种单播模式。</p>
-<p>当session关闭时,如果有一些消息已经收到,但还没有签收,那么当客户端再次连接上时,这些消息还会被再次接收。</p>
-<p>如果消费端设置了选择器,那么不符合条件的消息会留在队列中,不会被接收。</p>
-<p>队列可以持久保存消息知道消费端收到消息,充分体现异步传输的优势</p>
-<h2 id="消息模型-pub-sub"><a href="#消息模型-pub-sub" class="headerlink" title="消息模型-pub/sub"></a>消息模型-pub/sub</h2><p>发布订阅模式,生产者制定一个主题,多个消费端可以订阅这个主题来收到消息,是一种广播模式。</p>
-<ol>
-<li><p>消息订阅分为持久订阅和非持久订阅:非持久订阅当客户端处于非激活状态时,消息将会消失,永远不能接收到。<br>持久模式则是消费端向JMS注册自身,当消费端宕机,broker会保存这个主题的消息,当消费端上线时,可以得到离线时漏掉的消息。</p>
-</li>
-<li><p>非持久模式下不能重新派送一个未签收的消息,所以需要设置为持久化模式。</p>
-</li>
-</ol>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/06/jms-消息结构/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/12/06/jms-消息结构/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">JMS(1)-消息基础</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-12-06 14:12:58" itemprop="dateCreated datePublished" datetime="2018-12-06T14:12:58+08:00">2018-12-06</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-26 09:46:25" itemprop="dateModified" datetime="2018-12-26T09:46:25+08:00">2018-12-26</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="JMS"><a href="#JMS" class="headerlink" title="JMS"></a>JMS</h2><p>JMS即java message service,是一个java面向消息中间件提出的标准化接口。类似于jdbc于mysql-connector的关系。ActiveMQ是apache出的一个消息中间件,实现了JMS协议。目前AMQ的版本为5.x,社区不太活跃,因为AMQ目前的主要精力投入在下一代MQ的开发-appllo上。</p>
-<p>常见MQ的选型,供参考:</p>
-<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fxz85ye41hj30py0nqq66.jpg" alt=""></p>
-<h2 id="JMS消息结构"><a href="#JMS消息结构" class="headerlink" title="JMS消息结构"></a>JMS消息结构</h2><p>JMS消息由以下部分组成: 消息头 消息体 属性</p>
-<p>消息头包含识别信息和路由信息:</p>
-<ol>
-<li>JMSDestatination: 路由地址,由sender设置</li>
-<li>JMSDeliveryMode: 传送模式。两种: 持久模式和非持久化模式,持久模式消息会被传送”仅仅一次”。也就是说当broker宕机,消息不会丢失,当broker恢复后会再次发送消息。非持久消息保证传输最多一次,当机器宕机,数据将永远消失。</li>
-<li>JMSExpiration: 消息过期时间,消息在过期时间内没有被消费,则会删除。</li>
-<li>JMSPriority: 消息优先级,从0-9,0-4是普通消息,5-9是加急消息。JMS提供的保障的是加急消息先于普通消息送达,其他尽量保证,默认为4</li>
-<li>JMSMessageID: 每个消息的唯一识别,可以手动设置为业务id,否则会自动生成。</li>
-<li>JMSCorrelationID: 用来连接到另外一个消息,典型的应用是将回复消息链接到原消息,也就是有应答的场景。</li>
-<li>JMSReplyTo: 提供本消息回复消息的目的地址</li>
-<li>JMSType: 消息类型识别符</li>
-<li>JMSRedelivered: 如果客户端收到一个设置了JMSRedelivered属性的消息,表示客户端之前接受过这个消息,但是没有ack。如果触发了消息重新发送,JMSRedelivered=true,否则false。</li>
-</ol>
-<p>JMS消息体提供了5种消息体:</p>
-<ul>
-<li>TextMessage</li>
-<li>MapMessage</li>
-<li>BytesMessage</li>
-<li>StreamMessage</li>
-<li>ObjectMessage</li>
-</ul>
-<p>JMS提供三种消息属性:</p>
-<ol>
-<li>应用程序添加的属性: Message.setStringProperty(k,v)</li>
-<li>JMS定义的属性: connection.getMetaData().getJMSXPropertyNames() 获取jms定义的属性</li>
-<li>三方插件提供的特殊属性</li>
-</ol>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/05/k8s学习总结5-调度/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/12/05/k8s学习总结5-调度/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">k8s学习总结5-调度</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-12-05 16:05:02" itemprop="dateCreated datePublished" datetime="2018-12-05T16:05:02+08:00">2018-12-05</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-06 19:37:28" itemprop="dateModified" datetime="2018-12-06T19:37:28+08:00">2018-12-06</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>K8S调度器的主要任务就是为Pod寻找一个合适的Node。</p>
-<h2 id="默认调度器"><a href="#默认调度器" class="headerlink" title="默认调度器"></a>默认调度器</h2><p>K8S提供了默认调度器,它的主要流程是:根据Predicate算法检查每个Node。然后再调用Priority算法给Node打分。最终调度结果就是选择分数最高的那个Node。</p>
-<p>K8S调度算法的流程如下:</p>
-<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fxvz4mqinzj312u0nowfp.jpg" alt=""></p>
-<p>主要是两个循环过程:</p>
-<p>第一个循环informer负责监听etcd中Pod、Node、Service等需要调度的组件。一旦发现informer就将它放入一个优先级队列。</p>
-<p>第二个循环是Scheduling Path,不断从优先队列中取出一个Pod,使用Predicate算法过滤出一组Node,Node的信息从Cache中获取。选出一个合适的Node之后,调度器就会进行绑定操作,将Pod的nodeName填写为筛选出的Node名称。</p>
-<h2 id="Predicates"><a href="#Predicates" class="headerlink" title="Predicates"></a>Predicates</h2><p>K8S中Predicates算法默认提供四种调度策略:</p>
-<h3 id="GeneralPredicates"><a href="#GeneralPredicates" class="headerlink" title="GeneralPredicates"></a>GeneralPredicates</h3><p>这是第一组过滤策略,也是最基础的调度规则。目的就是根据yaml配置文件检查硬件资源是否充足,端口是否冲突。由于调度策略采用了无锁化设计,所以当一个Pod被调度到Node上时,Node会再次执行一遍这个策略。</p>
-<h3 id="Volume相关过滤"><a href="#Volume相关过滤" class="headerlink" title="Volume相关过滤"></a>Volume相关过滤</h3><p>这组规则主要对Volume进行过滤。</p>
-<p>首先是NoDiskconflict,检查Pod声明挂载的volume是否存在冲突。</p>
-<p>接着是MaxPDVolumeCountPredicate,判断节点某种volume类型是否超过上限。</p>
-<p>接着是VolumeBindingPredicate,主要作用是判断节点亲和性。</p>
-<h3 id="宿主机相关过滤规则"><a href="#宿主机相关过滤规则" class="headerlink" title="宿主机相关过滤规则"></a>宿主机相关过滤规则</h3><p>这组规则是判断Pod是否满足Node的某些条件。</p>
-<p>例如配置了PodToleratesNodeTaints字段,只有当Pod的Toleration和Node的taint字段相匹配,才能调度到该节点。</p>
-<h3 id="Pod相关过滤规则"><a href="#Pod相关过滤规则" class="headerlink" title="Pod相关过滤规则"></a>Pod相关过滤规则</h3><p>这组检查和GeneralPredicates有很多重合,比较特殊的一点是PodAffinityPredicate。用来检查Node上Pod之间的亲密和反亲密关系。</p>
-<p>上面这四种类型的 Predicates，就构成了调度器确定一个Node可以运行待调度Pod的基本策略。</p>
-<h2 id="Priorites"><a href="#Priorites" class="headerlink" title="Priorites"></a>Priorites</h2><p>Proorites根据算法对选出的Node打分,最常用的是LeastRequestedPriority</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">score = (cpu((capacity-sum(requested))10/capacity) + memory((capacity-sum(requested))10/capacity))/2</div></pre></td></tr></table></figure>
-<p>其实就是选择内存和CPU最多的主机,除此之外还有NodeAffinityPriority,TaintTolerationPriority以及InterPodAffinityPriority。</p>
-<h2 id="优先级与抢占机制"><a href="#优先级与抢占机制" class="headerlink" title="优先级与抢占机制"></a>优先级与抢占机制</h2><h3 id="优先级"><a href="#优先级" class="headerlink" title="优先级"></a>优先级</h3><p>首先要明确的是,优先级与抢占解决的是Pod调度失败的问题。</p>
-<p>通常情况下,调度失败的Pod会被搁置,直到出现满足条件的Node才能再次调度。但是如果这个Pod是一个优先级非常高的系统,我们希望能通过减少一部分优先度低的Pod,给优先级高的Pod空出位置。</p>
-<p>在K8S 1.10版本提供了优先级与抢占机制,首先要定义一个PriorityClass类型的yaml</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">apiVersion: scheduling.k8s.io/v1beta1</div><div class="line">kind: PriorityClass</div><div class="line">metadata:</div><div class="line">  name: high-priority</div><div class="line">value: 1000000</div><div class="line">globalDefault: false</div><div class="line">description: &quot;This priority class should be used for high priority service pods only.&quot;</div></pre></td></tr></table></figure>
-<p>这里定义了优先级为1000000的配置文件,globalDefault如果设置为true,就会将Pod的默认优先级定义为1000000,而实际默认是0。优先级最大为10亿,超过10亿为K8S内部的Pod。</p>
-<p>定义过后就可以在Pod中使用:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: Pod</div><div class="line">metadata:</div><div class="line">  name: nginx</div><div class="line">  labels:</div><div class="line">    env: test</div><div class="line">spec:</div><div class="line">  containers:</div><div class="line">  - name: nginx</div><div class="line">    image: nginx</div><div class="line">    imagePullPolicy: IfNotPresent</div><div class="line">  priorityClassName: high-priority</div></pre></td></tr></table></figure>
-<p>经过配置之后,调度队列就会将这个Pod就会比优先级低的Pod提前出队。</p>
-<h3 id="抢占"><a href="#抢占" class="headerlink" title="抢占"></a>抢占</h3><p>抢占机制相比优先级要复杂的多。当一个高优先级的Pod调度失败之后,就会触发抢占机制。抢占的大概过程如下:</p>
-<p>k8s选出优先级较低的Pod所在的Node节点,将抢占者的spec.nominatedNodeName填写为该Node,然后将该pod重新入队。如果在下个周期,这个Pod没有抢到node(出现了优先级更高的pod),将spec.nominatedNodeName去掉重新入队,如果抢占成功,则让被抢占节点优雅退出(delete api),将新pod部署。</p>
-<p>接下来讲述一下详细原理,我们将这个Pod称为抢占者,旧的节点称为牺牲者:</p>
-<p>抢占的重要设计就是在调度队列的实现里,实现了两个不同的队列。</p>
-<ol>
-<li><p>activeQ: 存放下个周期需要调度的Pod</p>
-</li>
-<li><p>unschedulableQ: 用于存放调度失败的Pod,当这个队列中的Pod被更新时,k8s将它重新放入activeq。</p>
-</li>
-</ol>
-<p>在这里发生调度失败,也就是节点入队时会去触发寻找牺牲者的流程。</p>
-<p>首先调度器检查这次调度失败的原因,用来确认抢占机制可以实现重新调度。</p>
-<p>如果抢占可以发生,调度器将缓存的所有节点信息复制一份,然后利用副本去模拟一遍抢占过程。</p>
-<p>模拟成功之后会选出一个最佳Node,接着调度器就会开始真正的抢占操作:</p>
-<p>首先检查牺牲者列表,清理Pod的spec.nominatedNodeName字段</p>
-<p>为抢占者设置spec.nominatedNodeName属性</p>
-<p>开启协程,删除旧Pod,完成抢占</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/12/04/mysql之redo-log和undo-log/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/12/04/mysql之redo-log和undo-log/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">mysql之日志模块</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-12-04 18:30:18 / 修改时间：20:18:26" itemprop="dateCreated datePublished" datetime="2018-12-04T18:30:18+08:00">2018-12-04</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>平时在看一些mysql的文章时,不可避免看到过undolog,redolog,binlog等xxlog概念,这些概念都属于mysql的日志模块,这里对这些概念做一次总结。</p>
-<h2 id="redolog"><a href="#redolog" class="headerlink" title="redolog"></a>redolog</h2><p>redolog也叫重做日志,是innodb特有的一种log,用于保证事务的持久性。在事务提交时,必须将该事务所有事务日志写到磁盘的redologfile 和 undologfile上。</p>
-<p>我们知道mysql的数据会持久化到磁盘上,但是如果每次进行更新都写磁盘。磁盘要进行io操作找到这条记录并更改,成本很高。因此mysql就是用了redolog来提升效率。</p>
-<p>具体来说,当有一条记录更新时,Innodb将数据循环写到redolog中,更新内存。当数据库空闲时或者redolog满,就会异步刷写到磁盘上。这种基于WAL(预写日志)的存储,都是crash-safe的,因为mysql可以通过redolog在crash之后恢复数据。redo log是在事务开始之后就开始逐步写入磁盘。</p>
-<p>关于redolog比较重要的一个参数是innodb_flush_log_at_trx_commit</p>
-<ul>
-<li><p>innodb_flush_log_at_trx_commit=1,每次commit都会将日志从redo log buffer(用户空间)写到system buffer(内核空间),并fsync刷新到磁盘文件中。</p>
-</li>
-<li><p>innodb_flush_log_at_trx_commit=2,每次commit都会将日志从redo log buffer(用户空间)写到system buffer(内核空间),由系统决定什么时候fsync到磁盘。如果这时服务器宕机,则会丢失这部分数据。</p>
-</li>
-<li><p>innodb_flush_log_at_trx_commit=0,mysql每秒从redo log buffer,把数据写入到系统中去。数据库宕机则丢失一秒内的数据。</p>
-</li>
-</ul>
-<h2 id="binlog"><a href="#binlog" class="headerlink" title="binlog"></a>binlog</h2><p>binlog是mysql服务器级别的日志,也叫做归档日志,二进制日志。这是因为innodb并不是mysql原生的引擎,binlog只能用于归档,并没有提供crash-safe能力。</p>
-<p>binlog在事务提交的时候产生,将事务中的语句按照一定的格式记录到binlog中。这里binlog的功能与redolog有些类似,但是精度也就是可靠性明显不同,redolog作用于事务层面,而binlog则主要用来做数据库备份,同步。另一个区别在于redolog是循环写的,不提供持久保存,而binlog提供归档的功能。</p>
-<p>binlog有两种模式:row和statement:statement记录的是sql语句,row模式记录变更前后的内容,会记录两条。因此row模式更安全,但是会是log变大。</p>
-<h3 id="两阶段提交"><a href="#两阶段提交" class="headerlink" title="两阶段提交"></a>两阶段提交</h3><p>由于redo log和binlog都会记录事务,那么这就对binlog和redolog的提交有要求。如果binlog和redolog的记录不一致,那么就会出现事务不一致的状况,这常常发生在主从复制的环境下。</p>
-<p>MySQL通过两阶段提交过程来完成事务的一致性的,也即redo log和binlog的一致性的,先写redo log,处于prepare状态,再写binlog,写成功后进入commit状态。两个日志都提交成功（刷入磁盘），事务才算真正的完成。</p>
-<h2 id="undolog"><a href="#undolog" class="headerlink" title="undolog"></a>undolog</h2><p>undolog也叫回滚日志,保存了事务发生之前数据的版本,可以用来回滚,并提供MVCC。</p>
-<p>当我们对数据进行更新操作就会产生undolog,可以把undolog可以理解为一个链表,保存了一个字段连续变化的过程。当我们进行修改时,会将数据备份到undolog,并在undlog中进行修改。如果出现了错误或者用户执行了ROLLBACK语句，系统可以利用Undo Log中的备份将数据恢复到事务开始之前的状态。undolog正式凭借此保证事务的原子性。</p>
-<p>undolog另一个重要作用就是并发读写时支持mvcc(多版本并发控制)机制。当一行数据被写操作锁定时,读操作可以根据事务号到undolog中找到合适版本的数据,而不会写锁阻塞读操作,这就是一致性视图。</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/29/jvm学习笔记-重载与重写/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/11/29/jvm学习笔记-重载与重写/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">jvm学习笔记-重载与重写</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-11-29 13:58:59 / 修改时间：19:23:16" itemprop="dateCreated datePublished" datetime="2018-11-29T13:58:59+08:00">2018-11-29</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/jvm/" itemprop="url" rel="index"><span itemprop="name">jvm</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="重载与重写"><a href="#重载与重写" class="headerlink" title="重载与重写"></a>重载与重写</h2><p>重载与重写是java中相当重要的一组概念,java利用重载和重写实现了多态,看下面一个例子</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">void invoke(Object obj, Object... args) &#123; ... &#125;</div><div class="line">void invoke(String s, Object obj, Object... args) &#123; ... &#125;</div><div class="line"></div><div class="line">invoke(null, 1);    // 调用第二个 invoke 方法</div><div class="line">invoke(null, 1, 2); // 调用第二个 invoke 方法</div></pre></td></tr></table></figure>
-<p>在java中,如果一个类中存在相同名字的函数,并且参数也相同,那么它是无法通过编译的。那么就需要修改参数类型让他们不同,这种方法之间的关系,就是重载。</p>
-<p>重载的方法在编译阶段就可以识别,有以下几个原则:</p>
-<ol>
-<li>首先在不进行自动装箱/拆箱的情况下调用方法</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public void test(int i )&#123;</div><div class="line">    System.out.println(&quot;test int&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">public void test(Integer i)&#123;</div><div class="line">    System.out.println(&quot;test integer&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">public static void main(String[] args) &#123;</div><div class="line">    Rich r = new Rich();</div><div class="line">    r.test(1);  // 执行第一个</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ol>
-<li>在1不匹配的情况下,允许自动拆箱装箱,不优先选择带有可变长参数方法:</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public void test(int i,String hello)&#123;</div><div class="line">    System.out.println(&quot;test int&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">public void test(Integer i,String ... hellos)&#123;</div><div class="line">    System.out.println(&quot;test integer&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">public static void main(String[] args) &#123;</div><div class="line">    Rich r = new Rich();</div><div class="line">    r.test(1,&quot;1&quot;); //执行第一个</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ol>
-<li>在2不匹配的情况下,允许自动装箱拆箱/允许可变长参数</li>
-</ol>
-<p>除了同一个类中的方法,重载也可以作用于父类与子类之间,如果子类定义了与父类方法名称相同而参数类型不同,那么这两个方法也构成了重载。</p>
-<p>那么如果子类定义了与父类非私有方法同名的方法,并且参数类型也相同,那么这时子类重写了父类的方法。方法的重写,正是多态的一种重要体现方式,它允许子类继承父类部分功能的同时,拥有自己独特的行为。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""><br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/11/29/jvm学习笔记-重载与重写/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/27/表面理解jvm-类加载/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/11/27/表面理解jvm-类加载/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">jvm学习笔记-类加载</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-11-27 08:07:39" itemprop="dateCreated datePublished" datetime="2018-11-27T08:07:39+08:00">2018-11-27</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-11-28 16:41:44" itemprop="dateModified" datetime="2018-11-28T16:41:44+08:00">2018-11-28</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/jvm/" itemprop="url" rel="index"><span itemprop="name">jvm</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="宏观"><a href="#宏观" class="headerlink" title="宏观"></a>宏观</h2><blockquote>
-<p>当我们写好.java程序点击运行的时候发生了什么</p>
-</blockquote>
-<ol>
-<li>当我们写好.java的源程序，使用javac命令把源程序编译成.class文件，编译后的.class文件(类字节码文件)包括以下内容:</li>
-</ol>
-<ul>
-<li>以魔数Magic Number:0xCafeBabe开头</li>
-<li>ConstantPool:符号表</li>
-<li>FieldInfo:类成员变量表</li>
-<li>方法描述</li>
-<li>附加节点</li>
-<li>…</li>
-</ul>
-<ol>
-<li><p>有了.class文件我们就可以执行java命令运行java程序</p>
-</li>
-<li><p>首先JVM装载.class，也就是类加载器加载字节码。但是类加载器本身也是一个java类，所以它也需要被加载，幸运的是有一个类加载器是用c++编写的，叫做<code>Bootstrap类加载器</code>，属于虚拟机内核，用特定于操作系统的本地代码实现。Bootstrap类加载器负责加载javajava核心包中的类(rt.jar)，这些类的Class.getClassLoader()方法返回值会null，表示需要Bootstrap加载器来加载。JAVA核心包中还有两个类加载器:<code>ExtClassLoader</code>和<code>ApplicationClassLoader</code>。他们都用java语言编写，其中ExtClassLoader负责加载<java_home>/jre/lib/ext目录下的jar，ApplicationClassLoader负责加载应用程序的启动执行类，即当使用java命令去启动执行一个类时，JAVA虚拟机使用AppClassLoader加载这个类。所以这里有个小track就是把一些自己常用但是非java自带的jar放到ext目录下，这样就可以少写几个maven dependency。</java_home></p>
-</li>
-</ol>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/11/27/表面理解jvm-类加载/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/25/红黑树/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shuchang">
-      <meta itemprop="description" content="多喝热水">
-      <meta itemprop="image" content="/images/123.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ShuChang's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/11/25/红黑树/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">红黑树</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-11-25 13:30:45 / 修改时间：13:31:40" itemprop="dateCreated datePublished" datetime="2018-11-25T13:30:45+08:00">2018-11-25</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/算法/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="《算法导论》中的红黑树"><a href="#《算法导论》中的红黑树" class="headerlink" title="《算法导论》中的红黑树"></a>《算法导论》中的红黑树</h2><p>红黑树与AVL相似,都是对BST进行了一系列优化,防止退化成链表的现象。算法导论中对红黑树的定义如下</p>
-<ol>
-<li>每个节点要么是红色,要么是黑色</li>
-<li>根节点必须黑色</li>
-<li>每个叶子节点(空节点)也是黑色</li>
-<li>红节点的孩子节点必须为黑色</li>
-<li>任意节点到叶子节点,经过的黑色节点数量是相同的</li>
-</ol>
-<p>相信大多数人都看过这段关于RBT的描述,然后通过这段描述推导出更多的性质,然后就是一些列的旋转、染色代码,非常不友好。问题就在于我们通过上面的性质根本无法得知红黑树是怎么得来的,作者怎么发明这种算法的。</p>
-<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
-<ul>
-<li>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2018/11/25/红黑树/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-         
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
     
       
 
@@ -2393,11 +574,1698 @@
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/12/k8s学习总结3-存储/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/11/12/k8s学习总结3-存储/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">k8s学习总结3-存储</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-11-12 10:27:05 / 修改时间：10:27:24" itemprop="dateCreated datePublished" datetime="2018-11-12T10:27:05+08:00">2018-11-12</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="PV-PVC-StorageClass"><a href="#PV-PVC-StorageClass" class="headerlink" title="PV PVC StorageClass"></a>PV PVC StorageClass</h2><p>容器化一个应用最麻烦的地方,莫过于对其状态的管理,而最常见的状态就是存储状态。K8s提出了PV和PVC这样的概念,来方便开发人员对存储状态进行管理</p>
+<h3 id="PV"><a href="#PV" class="headerlink" title="PV"></a>PV</h3><p>PV文件描述的是一个持久化存储卷,例如一个Ceph文件系统,一个云盘等等,主要信息就是声明了访问方式以及存储容量的大小,主要由运维人员来维护,开发人员无需关心存储的具体细节。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: PersistentVolume</div><div class="line">metadata:</div><div class="line">  name: nfs</div><div class="line">spec:</div><div class="line">  storageClassName: manual</div><div class="line">  capacity:</div><div class="line">    storage: 1Gi</div><div class="line">  accessModes:</div><div class="line">    - ReadWriteMany</div><div class="line">  nfs:</div><div class="line">    server: 10.244.1.4</div><div class="line">    path: &quot;/&quot;</div></pre></td></tr></table></figure>
+<h3 id="PVC"><a href="#PVC" class="headerlink" title="PVC"></a>PVC</h3><p>PVC描述的是Pod所希望持久化存储的属性,例如所需磁盘的大小,可读写的权限等</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: PersistentVolumeClaim</div><div class="line">metadata:</div><div class="line">  name: nfs</div><div class="line">spec:</div><div class="line">  accessModes:</div><div class="line">    - ReadWriteMany</div><div class="line">  storageClassName: manual</div><div class="line">  resources:</div><div class="line">    requests:</div><div class="line">      storage: 1Gi</div></pre></td></tr></table></figure>
+<p>这里PVC真正能够使用起来,必须要同一个PV进行绑定,这里包括两部分检查:</p>
+<ol>
+<li>PV的存储空间大于等于PVC所声明的</li>
+<li>PV与PVC的storageClassName必须相同</li>
+</ol>
+<p>当PV与PVC进行绑定之后,我们就可以在yaml里使用这个存储了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: Pod</div><div class="line">metadata:</div><div class="line">  labels:</div><div class="line">    role: web-frontend</div><div class="line">spec:</div><div class="line">  containers:</div><div class="line">  - name: web</div><div class="line">    image: nginx</div><div class="line">    ports:</div><div class="line">      - name: web</div><div class="line">        containerPort: 80</div><div class="line">    volumeMounts:</div><div class="line">        - name: nfs</div><div class="line">          mountPath: &quot;/usr/share/nginx/html&quot;</div><div class="line">  volumes:</div><div class="line">  - name: nfs</div><div class="line">    persistentVolumeClaim:</div><div class="line">      claimName: nfs</div></pre></td></tr></table></figure>
+<h3 id="PV与PVC"><a href="#PV与PVC" class="headerlink" title="PV与PVC"></a>PV与PVC</h3><p>PV与PVC是如何做到持久化呢?我们知道Docker的volume机制就是将宿主机上的一个目录与容器里的目录绑定挂在到一起。而对于K8s这种分布式的系统来说,数据的持久化一定不能落在本地盘上,因为这样不具备分布式的特性,会引起单点的故障,所以hostPath和enptyDir是不行的。所以大多数情况下,持久化volume的实现依赖于一个远程存储服务，如NFS。</p>
+<p>K8S所需要做的就是将这个远程存储服务与容器的本地目录进行绑定,这个过程分为两步:</p>
+<ol>
+<li>Attach:连接到远程的存储服务</li>
+<li>Mount: 将磁盘设备格式化并挂载到宿主机目录</li>
+</ol>
+<p>经过这两个阶段的处理,我们就得到了一个持久化的volume宿主机目录,然后通过-v 就可以为Pod里的容器挂在这个持久化volume了,这就是K8s处理PV的过程。</p>
+<p>可以看到PV与PVC的关系就像JAVA中的接口与实现类,这样做的好出就是实现了解耦，与面向对象的思想一致。但是这样的方式也引入了一些困难:因为PV一般都是运维人员进行编写的,如果开发声明了一个PVC但是无法绑定PV,那么Pod就会创建失败,当K8s集群大到一定规模时,这种方式一定会成为一种灾难。</p>
+<h2 id="StorageClass"><a href="#StorageClass" class="headerlink" title="StorageClass"></a>StorageClass</h2><p>由于PV与PVC带来的这种问题,我们很自然的就希望能够提供一个自动创建PV的机制,这就是dynamic provisioning,相比于人工管理PV的方式就叫做static provisioning。</p>
+<p>dynamic provisioning机制的核心就是StorageClass对象,即创建一个PV的模板。一般来说一个StorageClass会定义两部分内容:</p>
+<ol>
+<li>PV的属性,如存储类型,大小</li>
+<li>创建这种PV所需要的插件,如ceph,nfs</li>
+</ol>
+<p>有了这个模板,K8S就能根据用户提交的PVC,找到一个对应的storageClass,然后调用storageClass所声明的插件,创建出PV。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">apiVersion: storage.k8s.io/v1</div><div class="line">kind: StorageClass</div><div class="line">metadata:</div><div class="line">  name: block-service</div><div class="line">provisioner: kubernetes.io/gce-pd</div><div class="line">parameters:</div><div class="line">  type: pd-ssd</div></pre></td></tr></table></figure>
+<p>而作为开发者,我们就只需要在yaml中指定需要使用的storageClass就可以了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: PersistentVolumeClaim</div><div class="line">metadata:</div><div class="line">  name: claim1</div><div class="line">spec:</div><div class="line">  accessModes:</div><div class="line">    - ReadWriteOnce</div><div class="line">  storageClassName: block-service</div><div class="line">  resources:</div><div class="line">    requests:</div><div class="line">      storage: 30Gi</div></pre></td></tr></table></figure>
+<h2 id="本地持久化"><a href="#本地持久化" class="headerlink" title="本地持久化"></a>本地持久化</h2><p>虽然K8S内置了20中持久化实现方式,但是并没有提供本地的持久化存储方式。但是依然有很多用户希望能够直接使用宿主机上的本地磁盘目录,而不依赖远程的存储服务。这样做好出也很明显,Volume直接使用本地磁盘,IO性能会好很多。所以在1.10版本之后,K8S依靠PV/PVC实现了这个特性,即Local Persistent Volume。</p>
+<p>首先本地持久卷并不适用于所有应用,并且相对于其他PV,一旦这些节点宕机,那么数据就会丢失,这就要求使用Local Persistent Volume的节点必须具有备份和回复能力。</p>
+<h3 id="难点1"><a href="#难点1" class="headerlink" title="难点1"></a>难点1</h3><p>Local Persistent Volume并不等于hostPath+nodeAffinity。实际上并不应该把宿主机上的一个目录当做PV来使用,因为本地目录的存储完全不可控,随时都有可能被写满,其次缺少最基础IO隔离机制。所以一个Local Persistent Volume应该等于一块额外挂载到宿主机的磁盘,也就是一个PV一块盘。</p>
+<h3 id="难点2"><a href="#难点2" class="headerlink" title="难点2"></a>难点2</h3><p>调度器如何保证Pod始终能被正确的调度到他所请求的Local Persistent Volume所在的节点。对于local PV来说,每个节点挂载情况可能完全不同,有的节点甚至没有挂载,那么K8s就需要维护这种关系,才能调度Pod,也就是在调度的时候考虑volume分布。</p>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>首先需要手动在node上挂载磁盘,例如/mnt/disks</p>
+<p>接着定义PV</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: PersistentVolume</div><div class="line">metadata:</div><div class="line">  name: example-pv</div><div class="line">spec:</div><div class="line">  capacity:</div><div class="line">    storage: 5Gi</div><div class="line">  volumeMode: Filesystem</div><div class="line">  accessModes:</div><div class="line">  - ReadWriteOnce</div><div class="line">  persistentVolumeReclaimPolicy: Delete</div><div class="line">  storageClassName: local-storage</div><div class="line">  local:</div><div class="line">    path: /mnt/disks/vol1</div><div class="line">  nodeAffinity:</div><div class="line">    required:</div><div class="line">      nodeSelectorTerms:</div><div class="line">      - matchExpressions:</div><div class="line">        - key: kubernetes.io/hostname</div><div class="line">          operator: In</div><div class="line">          values:</div><div class="line">          - node-1</div></pre></td></tr></table></figure>
+<p>可以看到这个PV定义了lcoal字段并且指定了路径.如果Pod要使用这个PV<br>那么就必须运行在这个node-1节点上,所以指定了nodeAffinity。</p>
+<p>接着定义一个StorageClass</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">kind: StorageClass</div><div class="line">apiVersion: storage.k8s.io/v1</div><div class="line">metadata:</div><div class="line">  name: local-storage</div><div class="line">provisioner: kubernetes.io/no-provisioner</div><div class="line">volumeBindingMode: WaitForFirstConsumer</div></pre></td></tr></table></figure>
+<p>这里需要注意local pv目前不支持动态创建,所以需要指定为no-provisioner。所以创建PV的过程是不可以省略的。</p>
+<p>volumeBindingMode=WaitForFirstConsumer属性也非常重要,这是一种延迟绑定的机制,这种绑定会在调度的时候才去绑定,否则就会引起Pod调度的失败。</p>
+<p>接着我们就可以编写一个普通的PVC来使用这个local pv了,这就类似于面向对象的设计,我们只需要修改接口的实现类,就可以动态修改类的表现。</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/10/k8s学习总结2-Pod/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/11/10/k8s学习总结2-Pod/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">k8s学习总结-2</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-11-10 17:02:51" itemprop="dateCreated datePublished" datetime="2018-11-10T17:02:51+08:00">2018-11-10</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-11-12 11:09:03" itemprop="dateModified" datetime="2018-11-12T11:09:03+08:00">2018-11-12</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="为什么我们需要Pod"><a href="#为什么我们需要Pod" class="headerlink" title="为什么我们需要Pod"></a>为什么我们需要Pod</h2><p>关于docker容器,我们都知道它的技术原理就是Namespace做隔离,cgroups做限制,rootfs做文件系统,那么k8s为什么又提出了Pod这个概念呢。</p>
+<p>我们可以这样理解,容器就是一个特殊的进程,而k8s就类似于操作系统,去调度管理这些特殊的进程,那么k8s就可以比做操作系统。我们知道,在真正的操作系统中,进程并不是孤单的运行,它存在于一个进程组之中,被操作系统有规则的组织在一起。</p>
+<p>那么我们可以理解Pod其实就是将操作系统中进程组的概念抽象到了K8s中,因为k8s的设计脱身于borg系统,谷歌的开发者们发现,他们部署的应用,往往都存在进程与进程组的关系,这些应用密切协作,必须部署在一台机器上。而如果没有组这个概念,这种组织关系就难以维护,而Pod就是将操作系统中的进程组的概念映射到了容器中。</p>
+<p>关于Pod的一个事实是,Pod只是一个逻辑概念,Pod里的容器共享网络栈并且可以声明共享同一个Volume。</p>
+<p>Pod的设计降低了调度的复杂度,考虑这样一种场景:A/B/C三个容器必须要部署在一起,各需要1G内存。现在node1有3G内存,node2有2.5G内存。若A首先初始化,部署到了node2上,那么轮到C就不满足硬件条件而部署失败。那么就必须要将AB两个容器回滚,重新部署到node1上。</p>
+<p>这就是一个典型的成组调度没有被妥善处理的例子,虽然有很多可供选择的方案,但谈不上完美,要么造成资源的严重浪费,要么技术难度不是常规团队可以驾驭。而加入了Pod这种概念,Pod是K8s调度的原子单位,调度器是按照Pod的需求而不是容器的需求来进行计算的。根据这种调度方式,上述的例子就会选择node1而不会选择node2进行调度。</p>
+<p>Pod除了简化调度模型,还有个更重要的意义就是容器设计模式。</p>
+<p>首先要弄清楚Pod的实现原理,Pod的实现需要一个中间容器,叫做infra容器(k8s.gcr.io/pause)。在Pod中,infra会首先被创建,其他容器都是通过join network namespace的方式与infra容器关联在一起。因此对于一个pod中的A B两个容器来说:</p>
+<ul>
+<li>可以使用localhost进行通信</li>
+<li>Pod的生命周期与infra容器一致,与A B无关</li>
+</ul>
+<p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fx530pb14ij30dh0d474j.jpg" alt=""></p>
+<p>而对于volume的共享,K8s只需要将所有volume的定义都设计在Pod层就好</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: Pod</div><div class="line">metadata:</div><div class="line">  name: two-containers</div><div class="line">spec:</div><div class="line">  restartPolicy: Never</div><div class="line">  volumes:</div><div class="line">  - name: shared-data</div><div class="line">    hostPath:      </div><div class="line">      path: /data</div><div class="line">  containers:</div><div class="line">  - name: nginx-container</div><div class="line">    image: nginx</div><div class="line">    volumeMounts:</div><div class="line">    - name: shared-data</div><div class="line">      mountPath: /usr/share/nginx/html</div><div class="line">  - name: debian-container</div><div class="line">    image: debian</div><div class="line">    volumeMounts:</div><div class="line">    - name: shared-data</div><div class="line">      mountPath: /pod-data</div><div class="line">    command: [&quot;/bin/sh&quot;]</div><div class="line">    args: [&quot;-c&quot;, &quot;echo Hello from the debian container &gt; /pod-data/index.html&quot;]</div></pre></td></tr></table></figure>
+<p>所以Pod这种”超亲密关系”容器的设计思想,实际上就是希望当用户想在容器里完成多个应用的时候,应该考虑是不是可以描述为一个pod里的多个容器。</p>
+<p>例如应用war包和tomcat容器,可以描述为一个Pod内的多个容器,以组合的方式解决war和tomcat的耦合关系。但是应用与mysql等数据库的关系,不应该描述为一个Pod,我们不能因为应用宕机而造成数据库无法使用,所以应用与数据库要分为两个Pod来部署。</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/11/10/k8s学习总结1-容器/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/11/10/k8s学习总结1-容器/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">k8s学习总结-1</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-11-10 16:01:35" itemprop="dateCreated datePublished" datetime="2018-11-10T16:01:35+08:00">2018-11-10</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-11-12 10:26:08" itemprop="dateModified" datetime="2018-11-12T10:26:08+08:00">2018-11-12</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/" itemprop="url" rel="index"><span itemprop="name">K8S</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/K8S/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="什么是容器"><a href="#什么是容器" class="headerlink" title="什么是容器"></a>什么是容器</h2><p>容器其实是一种沙盒技术,能够像集装箱一样,把你的应用装起来。应用与应用之间因为有了边界而不至于互相干扰,被装进集装箱的应用,也可以被方便的搬来搬去,这就是paas最理想的状态。</p>
+<h2 id="docker是如何修改应用的边界"><a href="#docker是如何修改应用的边界" class="headerlink" title="docker是如何修改应用的边界"></a>docker是如何修改应用的边界</h2><p>容器的核心技术,就是通过约束和修改进程的动态表现,从而创造出一种边界。对于Docker等大多数容器来说,Cgroups技术是用来制造约束的主要手段,Namespace技术则是用来修改进程视图的主要方式。</p>
+<p>Namespace可以视为一个障眼法,一个namespace里的应用都只能看到当前namespace下被cgroups等技术所限制的资源,文件,设备,而对于宿主机或其他不相关的应用,就完全看不到。这就是linux容器最基本的实现原理。所以容器技术其实就是一个特殊即进程而已。</p>
+<h2 id="容器与文件系统"><a href="#容器与文件系统" class="headerlink" title="容器与文件系统"></a>容器与文件系统</h2><p>容器里的应用进程,理应看到一份完全独立的文件系统,这样,他就可以在自己的容器目录下完成操作,完全不受宿主机和其他容器的影响。Docker在处理这个问题的时候使用了mount namespace技术,改变了容器文件系统的挂载点,简单来说可以理解为执行一下操作:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cd /var/lib/docker/</div><div class="line">以容器ID为名称创建一个文件夹,如123</div><div class="line">cd 123</div><div class="line">创建一系列文件夹如:etc var lib等待以及所需要的文件内容</div><div class="line">mount(&quot;/&quot;,&quot;var/lib/docker/123&quot;)即修改文件系统挂载点</div></pre></td></tr></table></figure>
+<p>这个挂载到容器根目录上,用来为容器进程提供隔离后执行环境的文件系统,就是所谓的容器镜像。他还有个更专业的名字,rootfs(根文件系统)</p>
+<p>一个常见的rootfs,通常会包含一些文件目录,如/bin /etc /proc等。rootfs只是一个操作系统所包含的文件、配置、目录,并不包含操作系统内核,所以容器镜像要比一个虚拟机iso小的多,因为虚拟机iso文件包含了操作系统的内核。</p>
+<p>除此之外,docker公司做出了一个巨大的创新,就是引入了layer概念,用户每修改一次镜像,都会增量追加一个rootfs,这种做法利用了Union File System技术,即将不同的目录联合挂载到一个目录下,最后我们所看到的文件系统实际上是由多个layer视图叠加显示出来的,一个容器的rootfs实际由三部分组成:</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fx3124ugtzj30jf0eiaao.jpg" alt=""></p>
+<p>用户所进行的一切操作都是在最上部的rw层进行的,init层是用来存放/etc/hosts、/etc/resolv.conf等信息。因为这些信息属于底层文件系统的一部分,有些场景需要修改这些文件,但是我们对镜像进行提交时又不希望将这些信息一起提交,所以设计了init层。下面的就全部都是只读的镜像层。</p>
+<p>当我们创建一个文件时,我们实际上只是在最上层的镜像添加了一个文件,当我们删除一个文件时,实际上创建了一个.wh.foo的文件,这样这个文件就被遮罩了起来。当修改一个文件时,首先会从上到下查找有没有这个文件，找到，就复制到容器层中修改，修改的结果就会作用到下层的文件，这种方式也被称为copy-on-write。</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/27/Rabbitmq常用模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/09/27/Rabbitmq常用模式/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">Rabbitmq常用模式</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-09-27 09:40:15" itemprop="dateCreated datePublished" datetime="2018-09-27T09:40:15+08:00">2018-09-27</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-26 09:46:00" itemprop="dateModified" datetime="2018-12-26T09:46:00+08:00">2018-12-26</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="RabbitMQ常用模式"><a href="#RabbitMQ常用模式" class="headerlink" title="RabbitMQ常用模式"></a>RabbitMQ常用模式</h2><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fvnbel6rimj30uy0gaqeu.jpg" alt=""></p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/09/27/Rabbitmq常用模式/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/22/Rabbitmq与Springboot/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/09/22/Rabbitmq与Springboot/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">Rabbitmq与Springboot</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-09-22 18:20:01" itemprop="dateCreated datePublished" datetime="2018-09-22T18:20:01+08:00">2018-09-22</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-26 09:45:44" itemprop="dateModified" datetime="2018-12-26T09:45:44+08:00">2018-12-26</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvihp66f5rj308v04eq2s.jpg" alt=""></p>
+<h2 id="SimpleMessageListenerContainer"><a href="#SimpleMessageListenerContainer" class="headerlink" title="SimpleMessageListenerContainer"></a>SimpleMessageListenerContainer</h2><p>SimpleMessageListenerContainer是一个简单消息监听容器,提供了事务特性的设置,包括事务并发量,回滚以及消息确认,重回队列等绝大部分消费者的设置。</p>
+<p>SimpleMessageListenerContainer支持动态修改消费者的配置,可以根据这一特性去自定义rabbitmq管控台。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/09/22/Rabbitmq与Springboot/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/18/redis底层数据结构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/09/18/redis底层数据结构/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">redis底层数据结构</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-09-18 16:24:43 / 修改时间：18:24:31" itemprop="dateCreated datePublished" datetime="2018-09-18T16:24:43+08:00">2018-09-18</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>redis中常用的数据结构包括String,Hash,List,Set,Sorted Set,每种都有对应的底层C语言结构。如下图所示</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvdtlczh7wj30ra088t90.jpg" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">String      : SDS</div><div class="line">Hash        : zipList/hashtable</div><div class="line">List        : quickList</div><div class="line">Set         : intSet/hashtable</div><div class="line">Sorted Set  : skipList</div></pre></td></tr></table></figure>
+<h2 id="SDS"><a href="#SDS" class="headerlink" title="SDS"></a>SDS</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">struct SDS&lt;T&gt; &#123;</div><div class="line">    T capacity; // 数组容量</div><div class="line">    T len; // 数组长度</div><div class="line">    byte flags; // 特殊标识位</div><div class="line">    byte[] content; // 数组内容</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>SDS全称为simple dynamic string,由于c语言中的字符串,每次进行len()操作的时候,都要进行遍历,复杂度为O(n),对于单线程的redis来说,O(n)复杂度都是不可接受的,所以在C语言的String基础上改造成了SDS类型。</p>
+<p>SDS内部会维护当前content的长度记为len,capacity为容量,&gt;=len。在字符串进行扩展是,redis会分配一部分额外的空间放置频繁的进行扩张</p>
+<h2 id="ZipList"><a href="#ZipList" class="headerlink" title="ZipList"></a>ZipList</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">struct ziplist&lt;T&gt; &#123;</div><div class="line">    int32 zlbytes; // 整个压缩列表占用字节数</div><div class="line">    int32 zltail_offset; // 最后一个元素距离压缩列表起始位置的偏移量，用于快速定位到最后一个节点</div><div class="line">    int16 zllength; // 元素个数</div><div class="line">    T[] entries; // 元素内容列表，挨个挨个紧凑存储</div><div class="line">    int8 zlend; // 标志压缩列表的结束，值恒为 0xFF</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>顾名思义,ZipList是一个紧凑的list,用于Hash结构元素较少的时候使用。压缩列表是一块连续的内存空间，元素之间紧挨着存储，没有任何冗余空隙。各个元素之间是双向的连接,配合zltail_offset可以实现从后向前遍历。</p>
+<p>但是ZipList也存在局限性,导致它并不适合在大量元素的情况下使用。</p>
+<p>由于ZipList是一块连续的内存区域,那么存在一种情况就是添加元素时已经没有地方realloc,那么这时候就需要重新找一块连续的内存进行分配,这时就需要将这块内存全部拷贝到新的地址空间上去。</p>
+<h2 id="QuickList"><a href="#QuickList" class="headerlink" title="QuickList"></a>QuickList</h2><p>List结构早期元素少时用 ziplist，元素多时用linkedlist。但是linkedlist会导致内存碎片化严重,并且linkedlist指针成本很高,所以在zipList和LinkedList的基础上改造成了QuickList。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">struct ziplist_compressed &#123;</div><div class="line">    int32 size;</div><div class="line">    byte[] compressed_data;</div><div class="line">&#125;</div><div class="line">struct quicklistNode &#123;</div><div class="line">    quicklistNode* prev;</div><div class="line">    quicklistNode* next;</div><div class="line">    ziplist* zl; // 指向压缩列表</div><div class="line">    int32 size; // ziplist 的字节总数</div><div class="line">    int16 count; // ziplist 中的元素数量</div><div class="line">    int2 encoding; // 存储形式 2bit，原生字节数组还是 LZF 压缩存储</div><div class="line"></div><div class="line">&#125;</div><div class="line">struct quicklist &#123;</div><div class="line">    quicklistNode* head;</div><div class="line">    quicklistNode* tail;</div><div class="line">    long count; // 元素总数</div><div class="line">    int nodes; // ziplist 节点的个数</div><div class="line">    int compressDepth; // LZF 算法压缩深度</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可见QuickList中的每个节点都是一个ZipList,ZipList之间通过指针双向连接。同时QuickList可以进行数据压缩,默认为0即不压缩。为1则表示QuickList首尾不压缩,2则表示就表示 quicklist 的首尾第一个 ziplist 以及首尾第二个 ziplist 都不压缩。</p>
+<h2 id="DIC"><a href="#DIC" class="headerlink" title="DIC"></a>DIC</h2><p>Dic内部包含了两个hashtable,dict 结构内部包含两个 hashtable，通常情况下只有一个 hashtable 是有值的。但是在 dict 扩容缩容时，需要分配新的 hashtable，然后进行渐进式搬迁，这时候两个 hashtable 存储的分别是旧的 hashtable 和新的 hashtable。待搬迁结束后，旧的 hashtable 被删除，新的 hashtable 取而代之。</p>
+<p>数据量较大的hash以及存储了非整数的set内部都是用了DIC结构,Hashtable和java中的HashTable非常类似。</p>
+<h3 id="渐进式rehash"><a href="#渐进式rehash" class="headerlink" title="渐进式rehash"></a>渐进式rehash</h3><p>与java中的hashTable不同的是,redis中的hashtable使用的是渐进式的rehash,因为redis中的hashtable数据量可能非常大,redis单线程进行复制可能会造成阻塞。一般来说rehash操作会隐藏在一些指令之后,如果没有执行完成,redis会交给后台的定时任务去完成。</p>
+<h3 id="扩容-缩容"><a href="#扩容-缩容" class="headerlink" title="扩容/缩容"></a>扩容/缩容</h3><p>hashtable扩容后会变为原数组的两倍大小。如果Redis 正在做 bgsave，为了减少内存页的过多分离 (Copy On Write)，Redis 尽量不去扩容 (dict_can_resize)，但是如果 hash 表已经非常满了，元素的个数已经达到了第一维数组长度的 5 倍 (dict_force_resize_ratio)，说明 hash 表已经过于拥挤了，这个时候就会强制扩容。</p>
+<p>当元素的个数小于数组大小的10%,就会进行缩容,缩容不需要考虑bgsave。</p>
+<h2 id="SkipList"><a href="#SkipList" class="headerlink" title="SkipList"></a>SkipList</h2><p>redis的sorted list内部使用skipList(跳表)实现。skipList的结构与java中的skipList几乎一致。SkipList首先要求是一个有序的列表,redis 通过set 一个score来实现。拿到这样一个list之后,redis会从list中利用算法均匀的筛选一些元素组成上层list,如此循环,redis中的跳表共有64层。理想情况下,跳表最终会形成如下的形状,也就是一个正态分布图。利用这种结构,redis每次从上到下进行匹配,可已将查询的复杂度从O(n)降低到O(1)</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fvduzjv8nyj30eo0a2t8h.jpg" alt=""></p>
+<h2 id="intSet"><a href="#intSet" class="headerlink" title="intSet"></a>intSet</h2><p>inSet是一个整数类型的集合,包括16位整数,32位整数,64位整数类型。个人理解这个结构是某些场景下用来节省空间的。例如set中只有整数类型是,当元素大小可以用16位表示,则这个set的encoding就是int16,当出现有元素必须用32位表示时,那么所有的整数都升级为int32,int64以此类推。但是当你删除了int32的数据,intSet是不会降级为int16的。也就是说只能升级不能降级。当set中出现了非整数类型时,redis使用hashtable代替intSet。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>redis的底层数据结构,几乎都针对redis本身进行了优化。无论在提高性能还是节省空间上,作者都花了很多功夫。</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/18/rabbitmq高级特性/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/09/18/rabbitmq高级特性/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">rabbitmq高级特性</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-09-18 10:16:09" itemprop="dateCreated datePublished" datetime="2018-09-18T10:16:09+08:00">2018-09-18</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-26 09:46:02" itemprop="dateModified" datetime="2018-12-26T09:46:02+08:00">2018-12-26</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/消息队列/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="消息可靠投递"><a href="#消息可靠投递" class="headerlink" title="消息可靠投递"></a>消息可靠投递</h2><blockquote>
+<p>什么是生产端的可靠性投递</p>
+</blockquote>
+<ul>
+<li>保证消息发出</li>
+<li>保证MQ接收到消息</li>
+<li>发送端收到MQ的应答</li>
+<li>消息补偿机制</li>
+</ul>
+<h3 id="方案一-消息落库并设置状态"><a href="#方案一-消息落库并设置状态" class="headerlink" title="方案一:消息落库并设置状态"></a>方案一:消息落库并设置状态</h3><p><img src="https://ws4.sinaimg.cn/large/006tNbRwgy1fvbrjpf4okj30tl0dgdir.jpg" alt=""></p>
+<p>通过上面的图示很容易理解这种方案的做法。首先要保证在第一步两个入库操作都要成功,这里必定涉及到事务,要做到同时成功,失败则要fail-fast。如果涉及到不同的库或者数据源还可能涉及分布式事务。所以这个设计最大的性能阻塞点就在这里,添加事务就无法应对高并发的场景。</p>
+<p>分布式定时任务用来做消息补偿,重跑一些异常状态的消息。这里有一个可能存在一个问题,当一个消息刚发送出去,定时任务就启动了,导致消息重复发送的情况。所以定时任务出了要判断消息状态,还应该对间隔时间做一个限制。例如查询状态=1并且距离更新时间大于一分钟的消息进行补偿重试。</p>
+<h3 id="方案二-消息延迟投递-做二次确认-回调检查"><a href="#方案二-消息延迟投递-做二次确认-回调检查" class="headerlink" title="方案二:消息延迟投递,做二次确认,回调检查"></a>方案二:消息延迟投递,做二次确认,回调检查</h3><p><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fvbrk01lblj30ke09p75o.jpg" alt=""></p>
+<p>上面说了方案一并不适合在高并发的场景下使用,那么方案二就是应对高并发场景下的常用设计。</p>
+<ol>
+<li>首先上游业务模块将数据入库并发送到broker的业务队列,同时生成一条deley check消息发送到另一个队列,设置延迟发送时间几秒或几分钟之后</li>
+<li>下游业务收到消息并消费后发送confirm消息到broker的一个队列</li>
+<li>callback服务收到确认消息,做消息持久化。</li>
+<li>当延迟确认消息到来之后,如果数据库中有,则成功,否则要callback服务需要进行rpc调用上游服务再次发送一遍消息</li>
+</ol>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/09/18/rabbitmq高级特性/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/08/ElasticSearch分布式架构-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/09/08/ElasticSearch分布式架构-5/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">系统学习ElasticSearch-分布式架构(5)</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-09-08 17:57:57" itemprop="dateCreated datePublished" datetime="2018-09-08T17:57:57+08:00">2018-09-08</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-09-18 18:03:04" itemprop="dateModified" datetime="2018-09-18T18:03:04+08:00">2018-09-18</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><img src="https://ws1.sinaimg.cn/large/0069RVTdgy1fv2aitojvfj30xk0e0aa6.jpg" alt=""></p>
+<p>ES是一套天生支持分布式的系统,分布式的目的是解决大数据量的问题。但是在我们使用的过程中,并没有对其分布式特性进行特殊配置。这时因为ES对用户隐藏了复杂的分布式机制,包括分片,集群发现,负载均衡,replica,路由,扩容以及reIndex。使得用户通过简单的配置就可以对ES实现开箱即用。但是对于开发人员,我们还是要理解ES隐藏的机制和架构,做到知其然也知其所以然。</p>
+<p><excerpt in="" index="" |="" 首页摘要=""><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/09/08/ElasticSearch分布式架构-5/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.shuchang.sc.com/2018/09/08/Hbase数据存取过程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shuchang">
+      <meta itemprop="description" content="多喝热水">
+      <meta itemprop="image" content="/images/123.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShuChang's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/09/08/Hbase数据存取过程/" class="post-title-link" itemprop="http://www.shuchang.sc.com/page/4/index.html">Hbase数据存取过程</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-09-08 13:20:57 / 修改时间：13:21:44" itemprop="dateCreated datePublished" datetime="2018-09-08T13:20:57+08:00">2018-09-08</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Hbase/" itemprop="url" rel="index"><span itemprop="name">Hbase</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="Hbase数据存储"><a href="#Hbase数据存储" class="headerlink" title="Hbase数据存储"></a>Hbase数据存储</h2><h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><p>在提交之前,Hbase client回去请求zk,从mate表中确定要存取regionServer的位置。根据rowKey找到对应的regionServer。拿到地址之后,默认情况下像put、delete这类操作是默认提交的,会直接提交到对应的regionServer上,也可以设置autoflush为false,当到达默认的2M的缓存阈值后才会异步批量提交到服务端。</p>
+<p><img src="https://ws3.sinaimg.cn/large/0069RVTdgy1fv21klmsihj30bv07dmxt.jpg" alt=""></p>
+<p>至此,客户端的操作就完成了</p>
+<p><excerpt in="" index="" |="" 首页摘要=""></excerpt></p>
+<ul>
+<li>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/09/08/Hbase数据存取过程/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+         
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2444,7 +2312,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">104</span>
+                    <span class="site-state-item-count">95</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
